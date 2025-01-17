@@ -1,16 +1,12 @@
 import React from 'react';
-import Link from 'next/link';
+import LoginPage from '../components/Login';
 
-const LoginPage = () => {
+const Homepage = () => {
   return (
-    <div>
-      <h1>Login Page</h1>
-      <h1>For example, the user logged in: Go to Homepage Page:</h1>
-      <Link href="/dashboard">Log In - Go to Dashboard</Link>
+    <div className="min-h-screen">
+      <LoginPage />
     </div>
   );
 };
 
-LoginPage.getLayout = (page: React.ReactNode) => page; // disable layout for this page
-
-export default LoginPage;
+export default Homepage;
