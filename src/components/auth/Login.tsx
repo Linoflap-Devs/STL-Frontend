@@ -8,9 +8,8 @@ import {
   Box,
   Checkbox,
   FormControlLabel,
-  InputAdornment,
 } from "@mui/material";
-import MonetizationOnIcon from "@mui/icons-material/MonetizationOn";
+//import MonetizationOnIcon from "@mui/icons-material/MonetizationOn";
 import ConfirmationNumberIcon from '@mui/icons-material/ConfirmationNumber';
 import { LoginSectionData } from "../../data/LoginSectionData";
 
@@ -20,6 +19,7 @@ const LoginPage = () => {
 
   const handleLogin = (e: { preventDefault: () => void }) => {
     e.preventDefault();
+    //console.log(username, password);
   };
 
   return (
@@ -47,7 +47,7 @@ const LoginPage = () => {
             flexDirection: "column",
             justifyContent: "center",
             borderRadius: "16px",
-            margin: "23px",
+            margin: "20px",
           }}
         >
           <ConfirmationNumberIcon sx={{ fontSize: 85, color: "white" }} />
@@ -76,9 +76,9 @@ const LoginPage = () => {
         {/* Right Column (Login Card Section) */}
         <Box
           sx={{
-            //flex: 1,
-            paddingLeft: { xs: 2, sm: 4, md: 5.5 }, // Adjust padding for different screen sizes
-            paddingTop: { xs: 0, sm: 0, md: 8 }, // Adjust padding for different screen sizes
+            flex: 1,
+            paddingLeft: { xs: 2, sm: 4, md: 5.5 },
+            paddingTop: { xs: 0, sm: 0, md: 8 },
             padding: 8,
             display: "flex",
             alignItems: "center",
@@ -97,19 +97,19 @@ const LoginPage = () => {
               <img
                 src={LoginSectionData.image}
                 alt="Logo"
-                style={{ maxWidth: "90px", width: "100%" }}
+                style={{ maxWidth: "75px", width: "100%" }}
               />
             </Box>
 
             <Typography
               variant="h4"
-              sx={{ fontWeight: "bold", marginBottom: 1 }}
+              sx={{ fontWeight: "bold" }}
             >
               {LoginSectionData.cardTitle}
             </Typography>
             <Typography
-              variant="subtitle2"
-              sx={{ marginTop: 1.3, color: "text.secondary" }}
+              variant="body2"
+              sx={{ marginTop: 1, color: "text.secondary" }}
             >
               {LoginSectionData.cardDescription}
             </Typography>
@@ -124,7 +124,7 @@ const LoginPage = () => {
               >
                 <TextField
                   sx={{
-                    marginTop: 2.5,
+                    marginTop: 3.2,
                     marginBottom: 0.2,
                   }}
                   label="Username"
@@ -186,8 +186,7 @@ const LoginPage = () => {
               <Typography
                 variant="subtitle2"
                 sx={{
-                  fontWeight: "bold",
-                  marginTop: 3,
+                  marginTop: 2.9,
                   textAlign: "center",
                 }}
               >
