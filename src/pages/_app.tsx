@@ -6,7 +6,9 @@ import { useRouter } from 'next/router';
 const App = ({ Component, pageProps }: AppProps) => {
   const router = useRouter();
 
-  if (router.pathname === '/login') {
+  const isLoginPage = router.pathname === '/'; // will render the login page only
+
+  if (isLoginPage) {
     return <Component {...pageProps} />;
   }
 
@@ -14,7 +16,6 @@ const App = ({ Component, pageProps }: AppProps) => {
     <Layout>
       <Component {...pageProps} />
     </Layout>
-
   );
 };
 

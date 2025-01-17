@@ -3,11 +3,13 @@ import Link from 'next/link';
 
 const Header = () => {
   return (
-    <header className="header">
-      <div className="user-profile">
-        <span className="user-name">Header</span>
-        <span className="user-name">Admin</span>
-        <button className="logout-btn">Logout</button>
+    <header>
+      <div>
+        <span>Header</span>
+        <span>Admin</span>
+        <span>
+          <Link href="/">Temporary Logout Button</Link>
+        </span>
       </div>
     </header>
   );
