@@ -10,7 +10,8 @@ import {
   FormControlLabel,
   InputAdornment,
 } from "@mui/material";
-import MonetizationOnIcon from '@mui/icons-material/MonetizationOn';
+import MonetizationOnIcon from "@mui/icons-material/MonetizationOn";
+import ConfirmationNumberIcon from '@mui/icons-material/ConfirmationNumber';
 import { LoginSectionData } from "../../data/LoginSectionData";
 
 const LoginPage = () => {
@@ -49,7 +50,7 @@ const LoginPage = () => {
             margin: "23px",
           }}
         >
-          <MonetizationOnIcon sx={{ fontSize: 85, color: "white" }} />
+          <ConfirmationNumberIcon sx={{ fontSize: 85, color: "white" }} />
           <Typography
             variant="h3"
             sx={{
@@ -75,8 +76,10 @@ const LoginPage = () => {
         {/* Right Column (Login Card Section) */}
         <Box
           sx={{
-            flex: 1,
-            padding: 6,
+            //flex: 1,
+            paddingLeft: { xs: 2, sm: 4, md: 5.5 }, // Adjust padding for different screen sizes
+            paddingTop: { xs: 0, sm: 0, md: 8 }, // Adjust padding for different screen sizes
+            padding: 8,
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
@@ -98,7 +101,10 @@ const LoginPage = () => {
               />
             </Box>
 
-            <Typography variant="h4" sx={{ fontWeight: "bold", marginBottom: 1 }}>
+            <Typography
+              variant="h4"
+              sx={{ fontWeight: "bold", marginBottom: 1 }}
+            >
               {LoginSectionData.cardTitle}
             </Typography>
             <Typography
@@ -169,8 +175,7 @@ const LoginPage = () => {
                 color="primary"
                 fullWidth
                 sx={{
-                  marginTop: 2
-                  ,
+                  marginTop: 2,
                   padding: "11px 20px",
                   borderRadius: "8px",
                 }}
@@ -206,7 +211,9 @@ const LoginPage = () => {
               fontSize: "12px",
             }}
           >
-            <Typography variant="body2">{LoginSectionData.copyright}</Typography>
+            <Typography variant="body2">
+              {LoginSectionData.copyright}
+            </Typography>
           </Box>
         </Box>
       </Box>
