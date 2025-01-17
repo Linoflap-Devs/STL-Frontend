@@ -1,7 +1,7 @@
 // Shared layout component for the sidebar and header.
 
-import Sidebar from './components/Sidebar';
-import Header from './components/Header';
+import Sidebar from './components/layout/Sidebar';
+import Header from './components/layout/Header';
 
 const Layout = ({ children }: { children: React.ReactNode }) => {
   return (
