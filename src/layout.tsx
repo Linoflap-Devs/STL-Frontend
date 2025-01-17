@@ -1,4 +1,4 @@
-// Shared layout component for the sidebar and header
+// Shared layout component for the sidebar and header.
 
 import Sidebar from './components/Sidebar';
 import Header from './components/Header';

@@ -1,15 +1,21 @@
-// Main entry - how can i render users page to the main entry?
-
+import React from 'react';
+import { AppProps } from 'next/app';
 import Layout from '../layout';
-import '../globals.css';
+import { useRouter } from 'next/router';
 
-function MyApp({ Component, pageProps }: { Component: any, pageProps: any }) {
+const App = ({ Component, pageProps }: AppProps) => {
+  const router = useRouter();
+
+  if (router.pathname === '/login') {
+    return <Component {...pageProps} />;
+  }
+
   return (
     <Layout>
       <Component {...pageProps} />
     </Layout>
+
   );
-}
+};
 
-export default MyApp;
-
+export default App;

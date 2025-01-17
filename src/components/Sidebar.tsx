@@ -1,4 +1,3 @@
-// components/Sidebar.js
 import Link from 'next/link';
 
 const Sidebar = () => {
@@ -6,8 +5,8 @@ const Sidebar = () => {
     <nav className="sidebar">
       <ul>
         <li><Link href="/">Dashboard</Link></li>
-        <li><Link href="/users">Users</Link></li>
-        <li><Link href="/transactions">Transactions</Link></li>
+        <li><Link href="/users">Go to Users</Link></li>
+        <li><Link href="/transactions">Go to Transactions</Link></li>
       </ul>
     </nav>
   );
