@@ -11,7 +11,7 @@ import {
   IconButton,
   InputAdornment,
 } from "@mui/material";
-//import MonetizationOnIcon from "@mui/icons-material/MonetizationOn";
+
 import Visibility from "@mui/icons-material/Visibility";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
 import ConfirmationNumberIcon from '@mui/icons-material/ConfirmationNumber';
@@ -53,18 +53,18 @@ const LoginPage = () => {
         {/* Left Column (Text Section) */}
         <Box
           sx={{
-            flex: 1,
+            //flex: 1,
             //backgroundColor: "#1976d2",
             backgroundImage: `url(${LoginSectionData.image2})`,
             backgroundSize: "cover",
             backgroundPosition: "center",
             color: "#fff",
-            padding: 5,
+            padding: 4,
             display: "flex",
             flexDirection: "column",
             justifyContent: "center",
-            //borderRadius: "16px",
-            //margin: "20px",
+            borderRadius: "16px",
+            margin: "12px",
           }}
         >
           <Box

@@ -1,17 +1,29 @@
 import React from 'react';
-import Link from 'next/link';
+import { AppBar, Toolbar, Typography, IconButton } from '@mui/material';
+import MenuIcon from '@mui/icons-material/Menu';
 
-const Header = () => {
+interface HeaderProps {
+  onDrawerOpen: () => void;
+  open: boolean;
+}
+
+const Header = ({ onDrawerOpen }: HeaderProps) => {
   return (
-    <header>
-      <div>
-        <span>Header</span>
-        <span>Admin</span>
-        <span>
-          <Link href="/">Temporary Logout Button</Link>
-        </span>
-      </div>
-    </header>
+    <AppBar position="fixed">
+      <Toolbar>
+        <IconButton
+          color="inherit"
+          edge="start"
+          onClick={onDrawerOpen}
+          sx={{ marginRight: 2 }}
+        >
+          <MenuIcon />
+        </IconButton>
+        <Typography variant="h6" noWrap>
+          Dashboard
+        </Typography>
+      </Toolbar>
+    </AppBar>
   );
 };
 

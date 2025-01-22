@@ -1,22 +1,31 @@
 import { AppProps } from 'next/app';
 import Layout from '../layout';
 import { useRouter } from 'next/router';
+import Head from 'next/head';
 import '../globals.css';
 
 const App = ({ Component, pageProps }: AppProps) => {
   const router = useRouter();
 
-  const excludedPaths = ['/']; // if 2 or more paths exclusions
+  const excludedPaths = ['/']; // paths to exclude from layout
   const isExcludedPath = excludedPaths.includes(router.pathname || 'Not available');
 
   if (isExcludedPath) {
     return <Component {...pageProps} />;
-  } // skipping the layout. conditional rendering
+  }
 
   return (
-    <Layout>
-      <Component {...pageProps} />
-    </Layout> 
+    <>
+      <Head>
+        <link
+          href="https://fonts.googleapis.com/css2?family=Euclid+Circular+B:wght@400;600&display=swap"
+          rel="stylesheet"
+        />
+      </Head>
+      <Layout>
+        <Component {...pageProps} />
+      </Layout>
+    </>
   );
 };
 
