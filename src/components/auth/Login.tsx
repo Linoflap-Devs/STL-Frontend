@@ -31,7 +31,7 @@ const LoginPage = () => {
   };
 
   const handleNavigation = () => { // temporary link to dashboard
-    router.push("/dashboard");
+    router.push("/admin");
   };
 
   const isButtonDisabled = !username || !password;
@@ -53,7 +53,7 @@ const LoginPage = () => {
         {/* Left Column (Text Section) */}
         <Box
           sx={{
-            //flex: 1,
+            flex: 1,
             //backgroundColor: "#1976d2",
             backgroundImage: `url(${LoginSectionData.image2})`,
             backgroundSize: "cover",
@@ -184,20 +184,21 @@ const LoginPage = () => {
                   }}
                 />
 
-                <FormControlLabel
-                  control={
-                    <Checkbox
-                      sx={{
-                        padding: 0.5,
-                      }}
-                    />
-                  }
-                  label={
-                    <Typography variant="subtitle2">
-                      {LoginSectionData.rememberMe}
-                    </Typography>
-                  }
-                />
+              <FormControlLabel
+                control={
+                  <Checkbox
+                    sx={{
+                      padding: 0.5,
+                    }}
+                  />
+                }
+                label={
+                  <Typography variant="subtitle2">
+                    {LoginSectionData.rememberMe}
+                  </Typography>
+                }
+              />
+
               </Box>
 
               <Button

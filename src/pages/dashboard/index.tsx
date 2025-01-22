@@ -1,3 +1,5 @@
+// dashboard (homepage)
+
 import React from 'react';
 import { Box, CssBaseline, Typography } from '@mui/material';
 
@@ -23,3 +25,4 @@ const DashboardPage = () => {
 };
 
 export default DashboardPage;
+

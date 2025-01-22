@@ -1,55 +1,36 @@
-import * as React from 'react';
-import { Box, CssBaseline } from '@mui/material';
+import React, { useState } from 'react';
 import Header from './components/layout/Header';
 import Sidebar from './components/layout/Sidebar';
-import { styled } from '@mui/material/styles';
 
-const drawerWidth = 240;
-
-const Main = styled('main', { shouldForwardProp: (prop) => prop !== 'open' })<{
-  open?: boolean;
-}>(({ theme }) => ({
-  flexGrow: 1,
-  padding: theme.spacing(3),
-  marginTop: theme.spacing(8),
-  transition: theme.transitions.create('margin', {
-    easing: theme.transitions.easing.sharp,
-    duration: theme.transitions.duration.leavingScreen,
-  }),
-  marginLeft: `-${drawerWidth}px`,
-  variants: [
-    {
-      props: ({ open }) => open,
-      style: {
-        transition: theme.transitions.create('margin', {
-          easing: theme.transitions.easing.easeOut,
-          duration: theme.transitions.duration.enteringScreen,
-        }),
-        marginLeft: 0,
-      },
-    },
-  ],
-}));
-
-interface LayoutProps {
+interface Layout {
   children: React.ReactNode;
 }
 
-const Layout: React.FC<LayoutProps> = ({ children }) => {
-  const [open, setOpen] = React.useState(false);
+const Layout: React.FC<Layout> = ({ children }) => {
+  const [open, setOpen] = useState(false);
 
   const handleDrawerOpen = () => setOpen(true);
   const handleDrawerClose = () => setOpen(false);
 
   return (
-    <Box sx={{ display: 'flex' }}>
-      <CssBaseline />
-      <Header open={open} onDrawerOpen={handleDrawerOpen} />
-      <Sidebar open={open} onDrawerClose={handleDrawerClose} />
-      <Main open={open}>
-        {children}
-      </Main>
-    </Box>
+    <div style={{ display: 'flex', height: '100vh', overflow: 'hidden' }}>
+      <Sidebar open={open} handleDrawerClose={handleDrawerClose} />
+      <div
+        style={{
+          flex: 1,
+          display: 'flex',
+          flexDirection: 'column',
+          marginLeft: open ? 240 : 0,
+          transition: 'margin-left 0.5s ease',
+          overflow: 'hidden',
+        }}
+      >
+        <Header handleDrawerOpen={handleDrawerOpen} open={open} />
+        <div style={{ flex: 1, marginTop: '64px', overflow: 'auto' }}>
+          {children}
+        </div>
+      </div>
+    </div>
   );
 };
 
