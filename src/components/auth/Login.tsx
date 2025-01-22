@@ -8,29 +8,46 @@ import {
   Box,
   Checkbox,
   FormControlLabel,
+  IconButton,
+  InputAdornment,
 } from "@mui/material";
 //import MonetizationOnIcon from "@mui/icons-material/MonetizationOn";
+import Visibility from "@mui/icons-material/Visibility";
+import VisibilityOff from "@mui/icons-material/VisibilityOff";
 import ConfirmationNumberIcon from '@mui/icons-material/ConfirmationNumber';
 import { LoginSectionData } from "../../data/LoginSectionData";
 
+import { useRouter } from "next/router";
+
 const LoginPage = () => {
+  const router = useRouter();
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
 
   const handleLogin = (e: { preventDefault: () => void }) => {
     e.preventDefault();
     //console.log(username, password);
   };
 
+  const handleNavigation = () => { // temporary link to dashboard
+    router.push("/dashboard");
+  };
+
+  const isButtonDisabled = !username || !password;
+
+  const handleTogglePasswordVisibility = () => {
+    setShowPassword((prev) => !prev);
+  };
   return (
     <>
       <Box
         sx={{
           display: "flex",
           flexDirection: { xs: "column", md: "row" },
-          height: "100vh",
           backgroundColor: "#f5f5f5",
           margin: 0,
+          height: "100vh",
         }}
       >
         {/* Left Column (Text Section) */}
@@ -46,31 +63,42 @@ const LoginPage = () => {
             display: "flex",
             flexDirection: "column",
             justifyContent: "center",
-            borderRadius: "16px",
-            margin: "20px",
+            //borderRadius: "16px",
+            //margin: "20px",
           }}
         >
-          <ConfirmationNumberIcon sx={{ fontSize: 85, color: "white" }} />
-          <Typography
-            variant="h3"
+          <Box
             sx={{
-              fontWeight: "bold",
-              marginBottom: 0.3,
-              marginTop: { xs: 4, sm: 5, md: 85 },
-              textAlign: "start",
+              display: "flex",
+              flexDirection: "column",
+              justifyContent: "space-between",
+              height: "100vh",
             }}
           >
-            {LoginSectionData.title}
-          </Typography>
-          <Typography
-            variant="body1"
-            sx={{
-              marginBottom: 1.5,
-              textAlign: "start",
-            }}
-          >
-            {LoginSectionData.description}
-          </Typography>
+            <ConfirmationNumberIcon sx={{ fontSize: 85, color: "white" }} />
+
+            <Box
+            >
+              <Typography
+                variant="h3"
+                sx={{
+                  fontWeight: "bold",
+                  marginBottom: 1,
+                }}
+              >
+                {LoginSectionData.title}
+              </Typography>
+              <Typography
+                variant="body1"
+                sx={{
+                  marginBottom: 0.3,
+                }}
+              >
+                {LoginSectionData.description}
+              </Typography>
+            </Box>
+          </Box>
+
         </Box>
 
         {/* Right Column (Login Card Section) */}
@@ -88,7 +116,7 @@ const LoginPage = () => {
         >
           <Box
             sx={{
-              width: "100%",
+              width: "75%",
               maxWidth: 500,
               padding: 3,
             }}
@@ -138,13 +166,22 @@ const LoginPage = () => {
 
                 <TextField
                   label="Password"
-                  type="password"
+                  type={showPassword ? "text" : "password"}
                   variant="outlined"
                   fullWidth
                   margin="normal"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   required
+                  InputProps={{
+                    endAdornment: (
+                      <InputAdornment position="end">
+                        <IconButton onClick={handleTogglePasswordVisibility}>
+                          {showPassword ? <VisibilityOff /> : <Visibility />}
+                        </IconButton>
+                      </InputAdornment>
+                    ),
+                  }}
                 />
 
                 <FormControlLabel
@@ -160,23 +197,18 @@ const LoginPage = () => {
                       {LoginSectionData.rememberMe}
                     </Typography>
                   }
-                  sx={{
-                    display: "flex",
-                    alignItems: "center",
-                    marginLeft: 0.1,
-                    marginTop: 0.2,
-                  }}
                 />
               </Box>
 
               <Button
-                type="submit"
+                onClick={handleNavigation}
+                disabled={isButtonDisabled}
                 variant="contained"
                 color="primary"
                 fullWidth
                 sx={{
                   marginTop: 2,
-                  padding: "11px 20px",
+                  padding: "8px 20px",
                   borderRadius: "8px",
                 }}
               >
@@ -204,7 +236,7 @@ const LoginPage = () => {
           <Box
             sx={{
               position: "absolute",
-              bottom: 21,
+              bottom: 10,
               left: 15,
               color: "#888",
               fontSize: "12px",
