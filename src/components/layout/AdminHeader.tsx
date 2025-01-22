@@ -34,8 +34,7 @@ const AdminHeader: React.FC = () => {
       }}
     >
       <Container 
-        maxWidth="xl" 
-          sx={{ height: '10vh' }}>
+        maxWidth="xl">
         <Toolbar disableGutters>
           <Typography
             variant="h6"

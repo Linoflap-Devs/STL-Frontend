@@ -1,72 +1,137 @@
-import React from 'react';
-import { Container, Card, CardContent, Typography, Box, Button } from '@mui/material';
+import React from "react";
+import {
+  Container,
+  Typography,
+  Box,
+  Button,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+  Paper,
+} from "@mui/material";
+import AddIcon from "@mui/icons-material/Add";
 
 const UsersTable = () => {
-    const users = [
-        { id: 1, name: 'John Doe', email: 'john@example.com' },
-        { id: 2, name: 'Jane Smith', email: 'jane@example.com' },
-        { id: 3, name: 'Alice Johnson', email: 'alice@example.com' },
-    ];
+  const users = [
+    { id: 1, name: "John Doe", email: "john@example.com" },
+    { id: 2, name: "Jane Smith", email: "jane@example.com" },
+    { id: 3, name: "Alice Johnson", email: "alice@example.com" },
+  ];
 
-    return (
-        <Container maxWidth="lg">
-            <Box sx={{
-                display: 'flex',
-                flexDirection: 'row',
-                justifyContent: 'space-between',
-                alignItems: 'flex-end',
-                marginBottom: 2,
-            }}>
-                <Box>
-                    <Typography variant="h4" sx={{ fontWeight: 'bold', marginBottom: '0.1',  }}>
-                        Users Table
-                    </Typography>
-                    <Typography variant="subtitle1" sx={{ color: 'gray' }}>
-                        Manage Table
-                    </Typography>
-                </Box>
+  const tableCellStyle = {
+    color: "#637381",
+    fontWeight: "bold",
+    paddingY: 2,
+    lineHeight: "2rem",
+  };
 
-                <Box sx={{
-                    display: 'flex',
-                    justifyContent: 'flex-end',
-                }}>
-                    <Button variant="contained">Add Users</Button>
-                </Box>
-            </Box>
+  const tableContentStyle = (isLastRow: boolean) => ({
+    color: "#1C252E",
+    borderBottom: isLastRow ? "none" : "1px solid rgba(145, 158, 171, 0.2)",
+  });
 
+  return (
+    <Container maxWidth="xl" sx={{ marginTop: 4 }}>
+      {/* Header Section */}
+      <Box
+        sx={{
+          display: "flex",
+          flexDirection: "row",
+          justifyContent: "space-between",
+          alignItems: "center",
+          marginBottom: 3
+        }}
+      >
+        <Box>
+          <Typography
+            variant="h5"
+            sx={{ fontWeight: "bold", marginBottom: 0 }}
+            gutterBottom
+          >
+            Users
+          </Typography>
+          <Typography
+            variant="subtitle1"
+            sx={{ color: "gray", marginTop: 0 }}
+            gutterBottom
+          >
+            Manage Users List
+          </Typography>
+        </Box>
 
-            <Card sx={{
-                boxShadow: 2,
-                borderRadius: 2,
-                padding: 1.1,
-            }}
+        <Button
+          variant="contained"
+          color="primary"
+          sx={{
+            paddingX: 1.8,
+            paddingY: 0.8,
+            textTransform: "none",
+            fontSize: 15,
+            borderRadius: 2,
+          }}
+        >
+          <AddIcon sx={{ marginRight: 1 }} /> New User
+        </Button>
+      </Box>
+
+      {/* Table Section */}
+      <TableContainer component={Paper}>
+        <Table size="medium">
+          <TableHead>
+            <TableRow
+              sx={{
+                backgroundColor: "#f4f6f8",
+              }}
             >
-                <CardContent>
-                    <table style={{ width: '100%', borderCollapse: 'collapse' }}>
-                        <thead>
-                            <tr>
-                                <th style={{ padding: '5px'}}>ID</th>
-                                <th style={{ padding: '10px'}}>Name</th>
-                                <th style={{ padding: '10px'}}>Email</th>
-                                <th style={{ padding: '10px'}}>Actions</th>
-
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {users.map((user) => (
-                                <tr key={user.id}>
-                                    <td style={{ padding: '10px'}}>{user.id}</td>
-                                    <td style={{ padding: '10px'}}>{user.name}</td>
-                                    <td style={{ padding: '10px'}}>{user.email}</td>
-                                    <td style={{ padding: '10px'}}></td>
-                                </tr>
-                            ))}
-                        </tbody>
-                    </table>
-                </CardContent>
-            </Card>
-        </Container>
-    );
+              <TableCell sx={tableCellStyle}>ID</TableCell>
+              <TableCell sx={tableCellStyle}>Name</TableCell>
+              <TableCell sx={tableCellStyle}>Email</TableCell>
+              <TableCell sx={tableCellStyle}>Actions</TableCell>
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {users.map((user, index) => (
+              <TableRow
+                key={user.id}
+                sx={{
+                  "&:hover": {
+                    backgroundColor: "#f4f6f8",
+                    //cursor: "pointer",
+                  },
+                }}
+              >
+                <TableCell sx={tableContentStyle(index === users.length - 1)}>
+                  {user.id}
+                </TableCell>
+                <TableCell sx={tableContentStyle(index === users.length - 1)}>
+                  {user.name}
+                </TableCell>
+                <TableCell sx={tableContentStyle(index === users.length - 1)}>
+                  {user.email}
+                </TableCell>
+                <TableCell sx={tableContentStyle(index === users.length - 1)}>
+                  <Button
+                    variant="contained"
+                    color="info"
+                    size="small"
+                    sx={{ marginRight: 1 }}
+                  >
+                    Edit
+                  </Button>
+                  <Button variant="outlined" color="error" size="small">
+                    Delete
+                  </Button>
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </TableContainer>
+    </Container>
+  );
 };
 
 export default UsersTable;

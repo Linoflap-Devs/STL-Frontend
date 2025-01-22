@@ -30,7 +30,7 @@ const LoginPage = () => {
     //console.log(username, password);
   };
 
-  const handleNavigation = () => { // temporary link to dashboard
+  const handleNavigation = () => { // temporary link to admin
     router.push("/admin");
   };
 
@@ -53,7 +53,7 @@ const LoginPage = () => {
         {/* Left Column (Text Section) */}
         <Box
           sx={{
-            flex: 1,
+            //flex: 1,
             //backgroundColor: "#1976d2",
             backgroundImage: `url(${LoginSectionData.image2})`,
             backgroundSize: "cover",
