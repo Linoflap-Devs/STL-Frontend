@@ -5,8 +5,8 @@ import '../globals.css';
 
 const App = ({ Component, pageProps }: AppProps) => {
   const router = useRouter();
-
-  const excludedPaths = ['/', '/admin']; // paths to exclude from layout
+  
+  const excludedPaths = ['/', '/users']; // paths to exclude from layout
   const isExcludedPath = excludedPaths.includes(router.pathname || 'Not available');
 
   if (isExcludedPath) {

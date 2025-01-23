@@ -14,7 +14,12 @@ import {
 } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
 
-const UsersTable = () => {
+interface UsersTableProps {
+  onCreate: () => void; // onCreate is a function with no arguments and no return value
+}
+
+// sample data
+const UsersTable: React.FC<UsersTableProps> = ({ onCreate }) => {
   const users = [
     { id: 1, name: "John Doe", email: "john@example.com" },
     { id: 2, name: "Jane Smith", email: "jane@example.com" },
@@ -24,7 +29,7 @@ const UsersTable = () => {
   const tableCellStyle = {
     color: "#637381",
     fontWeight: "bold",
-    paddingY: 2,
+    paddingY: 1.5,
     lineHeight: "2rem",
   };
 
@@ -65,6 +70,7 @@ const UsersTable = () => {
         <Button
           variant="contained"
           color="primary"
+          onClick={onCreate}
           sx={{
             paddingX: 1.8,
             paddingY: 0.8,
@@ -79,7 +85,7 @@ const UsersTable = () => {
 
       {/* Table Section */}
       <TableContainer component={Paper}>
-        <Table size="medium">
+        <Table size="small">
           <TableHead>
             <TableRow
               sx={{
@@ -89,7 +95,7 @@ const UsersTable = () => {
               <TableCell sx={tableCellStyle}>ID</TableCell>
               <TableCell sx={tableCellStyle}>Name</TableCell>
               <TableCell sx={tableCellStyle}>Email</TableCell>
-              <TableCell sx={tableCellStyle}>Actions</TableCell>
+              <TableCell sx={tableCellStyle}></TableCell>
             </TableRow>
           </TableHead>
           <TableBody>

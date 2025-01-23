@@ -4,8 +4,8 @@ import {
   Button,
   Typography,
   Box,
-  Checkbox,
-  FormControlLabel,
+  //Checkbox,
+  //FormControlLabel,
   IconButton,
   InputAdornment,
 } from "@mui/material";
@@ -91,7 +91,7 @@ const LoginPage = () => {
     const isValid = validate();
 
     if (isValid) {
-      router.push("/admin");
+      router.push("/users");
     } else {
       console.log("Validation failed.")
     }
@@ -121,8 +121,8 @@ const LoginPage = () => {
             display: "flex",
             flexDirection: "column",
             justifyContent: "center",
-            borderRadius: "10px",
-            margin: "12px",
+            //borderRadius: "10px",
+            //margin: "12px",
           }}
         >
           <Box
