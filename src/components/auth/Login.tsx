@@ -63,7 +63,7 @@ const LoginPage = () => {
             display: "flex",
             flexDirection: "column",
             justifyContent: "center",
-            borderRadius: "16px",
+            borderRadius: "10px",
             margin: "12px",
           }}
         >
@@ -76,7 +76,6 @@ const LoginPage = () => {
             }}
           >
             <ConfirmationNumberIcon sx={{ fontSize: 85, color: "white" }} />
-
             <Box
             >
               <Typography
@@ -98,16 +97,15 @@ const LoginPage = () => {
               </Typography>
             </Box>
           </Box>
-
         </Box>
 
         {/* Right Column (Login Card Section) */}
         <Box
           sx={{
             flex: 1,
-            paddingLeft: { xs: 2, sm: 4, md: 5.5 },
-            paddingTop: { xs: 0, sm: 0, md: 8 },
-            padding: 8,
+            paddingLeft: { xs: 0, sm: 0, md: 5.5 },
+            paddingTop: { xs: 10, sm: 10, md: 0 },
+            paddingBottom: { xs: 8, sm: 8, md: 0 },
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
@@ -116,7 +114,7 @@ const LoginPage = () => {
         >
           <Box
             sx={{
-              width: "75%",
+              width: { xs: '100%', sm: '100%', md: '48%' },
               maxWidth: 500,
               padding: 3,
             }}
@@ -125,12 +123,12 @@ const LoginPage = () => {
               <img
                 src={LoginSectionData.image}
                 alt="Logo"
-                style={{ maxWidth: "75px", width: "100%" }}
+                style={{ maxWidth: "60px", width: "100%" }}
               />
             </Box>
 
             <Typography
-              variant="h4"
+              variant="h5"
               sx={{ fontWeight: "bold" }}
             >
               {LoginSectionData.cardTitle}
@@ -147,7 +145,7 @@ const LoginPage = () => {
                 sx={{
                   display: "flex",
                   flexDirection: "column",
-                  alignItems: "flex-start",
+                  alignItems: "stretch",
                 }}
               >
                 <TextField
@@ -164,7 +162,35 @@ const LoginPage = () => {
                   required
                 />
 
+                <Box
+                  sx={{
+                    display: "flex",
+                    justifyContent: "flex-end",
+                    width: "100%",
+                    mt: 1.7,
+                  }}
+                >
+                  <Typography
+                    sx={{
+                      textAlign: "right",
+                      marginBottom: 0,
+                      marginTop: 0.5,
+                      fontSize: 14,  
+                    }}
+                  >
+                    <a
+                      href="/forgot-password"
+                      style={{ textDecoration: "none", color: "inherit", }}
+                    >
+                      {LoginSectionData.forgotPassword}
+                    </a>
+                  </Typography>
+                </Box>
+
                 <TextField
+                  sx={{
+                    marginTop: 1,
+                  }}
                   label="Password"
                   type={showPassword ? "text" : "password"}
                   variant="outlined"
@@ -184,21 +210,20 @@ const LoginPage = () => {
                   }}
                 />
 
-              <FormControlLabel
-                control={
-                  <Checkbox
-                    sx={{
-                      padding: 0.5,
-                    }}
-                  />
-                }
-                label={
-                  <Typography variant="subtitle2">
-                    {LoginSectionData.rememberMe}
-                  </Typography>
-                }
-              />
-
+                {/* <FormControlLabel
+                  control={
+                    <Checkbox
+                      sx={{
+                        padding: 0.5,
+                      }}
+                    />
+                  }
+                  label={
+                    <Typography variant="subtitle2">
+                      {LoginSectionData.rememberMe}
+                    </Typography>
+                  }
+                /> */}
               </Box>
 
               <Button
@@ -215,21 +240,6 @@ const LoginPage = () => {
               >
                 {LoginSectionData.buttonText}
               </Button>
-
-              <Typography
-                variant="subtitle2"
-                sx={{
-                  marginTop: 2.9,
-                  textAlign: "center",
-                }}
-              >
-                <a
-                  href="/forgot-password"
-                  style={{ textDecoration: "none", color: "inherit" }}
-                >
-                  {LoginSectionData.forgotPassword}
-                </a>
-              </Typography>
             </form>
           </Box>
 

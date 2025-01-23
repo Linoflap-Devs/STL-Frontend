@@ -30,11 +30,11 @@ const UsersTable = () => {
 
   const tableContentStyle = (isLastRow: boolean) => ({
     color: "#1C252E",
-    borderBottom: isLastRow ? "none" : "1px solid rgba(145, 158, 171, 0.2)",
+    borderBottom: isLastRow ? "none" : "1px dotted rgba(145, 158, 171, 0.2)",
   });
 
   return (
-    <Container maxWidth="xl" sx={{ marginTop: 4 }}>
+    <Container maxWidth="lg" sx={{ marginTop: 4 }}>
       {/* Header Section */}
       <Box
         sx={{

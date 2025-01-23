@@ -8,7 +8,7 @@ export const LoginSectionData = {
   cardDescription: "Enter your username and password to access your account.",
   rememberMe: "Remember Me?",
   forgotPassword: "Forgot Password?",
-  buttonText: "Log In",
+  buttonText: "Sign-In",
   copyright: (
     <>
       Copyright © 2025. <br />
