@@ -15,9 +15,14 @@ import {
 import Visibility from "@mui/icons-material/Visibility";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
 import ConfirmationNumberIcon from '@mui/icons-material/ConfirmationNumber';
+import DarkModeIcon from '@mui/icons-material/DarkMode';
+import Brightness7Icon from '@mui/icons-material/Brightness4';
 import { LoginSectionData } from "../../data/LoginSectionData";
 
 import { useRouter } from "next/router";
+import CssBaseline from "@mui/material/CssBaseline";
+
+import { createTheme, ThemeProvider } from "@mui/material/styles";
 
 const LoginPage = () => {
   const router = useRouter();
@@ -25,9 +30,35 @@ const LoginPage = () => {
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
 
+  const [darkMode, setDarkMode] = useState(false);
+
+  const lightTheme = createTheme({
+    palette: {
+      mode: "light",
+      primary: {
+        main: "#3576ca",
+      },
+      background: {
+        default: "#f5f5f5",
+      },
+    },
+  });
+  
+  const darkTheme = createTheme({
+    palette: {
+      mode: "dark",
+      primary: {
+        main: "#90caf9",
+      },
+      background: {
+        default: "#141a21",
+      },
+    },
+  });
+  
   const handleLogin = (e: { preventDefault: () => void }) => {
     e.preventDefault();
-    //console.log(username, password);
+    // console.log(username, password);
   };
 
   const handleNavigation = () => { // temporary link to admin
@@ -40,12 +71,13 @@ const LoginPage = () => {
     setShowPassword((prev) => !prev);
   };
   return (
-    <>
+    <ThemeProvider theme={darkMode ? darkTheme : lightTheme}>
+      <CssBaseline />
       <Box
         sx={{
           display: "flex",
           flexDirection: { xs: "column", md: "row" },
-          backgroundColor: "#f5f5f5",
+          //backgroundColor: "#f5f5f5",
           margin: 0,
           height: "100vh",
         }}
@@ -58,7 +90,6 @@ const LoginPage = () => {
             backgroundImage: `url(${LoginSectionData.image2})`,
             backgroundSize: "cover",
             backgroundPosition: "center",
-            color: "#fff",
             padding: 4,
             display: "flex",
             flexDirection: "column",
@@ -83,6 +114,7 @@ const LoginPage = () => {
                 sx={{
                   fontWeight: "bold",
                   marginBottom: 1,
+                  color: 'white',
                 }}
               >
                 {LoginSectionData.title}
@@ -91,6 +123,7 @@ const LoginPage = () => {
                 variant="body1"
                 sx={{
                   marginBottom: 0.3,
+                  color: 'white',
                 }}
               >
                 {LoginSectionData.description}
@@ -112,6 +145,24 @@ const LoginPage = () => {
             position: "relative",
           }}
         >
+        <Box
+          sx={{
+            position: "absolute",
+            top: 50,
+            right: 60,
+            zIndex: 10,
+          }}
+        >
+          <IconButton
+            onClick={() => setDarkMode(!darkMode)}
+            color="inherit"
+            aria-label="toggle dark mode"
+            sx={{ fontSize: "2rem" }}
+          >
+            {darkMode ? <Brightness7Icon sx={{ fontSize: "2rem" }} /> : <DarkModeIcon sx={{ fontSize: "2rem" }} />}
+          </IconButton>
+        </Box>
+
           <Box
             sx={{
               width: { xs: '100%', sm: '100%', md: '48%' },
@@ -135,7 +186,7 @@ const LoginPage = () => {
             </Typography>
             <Typography
               variant="body2"
-              sx={{ marginTop: 1, color: "text.secondary" }}
+              sx={{ marginTop: 1 }}
             >
               {LoginSectionData.cardDescription}
             </Typography>
@@ -175,7 +226,7 @@ const LoginPage = () => {
                       textAlign: "right",
                       marginBottom: 0,
                       marginTop: 0.5,
-                      fontSize: 14,  
+                      fontSize: 14,
                     }}
                   >
                     <a
@@ -233,9 +284,10 @@ const LoginPage = () => {
                 color="primary"
                 fullWidth
                 sx={{
-                  marginTop: 2,
-                  padding: "8px 20px",
+                  marginTop: 1.7,
+                  padding: "10px 20px",
                   borderRadius: "8px",
+                  textTransform: "none",
                 }}
               >
                 {LoginSectionData.buttonText}
@@ -259,7 +311,7 @@ const LoginPage = () => {
           </Box>
         </Box>
       </Box>
-    </>
+    </ThemeProvider>
   );
 };
 
