@@ -2,8 +2,6 @@ import React, { useState } from "react";
 import {
   TextField,
   Button,
-  Card,
-  CardContent,
   Typography,
   Box,
   Checkbox,
@@ -12,25 +10,26 @@ import {
   InputAdornment,
 } from "@mui/material";
 
-import Visibility from "@mui/icons-material/Visibility";
-import VisibilityOff from "@mui/icons-material/VisibilityOff";
 import ConfirmationNumberIcon from '@mui/icons-material/ConfirmationNumber';
 import DarkModeIcon from '@mui/icons-material/DarkMode';
 import Brightness7Icon from '@mui/icons-material/Brightness4';
+import ErrorOutlineIcon from '@mui/icons-material/ErrorOutline';
+
+import CssBaseline from "@mui/material/CssBaseline";
+import { createTheme, ThemeProvider } from "@mui/material/styles";
+import Visibility from "@mui/icons-material/Visibility";
+import VisibilityOff from "@mui/icons-material/VisibilityOff";
 import { LoginSectionData } from "../../data/LoginSectionData";
 
 import { useRouter } from "next/router";
-import CssBaseline from "@mui/material/CssBaseline";
-
-import { createTheme, ThemeProvider } from "@mui/material/styles";
 
 const LoginPage = () => {
   const router = useRouter();
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
-
   const [darkMode, setDarkMode] = useState(false);
+  const [errors, setErrors] = useState<{ username?: string; password?: string }>({});
 
   const lightTheme = createTheme({
     palette: {
@@ -43,7 +42,7 @@ const LoginPage = () => {
       },
     },
   });
-  
+
   const darkTheme = createTheme({
     palette: {
       mode: "dark",
@@ -55,21 +54,49 @@ const LoginPage = () => {
       },
     },
   });
-  
+
+  // validation
+  const validate = () => {
+    const newErrors: { username?: string; password?: string } = {}
+
+    if (!username) {
+      newErrors.username = "Username is required";
+    }
+
+    if (!password) {
+      newErrors.password = "Password is required";
+    }
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0; // return true if no errors
+  };
+
   const handleLogin = (e: { preventDefault: () => void }) => {
     e.preventDefault();
     // console.log(username, password);
+    if (validate()) {
+      console.log("Login Successful", { username, password });
+    } else {
+      console.log("Validation failed.");
+    }
   };
 
-  const handleNavigation = () => { // temporary link to admin
-    router.push("/admin");
-  };
-
-  const isButtonDisabled = !username || !password;
+  //const isButtonDisabled = !username || !password;
 
   const handleTogglePasswordVisibility = () => {
     setShowPassword((prev) => !prev);
   };
+
+  // temporary link to admin w/ temporary validation
+  const handleNavigation = () => {
+    const isValid = validate();
+
+    if (isValid) {
+      router.push("/admin");
+    } else {
+      console.log("Validation failed.")
+    }
+  };
+
   return (
     <ThemeProvider theme={darkMode ? darkTheme : lightTheme}>
       <CssBaseline />
@@ -145,23 +172,26 @@ const LoginPage = () => {
             position: "relative",
           }}
         >
-        <Box
-          sx={{
-            position: "absolute",
-            top: 50,
-            right: 60,
-            zIndex: 10,
-          }}
-        >
-          <IconButton
-            onClick={() => setDarkMode(!darkMode)}
-            color="inherit"
-            aria-label="toggle dark mode"
-            sx={{ fontSize: "2rem" }}
+
+          <Box
+            sx={{
+              position: "absolute",
+              top: 40,
+              right: 60,
+              zIndex: 10,
+            }}
           >
-            {darkMode ? <Brightness7Icon sx={{ fontSize: "2rem" }} /> : <DarkModeIcon sx={{ fontSize: "2rem" }} />}
-          </IconButton>
-        </Box>
+            <IconButton
+              onClick={() => setDarkMode(!darkMode)}
+              color="inherit"
+              aria-label="toggle dark mode"
+              sx={{ fontSize: "2rem" }}
+            >
+              {darkMode ?
+                <Brightness7Icon sx={{ fontSize: "2rem" }} /> : <DarkModeIcon sx={{ fontSize: "2rem" }} />
+              }
+            </IconButton>
+          </Box>
 
           <Box
             sx={{
@@ -200,10 +230,7 @@ const LoginPage = () => {
                 }}
               >
                 <TextField
-                  sx={{
-                    marginTop: 3.2,
-                    marginBottom: 0.2,
-                  }}
+                  sx={{ marginTop: 3.2, marginBottom: 0.2 }}
                   label="Username"
                   variant="outlined"
                   fullWidth
@@ -211,6 +238,15 @@ const LoginPage = () => {
                   value={username}
                   onChange={(e) => setUsername(e.target.value)}
                   required
+                  error={!!errors.username}
+                  helperText={
+                    errors.username && (
+                      <span style={{ display: "flex", alignItems: "center", gap: "4px" }}>
+                        <ErrorOutlineIcon fontSize="small" color="error" />
+                        {errors.username}
+                      </span>
+                    )
+                  }
                 />
 
                 <Box
@@ -239,9 +275,7 @@ const LoginPage = () => {
                 </Box>
 
                 <TextField
-                  sx={{
-                    marginTop: 1,
-                  }}
+                  sx={{ marginTop: 1 }}
                   label="Password"
                   type={showPassword ? "text" : "password"}
                   variant="outlined"
@@ -250,6 +284,15 @@ const LoginPage = () => {
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   required
+                  error={!!errors.password}
+                  helperText={
+                    errors.password && (
+                      <span style={{ display: "flex", alignItems: "center", gap: "4px" }}>
+                        <ErrorOutlineIcon fontSize="small" color="error" />
+                        {errors.password}
+                      </span>
+                    )
+                  }
                   InputProps={{
                     endAdornment: (
                       <InputAdornment position="end">
@@ -279,7 +322,7 @@ const LoginPage = () => {
 
               <Button
                 onClick={handleNavigation}
-                disabled={isButtonDisabled}
+                //disabled={isButtonDisabled}
                 variant="contained"
                 color="primary"
                 fullWidth
