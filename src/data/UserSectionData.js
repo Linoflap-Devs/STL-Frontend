@@ -4,4 +4,6 @@ export const UserSectionData = {
     image: "/images/stl-logo.png",
     pages: ['Manager', 'Executive', 'Logout'],
     titleManager: "Small Town Lottery Manager",
-};      
+    addManagerButton: "Add Manager",
+    exportAsCSVButton: "Export As CSV",
+};

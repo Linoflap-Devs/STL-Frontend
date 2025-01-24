@@ -7,7 +7,6 @@ import IconButton from '@mui/material/IconButton';
 import MenuIcon from '@mui/icons-material/Menu';
 import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
-import Button from '@mui/material/Button';
 import Container from '@mui/material/Container';
 import { UserSectionData } from '../../data/UserSectionData';
 
@@ -31,8 +30,9 @@ const AdminHeader: React.FC<AdminHeaderProps> = ({ pages }) => {
       sx={{
         backgroundColor: '#2D2D2D',
         boxShadow: 'none',
-        minHeight: { xs: '50%', sm: '50%', md: '90%' },
-        paddingX: { xs: 2, md: 21 },
+        minHeight: { xs: '50%', sm: '100%', md: '100%' },
+        paddingX: { xs: 2, s: 5, md: 10, lg: 21, },
+        marginBottom: { xs: 2, s: 5, md: 10, lg: 5, },
       }}
     >
       <Container
@@ -49,7 +49,7 @@ const AdminHeader: React.FC<AdminHeaderProps> = ({ pages }) => {
               <img
                 src={UserSectionData.image}
                 alt="Logo"
-                style={{ maxWidth: "50px", width: "100%" }}
+                style={{ maxWidth: "60px", width: "100%" }}
               />
             </Box>
 
@@ -80,37 +80,36 @@ const AdminHeader: React.FC<AdminHeaderProps> = ({ pages }) => {
           </Box>
 
           {/* Right Side (Pages) */}
-          <Box sx={{ display: { xs: 'none', md: 'flex' }, justifyContent: 'flex-end' }}>
+          <Box sx={{ display: { xs: 'none', md: 'flex' }, justifyContent: 'flex-end', alignItems: 'center' }}>
             {UserSectionData.pages.map((page) => (
-              <Button
+              <Box
                 key={page}
+                component="a"
                 href={`/${page.toLowerCase()}`}
                 sx={{
                   display: 'block',
-                  textDecoration: 'none',
+                  textAlign: 'center',
                   textTransform: 'capitalize',
                   color: 'white',
                   paddingX: page === 'Manager' ? 3 : 'none',
-                  borderRadius: page == 'Manager' ? '7px' : 'none',
+                  paddingY: page === 'Manager' ? 0.7 : 'none',
+                  borderRadius: page === 'Manager' ? '7px' : 'none',
                   backgroundColor: page === 'Manager' ? '#A550A5' : 'transparent',
                   width: 'auto',
-                  fontSize: 13,
+                  fontSize: 13.8,
                   fontWeight: 300,
-                  marginX: 1.1,
-                  '&:hover': {
-                    backgroundColor: 'none',
-                  },
+                  marginX: 2,
+                  textDecoration: 'none',
                 }}
               >
                 {page}
-              </Button>
+              </Box>
             ))}
           </Box>
 
-
           {/* Mobile Menu */}
-          <Box sx={{ flexGrow: 1, display: { xs: 'flex', md: 'none' } }}>
-            <IconButton
+          <Box sx={{ flexGrow: 1, display: { xs: 'flex', sm: 'flex', md: 'none' }, justifyContent: 'flex-end' }}>
+          <IconButton
               size="large"
               aria-label="menu"
               aria-controls="menu-appbar"

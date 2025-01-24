@@ -11,43 +11,43 @@ import {
   TableHead,
   TableRow,
   Paper,
+  TextField,
+  InputAdornment,
 } from "@mui/material";
-import AddIcon from "@mui/icons-material/Add";
+import SearchIcon from '@mui/icons-material/Search';
+import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
+import { UserSectionData } from '../../data/UserSectionData';
 
 interface UsersTableProps {
-  onCreate: () => void; // onCreate is a function with no arguments and no return value
+  onCreate: () => void;
 }
 
 // sample data
 const UsersTable: React.FC<UsersTableProps> = ({ onCreate }) => {
   const users = [
-    { id: 1, name: "John Doe", email: "john@example.com" },
-    { id: 2, name: "Jane Smith", email: "jane@example.com" },
-    { id: 3, name: "Alice Johnson", email: "alice@example.com" },
+    {
+      firstname: "John", lastname: "Doe", username: "john@example.com", phonenumber: "0943 321 5342",
+      region: "National Capital Region", province: "Metro Manila", regisdate: "2025/01/22 13:05:32"
+    },
+    {
+      firstname: "John", lastname: "Smith", username: "jane@example.com", phonenumber: "0943 321 5343",
+      region: "Central Luzon", province: "Pampanga", regisdate: "2025/01/20 10:15:22"
+    },
+    {
+      firstname: "John", lastname: "Johnson", username: "alex@example.com", phonenumber: "0943 321 5344",
+      region: "Southern Luzon", province: "Laguna", regisdate: "2025/01/18 08:25:12"
+    },
   ];
 
-  const tableCellStyle = {
-    color: "#637381",
-    fontWeight: "bold",
-    paddingY: 1.5,
-    lineHeight: "2rem",
-  };
-
-  const tableContentStyle = (isLastRow: boolean) => ({
-    color: "#1C252E",
-    borderBottom: isLastRow ? "none" : "1px dotted rgba(145, 158, 171, 0.2)",
-  });
-
   return (
-    <Container maxWidth="lg" sx={{ marginTop: 4 }}>
-      {/* Header Section */}
+    <Container maxWidth="lg" sx={{ marginTop: 4, padding: 0, }}>
       <Box
         sx={{
           display: "flex",
           flexDirection: "row",
           justifyContent: "space-between",
           alignItems: "center",
-          marginBottom: 3
+          marginBottom: 3,
         }}
       >
         <Box>
@@ -56,86 +56,98 @@ const UsersTable: React.FC<UsersTableProps> = ({ onCreate }) => {
             sx={{ fontWeight: "bold", marginBottom: 0 }}
             gutterBottom
           >
-            Users
-          </Typography>
-          <Typography
-            variant="subtitle1"
-            sx={{ color: "gray", marginTop: 0 }}
-            gutterBottom
-          >
-            Manage Users List
+            {UserSectionData.titleManager}
           </Typography>
         </Box>
-
-        <Button
-          variant="contained"
-          color="primary"
-          onClick={onCreate}
-          sx={{
-            paddingX: 1.8,
-            paddingY: 0.8,
-            textTransform: "none",
-            fontSize: 15,
-            borderRadius: 2,
-          }}
-        >
-          <AddIcon sx={{ marginRight: 1 }} /> New User
-        </Button>
       </Box>
 
       {/* Table Section */}
-      <TableContainer component={Paper}>
-        <Table size="small">
-          <TableHead>
-            <TableRow
+      <TableContainer>
+        <Box sx={{ backgroundColor: '#1F2937' }}>
+          <Box sx={{ paddingTop: 2.5, paddingBottom: 2, paddingX: 2, display: 'flex', justifyContent: 'space-between' }}>
+            <Box sx={{ maxWidth: 500, padding: 0, width: { xs: '100%', sm: '300px', md: '320px' } }}>
+              <TextField
+                fullWidth
+                variant="outlined"
+                placeholder="Search"
+                InputProps={{
+                  startAdornment: (
+                    <InputAdornment position="start">
+                      <SearchIcon sx={{ fontSize: 20, color: '#9CA3AF' }} />
+                    </InputAdornment>
+                  ),
+                }}
+              />
+            </Box>
+
+            <Button
+              variant="contained"
+              onClick={onCreate}
               sx={{
-                backgroundColor: "#f4f6f8",
+                paddingX: 3.9,
+                paddingY: 0.9,
+                textTransform: 'none',
+                fontSize: 12,
+                borderRadius: 2,
+                backgroundColor: '#2563EB',
+                width: 'auto',
               }}
             >
-              <TableCell sx={tableCellStyle}>ID</TableCell>
-              <TableCell sx={tableCellStyle}>Name</TableCell>
-              <TableCell sx={tableCellStyle}>Email</TableCell>
-              <TableCell sx={tableCellStyle}></TableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {users.map((user, index) => (
-              <TableRow
-                key={user.id}
-                sx={{
-                  "&:hover": {
-                    backgroundColor: "#f4f6f8",
-                    //cursor: "pointer",
-                  },
-                }}
-              >
-                <TableCell sx={tableContentStyle(index === users.length - 1)}>
-                  {user.id}
-                </TableCell>
-                <TableCell sx={tableContentStyle(index === users.length - 1)}>
-                  {user.name}
-                </TableCell>
-                <TableCell sx={tableContentStyle(index === users.length - 1)}>
-                  {user.email}
-                </TableCell>
-                <TableCell sx={tableContentStyle(index === users.length - 1)}>
-                  <Button
-                    variant="contained"
-                    color="info"
-                    size="small"
-                    sx={{ marginRight: 1 }}
-                  >
-                    Edit
-                  </Button>
-                  <Button variant="outlined" color="error" size="small">
-                    Delete
-                  </Button>
-                </TableCell>
+              {UserSectionData.addManagerButton}
+            </Button>
+          </Box>
+
+          <Table size="small">
+            <TableHead>
+              <TableRow>
+                <TableCell>First Name</TableCell>
+                <TableCell>Last Name</TableCell>
+                <TableCell>Username</TableCell>
+                <TableCell>Phone Number</TableCell>
+                <TableCell>Region</TableCell>
+                <TableCell>Province</TableCell>
+                <TableCell>Registration Date</TableCell>
+                <TableCell>Actions</TableCell>
               </TableRow>
-            ))}
-          </TableBody>
-        </Table>
+            </TableHead>
+            <TableBody>
+              {users.map((user) => (
+                <TableRow key={user.firstname}>
+                  <TableCell>{user.firstname}</TableCell>
+                  <TableCell>{user.lastname}</TableCell>
+                  <TableCell>{user.username}</TableCell>
+                  <TableCell>{user.phonenumber}</TableCell>
+                  <TableCell>{user.region}</TableCell>
+                  <TableCell>{user.province}</TableCell>
+                  <TableCell>{user.regisdate}</TableCell>
+                  <TableCell>
+                    <Box sx={{ display: 'flex', justifyContent: 'center' }}>
+                      <MoreHorizIcon sx={{ fontSize: 20, color: '#9CA3AF' }} />
+                    </Box>
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </Box>
       </TableContainer>
+      <Box sx={{ display: 'flex', justifyContent: 'flex-end', paddingTop: 2.5 }}>
+        <Button
+          variant="contained"
+          onClick={onCreate}
+          sx={{
+            paddingX: 3.9,
+            paddingY: 0.9,
+            textTransform: 'none',
+            fontSize: 12,
+            borderRadius: 2,
+            backgroundColor: '#2563EB',
+            width: 'auto',
+          }}
+        >
+          {UserSectionData.exportAsCSVButton}
+        </Button>
+      </Box>
     </Container>
   );
 };
