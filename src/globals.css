@@ -20,7 +20,7 @@ body {
   margin: 0;
   color: var(--foreground);
   background: var(--background);
-  font-family: 'Euclid Circular B', sans-serif !important;
+  font-family: 'Inter', sans-serif !important;
 }
 
 /* Specific font weights */

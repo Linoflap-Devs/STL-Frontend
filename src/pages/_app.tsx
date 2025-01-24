@@ -11,17 +11,20 @@ const App = ({ Component, pageProps }: AppProps) => {
   const excludedPaths = ['/', '/users']; // paths to exclude from layout
   const isExcludedPath = excludedPaths.includes(router.pathname || 'Not available');
 
-  const darkTheme = createTheme ({
+  const darkTheme = createTheme({
     palette: {
-      mode: "dark",
+      mode: 'dark',
       background: {
-        default: "#252526",
-        paper: "#1e1e1e",
+        default: '#252526',
+        paper: '#1e1e1e',
       },
       text: {
-        primary: "#ffffff",
-        secondary: "#b0b0b0",
+        primary: '#ffffff',
+        secondary: '#b0b0b0',
       },
+    },
+    typography: {
+      fontFamily: '"Inter", sans-serif',
     },
   });
 

@@ -9,10 +9,13 @@ import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
 import Button from '@mui/material/Button';
 import Container from '@mui/material/Container';
-//import { useTheme } from '@mui/material/styles';
+import { UserSectionData } from '../../data/UserSectionData';
 
-const AdminHeader: React.FC = () => {
-  //const theme = useTheme();
+interface AdminHeaderProps {
+  pages: string[];
+}
+
+const AdminHeader: React.FC<AdminHeaderProps> = ({ pages }) => {
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
 
   const handleMenuOpen = (event: React.MouseEvent<HTMLElement>) => {
@@ -23,36 +26,85 @@ const AdminHeader: React.FC = () => {
     setAnchorEl(null);
   };
 
-  const pages = ['1', '2'];
-
   return (
     <AppBar position="static"
       sx={{
-        backgroundColor: '#ffffff',
-        boxShadow: '0px 1px 1px rgba(0, 0, 0, 0.1), 0px 1px 2px rgba(0, 0, 0, 0.10)',
-        marginBottom: '40px'
+        backgroundColor: '#2D2D2D',
+        boxShadow: 'none',
+        minHeight: { xs: '50%', sm: '50%', md: '90%' },
+        paddingX: { xs: 2, md: 21 },
       }}
     >
-      <Container 
-        maxWidth="xl">
-        <Toolbar disableGutters>
-          <Typography
-            variant="h6"
-            noWrap
-            component="a"
-            href="/"
-            sx={{
-              mr: 2,
-              display: { xs: 'none', md: 'flex' },
-              fontFamily: 'monospace',
-              fontWeight: 700,
-              letterSpacing: '.1rem',
-              color: '#171717',
-              textDecoration: 'none',
-            }}
-          >
-            LOGO
-          </Typography>
+      <Container
+        maxWidth="xl"
+        sx={{
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+        }}
+      >
+        <Toolbar disableGutters sx={{ width: '100%', display: 'flex', justifyContent: 'space-between' }}>
+          <Box sx={{ display: 'flex', alignItems: 'center' }}>
+            <Box sx={{ textAlign: "center", marginY: 2.2 }}>
+              <img
+                src={UserSectionData.image}
+                alt="Logo"
+                style={{ maxWidth: "50px", width: "100%" }}
+              />
+            </Box>
+
+            <Box sx={{ marginLeft: 1.5 }}>
+              <Typography
+                sx={{
+                  marginBottom: 0,
+                  color: 'white',
+                  fontWeight: '700',
+                  lineHeight: '24.2px',
+                  fontSize: 16,
+                }}
+              >
+                {UserSectionData.titleHeader}
+              </Typography>
+
+              <Typography
+                sx={{
+                  color: 'white',
+                  fontWeight: '200',
+                  lineHeight: '15px',
+                  fontSize: 12.5,
+                }}
+              >
+                {UserSectionData.userRole}
+              </Typography>
+            </Box>
+          </Box>
+
+          {/* Right Side (Pages) */}
+          <Box sx={{ display: { xs: 'none', md: 'flex' }, justifyContent: 'flex-end' }}>
+            {UserSectionData.pages.map((page) => (
+              <Button
+                key={page}
+                href={`/${page.toLowerCase()}`}
+                sx={{
+                  display: 'block',
+                  textDecoration: 'none',
+                  textTransform: 'capitalize',
+                  color: 'white',
+                  paddingX: page === 'Manager' ? 3 : 'none',
+                  paddingY: page === 'Manager' ? 0 : 'none',
+                  //marginY: page === 'Manager' ? 0 : '0  ',
+                  borderRadius: page == 'Manager' ? '6px' : 'none',
+                  backgroundColor: page === 'Manager' ? '#A550A5' : 'transparent',
+                  '&:hover': {
+                    backgroundColor: 'none',
+                  },
+                }}
+              >
+                {page}
+              </Button>
+            ))}
+          </Box>
+
 
           {/* Mobile Menu */}
           <Box sx={{ flexGrow: 1, display: { xs: 'flex', md: 'none' } }}>
@@ -84,43 +136,12 @@ const AdminHeader: React.FC = () => {
                 display: { xs: 'block', md: 'none' },
               }}
             >
-              {pages.map((page) => (
+              {UserSectionData.pages.map((page) => (
                 <MenuItem key={page} onClick={handleMenuClose}>
                   <Typography textAlign="center">{page}</Typography>
                 </MenuItem>
               ))}
             </Menu>
-          </Box>
-
-          {/* Desktop Menu */}
-          <Typography
-            variant="h5"
-            noWrap
-            component="a"
-            href="/"
-            sx={{
-              mr: 2,
-              display: { xs: 'flex', md: 'none' },
-              flexGrow: 1,
-              fontFamily: 'monospace',
-              fontWeight: 700,
-              letterSpacing: '.3rem',
-              color: 'inherit',
-              textDecoration: 'none',
-            }}
-          >
-            LOGO
-          </Typography>
-          <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}>
-            {pages.map((page) => (
-              <Button
-                key={page}
-                href={`/${page.toLowerCase()}`}
-                sx={{ my: 2, color: 'black', display: 'block' }}
-              >
-                {page}
-              </Button>
-            ))}
           </Box>
         </Toolbar>
       </Container>
