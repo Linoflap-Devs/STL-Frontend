@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   Container,
   Typography,
@@ -13,10 +13,13 @@ import {
   Paper,
   TextField,
   InputAdornment,
+  Menu,
+  MenuItem,
+  IconButton,
 } from "@mui/material";
-import SearchIcon from '@mui/icons-material/Search';
-import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
-import { UserSectionData } from '../../data/UserSectionData';
+import SearchIcon from "@mui/icons-material/Search";
+import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
+import { UserSectionData } from "../../data/UserSectionData";
 
 interface UsersTableProps {
   onCreate: () => void;
@@ -24,23 +27,73 @@ interface UsersTableProps {
 
 // sample data
 const UsersTable: React.FC<UsersTableProps> = ({ onCreate }) => {
+  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+
   const users = [
     {
-      firstname: "John", lastname: "Doe", username: "john@example.com", phonenumber: "0943 321 5342",
-      region: "National Capital Region", province: "Metro Manila", regisdate: "2025/01/22 13:05:32"
+      id: 1,
+      firstname: "John",
+      lastname: "Doe",
+      username: "john@example.com",
+      phonenumber: "0943 321 5342",
+      region: "National Capital Region",
+      province: "Metro Manila",
+      regisdate: "2025/01/22 13:05:32",
     },
     {
-      firstname: "John", lastname: "Smith", username: "jane@example.com", phonenumber: "0943 321 5343",
-      region: "Central Luzon", province: "Pampanga", regisdate: "2025/01/20 10:15:22"
+      id: 2,
+      firstname: "John",
+      lastname: "Smith",
+      username: "jane@example.com",
+      phonenumber: "0943 321 5343",
+      region: "Central Luzon",
+      province: "Pampanga",
+      regisdate: "2025/01/20 10:15:22",
     },
     {
-      firstname: "John", lastname: "Johnson", username: "alex@example.com", phonenumber: "0943 321 5344",
-      region: "Southern Luzon", province: "Laguna", regisdate: "2025/01/18 08:25:12"
+      id: 3,
+      firstname: "John",
+      lastname: "Johnson",
+      username: "alex@example.com",
+      phonenumber: "0943 321 5344",
+      region: "Southern Luzon",
+      province: "Laguna",
+      regisdate: "2025/01/18 08:25:12",
     },
   ];
 
+  const handleOpenMenu = (event: React.MouseEvent<HTMLButtonElement>) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handleCloseMenu = () => {
+    setAnchorEl(null);
+  };
+
+  const handleUpdate = () => {
+    console.log("Update clicked");
+    handleCloseMenu();
+  };
+
+  const handleDelete = () => {
+    console.log("Delete clicked");
+    handleCloseMenu();
+  };
+
   return (
-    <Container maxWidth="lg" sx={{ marginTop: 4, padding: 0, }}>
+    <Container
+      sx={{
+        marginTop: 4,
+        padding: 0,
+        maxWidth: {
+          xs: 300,
+          sm: 700,
+          md: 900,
+          lg: 1200,
+          xl: 1536,
+        },
+      }}
+    >
       <Box
         sx={{
           display: "flex",
@@ -63,9 +116,23 @@ const UsersTable: React.FC<UsersTableProps> = ({ onCreate }) => {
 
       {/* Table Section */}
       <TableContainer>
-        <Box sx={{ backgroundColor: '#1F2937' }}>
-          <Box sx={{ paddingTop: 2.5, paddingBottom: 2, paddingX: 2, display: 'flex', justifyContent: 'space-between' }}>
-            <Box sx={{ maxWidth: 500, padding: 0, width: { xs: '100%', sm: '300px', md: '320px' } }}>
+        <Box sx={{ backgroundColor: "#1F2937" }}>
+          <Box
+            sx={{
+              paddingTop: 2.5,
+              paddingBottom: 2,
+              paddingX: 2,
+              display: "flex",
+              justifyContent: "space-between",
+            }}
+          >
+            <Box
+              sx={{
+                maxWidth: 500,
+                padding: 0,
+                width: { xs: "100%", sm: "300px", md: "320px" },
+              }}
+            >
               <TextField
                 fullWidth
                 variant="outlined"
@@ -73,7 +140,7 @@ const UsersTable: React.FC<UsersTableProps> = ({ onCreate }) => {
                 InputProps={{
                   startAdornment: (
                     <InputAdornment position="start">
-                      <SearchIcon sx={{ fontSize: 20, color: '#9CA3AF' }} />
+                      <SearchIcon sx={{ fontSize: 20, color: "#9CA3AF" }} />
                     </InputAdornment>
                   ),
                 }}
@@ -86,11 +153,11 @@ const UsersTable: React.FC<UsersTableProps> = ({ onCreate }) => {
               sx={{
                 paddingX: 3.9,
                 paddingY: 0.9,
-                textTransform: 'none',
+                textTransform: "none",
                 fontSize: 12,
                 borderRadius: 2,
-                backgroundColor: '#2563EB',
-                width: 'auto',
+                backgroundColor: "#2563EB",
+                width: "auto",
               }}
             >
               {UserSectionData.addManagerButton}
@@ -107,12 +174,19 @@ const UsersTable: React.FC<UsersTableProps> = ({ onCreate }) => {
                 <TableCell>Region</TableCell>
                 <TableCell>Province</TableCell>
                 <TableCell>Registration Date</TableCell>
-                <TableCell>Actions</TableCell>
+                <TableCell
+                  sx={{
+                    display: "flex",
+                    justifyContent: "center",
+                  }}
+                >
+                  Actions
+                </TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
               {users.map((user) => (
-                <TableRow key={user.firstname}>
+                <TableRow key={user.id}>
                   <TableCell>{user.firstname}</TableCell>
                   <TableCell>{user.lastname}</TableCell>
                   <TableCell>{user.username}</TableCell>
@@ -121,8 +195,18 @@ const UsersTable: React.FC<UsersTableProps> = ({ onCreate }) => {
                   <TableCell>{user.province}</TableCell>
                   <TableCell>{user.regisdate}</TableCell>
                   <TableCell>
-                    <Box sx={{ display: 'flex', justifyContent: 'center' }}>
-                      <MoreHorizIcon sx={{ fontSize: 20, color: '#9CA3AF' }} />
+                    <Box sx={{ display: "flex", justifyContent: "center" }}>
+                      <IconButton onClick={handleOpenMenu}>
+                        <MoreHorizIcon sx={{ fontSize: 20, color: "#9CA3AF" }} />
+                      </IconButton>
+                      <Menu
+                        anchorEl={anchorEl}
+                        open={Boolean(anchorEl)}
+                        onClose={handleCloseMenu}
+                      >
+                        <MenuItem onClick={handleUpdate}>Update</MenuItem>
+                        <MenuItem onClick={handleDelete}>Delete</MenuItem>
+                      </Menu>
                     </Box>
                   </TableCell>
                 </TableRow>
@@ -131,18 +215,20 @@ const UsersTable: React.FC<UsersTableProps> = ({ onCreate }) => {
           </Table>
         </Box>
       </TableContainer>
-      <Box sx={{ display: 'flex', justifyContent: 'flex-end', paddingTop: 2.5 }}>
+      <Box
+        sx={{ display: "flex", justifyContent: "flex-end", paddingTop: 2.3 }}
+      >
         <Button
           variant="contained"
           onClick={onCreate}
           sx={{
             paddingX: 3.9,
             paddingY: 0.9,
-            textTransform: 'none',
+            textTransform: "none",
             fontSize: 12,
             borderRadius: 2,
-            backgroundColor: '#2563EB',
-            width: 'auto',
+            backgroundColor: "#2563EB",
+            width: "auto",
           }}
         >
           {UserSectionData.exportAsCSVButton}

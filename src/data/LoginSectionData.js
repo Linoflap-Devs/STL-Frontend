@@ -4,15 +4,19 @@ export const LoginSectionData = {
   image2: "/images/pexels-introspectivedsgn-4249023.jpg",
   title: "Small Town Lottery",
   description: "Big wins. Stronger communities.",
-  cardTitle: "Sign-In",
-  cardDescription: "Enter your username and password to access your account.",
+  cardTitle: "Welcome!",
+  cardDescription: (
+    <>
+      Let’s make your experience smarter, smoother, <br />
+      and more personalized.
+    </>
+  ),
   rememberMe: "Remember Me?",
   forgotPassword: "Forgot Password?",
-  buttonText: "Sign-In",
+  buttonText: "Login",
   copyright: (
     <>
-      Copyright © 2025. <br />
-      Linoflap Technology Philippines Inc. All rights reserved.
+      Powered by <span style={{ fontWeight: "bold" }}>Linoflap Technology Philippines Inc.</span>
     </>
   ),
 };

@@ -36,7 +36,7 @@ const darkTheme = createTheme({
       styleOverrides: {
         root: {
           '& .MuiOutlinedInput-root': {
-            padding: '7px 12px',
+            //padding: '7px 12px',
             border: 'none',
             borderRadius: 5,
             backgroundColor: '#374151',
@@ -53,7 +53,7 @@ const darkTheme = createTheme({
             transition: 'border-color 0.3s ease',
           },
           '& .MuiOutlinedInput-input': {
-            padding: '0.5px 0',
+            //padding: '0.5px 0',
             fontSize: 14,
           },
         },

@@ -10,11 +10,8 @@ import {
   InputAdornment,
 } from "@mui/material";
 
-import ConfirmationNumberIcon from '@mui/icons-material/ConfirmationNumber';
-import ErrorOutlineIcon from '@mui/icons-material/ErrorOutline';
-
-import CssBaseline from "@mui/material/CssBaseline";
-import { createTheme, ThemeProvider } from "@mui/material/styles";
+import ConfirmationNumberIcon from "@mui/icons-material/ConfirmationNumber";
+import ErrorOutlineIcon from "@mui/icons-material/ErrorOutline";
 import Visibility from "@mui/icons-material/Visibility";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
 import { LoginSectionData } from "../../data/LoginSectionData";
@@ -26,11 +23,14 @@ const LoginPage = () => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
-  const [errors, setErrors] = useState<{ username?: string; password?: string }>({});
+  const [errors, setErrors] = useState<{
+    username?: string;
+    password?: string;
+  }>({});
 
   // validation
   const validate = () => {
-    const newErrors: { username?: string; password?: string } = {}
+    const newErrors: { username?: string; password?: string } = {};
 
     if (!username) {
       newErrors.username = "Username is required";
@@ -66,12 +66,12 @@ const LoginPage = () => {
     if (isValid) {
       router.push("/users");
     } else {
-      console.log("Validation failed.")
+      console.log("Validation failed.");
     }
   };
 
   return (
-      <>
+    <>
       <Box
         sx={{
           display: "flex",
@@ -84,17 +84,15 @@ const LoginPage = () => {
         {/* Left Column (Text Section) */}
         <Box
           sx={{
-            //flex: 1,
-            //backgroundColor: "#1976d2",
-            backgroundImage: `url(${LoginSectionData.image2})`,
+            flex: 1,
+            backgroundColor: "#2D2D2D",
+            //backgroundImage: `url(${LoginSectionData.image2})`,
             backgroundSize: "cover",
             backgroundPosition: "center",
             padding: 4,
             display: "flex",
             flexDirection: "column",
             justifyContent: "center",
-            //borderRadius: "10px",
-            //margin: "12px",
           }}
         >
           <Box
@@ -105,7 +103,23 @@ const LoginPage = () => {
               height: "100vh",
             }}
           >
-            <ConfirmationNumberIcon sx={{ fontSize: 85, color: "white" }} />
+            <Box
+              sx={{
+                marginBottom: 2,
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+                height: "100%",
+              }}
+            >
+              <img
+                src={LoginSectionData.image}
+                alt="Logo"
+                style={{ maxWidth: "450px", width: "100%" }}
+              />
+            </Box>
+
+            {/* <ConfirmationNumberIcon sx={{ fontSize: 85, color: "white" }} />
             <Box
             >
               <Typography
@@ -127,7 +141,7 @@ const LoginPage = () => {
               >
                 {LoginSectionData.description}
               </Typography>
-            </Box>
+            </Box> */}
           </Box>
         </Box>
 
@@ -135,55 +149,52 @@ const LoginPage = () => {
         <Box
           sx={{
             flex: 1,
-            paddingLeft: { xs: 0, sm: 0, md: 5.5 },
-            paddingTop: { xs: 10, sm: 10, md: 0 },
-            paddingBottom: { xs: 8, sm: 8, md: 0 },
             display: "flex",
-            alignItems: "center",
             justifyContent: "center",
+            alignItems: "center",
             position: "relative",
           }}
         >
           <Box
             sx={{
-              width: { xs: '100%', sm: '100%', md: '48%' },
+              width: { xs: "100%", sm: "100%", md: "100%" },
               maxWidth: 500,
               padding: 3,
+              display: "flex",
+              flexDirection: "column",
+              justifyContent: "center",
+              alignItems: "center",
             }}
           >
-            <Box sx={{ textAlign: "center", marginBottom: 2 }}>
-              <img
-                src={LoginSectionData.image}
-                alt="Logo"
-                style={{ maxWidth: "60px", width: "100%" }}
-              />
+            <Box
+              sx={{
+                display: "flex",
+                justifyContent: "center",
+                flexDirection: "column",
+                textAlign: "center",
+              }}
+            >
+              <Typography variant="h4" sx={{ fontWeight: "bold" }}>
+                {LoginSectionData.cardTitle}
+              </Typography>
+              <Typography variant="body2" sx={{ marginTop: 1 }}>
+                {LoginSectionData.cardDescription}
+              </Typography>
             </Box>
 
-            <Typography
-              variant="h5"
-              sx={{ fontWeight: "bold" }}
-            >
-              {LoginSectionData.cardTitle}
-            </Typography>
-            <Typography
-              variant="body2"
-              sx={{ marginTop: 1 }}
-            >
-              {LoginSectionData.cardDescription}
-            </Typography>
-
-            <form onSubmit={handleLogin}>
+            <form onSubmit={handleLogin} style={{ width: "80%" }}>
               <Box
                 sx={{
                   display: "flex",
                   flexDirection: "column",
                   alignItems: "stretch",
+                  width: "100%",
                 }}
               >
                 <TextField
                   sx={{ marginTop: 3.2, marginBottom: 0.2 }}
-                  label="Username"
-                  variant="outlined"
+                  label="Enter Username"
+                  //variant="outlined"
                   fullWidth
                   margin="normal"
                   value={username}
@@ -192,7 +203,13 @@ const LoginPage = () => {
                   error={!!errors.username}
                   helperText={
                     errors.username && (
-                      <span style={{ display: "flex", alignItems: "center", gap: "4px" }}>
+                      <span
+                        style={{
+                          display: "flex",
+                          alignItems: "center",
+                          gap: "4px",
+                        }}
+                      >
                         <ErrorOutlineIcon fontSize="small" color="error" />
                         {errors.username}
                       </span>
@@ -207,29 +224,13 @@ const LoginPage = () => {
                     width: "100%",
                     mt: 1.7,
                   }}
-                >
-                  <Typography
-                    sx={{
-                      textAlign: "right",
-                      marginBottom: 0,
-                      marginTop: 0.5,
-                      fontSize: 14,
-                    }}
-                  >
-                    <a
-                      href="/forgot-password"
-                      style={{ textDecoration: "none", color: "inherit", }}
-                    >
-                      {LoginSectionData.forgotPassword}
-                    </a>
-                  </Typography>
-                </Box>
+                ></Box>
 
                 <TextField
                   sx={{ marginTop: 1 }}
-                  label="Password"
+                  label="Enter Password"
                   type={showPassword ? "text" : "password"}
-                  variant="outlined"
+                  //variant="outlined"
                   fullWidth
                   margin="normal"
                   value={password}
@@ -238,7 +239,13 @@ const LoginPage = () => {
                   error={!!errors.password}
                   helperText={
                     errors.password && (
-                      <span style={{ display: "flex", alignItems: "center", gap: "4px" }}>
+                      <span
+                        style={{
+                          display: "flex",
+                          alignItems: "center",
+                          gap: "4px",
+                        }}
+                      >
                         <ErrorOutlineIcon fontSize="small" color="error" />
                         {errors.password}
                       </span>
@@ -255,53 +262,52 @@ const LoginPage = () => {
                   }}
                 />
 
-                {/* <FormControlLabel
-                  control={
-                    <Checkbox
-                      sx={{
-                        padding: 0.5,
-                      }}
-                    />
-                  }
-                  label={
-                    <Typography variant="subtitle2">
-                      {LoginSectionData.rememberMe}
-                    </Typography>
-                  }
-                /> */}
+                <Typography
+                  sx={{
+                    textAlign: "right",
+                    marginBottom: 1,
+                    marginTop: 0.2,
+                    fontSize: 14,
+                  }}
+                >
+                  <a
+                    href="/forgot-password"
+                    style={{ textDecoration: "none", color: "#2563EB", fontWeight: 'bold' }}
+                  >
+                    {LoginSectionData.forgotPassword}
+                  </a>
+                </Typography>
               </Box>
 
               <Button
                 onClick={handleNavigation}
-                //disabled={isButtonDisabled}
                 variant="contained"
-                color="primary"
                 fullWidth
                 sx={{
                   marginTop: 1.7,
-                  padding: "10px 20px",
+                  padding: "7px 20px",
                   borderRadius: "8px",
                   textTransform: "none",
+                  backgroundColor: '#2563EB'
                 }}
               >
                 {LoginSectionData.buttonText}
               </Button>
             </form>
-          </Box>
 
-          {/* Copyright Text */}
-          <Box
-            sx={{
-              position: "absolute",
-              bottom: 10,
-              left: 15,
-              color: "#888",
-              fontSize: "12px",
-            }}
-          >
-            <Typography variant="body2">
-              {LoginSectionData.copyright}
-            </Typography>
+            <Box
+              sx={{
+                position: "absolute",
+                bottom: 30,
+                textAlign: "center",
+                color: "#FFFFFF",
+                fontSize: "8px",
+              }}
+            >
+              <Typography variant="body2">
+                {LoginSectionData.copyright}
+              </Typography>
+            </Box>
           </Box>
         </Box>
       </Box>
