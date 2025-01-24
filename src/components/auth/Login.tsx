@@ -11,8 +11,6 @@ import {
 } from "@mui/material";
 
 import ConfirmationNumberIcon from '@mui/icons-material/ConfirmationNumber';
-import DarkModeIcon from '@mui/icons-material/DarkMode';
-import Brightness7Icon from '@mui/icons-material/Brightness4';
 import ErrorOutlineIcon from '@mui/icons-material/ErrorOutline';
 
 import CssBaseline from "@mui/material/CssBaseline";
@@ -28,32 +26,7 @@ const LoginPage = () => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
-  const [darkMode, setDarkMode] = useState(false);
   const [errors, setErrors] = useState<{ username?: string; password?: string }>({});
-
-  const lightTheme = createTheme({
-    palette: {
-      mode: "light",
-      primary: {
-        main: "#3576ca",
-      },
-      background: {
-        default: "#f5f5f5",
-      },
-    },
-  });
-
-  const darkTheme = createTheme({
-    palette: {
-      mode: "dark",
-      primary: {
-        main: "#90caf9",
-      },
-      background: {
-        default: "#141a21",
-      },
-    },
-  });
 
   // validation
   const validate = () => {
@@ -98,8 +71,7 @@ const LoginPage = () => {
   };
 
   return (
-    <ThemeProvider theme={darkMode ? darkTheme : lightTheme}>
-      <CssBaseline />
+      <>
       <Box
         sx={{
           display: "flex",
@@ -172,27 +144,6 @@ const LoginPage = () => {
             position: "relative",
           }}
         >
-
-          <Box
-            sx={{
-              position: "absolute",
-              top: 40,
-              right: 60,
-              zIndex: 10,
-            }}
-          >
-            <IconButton
-              onClick={() => setDarkMode(!darkMode)}
-              color="inherit"
-              aria-label="toggle dark mode"
-              sx={{ fontSize: "2rem" }}
-            >
-              {darkMode ?
-                <Brightness7Icon sx={{ fontSize: "2rem" }} /> : <DarkModeIcon sx={{ fontSize: "2rem" }} />
-              }
-            </IconButton>
-          </Box>
-
           <Box
             sx={{
               width: { xs: '100%', sm: '100%', md: '48%' },
@@ -354,7 +305,7 @@ const LoginPage = () => {
           </Box>
         </Box>
       </Box>
-    </ThemeProvider>
+    </>
   );
 };
 

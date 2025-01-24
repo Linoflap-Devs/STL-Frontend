@@ -1,22 +1,23 @@
 import React, { useEffect, useState } from "react";
-import { 
-    Dialog, 
-    DialogActions, 
-    DialogContent, 
-    DialogTitle, 
-    Button, 
-    TextField } 
-from "@mui/material";
+import {
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
+  Button,
+  TextField
+}
+  from "@mui/material";
 
 interface CreateUsersProps {
-    open: boolean;
-    onClose: () => void;  // Function to close the modal
-    onSubmit: (userData: { name: string; email: string }) => void; // Function to handle form submission
-    userData: { name: string; email: string }| null;
-  }
-  
-  const CreateUsers: React.FC<CreateUsersProps> = ({ open, onClose, onSubmit, userData }) => {
-    const [user, setUser] = useState({ // storing
+  open: boolean;
+  onClose: () => void;  // Function to close the modal
+  onSubmit: (userData: { name: string; email: string }) => void; // Function to handle form submission
+  userData: { name: string; email: string } | null;
+}
+
+const CreateUsers: React.FC<CreateUsersProps> = ({ open, onClose, onSubmit, userData }) => {
+  const [user, setUser] = useState({ // storing
     name: "",
     email: "",
   });

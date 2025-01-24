@@ -3,11 +3,11 @@
 @tailwind components;
 @tailwind utilities;
 
-/* defaulted dark mode */
-:root {
-  --background: #f5f5f5;
-  --foreground: #171717;
-}
+/* defaulted dark mode - already implemeted globally using _app.tsx */
+/* :root {
+  --background: #252526;
+  --foreground: #f5f5f5;
+} */
 
 /* @media (prefers-color-scheme: dark) {
   :root { 
