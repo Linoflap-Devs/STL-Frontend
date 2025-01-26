@@ -40,7 +40,6 @@ interface User {
 const UsersTable: React.FC<{ onCreate: () => void }> = ({ onCreate }) => {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   //const [order, setOrder] = useState<"asc" | "desc">("asc");
-  //const [orderBy, setOrderBy] = useState<string>("firstname");
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
 
