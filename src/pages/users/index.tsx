@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import AdminHeader from '../../components/layout/AdminHeader';
-import UsersTable from '~/components/users/UsersTable';
-import CreateUsers from '~/components/users/CreateUsers';
+import ManagerTable from '~/components/users/ManagerTable';
+import CreateManager from '~/components/users/CreateManager';
 
 const UsersPage = () => {
   const [isModalOpen, setModalOpen] = useState(false);
@@ -28,9 +28,9 @@ const UsersPage = () => {
 
   return (
     <>
-      <AdminHeader />
-      <UsersTable onCreate={handleUserCreate} />
-      <CreateUsers 
+      <AdminHeader pages={[]} />
+      <ManagerTable onCreate={handleUserCreate} />
+      <CreateManager
         open={isModalOpen} 
         onClose={handleUserCloseModal} 
         onSubmit={handleSubmitUser} 

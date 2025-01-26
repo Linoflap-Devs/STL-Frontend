@@ -11,8 +11,8 @@ import {
 
 interface CreateUsersProps {
   open: boolean;
-  onClose: () => void;  // Function to close the modal
-  onSubmit: (userData: { name: string; email: string }) => void; // Function to handle form submission
+  onClose: () => void;
+  onSubmit: (userData: { name: string; email: string }) => void;
   userData: { name: string; email: string } | null;
 }
 
@@ -39,7 +39,7 @@ const CreateUsers: React.FC<CreateUsersProps> = ({ open, onClose, onSubmit, user
 
   return (
     <Dialog open={open} onClose={onClose}>
-      <DialogTitle>{"Create User"}</DialogTitle>
+      <DialogTitle>{"Add Manager"}</DialogTitle>
       <DialogContent>
         <TextField
           label="Name"

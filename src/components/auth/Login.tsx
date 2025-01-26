@@ -75,7 +75,7 @@ const LoginPage = () => {
       <Box
         sx={{
           display: "flex",
-          flexDirection: { xs: "column", md: "row" },
+          flexDirection: { xs: "column", sm: "row", md: "row", lg: "row" },
           //backgroundColor: "#f5f5f5",
           margin: 0,
           height: "100vh",
@@ -93,7 +93,7 @@ const LoginPage = () => {
             display: "flex",
             flexDirection: "column",
             justifyContent: "center",
-          }}
+          }}  
         >
           <Box
             sx={{
@@ -112,11 +112,14 @@ const LoginPage = () => {
                 height: "100%",
               }}
             >
-              <img
-                src={LoginSectionData.image}
-                alt="Logo"
-                style={{ maxWidth: "450px", width: "100%" }}
-              />
+            <Box 
+              component="img"
+              src={LoginSectionData.image}
+              alt="Logo"
+              sx={{ 
+                maxWidth: { xs: "60%", sm: "60%", md: "60%", lg: "50%", xl: "100%" },
+              }}
+            />
             </Box>
 
             {/* <ConfirmationNumberIcon sx={{ fontSize: 85, color: "white" }} />

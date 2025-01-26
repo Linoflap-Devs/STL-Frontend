@@ -14,7 +14,7 @@ const darkTheme = createTheme({
     },
   },
   typography: {
-    fontFamily: '"Monserrat", sans-serif',
+    fontFamily: '"Inter", sans-serif',
   },
   components: {
     MuiButton: {
@@ -36,7 +36,6 @@ const darkTheme = createTheme({
       styleOverrides: {
         root: {
           '& .MuiOutlinedInput-root': {
-            //padding: '7px 12px',
             border: 'none',
             borderRadius: 5,
             backgroundColor: '#374151',
@@ -53,7 +52,6 @@ const darkTheme = createTheme({
             transition: 'border-color 0.3s ease',
           },
           '& .MuiOutlinedInput-input': {
-            //padding: '0.5px 0',
             fontSize: 14,
           },
         },
@@ -74,7 +72,12 @@ const darkTheme = createTheme({
         root: {
           color: '#D1D5D8',
           fontSize: '12px',
-          padding: 12,
+          padding: 10,
+          borderBottom: "1.5px solid #374151",
+        },
+        head: {
+          color: '#9CA3AF',
+          fontWeight: 'bold',
         },
       },
     },
@@ -82,8 +85,7 @@ const darkTheme = createTheme({
       styleOverrides: {
         root: {
           backgroundColor: '#374151',
-          color: '#D1D5D8',
-          lineHeight: "2rem",
+          lineHeight: "1.5rem",
           textTransform: 'uppercase',
           fontWeight: 'bold',
         },
@@ -92,14 +94,93 @@ const darkTheme = createTheme({
     MuiTableRow: {
       styleOverrides: {
         root: {
-          color: '#D1D5D8',
-          borderBottom: "1px solid #4B5563",
+          borderBottom: "0.5px solid #374151",
           '&:hover': {
             backgroundColor: '#374151',
           },
         },
       },
+    },    
+    MuiCheckbox: {
+      styleOverrides: {
+        root: {
+          color: '#D1D5D8',
+          '&.Mui-checked': {
+            color: '#e5e7eb',
+          },
+          '&:hover': {
+            backgroundColor: '#374151',
+          },
+          '& .MuiSvgIcon-root': {
+            fill: '#6C7480',
+            //backgroundColor: '#374151',
+            padding: 0,
+            margin: 0,
+            fontSize: '21px',
+          },
+        },
+      },
     },
+    MuiList: {
+      styleOverrides: {
+        root: {
+          padding: "0px",
+          borderRadius: "0px",
+          boxShadow: "none",
+          //border: "0px solid rgba(0, 0, 0, 0.0)",
+        },
+      },
+    },
+    MuiMenuItem: {
+      styleOverrides: {
+        root: {
+          backgroundColor: "transparent",
+          color: "#ffffff",
+          padding: "16px 55px 16px 12px",  
+          borderRadius: "0px",
+          fontSize: 14,
+          boxShadow: "none",
+          "&:hover": {
+            backgroundColor: "transparent",
+            boxShadow: "none",
+          },
+        },
+      },
+    },
+    // MuiTablePagination: {
+    //   styleOverrides: {
+    //     root: {
+    //       backgroundColor: "#1F2937", // Background color of the root container
+    //       overflow: "hidden", // Prevent overflow issues
+    //     },
+    //     toolbar: {
+    //       display: "flex",
+    //       justifyContent: "space-between", // Space out the left and right content
+    //       padding: "0 16px", // Optional, if you want to control padding
+    //     },
+    //     selectLabel: {
+    //       textAlign: "left",
+    //       color: "#374151", // Text color for "Rows per page"
+    //       marginRight: 8, // Small margin for spacing
+    //     },
+    //     displayedRows: {
+    //       color: "#374151", // Text color for "1–10 of 100"
+    //       marginLeft: 8, // Small margin for spacing
+    //     },  
+    //     actions: {
+    //       display: "flex",
+    //       justifyContent: "flex-end", // Align the pagination actions (previous/next) to the right
+    //       alignItems: "center", // Optional, align items vertically
+    //       "& .MuiIconButton-root": {
+    //         border: "1px solid #ccc", // Border for the buttons
+    //         marginX: 1, // Margin between buttons
+    //         justifyContent: "flex-end",
+    //         backgroundColor: "transparent", // Ensure the background color doesn't hide them
+    //         color: "#ffffff", // Ensure icons are visible (white in dark mode)
+    //       },
+    //     },
+    //   },
+    // }
   },
 });
 

@@ -93,7 +93,7 @@ const AdminHeader: React.FC<AdminHeaderProps> = ({ pages }) => {
                   color: 'white',
                   paddingX: page === 'Manager' ? 3 : 'none',
                   paddingY: page === 'Manager' ? 0.7 : 'none',
-                  borderRadius: page === 'Manager' ? '7px' : 'none',
+                  borderRadius: page === 'Manager' ? '6px' : 'none',
                   backgroundColor: page === 'Manager' ? '#A550A5' : 'transparent',
                   width: 'auto',
                   fontSize: 13.8,
