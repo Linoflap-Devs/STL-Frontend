@@ -14,9 +14,11 @@ import {
   FormControl,
   FormHelperText,
   Box,
+  useMediaQuery,
 } from "@mui/material";
-import { ErrorOutline, Visibility, VisibilityOff } from "@mui/icons-material";
+import { Visibility, VisibilityOff } from "@mui/icons-material";
 import { SelectChangeEvent } from "@mui/material";
+//import theme from "~/theme";
 
 interface CreateManagerProps {
   open: boolean;
@@ -86,21 +88,25 @@ const CreateManager: React.FC<CreateManagerProps> = ({ open, onClose, onSubmit }
     }
   };
 
-  // formatting of keys
+  // formatting key
   const formatKey = (key: string) => {
     return key
-      .replace(/([a-z])([A-Z])/g, '$1 $2')
-      .replace(/([A-Z]+)([A-Z][a-z])/g, '$1 $2')
-      .split(' ')
+      .replace(/(name|address|number)/gi, " $1") // add space before common words
+      .replace(/([a-z])([A-Z])/g, "$1 $2")
+      .replace(/([A-Z]+)([A-Z][a-z])/g, "$1 $2")
+      .trim()
+      .split(" ")
       .map((word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
-      .join(' ');
+      .join(" ");
   };
+  
+  //const isSmallScreen = useMediaQuery(theme.breakpoints.down("sm"));
 
   return (
-    <Dialog maxWidth="md" fullWidth open={open} onClose={onClose}>
+    <Dialog  maxWidth="md" fullWidth open={open} onClose={onClose}>
       <DialogTitle>Add Manager</DialogTitle>
       <DialogContent>
-        <Grid container spacing={2.5}>
+        <Grid container spacing={3}>
           {Object.keys(user).map((key) => (
             <Grid item xs={12} sm={6} key={key}>
               <Typography sx={{ textAlign: "left", marginBottom: "0.3rem" }}>
@@ -149,10 +155,11 @@ const CreateManager: React.FC<CreateManagerProps> = ({ open, onClose, onSubmit }
               ) : key === "region" || key === "province" || key === "city" || key === "barangay" ? ( // Input Selects
                 <FormControl fullWidth error={!!errors[key]}>
                   <Select
+                    displayEmpty
                     value={selectState[key as keyof typeof selectState]}
                     onChange={(e) => handleSelectChange(e, key)}
                     name={key}
-                    sx={inputStyles}
+                    sx={selectStyles}
                     inputProps={{
                       "aria-label": formatKey(key),
                     }}
@@ -206,7 +213,6 @@ const inputStyles = {
   "& .MuiOutlinedInput-root": {
     "& fieldset": {
       borderColor: "#D1D5DB",
-      padding: "14px 40px 10px 14px",
       margin: '0px',
     },
     "&.Mui-error fieldset": {
@@ -215,13 +221,22 @@ const inputStyles = {
   },
 }
 
-const inputErrorStyles = {
-  display: "flex",
-  alignItems: "center",
-  gap: "3px",
-  color: "#F05252",
-  marginTop: "4px",
-  fontSize: "10px",
+const selectStyles = {
+  "& .MuiOutlinedInput-root": {
+    "& fieldset": {
+      borderColor: "transparent", // Default state with no border
+    },
+    "&:hover fieldset": {
+      borderColor: "#D1D5DB", // Hover state border color
+    },
+    "&.Mui-focused fieldset": {
+      borderColor: "#D1D5DB", // Border color when focused
+    },
+    "&.Mui-error fieldset": {
+      borderColor: "#F05252", // Error state border color
+    },
+  },
 };
+
 
 export default CreateManager;

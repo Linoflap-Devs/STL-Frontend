@@ -195,6 +195,7 @@ const darkTheme = createTheme({
         root: {
           bgcolor: "#374151",
           color: "#ffffff",
+          fontSize: '0.85rem',
           "&:hover fieldset": {
             borderColor: "#D1D5DB",
           },
@@ -204,7 +205,7 @@ const darkTheme = createTheme({
         },
         input: {
           color: "#ffffff",
-          padding: "10px 16px 10px 16px",
+          padding: "10px 16px",
         },
       },
     },
@@ -212,23 +213,42 @@ const darkTheme = createTheme({
       styleOverrides: {
         root: {
           backgroundColor: "#374151",
-          color: "#ffffff",
           borderColor: "#D1D5DB",
-          //borderWidth: '1px',
         },
         icon: {
           color: "#ffffff",
         },
+        select: {
+          color: "#9CA3AF", // Change to your desired font color
+        },
       },
     },
+    MuiInputBase: {
+      styleOverrides: {
+        input: {
+          "::placeholder": {
+            color: "#9CA3AF", // Customize the placeholder color here
+          },
+        },
+      },
+    },    
     MuiFormHelperText : {
       styleOverrides: {
         root: {
-          fontSize: '0.85rem',
+          fontSize: '0.80rem',
           marginLeft: '0px',
         }
       }
-    }
+    },
+    MuiTypography: {
+      styleOverrides: {
+        root: {
+          textAlign: "left",
+          marginBottom: "0.3rem",
+          fontSize: "0.93rem",
+        },
+      },
+    },
     
   },
 });
