@@ -17,6 +17,7 @@ import {
   IconButton,
   TablePagination,
 } from "@mui/material";
+
 import SearchIcon from "@mui/icons-material/Search";
 import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
 
@@ -39,7 +40,6 @@ interface User {
 
 const UsersTable: React.FC<{ onCreate: () => void }> = ({ onCreate }) => {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
-  //const [order, setOrder] = useState<"asc" | "desc">("asc");
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
 
@@ -51,77 +51,26 @@ const UsersTable: React.FC<{ onCreate: () => void }> = ({ onCreate }) => {
     direction: "asc",
   });
 
+  interface SortConfig {
+    key: string;
+    direction: "asc" | "desc";
+  }
+
+  interface SortableTableCellProps {
+    label: string;
+    sortKey: keyof User;
+    sortConfig: SortConfig;
+    onSort: (sortKey: keyof User) => void;
+  }
+
   const users: User[] = [
-    {
-      id: 1,
-      firstname: "Anne",
-      lastname: "Doe",
-      username: "john@example.com",
-      phonenumber: "0943 321 5342",
-      region: "National Capital Region",
-      province: "Metro Manila",
-      regisdate: "2025/01/22 13:05:32",
-    },
-    {
-      id: 2,
-      firstname: "Shay",
-      lastname: "Marasigan",
-      username: "jane@example.com",
-      phonenumber: "0943 321 5343",
-      region: "Central Luzon",
-      province: "Pampanga",
-      regisdate: "2025/01/20 10:15:22",
-    },
-    {
-      id: 3,
-      firstname: "Zac",
-      lastname: "Johnson",
-      username: "alex@example.com",
-      phonenumber: "0943 321 5344",
-      region: "Southern Luzon",
-      province: "Laguna",
-      regisdate: "2025/01/18 08:25:12",
-    },
-    {
-      id: 4,
-      firstname: "Sample",
-      lastname: "Johnson",
-      username: "alex@example.com",
-      phonenumber: "0943 321 5344",
-      region: "Southern Luzon",
-      province: "Laguna",
-      regisdate: "2025/01/18 08:25:12",
-    },
-    {
-      id: 5,
-      firstname: "John",
-      lastname: "Johnson",
-      username: "alex@example.com",
-      phonenumber: "0943 321 5344",
-      region: "Southern Luzon",
-      province: "Laguna",
-      regisdate: "2025/01/18 08:25:12",
-    },
-    {
-      id: 6,
-      firstname: "John",
-      lastname: "Johnson",
-      username: "alex@example.com",
-      phonenumber: "0943 321 5344",
-      region: "Southern Luzon",
-      province: "Laguna",
-      regisdate: "2025/01/18 08:25:12",
-    },
-    {
-      id: 7,
-      firstname: "John",
-      lastname: "Johnson",
-      username: "alex@example.com",
-      phonenumber: "0943 321 5344",
-      region: "Southern Luzon",
-      province: "Laguna",
-      regisdate: "2025/01/18 08:25:12",
-    },
+    { id: 1, firstname: "Angelo", lastname: "Doe", username: "john@example.com", phonenumber: "0943 321 5342", region: "CALABARZON", province: "Metro Manila", regisdate: "2025/01/22 13:05:32", },
+    { id: 2, firstname: "Jimas", lastname: "Doe", username: "john@example.com", phonenumber: "0943 321 5342", region: "National Capital Region", province: "Metro Manila", regisdate: "2025/01/22 13:05:32", },
+    { id: 3, firstname: "Jhustie", lastname: "Cruz", username: "john@example.com", phonenumber: "0943 321 5342", region: "National Capital Region", province: "Metro Manila", regisdate: "2025/01/22 13:05:32", },
+    { id: 4, firstname: "Thea", lastname: "Doe", username: "john@example.com", phonenumber: "0943 321 5342", region: "National Capital Region", province: "Metro Manila", regisdate: "2025/01/22 13:05:32", },
+    { id: 5, firstname: "Jacob", lastname: "Doe", username: "john@example.com", phonenumber: "0943 321 5342", region: "National Capital Region", province: "Metro Manila", regisdate: "2025/01/22 13:05:32", },
+    { id: 6, firstname: "Wendell", lastname: "Ravago", username: "john@example.com", phonenumber: "0943 321 5342", region: "National Capital Region", province: "Metro Manila", regisdate: "2025/01/22 13:05:32", },
+    { id: 7, firstname: "Rissa", lastname: "Doe", username: "john@example.com", phonenumber: "0943 321 5342", region: "National Capital Region", province: "Metro Manila", regisdate: "2025/01/22 13:05:32", },
   ];
 
   // sorting
@@ -149,7 +98,6 @@ const UsersTable: React.FC<{ onCreate: () => void }> = ({ onCreate }) => {
         ? dateA.getTime() - dateB.getTime()
         : dateB.getTime() - dateA.getTime();
     }
-
     return 0;
   });
 
@@ -193,6 +141,31 @@ const UsersTable: React.FC<{ onCreate: () => void }> = ({ onCreate }) => {
     setSortConfig({ key: column, direction });
   };
 
+  // reusable code
+  const SortableTableCell: React.FC<SortableTableCellProps> = ({
+    label,
+    sortKey,
+    sortConfig,
+    onSort,
+  }) => {
+    return (
+      <TableCell
+        sx={{ cursor: "pointer" }}
+        onClick={() => onSort(sortKey)}
+      >
+        {label}
+        {sortConfig.key === sortKey && (
+          sortConfig.direction === "asc" ? (
+            <KeyboardArrowUpIcon sx={{ fontSize: 16, marginLeft: 1 }} />
+          ) : (
+            <KeyboardArrowDownIcon sx={{ fontSize: 16, marginLeft: 1 }} />
+          )
+        )}
+      </TableCell>
+    );
+  };
+
+  // for checkbox
   const label = { inputProps: { "aria-label": "Checkbox demo" } };
 
   return (
@@ -205,7 +178,8 @@ const UsersTable: React.FC<{ onCreate: () => void }> = ({ onCreate }) => {
           sm: 700,
           md: 900,
           lg: 1200,
-          xl: 1536,
+          xl: 1200,
+          //xl: 1536,
         },
       }}
     >
@@ -243,7 +217,12 @@ const UsersTable: React.FC<{ onCreate: () => void }> = ({ onCreate }) => {
               sx={{
                 maxWidth: 500,
                 padding: 0,
-                width: { xs: "100%", sm: "300px", md: "320px" },
+                width: {
+                  xs: "100%",
+                  sm: "300px",
+                  md: "320px",
+                  lg: "1200px",
+                },
               }}
             >
               <TextField
@@ -288,120 +267,50 @@ const UsersTable: React.FC<{ onCreate: () => void }> = ({ onCreate }) => {
             <TableHead>
               <TableRow>
                 <TableCell>
-                  <Checkbox {...label} />
+                  <Checkbox />
                 </TableCell>
-                <TableCell
-                  sx={{ cursor: "pointer" }}
-                  onClick={() => handleSort("firstname")}
-                >
-                  First Name
-                  {sortConfig.key === "firstname" &&
-                    (sortConfig.direction === "asc" ? (
-                      <KeyboardArrowUpIcon
-                        sx={{ fontSize: 16, marginLeft: 1 }}
-                      />
-                    ) : (
-                      <KeyboardArrowDownIcon
-                        sx={{ fontSize: 16, marginLeft: 1 }}
-                      />
-                    ))}
-                </TableCell>
-                <TableCell
-                  sx={{ cursor: "pointer" }}
-                  onClick={() => handleSort("lastname")}
-                >
-                  Last Name
-                  {sortConfig.key === "lastname" &&
-                    (sortConfig.direction === "asc" ? (
-                      <KeyboardArrowUpIcon
-                        sx={{ fontSize: 16, marginLeft: 1 }}
-                      />
-                    ) : (
-                      <KeyboardArrowDownIcon
-                        sx={{ fontSize: 16, marginLeft: 1 }}
-                      />
-                    ))}
-                </TableCell>
-                <TableCell
-                  sx={{ cursor: "pointer" }}
-                  onClick={() => handleSort("username")}
-                >
-                  Username
-                  {sortConfig.key === "username" &&
-                    (sortConfig.direction === "asc" ? (
-                      <KeyboardArrowUpIcon
-                        sx={{ fontSize: 16, marginLeft: 1 }}
-                      />
-                    ) : (
-                      <KeyboardArrowDownIcon
-                        sx={{ fontSize: 16, marginLeft: 1 }}
-                      />
-                    ))}
-                </TableCell>
-                <TableCell
-                  sx={{ cursor: "pointer" }}
-                  onClick={() => handleSort("phonenumber")}
-                >
-                  Phone Number
-                  {sortConfig.key === "phonenumber" &&
-                    (sortConfig.direction === "asc" ? (
-                      <KeyboardArrowUpIcon
-                        sx={{ fontSize: 16, marginLeft: 1 }}
-                      />
-                    ) : (
-                      <KeyboardArrowDownIcon
-                        sx={{ fontSize: 16, marginLeft: 1 }}
-                      />
-                    ))}
-                </TableCell>
-                <TableCell
-                  sx={{ cursor: "pointer" }}
-                  onClick={() => handleSort("region")}
-                >
-                  Region
-                  {sortConfig.key === "region" &&
-                    (sortConfig.direction === "asc" ? (
-                      <KeyboardArrowUpIcon
-                        sx={{ fontSize: 16, marginLeft: 1 }}
-                      />
-                    ) : (
-                      <KeyboardArrowDownIcon
-                        sx={{ fontSize: 16, marginLeft: 1 }}
-                      />
-                    ))}
-                </TableCell>
-                <TableCell
-                  sx={{ cursor: "pointer" }}
-                  onClick={() => handleSort("province")}
-                >
-                  Province
-                  {sortConfig.key === "province" &&
-                    (sortConfig.direction === "asc" ? (
-                      <KeyboardArrowUpIcon
-                        sx={{ fontSize: 16, marginLeft: 1 }}
-                      />
-                    ) : (
-                      <KeyboardArrowDownIcon
-                        sx={{ fontSize: 16, marginLeft: 1 }}
-                      />
-                    ))}
-                </TableCell>
-                <TableCell
-                  sx={{ cursor: "pointer" }}
-                  onClick={() => handleSort("regisdate")}
-                >
-                  Registration Date
-                  {sortConfig.key === "regisdate" &&
-                    (sortConfig.direction === "asc" ? (
-                      <KeyboardArrowUpIcon
-                        sx={{ fontSize: 16, marginLeft: 1 }}
-                      />
-                    ) : (
-                      <KeyboardArrowDownIcon
-                        sx={{ fontSize: 16, marginLeft: 1 }}
-                      />
-                    ))}
-                </TableCell>
+                <SortableTableCell
+                  label="First Name"
+                  sortKey="firstname"
+                  sortConfig={sortConfig}
+                  onSort={handleSort}
+                />
+                <SortableTableCell
+                  label="Last Name"
+                  sortKey="lastname"
+                  sortConfig={sortConfig}
+                  onSort={handleSort}
+                />
+                <SortableTableCell
+                  label="Username"
+                  sortKey="username"
+                  sortConfig={sortConfig}
+                  onSort={handleSort}
+                />
+                <SortableTableCell
+                  label="Phone Number"
+                  sortKey="phonenumber"
+                  sortConfig={sortConfig}
+                  onSort={handleSort}
+                />
+                <SortableTableCell
+                  label="Region"
+                  sortKey="region"
+                  sortConfig={sortConfig}
+                  onSort={handleSort}
+                />
+                <SortableTableCell
+                  label="Province"
+                  sortKey="province"
+                  sortConfig={sortConfig}
+                  onSort={handleSort}
+                />
+                <SortableTableCell
+                  label="Registration Date"
+                  sortKey="regisdate"
+                  sortConfig={sortConfig}
+                  onSort={handleSort}
+                />
                 <TableCell sx={{ textAlign: "center" }}>Actions</TableCell>
               </TableRow>
             </TableHead>

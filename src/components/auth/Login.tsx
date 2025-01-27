@@ -33,6 +33,17 @@ const LoginPage = () => {
     }
   };
 
+  // temporary link to admin w/ temporary validation
+  const handleNavigation = () => {
+    const isValid = validate();
+
+    if (isValid) {
+      router.push("/users");
+    } else {
+      console.log("Validation failed.");
+    }
+  };
+
   const handleTogglePasswordVisibility = () => setShowPassword((prev) => !prev);
 
   return (
@@ -128,7 +139,7 @@ const LoginPage = () => {
               </Box>
 
               {/* Login Button */}
-              <Button type="submit" variant="contained" color="primary" sx={{ mt: 1, py: 1.5, fontSize: "16px", padding: "8px 20px", borderRadius: "8px", textTransform: "none", backgroundColor: "#2563EB", }}>
+              <Button type="submit" variant="contained" color="primary" onClick={handleNavigation} sx={{ mt: 1, py: 1.5, fontSize: "16px", padding: "8px 20px", borderRadius: "8px", textTransform: "none", backgroundColor: "#2563EB", }}>
                 Login
               </Button>
             </Box>

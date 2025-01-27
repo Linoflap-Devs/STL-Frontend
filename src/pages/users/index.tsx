@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import AdminHeader from '../../components/layout/AdminHeader';
-import ManagerTable from '~/components/users/ManagerTable';
-import CreateManager from '~/components/users/CreateManager';
+import ManagerTable from '~/components/manager/ManagerTable';
+import CreateManager from '~/components/manager/CreateManager';
 
 const UsersPage = () => {
   const [isModalOpen, setModalOpen] = useState(false);
