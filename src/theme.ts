@@ -127,7 +127,13 @@ const darkTheme = createTheme({
           padding: "0px",
           borderRadius: "0px",
           boxShadow: "none",
-          //border: "0px solid rgba(0, 0, 0, 0.0)",
+        },
+      },
+    },
+    MuiMenu: {
+      styleOverrides: {
+        paper: {
+          boxShadow: "0px 5px 5px -2px rgba(0,0,0,0.2)",
         },
       },
     },
@@ -139,48 +145,25 @@ const darkTheme = createTheme({
           padding: "16px 55px 16px 12px",  
           borderRadius: "0px",
           fontSize: 14,
-          boxShadow: "none",
-          "&:hover": {
-            backgroundColor: "transparent",
-            boxShadow: "none",
-          },
         },
       },
     },
-    // MuiTablePagination: {
-    //   styleOverrides: {
-    //     root: {
-    //       backgroundColor: "#1F2937", // Background color of the root container
-    //       overflow: "hidden", // Prevent overflow issues
-    //     },
-    //     toolbar: {
-    //       display: "flex",
-    //       justifyContent: "space-between", // Space out the left and right content
-    //       padding: "0 16px", // Optional, if you want to control padding
-    //     },
-    //     selectLabel: {
-    //       textAlign: "left",
-    //       color: "#374151", // Text color for "Rows per page"
-    //       marginRight: 8, // Small margin for spacing
-    //     },
-    //     displayedRows: {
-    //       color: "#374151", // Text color for "1–10 of 100"
-    //       marginLeft: 8, // Small margin for spacing
-    //     },  
-    //     actions: {
-    //       display: "flex",
-    //       justifyContent: "flex-end", // Align the pagination actions (previous/next) to the right
-    //       alignItems: "center", // Optional, align items vertically
-    //       "& .MuiIconButton-root": {
-    //         border: "1px solid #ccc", // Border for the buttons
-    //         marginX: 1, // Margin between buttons
-    //         justifyContent: "flex-end",
-    //         backgroundColor: "transparent", // Ensure the background color doesn't hide them
-    //         color: "#ffffff", // Ensure icons are visible (white in dark mode)
-    //       },
-    //     },
-    //   },
-    // }
+    MuiTablePagination: {
+      styleOverrides: {
+        root: {
+          overflow: "hidden",
+          maxHeight: "48px",
+        },
+        displayedRows: {
+          color: "#D1D5D8",
+        },  
+        actions: {
+          "& .MuiIconButton-root": {
+            color: "#D1D5D8",
+          },
+        },
+      },
+    }
   },
 });
 

@@ -141,7 +141,7 @@ const UsersTable: React.FC<{ onCreate: () => void }> = ({ onCreate }) => {
     setSortConfig({ key: column, direction });
   };
 
-  // reusable code
+  // reusable sorting code
   const SortableTableCell: React.FC<SortableTableCellProps> = ({
     label,
     sortKey,
@@ -359,7 +359,7 @@ const UsersTable: React.FC<{ onCreate: () => void }> = ({ onCreate }) => {
             }}
           >
             <TablePagination
-              rowsPerPageOptions={[5, 10, 25, 50, 100]}
+              rowsPerPageOptions={[5, 25, 50, 100]}
               component="div"
               count={users.length}
               rowsPerPage={rowsPerPage}
