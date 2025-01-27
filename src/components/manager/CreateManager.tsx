@@ -139,7 +139,8 @@ const CreateManager: React.FC<CreateManagerProps> = ({ open, onClose, onSubmit }
                     </Button>
                   </Grid>
                 </Grid>
-              ) : key === "region" || key === "province" || key === "city" || key === "barangay" ? ( // Input Select
+
+              ) : key === "region" || key === "province" || key === "city" || key === "barangay" ? ( // Input Selects
                 <FormControl fullWidth error={!!errors[key]}>
                   <Select
                     value={selectState[key as keyof typeof selectState]}
@@ -158,7 +159,8 @@ const CreateManager: React.FC<CreateManagerProps> = ({ open, onClose, onSubmit }
                   </Select>
                   {errors[key] && <FormHelperText>{errors[key]}</FormHelperText>}
                 </FormControl>
-              ) : ( // Input TextField
+                
+              ) : ( // Input TextFields
                 <TextField
                   fullWidth
                   variant="outlined"
@@ -177,7 +179,7 @@ const CreateManager: React.FC<CreateManagerProps> = ({ open, onClose, onSubmit }
 
         <Button onClick={handleUserCreateSubmit}
           sx={{
-            mt: 3.5,
+            mt: 6,
             width: "100%",
             backgroundColor: "#2563EB",
             textTransform: "none",
