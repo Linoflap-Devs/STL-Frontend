@@ -220,6 +220,14 @@ const darkTheme = createTheme({
           color: "#ffffff",
         },
       },
+    },
+    MuiFormHelperText : {
+      styleOverrides: {
+        root: {
+          fontSize: '0.85rem',
+          marginLeft: '0px',
+        }
+      }
     }
     
   },

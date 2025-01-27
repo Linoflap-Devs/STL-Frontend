@@ -13,6 +13,7 @@ import {
   IconButton,
   FormControl,
   FormHelperText,
+  Box,
 } from "@mui/material";
 import { ErrorOutline, Visibility, VisibilityOff } from "@mui/icons-material";
 import { SelectChangeEvent } from "@mui/material";
@@ -119,7 +120,7 @@ const CreateManager: React.FC<CreateManagerProps> = ({ open, onClose, onSubmit }
                       name={key}
                       sx={inputStyles}
                       error={!!errors[key]}
-                      helperText={errors[key]}
+                      helperText={''}
                       InputProps={{
                         endAdornment: (
                           <IconButton sx={{ color: "#9ca3af" }} onClick={() => setShowPassword((prev) => !prev)} edge="end">
@@ -138,6 +139,11 @@ const CreateManager: React.FC<CreateManagerProps> = ({ open, onClose, onSubmit }
                       Generate
                     </Button>
                   </Grid>
+                  {errors[key] && (
+                    <Box sx={{ color: 'error.main', mt: "3px", marginLeft: '12px', fontSize: '0.85rem' }}>
+                      {errors[key]}
+                    </Box>
+                  )}
                 </Grid>
 
               ) : key === "region" || key === "province" || key === "city" || key === "barangay" ? ( // Input Selects
@@ -159,7 +165,7 @@ const CreateManager: React.FC<CreateManagerProps> = ({ open, onClose, onSubmit }
                   </Select>
                   {errors[key] && <FormHelperText>{errors[key]}</FormHelperText>}
                 </FormControl>
-                
+
               ) : ( // Input TextFields
                 <TextField
                   fullWidth
@@ -202,7 +208,6 @@ const inputStyles = {
       borderColor: "#D1D5DB",
       padding: "14px 40px 10px 14px",
       margin: '0px',
-
     },
     "&.Mui-error fieldset": {
       borderColor: "#F05252",
