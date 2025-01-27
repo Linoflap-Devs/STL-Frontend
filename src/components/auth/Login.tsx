@@ -152,14 +152,9 @@ const LoginPage = () => {
 
 const inputStyles = {
   "& .MuiOutlinedInput-root": {
-    bgcolor: "#374151",
-    color: "#ffffff",
     "& fieldset": { borderColor: "#D1D5DB", padding: "14px 40px 10px 14px", },
-    "&:hover fieldset": { borderColor: "#A1A1AA" },
     "&.Mui-error fieldset": { borderColor: "#F05252" },
   },
-  "& .MuiInputBase-input": { color: "#ffffff", padding: "14px 40px 10px 14px", },
-  "& .MuiFormHelperText-root": { display: "flex", alignItems: "center", gap: 0.5 },
 };
 
 const inputErrorStyles = {

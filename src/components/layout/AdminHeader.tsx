@@ -8,7 +8,7 @@ import MenuIcon from '@mui/icons-material/Menu';
 import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
 import Container from '@mui/material/Container';
-import { UserSectionData } from '../../data/UserSectionData';
+import { UserSectionData } from '../../data/AdminSectionData';
 
 interface AdminHeaderProps {
   pages: string[];

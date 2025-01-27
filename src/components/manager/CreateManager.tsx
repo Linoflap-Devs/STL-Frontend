@@ -1,73 +1,220 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import {
   Dialog,
   DialogActions,
   DialogContent,
   DialogTitle,
   Button,
-  TextField
-}
-  from "@mui/material";
+  TextField,
+  Typography,
+  Grid,
+  Select,
+  MenuItem,
+  IconButton,
+  FormControl,
+  FormHelperText,
+} from "@mui/material";
+import { ErrorOutline, Visibility, VisibilityOff } from "@mui/icons-material";
+import { SelectChangeEvent } from "@mui/material";
 
-interface CreateUsersProps {
+interface CreateManagerProps {
   open: boolean;
   onClose: () => void;
-  onSubmit: (userData: { name: string; email: string }) => void;
-  userData: { name: string; email: string } | null;
+  onSubmit: (userData: {
+    firstname: string;
+    lastname: string;
+    region: string;
+    province: string;
+    city: string;
+    barangay: string;
+    streetaddress: string;
+    phonenumber: string;
+    username: string;
+    password: string;
+  }) => void;
 }
 
-const CreateUsers: React.FC<CreateUsersProps> = ({ open, onClose, onSubmit, userData }) => {
-  const [user, setUser] = useState({ // storing
-    name: "",
-    email: "",
+const CreateManager: React.FC<CreateManagerProps> = ({ open, onClose, onSubmit }) => {
+  // the followed sequence
+  const [user, setUser] = useState({
+    firstname: "",
+    lastname: "",
+    region: "",
+    province: "",
+    city: "",
+    barangay: "",
+    streetaddress: "",
+    phonenumber: "",
+    username: "",
+    password: "",
   });
 
-  useEffect(() => {
-    if (userData) {
-      setUser({ name: userData.name, email: userData.email });
-    }
-  }, [userData]); // updating data
+  const [errors, setErrors] = useState<{ [key: string]: string }>({});
+  const [showPassword, setShowPassword] = useState(false);
+  const [selectState, setSelectState] = useState({
+    region: "",
+    province: "",
+    city: "",
+    barangay: "",
+  });
 
-  const handleUserChange = (e: { target: { name: any; value: any; }; }) => {
+  const handleManagerChange = (e: React.ChangeEvent<{ name?: string; value: unknown }>) => {
     const { name, value } = e.target;
-    setUser((prevUser) => ({ ...prevUser, [name]: value }));
+    setUser((prevUser) => ({ ...prevUser, [name as string]: value as string }));
+  };
+
+  const handleSelectChange = (e: SelectChangeEvent<string>, name: string) => {
+    setSelectState((prevState) => ({ ...prevState, [name]: e.target.value }));
+  };
+
+  const validate = () => {
+    const newErrors: { [key: string]: string } = {};
+    Object.entries(user).forEach(([key, value]) => {
+      if (!value) {
+        newErrors[key] = `${formatKey(key)} is required`;
+      }
+    });
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
   };
 
   const handleUserCreateSubmit = () => {
-    onSubmit(user);
+    if (validate()) {
+      onSubmit(user);
+    }
+  };
+
+  // formatting of keys
+  const formatKey = (key: string) => {
+    return key
+      .replace(/([a-z])([A-Z])/g, '$1 $2')
+      .replace(/([A-Z]+)([A-Z][a-z])/g, '$1 $2')
+      .split(' ')
+      .map((word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+      .join(' ');
   };
 
   return (
-    <Dialog open={open} onClose={onClose}>
-      <DialogTitle>{"Add Manager"}</DialogTitle>
+    <Dialog maxWidth="md" fullWidth open={open} onClose={onClose}>
+      <DialogTitle>Add Manager</DialogTitle>
       <DialogContent>
-        <TextField
-          label="Name"
-          name="name"
-          value={user.name}
-          onChange={handleUserChange}
-          fullWidth
-          margin="normal"
-        />
-        <TextField
-          label="Email"
-          name="email"
-          value={user.email}
-          onChange={handleUserChange}
-          fullWidth
-          margin="normal"
-        />
+        <Grid container spacing={2.5}>
+          {Object.keys(user).map((key) => (
+            <Grid item xs={12} sm={6} key={key}>
+              <Typography sx={{ textAlign: "left", marginBottom: "0.3rem" }}>
+                {formatKey(key)}
+              </Typography>
+
+              {key === "password" ? ( // Input password
+                <Grid container spacing={1.5} alignItems="center">
+                  <Grid item xs={7}>
+                    <TextField
+                      fullWidth
+                      variant="outlined"
+                      placeholder={`Enter ${key}`}
+                      type={showPassword ? "text" : "password"}
+                      value={user[key as keyof typeof user]}
+                      onChange={handleManagerChange}
+                      name={key}
+                      sx={inputStyles}
+                      error={!!errors[key]}
+                      helperText={errors[key]}
+                      InputProps={{
+                        endAdornment: (
+                          <IconButton sx={{ color: "#9ca3af" }} onClick={() => setShowPassword((prev) => !prev)} edge="end">
+                            {showPassword ? <VisibilityOff /> : <Visibility />}
+                          </IconButton>
+                        ),
+                      }}
+                    />
+                  </Grid>
+                  <Grid item xs={5}>
+                    <Button
+                      variant="contained"
+                      color="secondary"
+                      sx={{ width: "100%", textTransform: "none", backgroundColor: "#2563EB", borderRadius: "8px" }}
+                    >
+                      Generate
+                    </Button>
+                  </Grid>
+                </Grid>
+              ) : key === "region" || key === "province" || key === "city" || key === "barangay" ? ( // Input Select
+                <FormControl fullWidth error={!!errors[key]}>
+                  <Select
+                    value={selectState[key as keyof typeof selectState]}
+                    onChange={(e) => handleSelectChange(e, key)}
+                    name={key}
+                    sx={inputStyles}
+                    inputProps={{
+                      "aria-label": formatKey(key),
+                    }}
+                  >
+                    <MenuItem value="" disabled>
+                      Select a {formatKey(key)}
+                    </MenuItem>
+                    <MenuItem value="option1">Option 1</MenuItem>
+                    <MenuItem value="option2">Option 2</MenuItem>
+                  </Select>
+                  {errors[key] && <FormHelperText>{errors[key]}</FormHelperText>}
+                </FormControl>
+              ) : ( // Input TextField
+                <TextField
+                  fullWidth
+                  variant="outlined"
+                  placeholder={`Enter ${formatKey(key)}`}
+                  value={user[key as keyof typeof user]}
+                  onChange={handleManagerChange}
+                  name={key}
+                  sx={inputStyles}
+                  error={!!errors[key]}
+                  helperText={errors[key]}
+                />
+              )}
+            </Grid>
+          ))}
+        </Grid>
+
+        <Button onClick={handleUserCreateSubmit}
+          sx={{
+            mt: 3.5,
+            width: "100%",
+            backgroundColor: "#2563EB",
+            textTransform: "none",
+            fontSize: "12px",
+            padding: '0.8rem',
+            borderRadius: '8px',
+            fontWeight: 700,
+          }}
+          variant="contained"> Add Manager
+        </Button>
+
       </DialogContent>
-      <DialogActions>
-        <Button onClick={onClose} color="primary">
-          Cancel
-        </Button>
-        <Button onClick={handleUserCreateSubmit} color="primary">
-          {"Create"}
-        </Button>
-      </DialogActions>
     </Dialog>
   );
 };
 
-export default CreateUsers;
+const inputStyles = {
+  "& .MuiOutlinedInput-root": {
+    "& fieldset": {
+      borderColor: "#D1D5DB",
+      padding: "14px 40px 10px 14px",
+      margin: '0px',
+
+    },
+    "&.Mui-error fieldset": {
+      borderColor: "#F05252",
+    },
+  },
+}
+
+const inputErrorStyles = {
+  display: "flex",
+  alignItems: "center",
+  gap: "3px",
+  color: "#F05252",
+  marginTop: "4px",
+  fontSize: "10px",
+};
+
+export default CreateManager;

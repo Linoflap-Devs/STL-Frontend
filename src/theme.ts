@@ -57,6 +57,13 @@ const darkTheme = createTheme({
         },
       },
     },
+    MuiTableContainer: {
+      styleOverrides: {
+        root: {
+          borderRadius: '10px',
+        },
+      },
+    },
     MuiTable: {
       styleOverrides: {
         root: {
@@ -160,10 +167,61 @@ const darkTheme = createTheme({
         actions: {
           "& .MuiIconButton-root": {
             color: "#D1D5D8",
+            padding: "0",
           },
         },
       },
+    },
+    MuiDialog: {
+      styleOverrides: {
+        paper: {
+          boxShadow: "none",
+          backgroundImage: "none",
+          borderRadius: '6px',
+          padding: '25px 8px 27px 8px',
+        },
+      },
+    },
+    MuiDialogTitle: {
+      styleOverrides: {
+        root: {
+          fontSize: '27px',
+          fontWeight: '700',
+        },
+      },
+    }, // input types
+    MuiOutlinedInput: {
+      styleOverrides: {
+        root: {
+          bgcolor: "#374151",
+          color: "#ffffff",
+          "&:hover fieldset": {
+            borderColor: "#D1D5DB",
+          },
+          "&.Mui-error fieldset": {
+            borderColor: "#F05252",
+          },
+        },
+        input: {
+          color: "#ffffff",
+          padding: "10px 16px 10px 16px",
+        },
+      },
+    },
+    MuiSelect: {
+      styleOverrides: {
+        root: {
+          backgroundColor: "#374151",
+          color: "#ffffff",
+          borderColor: "#D1D5DB",
+          //borderWidth: '1px',
+        },
+        icon: {
+          color: "#ffffff",
+        },
+      },
     }
+    
   },
 });
 
