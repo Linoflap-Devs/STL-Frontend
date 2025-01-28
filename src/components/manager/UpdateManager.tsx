@@ -136,7 +136,23 @@ const UpdateManager: React.FC<UpdateManagerProps> = ({ open, onClose, onSubmit, 
   };
 
   return (
-    <Dialog open={open} onClose={onClose} fullWidth>
+    <Dialog
+      open={open}
+      onClose={onClose}
+      fullWidth
+      PaperProps={{
+        sx: {
+          width: "100%",
+          maxWidth: {
+            xs: "90%",
+            sm: "80%",
+            md: "600px",
+            lg: "650px",
+            xl: "800px"
+          }
+        }
+      }}
+    >
       <DialogTitle>Update Manager</DialogTitle>
       <DialogContent>
         <Grid container rowSpacing={2.3} columnSpacing={{ xs: 1, sm: 3, md: 2.5 }}>
@@ -167,12 +183,22 @@ const UpdateManager: React.FC<UpdateManagerProps> = ({ open, onClose, onSubmit, 
                       }}
                     />
                   </Grid>
+                  <Grid item xs={5}>
+                    <Button
+                      variant="contained"
+                      color="secondary"
+                      sx={{ width: "100%", textTransform: "none", backgroundColor: "#2563EB", borderRadius: "8px" }}
+                    >
+                      Generate
+                    </Button>
+                  </Grid>
                   {errors[key] && (
-                    <Box sx={{ color: 'error.main', mt: "3px", fontSize: '0.80rem' }}>
+                    <Box sx={{ color: 'error.main', mt: "3px", marginLeft: '12px', fontSize: '0.80rem' }}>
                       {errors[key]}
                     </Box>
                   )}
                 </Grid>
+
               ) : key === "region" || key === "province" || key === "city" || key === "barangay" ? (
                 <FormControl fullWidth error={!!errors[key]}>
                   <Select
@@ -188,6 +214,7 @@ const UpdateManager: React.FC<UpdateManagerProps> = ({ open, onClose, onSubmit, 
                   {errors[key] && <FormHelperText>{errors[key]}</FormHelperText>}
                 </FormControl>
               ) : (
+
                 <TextField
                   fullWidth
                   variant="outlined"
