@@ -151,7 +151,7 @@ const darkTheme = createTheme({
           color: "#ffffff",
           padding: "16px 55px 16px 12px",  
           borderRadius: "0px",
-          fontSize: 14,
+          fontSize: 12,
         },
       },
     },
@@ -185,15 +185,23 @@ const darkTheme = createTheme({
     MuiDialogTitle: {
       styleOverrides: {
         root: {
-          fontSize: '27px',
+          fontSize: '25px',
           fontWeight: '700',
+          marginBottom: '-0.5rem',
         },
       },
-    }, // input types
+    }, // input types modal??
+    MuiInput: {
+      styleOverrides: {
+        root: {
+          fontSize: '0.85rem',
+        }
+      }
+    }, // sa loob ng text
     MuiOutlinedInput: {
       styleOverrides: {
         root: {
-          bgcolor: "#374151",
+          backgroundColor: "#374151", // Correct property name
           color: "#ffffff",
           fontSize: '0.85rem',
           "&:hover fieldset": {
@@ -202,11 +210,16 @@ const darkTheme = createTheme({
           "&.Mui-error fieldset": {
             borderColor: "#F05252",
           },
+          width: '100% !important', // Force width on the root
+          '@media (max-width:600px)': {
+            width: '100% !important', // Ensure it takes full width on small screens
+          },
         },
         input: {
           color: "#ffffff",
-          padding: "10px 16px",
-        },
+          padding: "7px 16px",
+          width: '100% !important', // Ensure the input itself takes full width
+        }
       },
     },
     MuiSelect: {
@@ -214,20 +227,28 @@ const darkTheme = createTheme({
         root: {
           backgroundColor: "#374151",
           borderColor: "#D1D5DB",
+          width: '100%', // Default width
+          '@media (max-width:600px)': {
+            width: '100%',
+          },
         },
         icon: {
           color: "#ffffff",
         },
         select: {
-          color: "#9CA3AF", // Change to your desired font color
+          color: "#9CA3AF",
+          padding: "7px 16px",
         },
       },
     },
     MuiInputBase: {
       styleOverrides: {
+        root: {
+          fontSize: '0.80rem',
+        },
         input: {
           "::placeholder": {
-            color: "#9CA3AF", // Customize the placeholder color here
+            color: "#9CA3AF",
           },
         },
       },
@@ -235,21 +256,11 @@ const darkTheme = createTheme({
     MuiFormHelperText : {
       styleOverrides: {
         root: {
-          fontSize: '0.80rem',
+          fontSize: '0.70rem',
           marginLeft: '0px',
         }
       }
-    },
-    MuiTypography: {
-      styleOverrides: {
-        root: {
-          textAlign: "left",
-          marginBottom: "0.3rem",
-          fontSize: "0.93rem",
-        },
-      },
-    },
-    
+    },    
   },
 });
 

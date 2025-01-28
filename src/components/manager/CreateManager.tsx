@@ -103,13 +103,29 @@ const CreateManager: React.FC<CreateManagerProps> = ({ open, onClose, onSubmit }
   //const isSmallScreen = useMediaQuery(theme.breakpoints.down("sm"));
 
   return (
-    <Dialog  maxWidth="md" fullWidth open={open} onClose={onClose}>
+      <Dialog
+        open={open}
+        onClose={onClose}
+        fullWidth
+        PaperProps={{
+          sx: {
+            width: "100%",
+            maxWidth: {
+              xs: "90%",
+              sm: "550px",
+              md: "620px",
+              lg: "650px",
+              xl: "620px"
+            }
+          }
+        }}
+      >
       <DialogTitle>Add Manager</DialogTitle>
       <DialogContent>
-        <Grid container spacing={3}>
-          {Object.keys(user).map((key) => (
-            <Grid item xs={12} sm={6} key={key}>
-              <Typography sx={{ textAlign: "left", marginBottom: "0.3rem" }}>
+        <Grid container rowSpacing={2.3} columnSpacing={{ xs: 1, sm: 1, md: 2.5 }}>
+        {Object.keys(user).map((key) => (
+            <Grid item xs={12} sm={6} sx={{ padding: { xs: 0, sm: 0 } }} key={key}>
+              <Typography sx={{ textAlign: "left", marginBottom: "0.3rem", fontSize: "0.90rem" }}>
                 {formatKey(key)}
               </Typography>
 

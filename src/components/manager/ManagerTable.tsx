@@ -350,7 +350,6 @@ const UsersTable: React.FC<{ onCreate: () => void }> = ({ onCreate }) => {
                 ))}
             </TableBody>
           </Table>
-
           <Box
             sx={{
               padding: "12px",
@@ -367,7 +366,6 @@ const UsersTable: React.FC<{ onCreate: () => void }> = ({ onCreate }) => {
             />
           </Box>
         </Box>
-
         <Box
           sx={{ display: "flex", justifyContent: "flex-end", paddingTop: 2.3 }}
         >
