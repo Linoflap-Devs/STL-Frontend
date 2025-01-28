@@ -189,7 +189,7 @@ const darkTheme = createTheme({
         root: {
           fontSize: '25px',
           fontWeight: '700',
-          marginBottom: '-0.4rem',
+          //marginBottom: '-0.4rem',
         },
       },
     }, // input types modal??

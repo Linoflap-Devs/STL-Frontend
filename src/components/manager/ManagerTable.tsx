@@ -1,5 +1,3 @@
-// manager/managertable.tsx
-
 import React, { useState } from "react";
 import {
   Container,
@@ -37,7 +35,7 @@ export interface User {
   province: string;
   city?: string;
   barangay?: string;
-  streetaddress?: string;
+  streetaddress: string;
   phonenumber: string;
   username: string;
   password?: string;
@@ -45,6 +43,7 @@ export interface User {
 }
 
 interface ManagerTableProps {
+  managers: User[];
   onCreate: () => void;
   onEdit: (user: User) => void;
 }
@@ -61,13 +60,15 @@ interface SortableTableCellProps {
   onSort: (sortKey: keyof User) => void;
 }
 
-const ManagerTable: React.FC<ManagerTableProps> = ({ onCreate, onEdit }) => {
+const ManagerTable: React.FC<ManagerTableProps> = ({
+  managers,
+  onCreate,
+  onEdit,
+}) => {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
-  const [updateModalOpen, setIsUpdateModalOpen] = useState<User | null>(null);
-
   const [sortConfig, setSortConfig] = useState<{
     key: keyof User;
     direction: "asc" | "desc";
@@ -76,46 +77,34 @@ const ManagerTable: React.FC<ManagerTableProps> = ({ onCreate, onEdit }) => {
     direction: "asc",
   });
 
-  const users: User[] = [
-    { id: 1, firstname: "Angelo", lastname: "Doe", username: "angelodoe", phonenumber: "0943 321 5342", region: "CALABARZON", province: "Metro Manila", regisdate: "2025/01/22 13:05:32" },
-    { id: 2, firstname: "Jimas", lastname: "Doe", username: "jimasdoe", phonenumber: "0943 321 5342", region: "National Capital Region", province: "Metro Manila", regisdate: "2025/01/22 13:05:32" },
-    { id: 3, firstname: "Jhustie", lastname: "Cruz", username: "jhustiedoe", phonenumber: "0943 321 5342", region: "National Capital Region", province: "Metro Manila", regisdate: "2025/01/22 13:05:32" },
-    { id: 4, firstname: "Thea", lastname: "Doe", username: "theadoe", phonenumber: "0943 321 5342", region: "National Capital Region", province: "Metro Manila", regisdate: "2025/01/22 13:05:32" },
-    { id: 5, firstname: "Jacob", lastname: "Doe", username: "jacobdoe", phonenumber: "0943 321 5342", region: "MIMAROPA", province: "Metro Manila", regisdate: "2025/01/22 13:05:32" },
-    { id: 6, firstname: "Wendell", lastname: "Ravago", username: "wendelldoe", phonenumber: "0943 321 5342", region: "National Capital Region", province: "Metro Manila", regisdate: "2025/01/22 13:05:32" },
-    { id: 7, firstname: "Rissa", lastname: "Doe", username: "rissadoe", phonenumber: "0943 321 5342", region: "National Capital Region", province: "Metro Manila", regisdate: "2025/01/22 13:05:32" },
-  ];
-
-  // Sorting logic
-  const sortedUsers = [...users].sort((a, b) => {
+  const sortedUsers = [...managers].sort((a, b) => {
     const valueA = a[sortConfig.key];
     const valueB = b[sortConfig.key];
-  
+
     if (typeof valueA === "string" && typeof valueB === "string") {
       return sortConfig.direction === "asc"
         ? valueA.localeCompare(valueB)
         : valueB.localeCompare(valueA);
     }
-  
+
     if (typeof valueA === "number" && typeof valueB === "number") {
       return sortConfig.direction === "asc" ? valueA - valueB : valueB - valueA;
     }
-  
+
     if (typeof valueA === "string" && typeof valueB === "string") {
       const dateA = new Date(valueA);
       const dateB = new Date(valueB);
-  
+
       if (!isNaN(dateA.getTime()) && !isNaN(dateB.getTime())) {
         return sortConfig.direction === "asc"
           ? dateA.getTime() - dateB.getTime()
           : dateB.getTime() - dateA.getTime();
       }
     }
-  
+
     return 0;
   });
-  
-  // Sortable table header component
+
   const SortableTableCell: React.FC<SortableTableCellProps> = ({
     label,
     sortKey,
@@ -125,22 +114,26 @@ const ManagerTable: React.FC<ManagerTableProps> = ({ onCreate, onEdit }) => {
     return (
       <TableCell sx={{ cursor: "pointer" }} onClick={() => onSort(sortKey)}>
         {label}
-        {sortConfig.key === sortKey && (
-          sortConfig.direction === "asc" ? (
+        {sortConfig.key === sortKey &&
+          (sortConfig.direction === "asc" ? (
             <KeyboardArrowUpIcon sx={{ fontSize: 16, marginLeft: 1 }} />
           ) : (
             <KeyboardArrowDownIcon sx={{ fontSize: 16, marginLeft: 1 }} />
-          )
-        )}
+          ))}
       </TableCell>
     );
   };
 
-  const handleChangePage = (event: React.MouseEvent<HTMLButtonElement> | null, newPage: number) => {
+  const handleChangePage = (
+    event: React.MouseEvent<HTMLButtonElement> | null,
+    newPage: number
+  ) => {
     setPage(newPage);
   };
 
-  const handleChangeRowsPerPage = (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+  const handleChangeRowsPerPage = (
+    event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
     setRowsPerPage(parseInt(event.target.value, 10));
     setPage(0);
   };
@@ -153,19 +146,22 @@ const ManagerTable: React.FC<ManagerTableProps> = ({ onCreate, onEdit }) => {
     setSortConfig({ key: column, direction });
   };
 
-  // for menu
-  const handleOpenMenu = (event: React.MouseEvent<HTMLButtonElement>, user: User) => {
+  const handleOpenMenu = (
+    event: React.MouseEvent<HTMLButtonElement>,
+    user: User
+  ) => {
     setAnchorEl(event.currentTarget);
     setSelectedUser(user);
   };
-  
+
   const handleCloseMenu = () => {
     setAnchorEl(null);
     setSelectedUser(null);
   };
 
   const handleEditClick = (user: User) => {
-    onEdit(user); // Call the function passed down as a prop
+    onEdit(user);
+    handleCloseMenu();
   };
 
   const handleDeleteUser = () => {
@@ -185,8 +181,7 @@ const ManagerTable: React.FC<ManagerTableProps> = ({ onCreate, onEdit }) => {
           sm: 700,
           md: 900,
           lg: 1200,
-          xl: 1200,
-          //xl: 1536,
+          xl: 1536,
         },
       }}
     >
@@ -252,7 +247,6 @@ const ManagerTable: React.FC<ManagerTableProps> = ({ onCreate, onEdit }) => {
                   ),
                 }}
               />
-
             </Box>
 
             <Button
@@ -319,7 +313,7 @@ const ManagerTable: React.FC<ManagerTableProps> = ({ onCreate, onEdit }) => {
                   sortConfig={sortConfig}
                   onSort={handleSort}
                 />
-                <TableCell sx={{ textAlign: "center" }}>Actions</TableCell>
+                <TableCell>Actions</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
@@ -328,7 +322,7 @@ const ManagerTable: React.FC<ManagerTableProps> = ({ onCreate, onEdit }) => {
                 .map((user) => (
                   <TableRow key={user.id}>
                     <TableCell>
-                      <Checkbox {...label} />
+                      <Checkbox />
                     </TableCell>
                     <TableCell>{user.firstname}</TableCell>
                     <TableCell>{user.lastname}</TableCell>
@@ -338,22 +332,30 @@ const ManagerTable: React.FC<ManagerTableProps> = ({ onCreate, onEdit }) => {
                     <TableCell>{user.province}</TableCell>
                     <TableCell>{user.regisdate}</TableCell>
                     <TableCell>
-                      <IconButton onClick={(e) => handleOpenMenu(e, user)}>
+                      <IconButton
+                        onClick={(event) => handleOpenMenu(event, user)}
+                      >
                         <MoreHorizIcon />
                       </IconButton>
-                      <Menu
-                        anchorEl={anchorEl}
-                        open={Boolean(selectedUser && selectedUser.id === user.id)}
-                        onClose={handleCloseMenu}
-                      >
-                      <MenuItem onClick={() => onEdit(user)}>Update</MenuItem>
-                      <MenuItem onClick={handleDeleteUser}>Delete</MenuItem>
-                      </Menu>
                     </TableCell>
                   </TableRow>
                 ))}
             </TableBody>
           </Table>
+          <Menu
+            anchorEl={anchorEl}
+            open={Boolean(anchorEl)}
+            onClose={handleCloseMenu}
+            MenuListProps={{
+              "aria-labelledby": "basic-button",
+            }}
+          >
+            <MenuItem onClick={() => handleEditClick(selectedUser!)}>
+              Edit
+            </MenuItem>
+            <MenuItem onClick={handleDeleteUser}>Delete</MenuItem>
+          </Menu>
+
           <Box
             sx={{
               padding: "12px",
@@ -362,7 +364,7 @@ const ManagerTable: React.FC<ManagerTableProps> = ({ onCreate, onEdit }) => {
             <TablePagination
               rowsPerPageOptions={[10, 25, 50, 100]}
               component="div"
-              count={users.length}
+              count={managers.length}
               rowsPerPage={rowsPerPage}
               page={page}
               onPageChange={handleChangePage}
@@ -394,4 +396,3 @@ const ManagerTable: React.FC<ManagerTableProps> = ({ onCreate, onEdit }) => {
 };
 
 export default ManagerTable;
-
