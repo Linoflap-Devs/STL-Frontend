@@ -76,6 +76,38 @@ const CreateManager: React.FC<CreateManagerProps> = ({ open, onClose, onSubmit }
       if (!value) {
         newErrors[key] = `${formatKey(key)} is required`;
       }
+      if (user.firstname && user.lastname) {
+        const nameRegex = /^[A-Za-z]+$/;
+        
+        if (!nameRegex.test(user.firstname)) {
+          newErrors.firstname = 'First Name can only contain letters.';
+        }
+        
+        if (!nameRegex.test(user.lastname)) {
+          newErrors.lastname = 'Last Name can only contain letters.';
+        }
+      }
+      if (user.phonenumber) {
+        const phoneRegex = /^09\d{2} \d{3} \d{4}$/;
+
+        if (!phoneRegex.test(user.phonenumber)) {
+          newErrors.phonenumber = 'Please enter a valid phone number. e.g. 09xx xxx xxxx';
+        }
+      }
+      if (user.username) {
+        const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+      
+        if (emailRegex.test(user.username)) {
+          newErrors.username = 'Please enter a valid email address.';
+        }
+      }
+      if (user.password) {
+        const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*])[A-Za-z\d!@#$%^&*]{8,}$/;
+      
+        if (!passwordRegex.test(user.password)) {
+          newErrors.password = 'Password must be at least 8 characters long and include at least one uppercase letter, one lowercase letter, one number, and one special character.';
+        }
+      }
     });
 
     setErrors(newErrors);
@@ -91,7 +123,7 @@ const CreateManager: React.FC<CreateManagerProps> = ({ open, onClose, onSubmit }
   // formatting key
   const formatKey = (key: string) => {
     return key
-      .replace(/(name|address|number)/gi, " $1") // add space before common words
+      .replace(/(name|address|number)/gi, " $1")
       .replace(/([a-z])([A-Z])/g, "$1 $2")
       .replace(/([A-Z]+)([A-Z][a-z])/g, "$1 $2")
       .trim()
@@ -99,31 +131,29 @@ const CreateManager: React.FC<CreateManagerProps> = ({ open, onClose, onSubmit }
       .map((word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
       .join(" ");
   };
-  
-  //const isSmallScreen = useMediaQuery(theme.breakpoints.down("sm"));
 
   return (
-      <Dialog
-        open={open}
-        onClose={onClose}
-        fullWidth
-        PaperProps={{
-          sx: {
-            width: "100%",
-            maxWidth: {
-              xs: "90%",
-              sm: "550px",
-              md: "620px",
-              lg: "650px",
-              xl: "620px"
-            }
+    <Dialog
+      open={open}
+      onClose={onClose}
+      fullWidth
+      PaperProps={{
+        sx: {
+          width: "100%",
+          maxWidth: {
+            xs: "90%",
+            sm: "550px",
+            md: "620px",
+            lg: "650px",
+            xl: "620px"
           }
-        }}
-      >
+        }
+      }}
+    >
       <DialogTitle>Add Manager</DialogTitle>
       <DialogContent>
         <Grid container rowSpacing={2.3} columnSpacing={{ xs: 1, sm: 1, md: 2.5 }}>
-        {Object.keys(user).map((key) => (
+          {Object.keys(user).map((key) => (
             <Grid item xs={12} sm={6} sx={{ padding: { xs: 0, sm: 0 } }} key={key}>
               <Typography sx={{ textAlign: "left", marginBottom: "0.3rem", fontSize: "0.90rem" }}>
                 {formatKey(key)}
