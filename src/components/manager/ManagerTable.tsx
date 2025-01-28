@@ -68,7 +68,7 @@ const UsersTable: React.FC<{ onCreate: () => void }> = ({ onCreate }) => {
     { id: 2, firstname: "Jimas", lastname: "Doe", username: "jimasdoe", phonenumber: "0943 321 5342", region: "National Capital Region", province: "Metro Manila", regisdate: "2025/01/22 13:05:32", },
     { id: 3, firstname: "Jhustie", lastname: "Cruz", username: "jhustiedoe", phonenumber: "0943 321 5342", region: "National Capital Region", province: "Metro Manila", regisdate: "2025/01/22 13:05:32", },
     { id: 4, firstname: "Thea", lastname: "Doe", username: "theadoe", phonenumber: "0943 321 5342", region: "National Capital Region", province: "Metro Manila", regisdate: "2025/01/22 13:05:32", },
-    { id: 5, firstname: "Jacob", lastname: "Doe", username: "jacobdoe", phonenumber: "0943 321 5342", region: "National Capital Region", province: "Metro Manila", regisdate: "2025/01/22 13:05:32", },
+    { id: 5, firstname: "Jacob", lastname: "Doe", username: "jacobdoe", phonenumber: "0943 321 5342", region: "MIMAROPA", province: "Metro Manila", regisdate: "2025/01/22 13:05:32", },
     { id: 6, firstname: "Wendell", lastname: "Ravago", username: "wendelldoe", phonenumber: "0943 321 5342", region: "National Capital Region", province: "Metro Manila", regisdate: "2025/01/22 13:05:32", },
     { id: 7, firstname: "Rissa", lastname: "Doe", username: "rissadoe", phonenumber: "0943 321 5342", region: "National Capital Region", province: "Metro Manila", regisdate: "2025/01/22 13:05:32", },
   ];
@@ -230,6 +230,7 @@ const UsersTable: React.FC<{ onCreate: () => void }> = ({ onCreate }) => {
                 variant="outlined"
                 placeholder="Search"
                 sx={{
+                  maxWidth: "350px",
                   "& .MuiOutlinedInput-root": {
                     padding: "8px 12px",
                   },
@@ -245,6 +246,7 @@ const UsersTable: React.FC<{ onCreate: () => void }> = ({ onCreate }) => {
                   ),
                 }}
               />
+
             </Box>
 
             <Button

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { FC } from 'react';
 import AppBar from '@mui/material/AppBar';
 import Box from '@mui/material/Box';
 import Toolbar from '@mui/material/Toolbar';
@@ -11,10 +11,11 @@ import Container from '@mui/material/Container';
 import { UserSectionData } from '../../data/AdminSectionData';
 
 interface AdminHeaderProps {
+  children?: React.ReactNode;
   pages: string[];
 }
 
-const AdminHeader: React.FC<AdminHeaderProps> = ({ pages }) => {
+const AdminHeader: FC<AdminHeaderProps> = ({ children, pages, ...props }) => {
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
 
   const handleMenuOpen = (event: React.MouseEvent<HTMLElement>) => {

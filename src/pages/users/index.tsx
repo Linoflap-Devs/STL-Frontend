@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import AdminHeader from '../../components/layout/AdminHeader';
 import ManagerTable from '~/components/manager/ManagerTable';
 import CreateManager from '~/components/manager/CreateManager';
 
@@ -28,12 +27,11 @@ const UsersPage = () => {
 
   return (
     <>
-      <AdminHeader pages={[]} />
       <ManagerTable onCreate={handleUserCreate} />
       <CreateManager
         open={isModalOpen} 
         onClose={handleUserCloseModal} 
-        onSubmit={handleSubmitUser} 
+        onSubmit={handleSubmitUser}
         userData={selectedUser}
       />
     </>

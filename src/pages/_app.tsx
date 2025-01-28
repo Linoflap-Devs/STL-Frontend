@@ -1,15 +1,14 @@
-// src/pages/_app.tsx
 import { AppProps } from 'next/app';
-import Layout from '../layout';
 import { useRouter } from 'next/router';
 import '../globals.css';
 import { ThemeProvider, CssBaseline } from '@mui/material';
 import darkTheme from '../theme';
+import AdminHeader from '../components/layout/AdminHeader';
 
 const App = ({ Component, pageProps }: AppProps) => {
   const router = useRouter();
 
-  const excludedPaths = ['/', '/users']; // paths to exclude from layout
+  const excludedPaths = ['/'];
   const isExcludedPath = excludedPaths.includes(router.pathname || 'Not available');
 
   if (isExcludedPath) {
@@ -24,9 +23,14 @@ const App = ({ Component, pageProps }: AppProps) => {
   return (
     <ThemeProvider theme={darkTheme}>
       <CssBaseline />
-      <Layout>
-        <Component {...pageProps} />
-      </Layout>
+      <div>
+        <AdminHeader pages={[]} />
+        <main style={{ flexGrow: 1 }}>
+          <Component {...pageProps} />
+        </main>
+        <footer style={{ padding: '2rem' }}>
+        </footer>
+      </div>
     </ThemeProvider>
   );
 };

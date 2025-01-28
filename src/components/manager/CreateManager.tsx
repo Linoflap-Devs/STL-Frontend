@@ -16,9 +16,9 @@ import {
   Box,
   useMediaQuery,
 } from "@mui/material";
+
 import { Visibility, VisibilityOff } from "@mui/icons-material";
 import { SelectChangeEvent } from "@mui/material";
-//import theme from "~/theme";
 
 interface CreateManagerProps {
   open: boolean;
@@ -38,7 +38,6 @@ interface CreateManagerProps {
 }
 
 const CreateManager: React.FC<CreateManagerProps> = ({ open, onClose, onSubmit }) => {
-  // the followed sequence
   const [user, setUser] = useState({
     firstname: "",
     lastname: "",
@@ -61,11 +60,13 @@ const CreateManager: React.FC<CreateManagerProps> = ({ open, onClose, onSubmit }
     barangay: "",
   });
 
+  // for form inputs
   const handleManagerChange = (e: React.ChangeEvent<{ name?: string; value: unknown }>) => {
     const { name, value } = e.target;
     setUser((prevUser) => ({ ...prevUser, [name as string]: value as string }));
   };
 
+  // for select dropdown
   const handleSelectChange = (e: SelectChangeEvent<string>, name: string) => {
     setSelectState((prevState) => ({ ...prevState, [name]: e.target.value }));
   };
@@ -78,11 +79,11 @@ const CreateManager: React.FC<CreateManagerProps> = ({ open, onClose, onSubmit }
       }
       if (user.firstname && user.lastname) {
         const nameRegex = /^[A-Za-z]+$/;
-        
+
         if (!nameRegex.test(user.firstname)) {
           newErrors.firstname = 'First Name can only contain letters.';
         }
-        
+
         if (!nameRegex.test(user.lastname)) {
           newErrors.lastname = 'Last Name can only contain letters.';
         }
@@ -96,14 +97,14 @@ const CreateManager: React.FC<CreateManagerProps> = ({ open, onClose, onSubmit }
       }
       if (user.username) {
         const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
-      
+
         if (emailRegex.test(user.username)) {
           newErrors.username = 'Please enter a valid email address.';
         }
       }
       if (user.password) {
         const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*])[A-Za-z\d!@#$%^&*]{8,}$/;
-      
+
         if (!passwordRegex.test(user.password)) {
           newErrors.password = 'Password must be at least 8 characters long and include at least one uppercase letter, one lowercase letter, one number, and one special character.';
         }
@@ -142,19 +143,20 @@ const CreateManager: React.FC<CreateManagerProps> = ({ open, onClose, onSubmit }
           width: "100%",
           maxWidth: {
             xs: "90%",
-            sm: "550px",
-            md: "620px",
+            sm: "80%",
+            md: "600px",
             lg: "650px",
-            xl: "620px"
+            xl: "800px"
           }
         }
       }}
     >
       <DialogTitle>Add Manager</DialogTitle>
       <DialogContent>
-        <Grid container rowSpacing={2.3} columnSpacing={{ xs: 1, sm: 1, md: 2.5 }}>
+        <Grid container rowSpacing={2.3} columnSpacing={{ xs: 1, sm: 3, md: 2.5 }}>
           {Object.keys(user).map((key) => (
             <Grid item xs={12} sm={6} sx={{ padding: { xs: 0, sm: 0 } }} key={key}>
+
               <Typography sx={{ textAlign: "left", marginBottom: "0.3rem", fontSize: "0.90rem" }}>
                 {formatKey(key)}
               </Typography>
@@ -170,7 +172,6 @@ const CreateManager: React.FC<CreateManagerProps> = ({ open, onClose, onSubmit }
                       value={user[key as keyof typeof user]}
                       onChange={handleManagerChange}
                       name={key}
-                      sx={inputStyles}
                       error={!!errors[key]}
                       helperText={''}
                       InputProps={{
@@ -192,20 +193,20 @@ const CreateManager: React.FC<CreateManagerProps> = ({ open, onClose, onSubmit }
                     </Button>
                   </Grid>
                   {errors[key] && (
-                    <Box sx={{ color: 'error.main', mt: "3px", marginLeft: '12px', fontSize: '0.85rem' }}>
+                    <Box sx={{ color: 'error.main', mt: "3px", marginLeft: '12px', fontSize: '0.80rem' }}>
                       {errors[key]}
                     </Box>
                   )}
                 </Grid>
 
-              ) : key === "region" || key === "province" || key === "city" || key === "barangay" ? ( // Input Selects
+              ) : key === "region" || key === "province" || key === "city" || key === "barangay" ? (
                 <FormControl fullWidth error={!!errors[key]}>
                   <Select
                     displayEmpty
                     value={selectState[key as keyof typeof selectState]}
                     onChange={(e) => handleSelectChange(e, key)}
                     name={key}
-                    sx={selectStyles}
+                    //sx={selectStyles}
                     inputProps={{
                       "aria-label": formatKey(key),
                     }}
@@ -219,7 +220,7 @@ const CreateManager: React.FC<CreateManagerProps> = ({ open, onClose, onSubmit }
                   {errors[key] && <FormHelperText>{errors[key]}</FormHelperText>}
                 </FormControl>
 
-              ) : ( // Input TextFields
+              ) : (
                 <TextField
                   fullWidth
                   variant="outlined"
@@ -227,7 +228,7 @@ const CreateManager: React.FC<CreateManagerProps> = ({ open, onClose, onSubmit }
                   value={user[key as keyof typeof user]}
                   onChange={handleManagerChange}
                   name={key}
-                  sx={inputStyles}
+                  //sx={inputStyles}
                   error={!!errors[key]}
                   helperText={errors[key]}
                 />
@@ -247,42 +248,14 @@ const CreateManager: React.FC<CreateManagerProps> = ({ open, onClose, onSubmit }
             borderRadius: '8px',
             fontWeight: 700,
           }}
-          variant="contained"> Add Manager
+          variant="contained"
+        >
+          Add Manager
         </Button>
 
       </DialogContent>
     </Dialog>
   );
 };
-
-const inputStyles = {
-  "& .MuiOutlinedInput-root": {
-    "& fieldset": {
-      borderColor: "#D1D5DB",
-      margin: '0px',
-    },
-    "&.Mui-error fieldset": {
-      borderColor: "#F05252",
-    },
-  },
-}
-
-const selectStyles = {
-  "& .MuiOutlinedInput-root": {
-    "& fieldset": {
-      borderColor: "transparent", // Default state with no border
-    },
-    "&:hover fieldset": {
-      borderColor: "#D1D5DB", // Hover state border color
-    },
-    "&.Mui-focused fieldset": {
-      borderColor: "#D1D5DB", // Border color when focused
-    },
-    "&.Mui-error fieldset": {
-      borderColor: "#F05252", // Error state border color
-    },
-  },
-};
-
 
 export default CreateManager;

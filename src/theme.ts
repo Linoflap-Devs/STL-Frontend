@@ -78,8 +78,8 @@ const darkTheme = createTheme({
       styleOverrides: {
         root: {
           color: '#D1D5D8',
-          fontSize: '12px',
-          padding: 10,
+          fontSize: '12.5px',
+          padding: 7.5,
           borderBottom: "1.5px solid #374151",
         },
         head: {
@@ -149,9 +149,9 @@ const darkTheme = createTheme({
         root: {
           backgroundColor: "transparent",
           color: "#ffffff",
-          padding: "16px 55px 16px 12px",  
+          padding: "17px 55px 17px 12px",  
           borderRadius: "0px",
-          fontSize: 12,
+          fontSize: 14,
         },
       },
     },
@@ -163,12 +163,6 @@ const darkTheme = createTheme({
         },
         displayedRows: {
           color: "#D1D5D8",
-        },  
-        actions: {
-          "& .MuiIconButton-root": {
-            color: "#D1D5D8",
-            padding: "0",
-          },
         },
       },
     },
@@ -182,12 +176,20 @@ const darkTheme = createTheme({
         },
       },
     },
+    MuiDialogContent: {
+      styleOverrides: {
+        root: {
+          height: 'auto', 
+          //overflow: 'hidden',
+        },
+      },
+    },
     MuiDialogTitle: {
       styleOverrides: {
         root: {
           fontSize: '25px',
           fontWeight: '700',
-          marginBottom: '-0.5rem',
+          marginBottom: '-0.4rem',
         },
       },
     }, // input types modal??
@@ -201,7 +203,7 @@ const darkTheme = createTheme({
     MuiOutlinedInput: {
       styleOverrides: {
         root: {
-          backgroundColor: "#374151", // Correct property name
+          backgroundColor: "#374151",
           color: "#ffffff",
           fontSize: '0.85rem',
           "&:hover fieldset": {
@@ -210,15 +212,12 @@ const darkTheme = createTheme({
           "&.Mui-error fieldset": {
             borderColor: "#F05252",
           },
-          width: '100% !important', // Force width on the root
-          '@media (max-width:600px)': {
-            width: '100% !important', // Ensure it takes full width on small screens
-          },
+          width: '100% !important',
         },
         input: {
           color: "#ffffff",
-          padding: "7px 16px",
-          width: '100% !important', // Ensure the input itself takes full width
+          padding: "9px 16px",
+          width: '100% !important',
         }
       },
     },
@@ -227,17 +226,14 @@ const darkTheme = createTheme({
         root: {
           backgroundColor: "#374151",
           borderColor: "#D1D5DB",
-          width: '100%', // Default width
-          '@media (max-width:600px)': {
-            width: '100%',
-          },
+          width: '100%',
         },
         icon: {
           color: "#ffffff",
         },
         select: {
           color: "#9CA3AF",
-          padding: "7px 16px",
+          padding: "9px 16px",
         },
       },
     },
@@ -245,6 +241,7 @@ const darkTheme = createTheme({
       styleOverrides: {
         root: {
           fontSize: '0.80rem',
+          
         },
         input: {
           "::placeholder": {
@@ -256,7 +253,7 @@ const darkTheme = createTheme({
     MuiFormHelperText : {
       styleOverrides: {
         root: {
-          fontSize: '0.70rem',
+          fontSize: '0.80rem',
           marginLeft: '0px',
         }
       }
