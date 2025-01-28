@@ -12,36 +12,59 @@ import {
   TableRow,
   TextField,
   InputAdornment,
-  Menu,
-  MenuItem,
   IconButton,
   TablePagination,
+  Menu,
+  MenuItem,
+  Checkbox,
 } from "@mui/material";
 
 import SearchIcon from "@mui/icons-material/Search";
 import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
-
 import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 
-import Checkbox from "@mui/material/Checkbox";
 import { UserSectionData } from "../../data/AdminSectionData";
 
-interface User {
-  id: number;
+// define user
+export interface User {
+  id?: number;
   firstname: string;
   lastname: string;
-  username: string;
-  phonenumber: string;
   region: string;
   province: string;
-  regisdate: string;
+  city?: string;  // Make these optional
+  barangay?: string;
+  streetaddress?: string;
+  phonenumber: string;
+  username: string;
+  password?: string;  // Make this optional as well
+  regisdate?: string;
 }
 
-const UsersTable: React.FC<{ onCreate: () => void }> = ({ onCreate }) => {
+interface ManagerTableProps {
+  onCreate: () => void;
+  onEdit: (user: User) => void;
+}
+
+interface SortConfig {
+  key: string;
+  direction: "asc" | "desc";
+}
+
+interface SortableTableCellProps {
+  label: string;
+  sortKey: keyof User;
+  sortConfig: SortConfig;
+  onSort: (sortKey: keyof User) => void;
+}
+
+const ManagerTable: React.FC<ManagerTableProps> = ({ onCreate, onEdit }) => {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
+  const [selectedUser, setSelectedUser] = useState<User | null>(null);
+  const [updateModalOpen, setIsUpdateModalOpen] = useState<User | null>(null);
 
   const [sortConfig, setSortConfig] = useState<{
     key: keyof User;
@@ -51,97 +74,48 @@ const UsersTable: React.FC<{ onCreate: () => void }> = ({ onCreate }) => {
     direction: "asc",
   });
 
-  interface SortConfig {
-    key: string;
-    direction: "asc" | "desc";
-  }
-
-  interface SortableTableCellProps {
-    label: string;
-    sortKey: keyof User;
-    sortConfig: SortConfig;
-    onSort: (sortKey: keyof User) => void;
-  }
-
   const users: User[] = [
-    { id: 1, firstname: "Angelo", lastname: "Doe", username: "angelodoe", phonenumber: "0943 321 5342", region: "CALABARZON", province: "Metro Manila", regisdate: "2025/01/22 13:05:32", },
-    { id: 2, firstname: "Jimas", lastname: "Doe", username: "jimasdoe", phonenumber: "0943 321 5342", region: "National Capital Region", province: "Metro Manila", regisdate: "2025/01/22 13:05:32", },
-    { id: 3, firstname: "Jhustie", lastname: "Cruz", username: "jhustiedoe", phonenumber: "0943 321 5342", region: "National Capital Region", province: "Metro Manila", regisdate: "2025/01/22 13:05:32", },
-    { id: 4, firstname: "Thea", lastname: "Doe", username: "theadoe", phonenumber: "0943 321 5342", region: "National Capital Region", province: "Metro Manila", regisdate: "2025/01/22 13:05:32", },
-    { id: 5, firstname: "Jacob", lastname: "Doe", username: "jacobdoe", phonenumber: "0943 321 5342", region: "MIMAROPA", province: "Metro Manila", regisdate: "2025/01/22 13:05:32", },
-    { id: 6, firstname: "Wendell", lastname: "Ravago", username: "wendelldoe", phonenumber: "0943 321 5342", region: "National Capital Region", province: "Metro Manila", regisdate: "2025/01/22 13:05:32", },
-    { id: 7, firstname: "Rissa", lastname: "Doe", username: "rissadoe", phonenumber: "0943 321 5342", region: "National Capital Region", province: "Metro Manila", regisdate: "2025/01/22 13:05:32", },
+    { id: 1, firstname: "Angelo", lastname: "Doe", username: "angelodoe", phonenumber: "0943 321 5342", region: "CALABARZON", province: "Metro Manila", regisdate: "2025/01/22 13:05:32" },
+    { id: 2, firstname: "Jimas", lastname: "Doe", username: "jimasdoe", phonenumber: "0943 321 5342", region: "National Capital Region", province: "Metro Manila", regisdate: "2025/01/22 13:05:32" },
+    { id: 3, firstname: "Jhustie", lastname: "Cruz", username: "jhustiedoe", phonenumber: "0943 321 5342", region: "National Capital Region", province: "Metro Manila", regisdate: "2025/01/22 13:05:32" },
+    { id: 4, firstname: "Thea", lastname: "Doe", username: "theadoe", phonenumber: "0943 321 5342", region: "National Capital Region", province: "Metro Manila", regisdate: "2025/01/22 13:05:32" },
+    { id: 5, firstname: "Jacob", lastname: "Doe", username: "jacobdoe", phonenumber: "0943 321 5342", region: "MIMR", province: "Metro Manila", regisdate: "2025/01/22 13:05:32" },
+    { id: 6, firstname: "Wendell", lastname: "Ravago", username: "wendelldoe", phonenumber: "0943 321 5342", region: "National Capital Region", province: "Metro Manila", regisdate: "2025/01/22 13:05:32" },
+    { id: 7, firstname: "Rissa", lastname: "Doe", username: "rissadoe", phonenumber: "0943 321 5342", region: "National Capital Region", province: "Metro Manila", regisdate: "2025/01/22 13:05:32" },
   ];
 
-  // sorting
+  // Sorting logic
   const sortedUsers = [...users].sort((a, b) => {
     const valueA = a[sortConfig.key];
     const valueB = b[sortConfig.key];
-
-    // Sort strings alphabetically
+  
     if (typeof valueA === "string" && typeof valueB === "string") {
       return sortConfig.direction === "asc"
         ? valueA.localeCompare(valueB)
         : valueB.localeCompare(valueA);
     }
-
-    // Sort numbers
+  
     if (typeof valueA === "number" && typeof valueB === "number") {
       return sortConfig.direction === "asc" ? valueA - valueB : valueB - valueA;
     }
-
-    // Sort date strings
-    if (typeof valueA === "string" && !isNaN(Date.parse(valueA))) {
+  
+    // Check if both values are strings that represent valid date formats
+    if (typeof valueA === "string" && typeof valueB === "string") {
       const dateA = new Date(valueA);
       const dateB = new Date(valueB);
-      return sortConfig.direction === "asc"
-        ? dateA.getTime() - dateB.getTime()
-        : dateB.getTime() - dateA.getTime();
+  
+      // Only compare if both date objects are valid (not NaN)
+      if (!isNaN(dateA.getTime()) && !isNaN(dateB.getTime())) {
+        return sortConfig.direction === "asc"
+          ? dateA.getTime() - dateB.getTime()
+          : dateB.getTime() - dateA.getTime();
+      }
     }
+  
     return 0;
   });
-
-  const handleOpenMenu = (event: React.MouseEvent<HTMLButtonElement>) => {
-    setAnchorEl(event.currentTarget);
-  };
-
-  const handleCloseMenu = () => {
-    setAnchorEl(null);
-  };
-
-  const handleUpdate = () => {
-    console.log("Update clicked");
-    handleCloseMenu();
-  };
-
-  const handleDelete = () => {
-    console.log("Delete clicked");
-    handleCloseMenu();
-  };
-
-  const handleChangePage = (
-    event: React.MouseEvent<HTMLButtonElement> | null,
-    newPage: number
-  ) => {
-    setPage(newPage);
-  };
-
-  const handleChangeRowsPerPage = (
-    event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
-  ) => {
-    setRowsPerPage(parseInt(event.target.value, 10));
-    setPage(0);
-  };
-
-  const handleSort = (column: keyof User) => {
-    let direction: "asc" | "desc" = "asc";
-    if (sortConfig.key === column && sortConfig.direction === "asc") {
-      direction = "desc";
-    }
-    setSortConfig({ key: column, direction });
-  };
-
-  // reusable sorting code
+  
+  // Sortable table header component
   const SortableTableCell: React.FC<SortableTableCellProps> = ({
     label,
     sortKey,
@@ -149,10 +123,7 @@ const UsersTable: React.FC<{ onCreate: () => void }> = ({ onCreate }) => {
     onSort,
   }) => {
     return (
-      <TableCell
-        sx={{ cursor: "pointer" }}
-        onClick={() => onSort(sortKey)}
-      >
+      <TableCell sx={{ cursor: "pointer" }} onClick={() => onSort(sortKey)}>
         {label}
         {sortConfig.key === sortKey && (
           sortConfig.direction === "asc" ? (
@@ -165,7 +136,41 @@ const UsersTable: React.FC<{ onCreate: () => void }> = ({ onCreate }) => {
     );
   };
 
-  // for checkbox
+  const handleChangePage = (event: React.MouseEvent<HTMLButtonElement> | null, newPage: number) => {
+    setPage(newPage);
+  };
+
+  const handleChangeRowsPerPage = (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    setRowsPerPage(parseInt(event.target.value, 10));
+    setPage(0);
+  };
+
+  const handleSort = (column: keyof User) => {
+    let direction: "asc" | "desc" = "asc";
+    if (sortConfig.key === column && sortConfig.direction === "asc") {
+      direction = "desc";
+    }
+    setSortConfig({ key: column, direction });
+  };
+
+  const handleOpenMenu = (event: React.MouseEvent<HTMLButtonElement>, user: User) => {
+    setAnchorEl(event.currentTarget);
+    setSelectedUser(user);
+  };
+
+  const handleCloseMenu = () => {
+    setAnchorEl(null);
+  };
+
+  const handleOpenUpdateModal = (user: User) => {
+    setIsUpdateModalOpen(user);
+  };
+
+  const handleDeleteUser = () => {
+    console.log("Delete user:", selectedUser);
+    handleCloseMenu();
+  };
+
   const label = { inputProps: { "aria-label": "Checkbox demo" } };
 
   return (
@@ -201,7 +206,6 @@ const UsersTable: React.FC<{ onCreate: () => void }> = ({ onCreate }) => {
         </Typography>
       </Box>
 
-      {/* Table Section */}
       <TableContainer>
         <Box sx={{ backgroundColor: "#1F2937" }}>
           <Box
@@ -332,21 +336,17 @@ const UsersTable: React.FC<{ onCreate: () => void }> = ({ onCreate }) => {
                     <TableCell>{user.province}</TableCell>
                     <TableCell>{user.regisdate}</TableCell>
                     <TableCell>
-                      <Box sx={{ display: "flex", justifyContent: "center" }}>
-                        <IconButton onClick={handleOpenMenu}>
-                          <MoreHorizIcon
-                            sx={{ fontSize: 20, color: "#9CA3AF" }}
-                          />
-                        </IconButton>
-                        <Menu
-                          anchorEl={anchorEl}
-                          open={Boolean(anchorEl)}
-                          onClose={handleCloseMenu}
-                        >
-                          <MenuItem onClick={handleUpdate}>Update</MenuItem>
-                          <MenuItem onClick={handleDelete}>Delete</MenuItem>
-                        </Menu>
-                      </Box>
+                      <IconButton onClick={(e) => handleOpenMenu(e, user)}>
+                        <MoreHorizIcon />
+                      </IconButton>
+                      <Menu
+                        anchorEl={anchorEl}
+                        open={Boolean(selectedUser && selectedUser.id === user.id)}
+                        onClose={handleCloseMenu}
+                      >
+                        <MenuItem onClick={() => handleOpenUpdateModal(user)}>Update</MenuItem>
+                        <MenuItem onClick={handleDeleteUser}>Delete</MenuItem>
+                      </Menu>
                     </TableCell>
                   </TableRow>
                 ))}
@@ -358,7 +358,7 @@ const UsersTable: React.FC<{ onCreate: () => void }> = ({ onCreate }) => {
             }}
           >
             <TablePagination
-              rowsPerPageOptions={[5, 10, 25, 50, 100]}
+              rowsPerPageOptions={[10, 25, 50, 100]}
               component="div"
               count={users.length}
               rowsPerPage={rowsPerPage}
@@ -373,7 +373,6 @@ const UsersTable: React.FC<{ onCreate: () => void }> = ({ onCreate }) => {
         >
           <Button
             variant="contained"
-            onClick={onCreate}
             sx={{
               paddingX: 3.9,
               paddingY: 0.9,
@@ -392,4 +391,5 @@ const UsersTable: React.FC<{ onCreate: () => void }> = ({ onCreate }) => {
   );
 };
 
-export default UsersTable;
+export default ManagerTable;
+

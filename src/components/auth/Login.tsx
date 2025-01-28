@@ -38,7 +38,7 @@ const LoginPage = () => {
     const isValid = validate();
 
     if (isValid) {
-      router.push("/users");
+      router.push("/managers");
     } else {
       console.log("Validation failed.");
     }

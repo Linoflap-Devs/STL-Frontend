@@ -97,8 +97,9 @@ const CreateManager: React.FC<CreateManagerProps> = ({ open, onClose, onSubmit }
       }
       if (user.username) {
         const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+        const restrictedCharsRegex = /[@!#$%^&*()_+=<>]/;
 
-        if (emailRegex.test(user.username)) {
+        if (emailRegex.test(user.username) || restrictedCharsRegex.test(user.username)) {
           newErrors.username = 'Please enter a valid email address.';
         }
       }
