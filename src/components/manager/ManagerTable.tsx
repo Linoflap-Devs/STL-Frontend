@@ -1,3 +1,5 @@
+// manager/managertable.tsx
+
 import React, { useState } from "react";
 import {
   Container,
@@ -33,12 +35,12 @@ export interface User {
   lastname: string;
   region: string;
   province: string;
-  city?: string;  // Make these optional
+  city?: string;
   barangay?: string;
   streetaddress?: string;
   phonenumber: string;
   username: string;
-  password?: string;  // Make this optional as well
+  password?: string;
   regisdate?: string;
 }
 
@@ -79,7 +81,7 @@ const ManagerTable: React.FC<ManagerTableProps> = ({ onCreate, onEdit }) => {
     { id: 2, firstname: "Jimas", lastname: "Doe", username: "jimasdoe", phonenumber: "0943 321 5342", region: "National Capital Region", province: "Metro Manila", regisdate: "2025/01/22 13:05:32" },
     { id: 3, firstname: "Jhustie", lastname: "Cruz", username: "jhustiedoe", phonenumber: "0943 321 5342", region: "National Capital Region", province: "Metro Manila", regisdate: "2025/01/22 13:05:32" },
     { id: 4, firstname: "Thea", lastname: "Doe", username: "theadoe", phonenumber: "0943 321 5342", region: "National Capital Region", province: "Metro Manila", regisdate: "2025/01/22 13:05:32" },
-    { id: 5, firstname: "Jacob", lastname: "Doe", username: "jacobdoe", phonenumber: "0943 321 5342", region: "MIMR", province: "Metro Manila", regisdate: "2025/01/22 13:05:32" },
+    { id: 5, firstname: "Jacob", lastname: "Doe", username: "jacobdoe", phonenumber: "0943 321 5342", region: "MIMAROPA", province: "Metro Manila", regisdate: "2025/01/22 13:05:32" },
     { id: 6, firstname: "Wendell", lastname: "Ravago", username: "wendelldoe", phonenumber: "0943 321 5342", region: "National Capital Region", province: "Metro Manila", regisdate: "2025/01/22 13:05:32" },
     { id: 7, firstname: "Rissa", lastname: "Doe", username: "rissadoe", phonenumber: "0943 321 5342", region: "National Capital Region", province: "Metro Manila", regisdate: "2025/01/22 13:05:32" },
   ];
@@ -99,12 +101,10 @@ const ManagerTable: React.FC<ManagerTableProps> = ({ onCreate, onEdit }) => {
       return sortConfig.direction === "asc" ? valueA - valueB : valueB - valueA;
     }
   
-    // Check if both values are strings that represent valid date formats
     if (typeof valueA === "string" && typeof valueB === "string") {
       const dateA = new Date(valueA);
       const dateB = new Date(valueB);
   
-      // Only compare if both date objects are valid (not NaN)
       if (!isNaN(dateA.getTime()) && !isNaN(dateB.getTime())) {
         return sortConfig.direction === "asc"
           ? dateA.getTime() - dateB.getTime()
@@ -153,17 +153,19 @@ const ManagerTable: React.FC<ManagerTableProps> = ({ onCreate, onEdit }) => {
     setSortConfig({ key: column, direction });
   };
 
+  // for menu
   const handleOpenMenu = (event: React.MouseEvent<HTMLButtonElement>, user: User) => {
     setAnchorEl(event.currentTarget);
     setSelectedUser(user);
   };
-
+  
   const handleCloseMenu = () => {
     setAnchorEl(null);
+    setSelectedUser(null);
   };
 
-  const handleOpenUpdateModal = (user: User) => {
-    setIsUpdateModalOpen(user);
+  const handleEditClick = (user: User) => {
+    onEdit(user); // Call the function passed down as a prop
   };
 
   const handleDeleteUser = () => {
@@ -344,8 +346,8 @@ const ManagerTable: React.FC<ManagerTableProps> = ({ onCreate, onEdit }) => {
                         open={Boolean(selectedUser && selectedUser.id === user.id)}
                         onClose={handleCloseMenu}
                       >
-                        <MenuItem onClick={() => handleOpenUpdateModal(user)}>Update</MenuItem>
-                        <MenuItem onClick={handleDeleteUser}>Delete</MenuItem>
+                      <MenuItem onClick={() => onEdit(user)}>Update</MenuItem>
+                      <MenuItem onClick={handleDeleteUser}>Delete</MenuItem>
                       </Menu>
                     </TableCell>
                   </TableRow>

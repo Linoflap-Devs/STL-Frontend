@@ -1,163 +1,227 @@
 import React, { useState, useEffect } from "react";
-import ManagerTable, { User } from '~/components/manager/ManagerTable';
-
 import {
-    Dialog,
-    DialogActions,
-    DialogContent,
-    DialogTitle,
-    Button,
-    TextField,
-    Grid,
-    IconButton,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
+  Button,
+  TextField,
+  Typography,
+  Grid,
+  Select,
+  MenuItem,
+  IconButton,
+  FormControl,
+  FormHelperText,
+  Box,
 } from "@mui/material";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
+import { SelectChangeEvent } from "@mui/material";
 
 interface UpdateManagerProps {
-    open: boolean;
-    onClose: () => void;
-    onSubmit: (userData: User) => void;
-    manager: User | null;
+  open: boolean;
+  onClose: () => void;
+  onSubmit: (userData: {
+    id: string;
+    firstname: string;
+    lastname: string;
+    region: string;
+    province: string;
+    city: string;
+    barangay: string;
+    streetaddress: string;
+    phonenumber: string;
+    username: string;
+    password: string;
+  }) => void;
+  manager: {
+    id: string;
+    firstname: string;
+    lastname: string;
+    region: string;
+    province: string;
+    city: string;
+    barangay: string;
+    streetaddress: string;
+    phonenumber: string;
+    username: string;
+    password: string;
+  };
 }
 
 const UpdateManager: React.FC<UpdateManagerProps> = ({ open, onClose, onSubmit, manager }) => {
-    const [showPassword, setShowPassword] = useState(false);
+  const [user, setUser] = useState(manager);
+  const [errors, setErrors] = useState<{ [key: string]: string }>({});
+  const [showPassword, setShowPassword] = useState(false);
+  const [selectState, setSelectState] = useState({
+    region: manager.region,
+    province: manager.province,
+    city: manager.city,
+    barangay: manager.barangay,
+  });
 
-    const [user, setUser] = useState<User>({
-        id: manager?.id || undefined,
-        firstname: manager?.firstname || '',
-        lastname: manager?.lastname || '',
-        region: manager?.region || '',
-        province: manager?.province || '',
-        city: manager?.city || '',
-        barangay: manager?.barangay || '',
-        streetaddress: manager?.streetaddress || '',
-        phonenumber: manager?.phonenumber || '',
-        username: manager?.username || '',
-        password: manager?.password || '',
+  useEffect(() => {
+    setUser(manager);
+    setSelectState({
+      region: manager.region,
+      province: manager.province,
+      city: manager.city,
+      barangay: manager.barangay,
+    });
+  }, [manager]);
+
+  const handleManagerChange = (e: React.ChangeEvent<{ name?: string; value: unknown }>) => {
+    const { name, value } = e.target;
+    setUser((prevUser) => ({ ...prevUser, [name as string]: value as string }));
+  };
+
+  const handleSelectChange = (e: SelectChangeEvent<string>, name: string) => {
+    setSelectState((prevState) => ({ ...prevState, [name]: e.target.value }));
+  };
+
+  const validate = () => {
+    const newErrors: { [key: string]: string } = {};
+    Object.entries(user).forEach(([key, value]) => {
+      if (!value) {
+        newErrors[key] = `${formatKey(key)} is required`;
+      }
+      if (user.firstname && user.lastname) {
+        const nameRegex = /^[A-Za-z]+$/;
+        if (!nameRegex.test(user.firstname)) {
+          newErrors.firstname = 'First Name can only contain letters.';
+        }
+        if (!nameRegex.test(user.lastname)) {
+          newErrors.lastname = 'Last Name can only contain letters.';
+        }
+      }
+      if (user.phonenumber) {
+        const phoneRegex = /^09\d{2} \d{3} \d{4}$/;
+        if (!phoneRegex.test(user.phonenumber)) {
+          newErrors.phonenumber = 'Please enter a valid phone number. e.g. 09xx xxx xxxx';
+        }
+      }
+      if (user.username) {
+        const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+        if (!emailRegex.test(user.username)) {
+          newErrors.username = 'Please enter a valid email address.';
+        }
+      }
+      if (user.password) {
+        const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*])[A-Za-z\d!@#$%^&*]{8,}$/;
+        if (!passwordRegex.test(user.password)) {
+          newErrors.password = 'Password must be at least 8 characters long and include at least one uppercase letter, one lowercase letter, one number, and one special character.';
+        }
+      }
     });
 
-    const [errors, setErrors] = useState<{ [key: string]: string }>({});
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
 
-    useEffect(() => {
-        if (open && manager) {
-            setUser(manager); // Sync the manager data when the modal opens
-        }
-    }, [open, manager]);
+  const handleUserUpdateSubmit = () => {
+    if (validate()) {
+      onSubmit(user);
+    }
+  };
 
-    const handleManagerChange = (e: React.ChangeEvent<{ name?: string; value: unknown }>) => {
-        const { name, value } = e.target;
-        setUser((prevUser) => ({
-            ...prevUser,
-            [name as string]: value as string,
-        }));
-    };
+  const formatKey = (key: string) => {
+    return key
+      .replace(/(name|address|number)/gi, " $1")
+      .replace(/([a-z])([A-Z])/g, "$1 $2")
+      .replace(/([A-Z]+)([A-Z][a-z])/g, "$1 $2")
+      .trim()
+      .split(" ")
+      .map((word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+      .join(" ");
+  };
 
-    const validate = () => {
-        const newErrors: { [key: string]: string } = {};
-        Object.entries(user).forEach(([key, value]) => {
-            if (!value) {
-                newErrors[key] = `${formatKey(key)} is required`;
-            }
-        });
-
-        setErrors(newErrors);
-        return Object.keys(newErrors).length === 0;
-    };
-
-    const handleUserUpdateSubmit = () => {
-        if (validate()) {
-            onSubmit(user); // Pass user data to onSubmit
-        }
-    };
-
-    const formatKey = (key: string) => {
-        return key
-            .replace(/(name|address|number)/gi, " $1")
-            .replace(/([a-z])([A-Z])/g, "$1 $2")
-            .replace(/([A-Z]+)([A-Z][a-z])/g, "$1 $2")
-            .trim()
-            .split(" ")
-            .map((word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
-            .join(" ");
-    };
-
-    return (
-        <Dialog open={open} onClose={onClose}>
-            <DialogTitle>Update User</DialogTitle>
-            <DialogContent>
-                <Grid container spacing={2}>
-                    <Grid item xs={12} sm={6}>
-                        <TextField
-                            fullWidth
-                            label="First Name"
-                            value={user.firstname}
-                            name="firstname"
-                            onChange={handleManagerChange}
-                            error={!!errors.firstname}
-                            helperText={errors.firstname}
-                        />
-                    </Grid>
-                    <Grid item xs={12} sm={6}>
-                        <TextField
-                            fullWidth
-                            label="Last Name"
-                            value={user.lastname}
-                            name="lastname"
-                            onChange={handleManagerChange}
-                            error={!!errors.lastname}
-                            helperText={errors.lastname}
-                        />
-                    </Grid>
-                    <Grid item xs={12}>
-                        <TextField
-                            fullWidth
-                            label="Phone Number"
-                            value={user.phonenumber}
-                            name="phonenumber"
-                            onChange={handleManagerChange}
-                            error={!!errors.phonenumber}
-                            helperText={errors.phonenumber}
-                        />
-                    </Grid>
-                    <Grid item xs={12}>
-                        <TextField
-                            fullWidth
-                            label="Username"
-                            value={user.username}
-                            name="username"
-                            onChange={handleManagerChange}
-                            error={!!errors.username}
-                            helperText={errors.username}
-                        />
-                    </Grid>
-                    <Grid item xs={12}>
-                        <TextField
-                            fullWidth
-                            label="Password"
-                            type={showPassword ? "text" : "password"}
-                            value={user.password}
-                            name="password"
-                            onChange={handleManagerChange}
-                            error={!!errors.password}
-                            helperText={errors.password}
-                            InputProps={{
-                                endAdornment: (
-                                    <IconButton onClick={() => setShowPassword(!showPassword)}>
-                                        {showPassword ? <VisibilityOff /> : <Visibility />}
-                                    </IconButton>
-                                ),
-                            }}
-                        />
-                    </Grid>
+  return (
+    <Dialog open={open} onClose={onClose} fullWidth>
+      <DialogTitle>Update Manager</DialogTitle>
+      <DialogContent>
+        <Grid container rowSpacing={2.3} columnSpacing={{ xs: 1, sm: 3, md: 2.5 }}>
+          {Object.keys(user).map((key) => (
+            <Grid item xs={12} sm={6} key={key}>
+              <Typography sx={{ textAlign: "left", marginBottom: "0.3rem", fontSize: "0.90rem" }}>
+                {formatKey(key)}
+              </Typography>
+              {key === "password" ? (
+                <Grid container spacing={1.5} alignItems="center">
+                  <Grid item xs={7}>
+                    <TextField
+                      fullWidth
+                      variant="outlined"
+                      placeholder={`Enter ${key}`}
+                      type={showPassword ? "text" : "password"}
+                      value={user[key as keyof typeof user]}
+                      onChange={handleManagerChange}
+                      name={key}
+                      error={!!errors[key]}
+                      helperText={''}
+                      InputProps={{
+                        endAdornment: (
+                          <IconButton sx={{ color: "#9ca3af" }} onClick={() => setShowPassword((prev) => !prev)} edge="end">
+                            {showPassword ? <VisibilityOff /> : <Visibility />}
+                          </IconButton>
+                        ),
+                      }}
+                    />
+                  </Grid>
+                  {errors[key] && (
+                    <Box sx={{ color: 'error.main', mt: "3px", fontSize: '0.80rem' }}>
+                      {errors[key]}
+                    </Box>
+                  )}
                 </Grid>
-            </DialogContent>
-            <DialogActions>
-                <Button onClick={onClose}>Cancel</Button>
-                <Button onClick={handleUserUpdateSubmit}>Save</Button>
-            </DialogActions>
-        </Dialog>
-    );
+              ) : key === "region" || key === "province" || key === "city" || key === "barangay" ? (
+                <FormControl fullWidth error={!!errors[key]}>
+                  <Select
+                    displayEmpty
+                    value={selectState[key as keyof typeof selectState]}
+                    onChange={(e) => handleSelectChange(e, key)}
+                    name={key}
+                  >
+                    <MenuItem value="" disabled>Select a {formatKey(key)}</MenuItem>
+                    <MenuItem value="option1">Option 1</MenuItem>
+                    <MenuItem value="option2">Option 2</MenuItem>
+                  </Select>
+                  {errors[key] && <FormHelperText>{errors[key]}</FormHelperText>}
+                </FormControl>
+              ) : (
+                <TextField
+                  fullWidth
+                  variant="outlined"
+                  placeholder={`Enter ${formatKey(key)}`}
+                  value={user[key as keyof typeof user]}
+                  onChange={handleManagerChange}
+                  name={key}
+                  error={!!errors[key]}
+                  helperText={errors[key]}
+                />
+              )}
+            </Grid>
+          ))}
+        </Grid>
+
+        <Button
+          onClick={handleUserUpdateSubmit}
+          sx={{
+            mt: 6,
+            width: "100%",
+            backgroundColor: "#2563EB",
+            textTransform: "none",
+            fontSize: "12px",
+            padding: '0.8rem',
+            borderRadius: '8px',
+            fontWeight: 700,
+          }}
+          variant="contained"
+        >
+          Update Manager
+        </Button>
+      </DialogContent>
+    </Dialog>
+  );
 };
 
 export default UpdateManager;

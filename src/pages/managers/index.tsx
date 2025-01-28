@@ -1,3 +1,5 @@
+// managers/index.tsx
+
 import React, { useState } from 'react';
 import ManagerTable, { User } from '~/components/manager/ManagerTable';
 import CreateManager from '~/components/manager/CreateManager';
@@ -7,7 +9,7 @@ const UsersPage = () => {
   const [isModalOpen, setModalOpen] = useState(false);
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
   const [isUpdateModalOpen, setUpdateModalOpen] = useState(false);
-  const [selectedManager, setSelectedManager] = useState<User | null>(null); // Track the manager to be updated
+  const [selectedManager, setSelectedManager] = useState<User | null>(null);
 
   const handleUserCreate = () => {
     setSelectedUser(null);
@@ -19,6 +21,7 @@ const UsersPage = () => {
     setSelectedManager(user);
     setUpdateModalOpen(true);
   };
+  
 
   const closeUpdateModal = () => {
     setUpdateModalOpen(false);
@@ -45,7 +48,7 @@ const UsersPage = () => {
       <ManagerTable onCreate={handleUserCreate} onEdit={handleUserEdit} />
       <CreateManager
         open={isModalOpen}
-        onClose={() => setModalOpen(false)} // Close create modal
+        onClose={() => setModalOpen(false)}
         onSubmit={handleSubmitUser}
         // userData={selectedUser}
       />
