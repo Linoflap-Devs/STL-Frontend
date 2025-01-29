@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import Swal from "sweetalert2";
 import {
 Container,
   Typography,
@@ -130,9 +131,28 @@ const ManagerTable: React.FC<ManagerTableProps> = ({
 
   const handleDeleteUser = () => {
     if (selectedUser) {
-      onDelete(selectedUser.id!);
+
+      Swal.fire({
+        title: "Are you sure?",
+        text: "You won’t be able to revert this",
+        icon: "warning",
+        showCancelButton: true,
+        cancelButtonText: "Cancel",
+        confirmButtonText: "Yes, delete it!",
+      }).then((result) => {
+        if (result.isConfirmed) {
+          onDelete(selectedUser.id!);
+
+          Swal.fire({
+            title: "Deleted!",
+            text: "The manager has been successfully deleted.",
+            icon: "success",
+            confirmButtonText: "OK",
+          });
+        }
+      });
     }
-    handleToggleMenu(); 
+    handleToggleMenu();
   };
 
   return (

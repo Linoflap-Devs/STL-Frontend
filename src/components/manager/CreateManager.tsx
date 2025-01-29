@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { validateUser } from "../../utils/validation";
 import { formatKey } from "../../utils/format";
+import Swal from "sweetalert2";
 
 import {
   Dialog,
@@ -36,26 +37,27 @@ const CreateManager: React.FC<CreateManagerProps> = ({
   userData,
   managers,
 }) => {
+  const SPACE: string = "";
   const [user, setUser] = useState({
-    id: userData?.id ?? "",
-    firstname: userData?.firstname ?? "",
-    lastname: userData?.lastname ?? "",
-    region: userData?.region ?? "",
-    province: userData?.province ?? "",
-    city: userData?.city ?? "",
-    barangay: userData?.barangay ?? "",
-    streetaddress: userData?.streetaddress ?? "",
-    phonenumber: userData?.phonenumber ?? "",
-    username: userData?.username ?? "",
-    password: "",
+    id: userData?.id ?? SPACE,
+    firstname: userData?.firstname ?? SPACE,
+    lastname: userData?.lastname ?? SPACE,
+    region: userData?.region ?? SPACE,
+    province: userData?.province ?? SPACE,
+    city: userData?.city ?? SPACE,
+    barangay: userData?.barangay ?? SPACE,
+    streetaddress: userData?.streetaddress ?? SPACE,
+    phonenumber: userData?.phonenumber ?? SPACE,
+    username: userData?.username ?? SPACE,
+    password: SPACE,
   });
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
   const [showPassword, setShowPassword] = useState(false);
   const [selectState, setSelectState] = useState({
-    region: userData?.region ?? "",
-    province: userData?.province ?? "",
-    city: userData?.city ?? "",
-    barangay: userData?.barangay ?? "",
+    region: userData?.region ?? SPACE,
+    province: userData?.province ?? SPACE,
+    city: userData?.city ?? SPACE,
+    barangay: userData?.barangay ?? SPACE,
   });
 
   //form handlings
@@ -68,6 +70,12 @@ const CreateManager: React.FC<CreateManagerProps> = ({
 
   const handleSelectChange = (e: SelectChangeEvent<string>, name: string) => {
     setSelectState((prevState) => ({ ...prevState, [name]: e.target.value }));
+  };
+
+  // generate password
+  const handleGeneratePassword = () => {
+    const generatedPassword = "0912Gg33*12"; // hardcoded
+    setUser((prevUser) => ({ ...prevUser, password: generatedPassword }));
   };
 
   // handle create submit
@@ -85,20 +93,39 @@ const CreateManager: React.FC<CreateManagerProps> = ({
 
     if (Object.keys(validationErrors).length === 0) {
       console.log("Valid user data, submitting...");
-      onSubmit(combinedUserData);
-      onClose();
 
-      setUser({ ...user, firstname: '', lastname: '', username: '', password: '' });
-      setSelectState({ region: '', province: '', city: '', barangay: '' });
+      Swal.fire({
+        title: "Did you input the correct credentials?",
+        icon: "question",
+        showCancelButton: true,
+        cancelButtonText: "No, let me check",
+        confirmButtonText: "Yes, I did",
+      }).then((result) => {
+        if (result.isConfirmed) {
+          onSubmit(combinedUserData);
+          onClose();
+
+          // Show success message
+          Swal.fire({
+            title: "Success!",
+            text: "Manager added successfully.",
+            icon: "success",
+            confirmButtonText: "OK",
+          });
+
+          setUser({
+            ...user,
+            firstname: "",
+            lastname: "",
+            username: "",
+            password: "",
+          });
+          setSelectState({ region: "", province: "", city: "", barangay: "" });
+        }
+      });
     } else {
       console.log("Validation errors:", validationErrors);
     }
-  };
-
-  // generate password
-  const handleGeneratePassword = () => {
-    const generatedPassword = "0912Gg33*12"; // hardcoded
-    setUser((prevUser) => ({ ...prevUser, password: generatedPassword }));
   };
 
   return (
@@ -153,11 +180,11 @@ const CreateManager: React.FC<CreateManagerProps> = ({
                         variant="outlined"
                         placeholder={`Enter ${key}`}
                         type={showPassword ? "text" : "password"}
-                        value={user[key as keyof typeof user] || ""}
+                        value={user[key as keyof typeof user] || SPACE}
                         onChange={handleManagerChange}
                         name={key}
                         error={!!errors[key]}
-                        helperText={errors[key] || ""}
+                        helperText={errors[key] || SPACE}
                         InputProps={{
                           endAdornment: (
                             <IconButton
@@ -198,7 +225,7 @@ const CreateManager: React.FC<CreateManagerProps> = ({
                   <FormControl fullWidth error={!!errors[key]}>
                     <Select
                       displayEmpty
-                      value={selectState[key as keyof typeof selectState] || ""}
+                      value={selectState[key as keyof typeof selectState] || SPACE}
                       onChange={(e) => handleSelectChange(e, key)}
                       name={key}
                       inputProps={{
@@ -222,11 +249,11 @@ const CreateManager: React.FC<CreateManagerProps> = ({
                     fullWidth
                     variant="outlined"
                     placeholder={`Enter ${formatKey(key)}`}
-                    value={user[key as keyof typeof user] || ""}
+                    value={user[key as keyof typeof user] || SPACE}
                     onChange={handleManagerChange}
                     name={key}
                     error={!!errors[key]}
-                    helperText={errors[key] || ""}
+                    helperText={errors[key] || SPACE}
                   />
                 )}
               </Grid>

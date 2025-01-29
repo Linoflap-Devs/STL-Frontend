@@ -39,3 +39,11 @@ input:-webkit-autofill {
   -webkit-box-shadow: 0 0 0 30px #374151 inset !important;
   -webkit-text-fill-color: white !important;
 }
+
+.swal2-popup {
+  z-index: 9999 !important;
+}
+
+.MuiDialog-root {
+  z-index: 999 !important;
+}

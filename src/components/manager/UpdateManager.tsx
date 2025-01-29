@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { validateUser } from "../../utils/validation";
 import { formatKey } from "../../utils/format";
+import Swal from "sweetalert2";
 import {
   Dialog,
   DialogContent,
@@ -111,13 +112,13 @@ const UpdateManager: React.FC<UpdateManagerProps> = React.memo(
 
     const handleSelectChange = (e: SelectChangeEvent<string>, name: string) => {
       const value = e.target.value.toString();
-    
+
       // Update both selectState and user state
       setSelectState((prevState) => ({
         ...prevState,
         [name]: value,
       }));
-    
+
       setUser((prevUser) => {
         if (prevUser) {
           return {
@@ -128,7 +129,6 @@ const UpdateManager: React.FC<UpdateManagerProps> = React.memo(
         return prevUser;
       });
     };
-    
 
     const handleUserUpdateSubmit = () => {
       console.log(user);
@@ -136,37 +136,51 @@ const UpdateManager: React.FC<UpdateManagerProps> = React.memo(
         setErrors({ general: "User data is missing." });
         return;
       }
-
+    
       const validationErrors = validateUser(user);
-
-      //console.log("length:::" + Object.keys(validationErrors).length);
-      //console.log("validation errors keys:::" + Object.keys(validationErrors));
-      //console.log("validation error:::" + JSON.stringify(validationErrors));
-
-      if (Object.keys(validationErrors).length === 0) {
-        const updatedUserData = {
-          id: user.id ?? 0,
-          firstname: user.firstname ?? SPACE,
-          lastname: user.lastname ?? SPACE,
-          region: user.region ?? SPACE,
-          province: user.province ?? SPACE,
-          city: user.city ?? SPACE,
-          barangay: user.barangay ?? SPACE,
-          streetaddress: user.streetaddress ?? SPACE,
-          phonenumber: user.phonenumber ?? SPACE,
-          username: user.username ?? SPACE,
-          password: user.password ?? SPACE,
-          regisdate: user.regisdate ?? SPACE,
-        };
-
-        console.log("Update User Data...");
-        onSubmit(updatedUserData);
-
-        onClose();
-        setUser(null);
+    
+      if (Object.keys(validationErrors).length > 0) {
+        setErrors(validationErrors);
+        return;
       }
-
-      setErrors(validationErrors);
+    
+      Swal.fire({
+        title: "Did you input the correct credentials?",
+        icon: "question",
+        showCancelButton: true,
+        cancelButtonText: "No, let me check",
+        confirmButtonText: "Yes, I did",
+      }).then((result) => {
+        if (result.isConfirmed) {
+          const updatedUserData = {
+            id: user.id ?? 0,
+            firstname: user.firstname ?? SPACE,
+            lastname: user.lastname ?? SPACE,
+            region: user.region ?? SPACE,
+            province: user.province ?? SPACE,
+            city: user.city ?? SPACE,
+            barangay: user.barangay ?? SPACE,
+            streetaddress: user.streetaddress ?? SPACE,
+            phonenumber: user.phonenumber ?? SPACE,
+            username: user.username ?? SPACE,
+            password: user.password ?? SPACE,
+            regisdate: user.regisdate ?? SPACE,
+          };
+    
+          console.log("Update User Data...");
+          onSubmit(updatedUserData);
+    
+          Swal.fire({
+            title: "Updated!",
+            text: "The manager's information has been successfully updated.",
+            icon: "success",
+            confirmButtonText: "OK",
+          });
+    
+          onClose();
+          setUser(null);
+        }
+      });
     };
 
     return (
@@ -214,8 +228,7 @@ const UpdateManager: React.FC<UpdateManagerProps> = React.memo(
                           variant="outlined"
                           placeholder={`Enter ${key}`}
                           type={showPassword ? "text" : "password"}
-                          value={user?.[key as keyof typeof user] || SPACE
-                          }
+                          value={user?.[key as keyof typeof user] || SPACE}
                           onChange={handleManagerChange}
                           name={key}
                           error={!!errors[key]}
@@ -271,11 +284,15 @@ const UpdateManager: React.FC<UpdateManagerProps> = React.memo(
                     <FormControl fullWidth error={!!errors[key]}>
                       <Select
                         displayEmpty
-                        value={user?.[key as keyof typeof user]?.toString() || SPACE}
+                        value={
+                          user?.[key as keyof typeof user]?.toString() || SPACE
+                        }
                         onChange={(e) => handleSelectChange(e, key)}
                         name={key}
                       >
-                        <MenuItem value="" disabled>Select a {formatKey(key)}</MenuItem>
+                        <MenuItem value="" disabled>
+                          Select a {formatKey(key)}
+                        </MenuItem>
                         <MenuItem value="10">10</MenuItem>
                         <MenuItem value="25">25</MenuItem>
                         <MenuItem value="50">50</MenuItem>
