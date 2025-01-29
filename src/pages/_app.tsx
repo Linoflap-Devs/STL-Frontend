@@ -1,8 +1,8 @@
 import { AppProps } from 'next/app';
 import { useRouter } from 'next/router';
-import '../globals.css';
+import '../styles/globals.css';
 import { ThemeProvider, CssBaseline } from '@mui/material';
-import darkTheme from '../theme';
+import darkTheme from '../styles/theme';
 import AdminHeader from '../components/layout/AdminHeader';
 
 const App = ({ Component, pageProps }: AppProps) => {

@@ -1,6 +1,6 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
-  Container,
+Container,
   Typography,
   Box,
   Button,
@@ -21,10 +21,8 @@ import {
 
 import SearchIcon from "@mui/icons-material/Search";
 import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
-import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
-import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
-
 import { UserSectionData } from "../../data/AdminSectionData";
+import { SortableTableCell } from "../../utils/SortableTableCell";
 
 // define user
 export interface User {
@@ -48,18 +46,6 @@ interface ManagerTableProps {
   onEdit: (user: User) => void;
 }
 
-interface SortConfig {
-  key: string;
-  direction: "asc" | "desc";
-}
-
-interface SortableTableCellProps {
-  label: string;
-  sortKey: keyof User;
-  sortConfig: SortConfig;
-  onSort: (sortKey: keyof User) => void;
-}
-
 const ManagerTable: React.FC<ManagerTableProps> = ({
   managers,
   onCreate,
@@ -72,11 +58,15 @@ const ManagerTable: React.FC<ManagerTableProps> = ({
   const [sortConfig, setSortConfig] = useState<{
     key: keyof User;
     direction: "asc" | "desc";
-  }>({
-    key: "id",
-    direction: "asc",
-  });
+  }>({ key: "id", direction: "asc" });
 
+  const [users, setUsers] = useState<User[]>(managers);
+
+  useEffect(() => {
+    setUsers(managers);
+  }, [managers]);
+
+  // sorting logic
   const sortedUsers = [...managers].sort((a, b) => {
     const valueA = a[sortConfig.key];
     const valueB = b[sortConfig.key];
@@ -105,25 +95,15 @@ const ManagerTable: React.FC<ManagerTableProps> = ({
     return 0;
   });
 
-  const SortableTableCell: React.FC<SortableTableCellProps> = ({
-    label,
-    sortKey,
-    sortConfig,
-    onSort,
-  }) => {
-    return (
-      <TableCell sx={{ cursor: "pointer" }} onClick={() => onSort(sortKey)}>
-        {label}
-        {sortConfig.key === sortKey &&
-          (sortConfig.direction === "asc" ? (
-            <KeyboardArrowUpIcon sx={{ fontSize: 16, marginLeft: 1 }} />
-          ) : (
-            <KeyboardArrowDownIcon sx={{ fontSize: 16, marginLeft: 1 }} />
-          ))}
-      </TableCell>
-    );
+  const handleSort = (column: keyof User) => {
+    let direction: "asc" | "desc" = "asc";
+    if (sortConfig.key === column && sortConfig.direction === "asc") {
+      direction = "desc";
+    }
+    setSortConfig({ key: column, direction });
   };
 
+  // pagination
   const handleChangePage = (
     event: React.MouseEvent<HTMLButtonElement> | null,
     newPage: number
@@ -138,38 +118,24 @@ const ManagerTable: React.FC<ManagerTableProps> = ({
     setPage(0);
   };
 
-  const handleSort = (column: keyof User) => {
-    let direction: "asc" | "desc" = "asc";
-    if (sortConfig.key === column && sortConfig.direction === "asc") {
-      direction = "desc";
-    }
-    setSortConfig({ key: column, direction });
-  };
-
-  const handleOpenMenu = (
-    event: React.MouseEvent<HTMLButtonElement>,
-    user: User
+  // for menu open and close
+  const handleToggleMenu = (
+    event?: React.MouseEvent<HTMLButtonElement>,
+    user?: User
   ) => {
-    setAnchorEl(event.currentTarget);
-    setSelectedUser(user);
-  };
-
-  const handleCloseMenu = () => {
-    setAnchorEl(null);
-    setSelectedUser(null);
+    setAnchorEl(event?.currentTarget || null);
+    setSelectedUser(user || null);
   };
 
   const handleEditClick = (user: User) => {
     onEdit(user);
-    handleCloseMenu();
+    handleToggleMenu();
   };
 
   const handleDeleteUser = () => {
     console.log("Delete user:", selectedUser);
-    handleCloseMenu();
+    handleToggleMenu();
   };
-
-  const label = { inputProps: { "aria-label": "Checkbox demo" } };
 
   return (
     <Container
@@ -333,7 +299,7 @@ const ManagerTable: React.FC<ManagerTableProps> = ({
                     <TableCell>{user.regisdate}</TableCell>
                     <TableCell>
                       <IconButton
-                        onClick={(event) => handleOpenMenu(event, user)}
+                        onClick={(event) => handleToggleMenu(event, user)}
                       >
                         <MoreHorizIcon />
                       </IconButton>
@@ -345,13 +311,13 @@ const ManagerTable: React.FC<ManagerTableProps> = ({
           <Menu
             anchorEl={anchorEl}
             open={Boolean(anchorEl)}
-            onClose={handleCloseMenu}
+            onClose={() => handleToggleMenu()}
             MenuListProps={{
               "aria-labelledby": "basic-button",
             }}
           >
             <MenuItem onClick={() => handleEditClick(selectedUser!)}>
-              Edit
+              Update
             </MenuItem>
             <MenuItem onClick={handleDeleteUser}>Delete</MenuItem>
           </Menu>

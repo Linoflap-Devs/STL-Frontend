@@ -4,7 +4,7 @@ import CreateManager from '~/components/manager/CreateManager';
 import UpdateManager from '~/components/manager/UpdateManager';
 
 const UsersPage = () => {
-  const [managers, setManagers] = useState<User[]>([]); // Store managers
+  const [managers, setManagers] = useState<User[]>([]);
   const [isModalOpen, setModalOpen] = useState(false);
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
   const [isUpdateModalOpen, setUpdateModalOpen] = useState(false);
@@ -28,13 +28,13 @@ const UsersPage = () => {
 
   const handleSubmitUser = (userData: User | null) => {
     if (userData) {
-      console.log('Submitted user data: ', userData);
-      setManagers((prevManagers) => [...prevManagers, userData]); // Add user to table
+      //console.log('Submitted user data: ', userData);
+      setManagers((prevManagers) => [...prevManagers, userData]);
     } else {
-      console.log('No user data submitted');
-      console.log(managers);
+      //console.log('No user data submitted');
+      //console.log(managers);
     }
-    setModalOpen(false); // Close create modal
+    setModalOpen(false);
   };
 
   const handleSaveUpdatedUser = (updatedUser: User) => {
@@ -60,12 +60,12 @@ const UsersPage = () => {
         onClose={() => setModalOpen(false)}
         onSubmit={handleSubmitUser}
         userData={selectedUser}
-        managers={managers} 
+        managers={managers} // for log checking
       />
       {isUpdateModalOpen && (
         <UpdateManager
           open={isUpdateModalOpen}
-          onClose={closeUpdateModal}
+          onClose={() => setUpdateModalOpen(false)}
           onSubmit={handleSaveUpdatedUser}
           manager={selectedManager}
         />

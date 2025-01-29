@@ -10,9 +10,9 @@ import { formatKey } from "../utils/format";
     const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*])[A-Za-z\d!@#$%^&*]{8,}$/;
   
     Object.entries(user).forEach(([key, value]) => {
-      if (!value) {
-        newErrors[key] = `${formatKey(key)} is required`;
-        return;
+      if (!value && key !== 'regisdate') {
+          newErrors[key] = `${formatKey(key)} is required`;
+          return;
       }
   
       switch (key) {

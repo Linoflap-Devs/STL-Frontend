@@ -36,86 +36,124 @@ interface UpdateManagerProps {
     username: string;
     password: string;
   }) => void;
-  manager: User | null; 
+  manager: User | null;
 }
 
 const UpdateManager: React.FC<UpdateManagerProps> = React.memo(
   ({ open, onClose, onSubmit, manager }) => {
-    const [user, setUser] = useState(manager);
+    const [user, setUser] = useState<User | null>(manager);
     const [errors, setErrors] = useState<{ [key: string]: string }>({});
     const [showPassword, setShowPassword] = useState(false);
-
+    const SPACE: string = "";
     const [selectState, setSelectState] = useState({
-      region: manager?.region ?? "", 
-      province: manager?.province ?? "",
-      city: manager?.city ?? "",
-      barangay: manager?.barangay ?? "",
+      region: manager?.region ?? SPACE,
+      province: manager?.province ?? SPACE,
+      city: manager?.city ?? SPACE,
+      barangay: manager?.barangay ?? SPACE,
     });
-    
+
     // Custom order for fields
     const customFieldOrder = [
-      "firstname", "lastname", "region", "province", "city", "barangay",
-      "streetaddress", "phonenumber", "username", "password"
+      "firstname",
+      "lastname",
+      "region",
+      "province",
+      "city",
+      "barangay",
+      "streetaddress",
+      "phonenumber",
+      "username",
+      "password",
     ];
 
-    // siya nag uupdate / set ng bagong data - manager
     useEffect(() => {
       if (manager) {
+        setUser(manager);
         setSelectState({
-          region: manager.region || "",
-          province: manager.province || "",
-          city: manager.city || "",
-          barangay: manager.barangay || "",
+          region: manager.region || SPACE,
+          province: manager.province || SPACE,
+          city: manager.city || SPACE,
+          barangay: manager.barangay || SPACE,
         });
       }
-    }, [manager]);
+    }, []);
 
     const handleManagerChange = (
-      e: React.ChangeEvent<{ name?: string; value: unknown }>
+      e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
     ) => {
       const { name, value } = e.target;
-      
+
       setUser((prevUser) => {
         if (prevUser === null) {
-           return {
+          return {
             id: undefined,
-            firstname: '',
-            lastname: '',
-            region: '',
-            province: '',
-            city: '',
-            barangay: '',
-            streetaddress: '',
-            phonenumber: '',
-            username: '',
-            password: '',
-            regisdate: '',
-            [name as string]: value as string,
+            firstname: SPACE,
+            lastname: SPACE,
+            region: SPACE,
+            province: SPACE,
+            city: SPACE,
+            barangay: SPACE,
+            streetaddress: SPACE,
+            phonenumber: SPACE,
+            username: SPACE,
+            password: SPACE,
+            regisdate: SPACE,
+            [name]: value,
           };
         }
-        
+
         return {
           ...prevUser,
-          [name as string]: value as string,
+          [name]: value,
         };
       });
     };
-    
+
+    const handleSelectChange = (e: SelectChangeEvent<string>, name: string) => {
+      setSelectState((prevState) => ({
+        ...prevState,
+        [name]: e.target.value.toString(),
+      }));
+    };
+
     const handleUserUpdateSubmit = () => {
-      if (user === null) {
-        setErrors({
-          general: "User data is missing.",
-        });
+      console.log(user);
+      if (!user) {
+        setErrors({ general: "User data is missing." });
         return;
       }
-    
+
       const validationErrors = validateUser(user);
+
+      //console.log("length:::" + Object.keys(validationErrors).length);
+      //console.log("validation errors keys:::" + Object.keys(validationErrors));
+      //console.log("validation error:::" + JSON.stringify(validationErrors));
+
+      if (Object.keys(validationErrors).length === 0) {
+        const updatedUserData = {
+          id: user.id ?? 0,
+          firstname: user.firstname ?? SPACE,
+          lastname: user.lastname ?? SPACE,
+          region: user.region ?? SPACE,
+          province: user.province ?? SPACE,
+          city: user.city ?? SPACE,
+          barangay: user.barangay ?? SPACE,
+          streetaddress: user.streetaddress ?? SPACE,
+          phonenumber: user.phonenumber ?? SPACE,
+          username: user.username ?? SPACE,
+          password: user.password ?? SPACE,
+          regisdate: user.regisdate ?? SPACE,
+        };
+
+        console.log("Update User Data...");
+        onSubmit(updatedUserData);
+
+        onClose();
+        setUser(null);
+      }
+
       setErrors(validationErrors);
     };
-    
-    function handleSelectChange(e: SelectChangeEvent<string>, key: string): void {
-      throw new Error("Function not implemented.");
-    }
 
     return (
       <Dialog
@@ -162,7 +200,8 @@ const UpdateManager: React.FC<UpdateManagerProps> = React.memo(
                           variant="outlined"
                           placeholder={`Enter ${key}`}
                           type={showPassword ? "text" : "password"}
-                          value={user?.[key as keyof typeof user] || ""}
+                          value={user?.[key as keyof typeof user] || SPACE
+                          }
                           onChange={handleManagerChange}
                           name={key}
                           error={!!errors[key]}
@@ -219,16 +258,18 @@ const UpdateManager: React.FC<UpdateManagerProps> = React.memo(
                       <Select
                         displayEmpty
                         value={
-                          selectState[key as keyof typeof selectState] || ""
+                          user?.[key as keyof typeof user]?.toString() || SPACE
                         }
-                        onChange={(e) => handleSelectChange(e, key)} 
+                        onChange={(e) => handleSelectChange(e, key)}
                         name={key}
                       >
                         <MenuItem value="" disabled>
                           Select a {formatKey(key)}
                         </MenuItem>
-                        <MenuItem value="option1">Option 1</MenuItem>
-                        <MenuItem value="option2">Option 2</MenuItem>
+                        <MenuItem value="10">10</MenuItem>
+                        <MenuItem value="25">25</MenuItem>
+                        <MenuItem value="50">50</MenuItem>
+                        <MenuItem value="100">100</MenuItem>
                       </Select>
                       {errors[key] && (
                         <FormHelperText>{errors[key]}</FormHelperText>
