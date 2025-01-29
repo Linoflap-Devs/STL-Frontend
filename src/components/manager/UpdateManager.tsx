@@ -76,7 +76,7 @@ const UpdateManager: React.FC<UpdateManagerProps> = React.memo(
           barangay: manager.barangay || SPACE,
         });
       }
-    }, []);
+    }, [manager]);
 
     const handleManagerChange = (
       e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -110,11 +110,25 @@ const UpdateManager: React.FC<UpdateManagerProps> = React.memo(
     };
 
     const handleSelectChange = (e: SelectChangeEvent<string>, name: string) => {
+      const value = e.target.value.toString();
+    
+      // Update both selectState and user state
       setSelectState((prevState) => ({
         ...prevState,
-        [name]: e.target.value.toString(),
+        [name]: value,
       }));
+    
+      setUser((prevUser) => {
+        if (prevUser) {
+          return {
+            ...prevUser,
+            [name]: value,
+          };
+        }
+        return prevUser;
+      });
     };
+    
 
     const handleUserUpdateSubmit = () => {
       console.log(user);
@@ -257,15 +271,11 @@ const UpdateManager: React.FC<UpdateManagerProps> = React.memo(
                     <FormControl fullWidth error={!!errors[key]}>
                       <Select
                         displayEmpty
-                        value={
-                          user?.[key as keyof typeof user]?.toString() || SPACE
-                        }
+                        value={user?.[key as keyof typeof user]?.toString() || SPACE}
                         onChange={(e) => handleSelectChange(e, key)}
                         name={key}
                       >
-                        <MenuItem value="" disabled>
-                          Select a {formatKey(key)}
-                        </MenuItem>
+                        <MenuItem value="" disabled>Select a {formatKey(key)}</MenuItem>
                         <MenuItem value="10">10</MenuItem>
                         <MenuItem value="25">25</MenuItem>
                         <MenuItem value="50">50</MenuItem>
@@ -280,7 +290,7 @@ const UpdateManager: React.FC<UpdateManagerProps> = React.memo(
                       fullWidth
                       variant="outlined"
                       placeholder={`Enter ${formatKey(key)}`}
-                      value={user?.[key as keyof typeof user] || ""}
+                      value={user?.[key as keyof typeof user] || SPACE}
                       onChange={handleManagerChange}
                       name={key}
                       error={!!errors[key]}
