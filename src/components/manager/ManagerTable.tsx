@@ -44,12 +44,14 @@ interface ManagerTableProps {
   managers: User[];
   onCreate: () => void;
   onEdit: (user: User) => void;
+  onDelete: (id: number) => void;
 }
 
 const ManagerTable: React.FC<ManagerTableProps> = ({
   managers,
   onCreate,
   onEdit,
+  onDelete
 }) => {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [page, setPage] = useState(0);
@@ -59,12 +61,6 @@ const ManagerTable: React.FC<ManagerTableProps> = ({
     key: keyof User;
     direction: "asc" | "desc";
   }>({ key: "id", direction: "asc" });
-
-  const [users, setUsers] = useState<User[]>(managers);
-
-  useEffect(() => {
-    setUsers(managers);
-  }, [managers]);
 
   // sorting logic
   const sortedUsers = [...managers].sort((a, b) => {
@@ -133,8 +129,10 @@ const ManagerTable: React.FC<ManagerTableProps> = ({
   };
 
   const handleDeleteUser = () => {
-    console.log("Delete user:", selectedUser);
-    handleToggleMenu();
+    if (selectedUser) {
+      onDelete(selectedUser.id!);
+    }
+    handleToggleMenu(); 
   };
 
   return (

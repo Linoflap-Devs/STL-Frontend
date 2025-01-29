@@ -48,12 +48,18 @@ const UsersPage = () => {
     setUpdateModalOpen(false);
   };
 
+  const handleDeleteManager = (id: number) => {
+    const updatedManagers = managers.filter(manager => manager.id !== id);
+    setManagers(updatedManagers);
+  };
+
   return (
     <>
       <ManagerTable
         onCreate={handleUserCreate}
         onEdit={handleUserEdit}
         managers={managers}
+        onDelete={handleDeleteManager}
       />
       <CreateManager
         open={isModalOpen}
