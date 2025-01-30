@@ -86,7 +86,7 @@ const AdminHeader: FC<AdminHeaderProps> = ({ children, pages, ...props }) => {
               <Box
                 key={page}
                 component="a"
-                href={`/${page.toLowerCase()}`}
+                href={page === 'Manager' ? '/managers' : `/${page.toLowerCase()}`}
                 sx={{
                   display: 'block',
                   textAlign: 'center',
