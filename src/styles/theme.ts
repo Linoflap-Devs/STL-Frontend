@@ -78,9 +78,9 @@ const darkTheme = createTheme({
       styleOverrides: {
         root: {
           color: '#D1D5D8',
-          fontSize: '12.5px',
-          padding: 4,
-          borderBottom: "1.5px solid #374151",
+          fontSize: '13px',
+          padding: 'auto',
+          borderBottom: "1px solid #374151",
         },
         head: {
           color: '#9CA3AF',
@@ -120,7 +120,6 @@ const darkTheme = createTheme({
           },
           '& .MuiSvgIcon-root': {
             fill: '#6C7480',
-            //backgroundColor: '#374151',
             padding: 0,
             margin: 0,
             fontSize: '21px',
@@ -180,7 +179,6 @@ const darkTheme = createTheme({
       styleOverrides: {
         root: {
           height: 'auto',
-          //overflow: 'hidden',
         },
       },
     },
@@ -189,17 +187,18 @@ const darkTheme = createTheme({
         root: {
           fontSize: '25px',
           fontWeight: '700',
-          //marginBottom: '-0.4rem',
+          marginBottom: '-0.4rem',
         },
       },
-    }, // input types modal??
+    },
     MuiInput: {
       styleOverrides: {
         root: {
           fontSize: '0.85rem',
         }
       }
-    }, // sa loob ng text
+    },     
+    // sa loob ng text
     MuiOutlinedInput: {
       styleOverrides: {
         root: {
@@ -232,10 +231,26 @@ const darkTheme = createTheme({
           color: "#ffffff",
         },
         select: {
-          color: "#9CA3AF",
           padding: "9px 16px",
+          '& .MuiInputBase-input': {
+            color: '#D1D5DB',
+            padding: '9px 16px',
+            '&::placeholder': {
+              color: '#D1D5DB',
+            },
+            '&:focus': {
+              color: '#ffffff',
+            },
+          },
         },
       },
+    },
+    MuiFormControl: {
+      styleOverrides: {
+        root: {
+          color: "#fffff"
+        }
+      }
     },
     MuiInputBase: {
       styleOverrides: {

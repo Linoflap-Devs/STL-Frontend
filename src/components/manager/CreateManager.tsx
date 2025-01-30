@@ -1,8 +1,4 @@
 import React, { useState } from "react";
-import { validateUser } from "../../utils/validation";
-import { formatKey } from "../../utils/format";
-import Swal from "sweetalert2";
-
 import {
   Dialog,
   DialogContent,
@@ -18,11 +14,13 @@ import {
   FormHelperText,
   Box,
 } from "@mui/material";
-
+import { validateUser } from "../../utils/validation";
+import { formatKey } from "../../utils/format";
+import { User } from "./ManagerTable";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
 import { SelectChangeEvent } from "@mui/material";
 import CloseIcon from '@mui/icons-material/Close';
-import { User } from "./ManagerTable";
+import Swal from "sweetalert2";
 
 export interface CreateManagerProps {
   open: boolean;
@@ -130,6 +128,7 @@ const CreateManager: React.FC<CreateManagerProps> = ({
     }
   };
 
+  // handle dummy data
   const handleDummyData = () => {
     setUser({
       id: managers.length + 1,

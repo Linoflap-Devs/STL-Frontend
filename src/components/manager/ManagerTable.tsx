@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import Swal from "sweetalert2";
+import { UserSectionData } from "../../data/AdminSectionData";
 import {
   Container,
   Typography,
@@ -19,10 +19,17 @@ import {
   MenuItem,
   Checkbox,
 } from "@mui/material";
+import {
+  SortableTableCell,
+  sortData,
+  handleSort,
+  handleChangePage,
+  handleChangeRowsPerPage,
+  filterData,
+} from "../../utils/sortPaginationSearch";
 import SearchIcon from "@mui/icons-material/Search";
 import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
-import { UserSectionData } from "../../data/AdminSectionData";
-import { SortableTableCell, sortData, handleSort, handleChangePage, handleChangeRowsPerPage, filterData } from "../../utils/sortPaginationSearch";
+import Swal from "sweetalert2";
 
 // define user interface
 export interface User {
@@ -60,6 +67,9 @@ const ManagerTable: React.FC<ManagerTableProps> = ({
   const [searchQuery, setSearchQuery] = useState<string>('');
   const onSortWrapper = (sortKey: keyof User) => { handleSort(sortKey, sortConfig, setSortConfig); };
   const [sortConfig, setSortConfig] = useState<{ key: keyof User; direction: "asc" | "desc" }>({ key: "id", direction: "asc" });
+  const [selectedUserIds, setSelectedUserIds] = useState<Set<number>>(new Set());
+  const [selectedCount, setSelectedCount] = useState<number>(0);
+  const [selectedRows, setSelectedRows] = useState<string[]>([]);
 
   // Search filter data
   const sortedUsers = sortData(
@@ -109,19 +119,24 @@ const ManagerTable: React.FC<ManagerTableProps> = ({
     handleToggleMenu();
   };
 
-  const buttonStyles = {
-    paddingX: 3.9,
-    paddingY: 0.9,
-    textTransform: "none",
-    fontSize: 12,
-    borderRadius: "8px",
-    backgroundColor: "#2563EB",
-    width: "auto",
+  // handle select all checkbox
+  const handleSelectAll = (event: React.ChangeEvent<HTMLInputElement>) => {
+    if (event.target.checked) {
+      const allUserIds = new Set(sortedUsers.map((user) => user.id!));
+      setSelectedUserIds(allUserIds);
+      setSelectedCount(sortedUsers.length);
+    } else {
+      setSelectedUserIds(new Set());
+      setSelectedCount(0);
+    }
   };
+
+  // check if all users are selected
+  const isAllSelected = sortedUsers.length > 0 && selectedUserIds.size === sortedUsers.length;
 
   return (
     <Container>
-      <Box sx={{ display: "flex", flexDirection: "row", justifyContent: "space-between", alignItems: "center", marginBottom: 3 }}>
+      <Box sx={{ display: "flex", flexDirection: "row", justifyContent: "space-between", alignItems: "center", marginBottom: 2.5 }}>
         <Typography variant="h5" sx={{ fontWeight: "bold", marginBottom: 0 }} gutterBottom>
           {UserSectionData.titleManager}
         </Typography>
@@ -167,15 +182,33 @@ const ManagerTable: React.FC<ManagerTableProps> = ({
           <Table size="small">
             <TableHead>
               <TableRow>
-                <TableCell><Checkbox /></TableCell>
-                <SortableTableCell label="First Name" sortKey="firstname" sortConfig={sortConfig} onSort={onSortWrapper} />
-                <SortableTableCell label="Last Name" sortKey="lastname" sortConfig={sortConfig} onSort={onSortWrapper} />
-                <SortableTableCell label="Username" sortKey="username" sortConfig={sortConfig} onSort={onSortWrapper} />
-                <SortableTableCell label="Phone Number" sortKey="phonenumber" sortConfig={sortConfig} onSort={onSortWrapper} />
-                <SortableTableCell label="Region" sortKey="region" sortConfig={sortConfig} onSort={onSortWrapper} />
-                <SortableTableCell label="Province" sortKey="province" sortConfig={sortConfig} onSort={onSortWrapper} />
-                <SortableTableCell label="Registration Date" sortKey="regisdate" sortConfig={sortConfig} onSort={onSortWrapper} />
-                <TableCell>Actions</TableCell>
+                <TableCell>
+                  <Checkbox
+                    checked={isAllSelected}
+                    onChange={handleSelectAll}
+                  />
+                </TableCell>
+
+                {!isAllSelected && (
+                  <>
+                    <SortableTableCell label="First Name" sortKey="firstname" sortConfig={sortConfig} onSort={onSortWrapper} />
+                    <SortableTableCell label="Last Name" sortKey="lastname" sortConfig={sortConfig} onSort={onSortWrapper} />
+                    <SortableTableCell label="Username" sortKey="username" sortConfig={sortConfig} onSort={onSortWrapper} />
+                    <SortableTableCell label="Phone Number" sortKey="phonenumber" sortConfig={sortConfig} onSort={onSortWrapper} />
+                    <SortableTableCell label="Region" sortKey="region" sortConfig={sortConfig} onSort={onSortWrapper} />
+                    <SortableTableCell label="Province" sortKey="province" sortConfig={sortConfig} onSort={onSortWrapper} />
+                    <SortableTableCell label="Registration Date" sortKey="regisdate" sortConfig={sortConfig} onSort={onSortWrapper} />
+                    <TableCell>Actions</TableCell>
+                  </>
+                )}
+
+                {selectedUserIds.size > 0 && (
+                  <TableCell
+                    sx={{ textTransform: 'none' }}
+                    colSpan={isAllSelected ? 8 : 8}>
+                    {selectedUserIds.size} Managers Selected
+                  </TableCell>
+                )}
               </TableRow>
             </TableHead>
 
@@ -184,7 +217,12 @@ const ManagerTable: React.FC<ManagerTableProps> = ({
                 .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                 .map((user) => (
                   <TableRow key={user.id}>
-                    <TableCell><Checkbox /></TableCell>
+                    <TableCell>
+                      <Checkbox
+                        checked={selectedUserIds.has(user.id!)}
+                        //onChange={(event) => handleSelectUser(event, user.id!)}
+                      />
+                    </TableCell>
                     <TableCell>{user.firstname}</TableCell>
                     <TableCell>{user.lastname}</TableCell>
                     <TableCell>{user.username}</TableCell>
@@ -214,12 +252,12 @@ const ManagerTable: React.FC<ManagerTableProps> = ({
 
           <Box sx={{
             padding: "12px",
-            boxShadow: "0 2px 8px rgba(0, 0, 0, 0.4)"
+            boxShadow: "0 2px 8px rgba(0, 0, 0, 0.4)",
           }}>
             <TablePagination
-              rowsPerPageOptions={[5, 10, 25, { label: 'All', value: -1 }]}
+              rowsPerPageOptions={[5, 10, 25, 100]}
               component="div"
-              count={managers.length}
+              count={sortedUsers.length}
               rowsPerPage={rowsPerPage}
               page={page}
               onPageChange={(event, newPage) => handleChangePage(event, newPage, setPage)}
@@ -239,5 +277,15 @@ const ManagerTable: React.FC<ManagerTableProps> = ({
     </Container>
   );
 };
+
+const buttonStyles = {
+  paddingX: 3.9,
+  paddingY: 0.9,
+  textTransform: "none",
+  fontSize: 12,
+  borderRadius: "8px",
+  backgroundColor: "#2563EB",
+  width: "auto",
+}
 
 export default ManagerTable;

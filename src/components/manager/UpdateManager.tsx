@@ -1,7 +1,4 @@
 import React, { useState, useEffect } from "react";
-import { validateUser } from "../../utils/validation";
-import { formatKey } from "../../utils/format";
-import Swal from "sweetalert2";
 import {
   Dialog,
   DialogContent,
@@ -17,10 +14,13 @@ import {
   FormHelperText,
   Box,
 } from "@mui/material";
+import { validateUser } from "../../utils/validation";
+import { formatKey } from "../../utils/format";
+import { User } from "./ManagerTable";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
 import { SelectChangeEvent } from "@mui/material";
 import CloseIcon from '@mui/icons-material/Close';
-import { User } from "./ManagerTable";
+import Swal from "sweetalert2";
 
 interface UpdateManagerProps {
   open: boolean;
@@ -131,7 +131,7 @@ const UpdateManager: React.FC<UpdateManagerProps> = React.memo(
     };
 
     const handleUserUpdateSubmit = () => {
-      console.log(user);
+      //console.log(user);
       if (!user) {
         setErrors({ general: "User data is missing." });
         return;
