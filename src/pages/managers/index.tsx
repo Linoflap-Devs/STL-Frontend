@@ -48,8 +48,8 @@ const UsersPage = () => {
     setUpdateModalOpen(false);
   };
 
-  const handleDeleteManager = (id: number) => {
-    const updatedManagers = managers.filter(manager => manager.id !== id);
+  const handleDeleteManager = (ids: number[]) => {
+    const updatedManagers = managers.filter(manager => !ids.includes(manager.id!));
     setManagers(updatedManagers);
   };
 
@@ -59,7 +59,7 @@ const UsersPage = () => {
         onCreate={handleUserCreate}
         onEdit={handleUserEdit}
         managers={managers}
-        onDelete={handleDeleteManager}
+        onDelete={handleDeleteManager} 
       />
       <CreateManager
         open={isModalOpen}

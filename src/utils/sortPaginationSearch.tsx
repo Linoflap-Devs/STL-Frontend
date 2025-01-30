@@ -16,6 +16,7 @@ interface SortableTableCellProps {
   sortKey: keyof User;
   sortConfig: SortConfig;
   onSort: (sortKey: keyof User) => void;
+  colSpan?: number;
 }
 
 // SortableTableCell component
