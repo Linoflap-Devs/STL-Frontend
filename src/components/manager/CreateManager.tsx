@@ -21,6 +21,7 @@ import {
 
 import { Visibility, VisibilityOff } from "@mui/icons-material";
 import { SelectChangeEvent } from "@mui/material";
+import CloseIcon from '@mui/icons-material/Close';
 import { User } from "./ManagerTable";
 
 export interface CreateManagerProps {
@@ -145,10 +146,10 @@ const CreateManager: React.FC<CreateManagerProps> = ({
     })
 
     setSelectState({
-      region: "Region IV-A",
-      province: "Cavite",
-      city: "Dasmariñas",
-      barangay: "Salawag",
+      region: "100",
+      province: "100",
+      city: "100",
+      barangay: "100",
     });
   }
 
@@ -170,14 +171,15 @@ const CreateManager: React.FC<CreateManagerProps> = ({
         },
       }}
     >
-      <DialogTitle sx={{ display: 'flex', justifyContent: 'space-between', }} >
+      <DialogTitle sx={{ display: 'flex', justifyContent: 'justify', }} >
         Add Manager
         <Button
           variant="contained"
           onClick={handleDummyData}
           sx={{
-            paddingX: 3.9,
-            paddingY: 0.9,
+            marginLeft: 2,
+            paddingX: 3,
+            paddingY: 0.5,
             textTransform: "none",
             fontSize: 12,
             borderRadius: "8px",
@@ -186,6 +188,21 @@ const CreateManager: React.FC<CreateManagerProps> = ({
           }}
         > Dummy Data
         </Button>
+
+        <IconButton
+          aria-label="close"
+          onClick={onClose}
+          sx={{
+            position: 'absolute',
+            right: 30,
+            top: 30,
+            color: '#D1D5D8'[300],
+            backgroundColor: '#374151',
+          }}
+        >
+          <CloseIcon sx={{ fontSize: 20, fontWeight: 'bold' }} />
+        </IconButton>
+
       </DialogTitle>
       <DialogContent>
         <Grid
@@ -213,43 +230,43 @@ const CreateManager: React.FC<CreateManagerProps> = ({
                 </Typography>
 
                 {key === "password" ? (
-                <Grid container spacing={1.5} alignItems="center">
-                  <Grid item xs={7}>
-                    <TextField
-                      fullWidth
-                      variant="outlined"
-                      placeholder={`Enter ${key}`}
-                      type={showPassword ? "text" : "password"}
-                      value={user[key as keyof typeof user]}
-                      onChange={handleManagerChange}
-                      name={key}
-                      error={!!errors[key]}
-                      helperText={''}
-                      InputProps={{
-                        endAdornment: (
-                          <IconButton sx={{ color: "#9ca3af" }} onClick={() => setShowPassword((prev) => !prev)} edge="end">
-                            {showPassword ? <VisibilityOff /> : <Visibility />}
-                          </IconButton>
-                        ),
-                      }}
-                    />
+                  <Grid container spacing={1.5} alignItems="center">
+                    <Grid item xs={7}>
+                      <TextField
+                        fullWidth
+                        variant="outlined"
+                        placeholder={`Enter ${key}`}
+                        type={showPassword ? "text" : "password"}
+                        value={user[key as keyof typeof user]}
+                        onChange={handleManagerChange}
+                        name={key}
+                        error={!!errors[key]}
+                        helperText={''}
+                        InputProps={{
+                          endAdornment: (
+                            <IconButton sx={{ color: "#9ca3af" }} onClick={() => setShowPassword((prev) => !prev)} edge="end">
+                              {showPassword ? <VisibilityOff /> : <Visibility />}
+                            </IconButton>
+                          ),
+                        }}
+                      />
+                    </Grid>
+                    <Grid item xs={5}>
+                      <Button
+                        variant="contained"
+                        color="secondary"
+                        onClick={handleGeneratePassword}
+                        sx={{ width: "100%", textTransform: "none", backgroundColor: "#2563EB", borderRadius: "8px" }}
+                      >
+                        Generate
+                      </Button>
+                    </Grid>
+                    {errors[key] && (
+                      <Box sx={{ color: 'error.main', mt: "3px", marginLeft: '12px', fontSize: '0.85rem' }}>
+                        {errors[key]}
+                      </Box>
+                    )}
                   </Grid>
-                  <Grid item xs={5}>
-                    <Button
-                      variant="contained"
-                      color="secondary"
-                      onClick={handleGeneratePassword}
-                      sx={{ width: "100%", textTransform: "none", backgroundColor: "#2563EB", borderRadius: "8px" }}
-                    >
-                      Generate
-                    </Button>
-                  </Grid>
-                  {errors[key] && (
-                    <Box sx={{ color: 'error.main', mt: "3px", marginLeft: '12px', fontSize: '0.85rem' }}>
-                      {errors[key]}
-                    </Box>
-                  )}
-                </Grid>
 
                 ) : key === "region" ||
                   key === "province" ||
@@ -297,7 +314,7 @@ const CreateManager: React.FC<CreateManagerProps> = ({
         <Button
           onClick={handleUserCreateSubmit}
           sx={{
-            mt: 5,
+            mt: 4,
             width: "100%",
             backgroundColor: "#2563EB",
             textTransform: "none",

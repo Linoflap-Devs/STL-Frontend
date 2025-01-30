@@ -19,6 +19,7 @@ import {
 } from "@mui/material";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
 import { SelectChangeEvent } from "@mui/material";
+import CloseIcon from '@mui/icons-material/Close';
 import { User } from "./ManagerTable";
 
 interface UpdateManagerProps {
@@ -200,7 +201,24 @@ const UpdateManager: React.FC<UpdateManagerProps> = React.memo(
           },
         }}
       >
-        <DialogTitle>Update Manager</DialogTitle>
+        <DialogTitle sx={{ display: 'flex', justifyContent: 'justify', }} >
+          Update Manager
+
+          <IconButton
+            aria-label="close"
+            onClick={onClose}
+            sx={{
+              position: 'absolute',
+              right: 30,
+              top: 30,
+              color: '#D1D5D8'[300],
+              backgroundColor: '#374151',
+            }}
+          >
+            <CloseIcon sx={{ fontSize: 20, fontWeight: 'bold' }} />
+          </IconButton>
+
+        </DialogTitle>
         <DialogContent>
           <Grid
             container
@@ -269,7 +287,7 @@ const UpdateManager: React.FC<UpdateManagerProps> = React.memo(
                             color: "error.main",
                             mt: "3px",
                             marginLeft: "12px",
-                            fontSize: "0.80rem",
+                            fontSize: "0.75rem",
                           }}
                         >
                           {errors[key]}
@@ -321,7 +339,7 @@ const UpdateManager: React.FC<UpdateManagerProps> = React.memo(
           <Button
             onClick={handleUserUpdateSubmit}
             sx={{
-              mt: 6,
+              mt: 4,
               width: "100%",
               backgroundColor: "#2563EB",
               textTransform: "none",

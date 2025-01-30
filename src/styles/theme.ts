@@ -79,7 +79,7 @@ const darkTheme = createTheme({
         root: {
           color: '#D1D5D8',
           fontSize: '12.5px',
-          padding: 5,
+          padding: 4,
           borderBottom: "1.5px solid #374151",
         },
         head: {
@@ -107,7 +107,7 @@ const darkTheme = createTheme({
           },
         },
       },
-    },    
+    },
     MuiCheckbox: {
       styleOverrides: {
         root: {
@@ -149,7 +149,7 @@ const darkTheme = createTheme({
         root: {
           backgroundColor: "transparent",
           color: "#ffffff",
-          padding: "17px 55px 17px 12px",  
+          padding: "17px 55px 17px 12px",
           borderRadius: "0px",
           fontSize: 14,
         },
@@ -179,7 +179,7 @@ const darkTheme = createTheme({
     MuiDialogContent: {
       styleOverrides: {
         root: {
-          height: 'auto', 
+          height: 'auto',
           //overflow: 'hidden',
         },
       },
@@ -241,7 +241,7 @@ const darkTheme = createTheme({
       styleOverrides: {
         root: {
           fontSize: '0.80rem',
-          
+
         },
         input: {
           "::placeholder": {
@@ -249,15 +249,15 @@ const darkTheme = createTheme({
           },
         },
       },
-    },    
-    MuiFormHelperText : {
+    },
+    MuiFormHelperText: {
       styleOverrides: {
         root: {
           fontSize: '0.80rem',
           marginLeft: '0px',
         }
       }
-    },    
+    },
   },
 });
 
