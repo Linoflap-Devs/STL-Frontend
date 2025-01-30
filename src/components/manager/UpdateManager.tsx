@@ -113,7 +113,6 @@ const UpdateManager: React.FC<UpdateManagerProps> = React.memo(
     const handleSelectChange = (e: SelectChangeEvent<string>, name: string) => {
       const value = e.target.value.toString();
 
-      // Update both selectState and user state
       setSelectState((prevState) => ({
         ...prevState,
         [name]: value,
@@ -136,14 +135,14 @@ const UpdateManager: React.FC<UpdateManagerProps> = React.memo(
         setErrors({ general: "User data is missing." });
         return;
       }
-    
+
       const validationErrors = validateUser(user);
-    
+
       if (Object.keys(validationErrors).length > 0) {
         setErrors(validationErrors);
         return;
       }
-    
+
       Swal.fire({
         title: "Did you input the correct credentials?",
         icon: "question",
@@ -166,17 +165,17 @@ const UpdateManager: React.FC<UpdateManagerProps> = React.memo(
             password: user.password ?? SPACE,
             regisdate: user.regisdate ?? SPACE,
           };
-    
+
           console.log("Update User Data...");
           onSubmit(updatedUserData);
-    
+
           Swal.fire({
             title: "Updated!",
             text: "The manager's information has been successfully updated.",
             icon: "success",
             confirmButtonText: "OK",
           });
-    
+
           onClose();
           setUser(null);
         }

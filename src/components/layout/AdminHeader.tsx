@@ -33,7 +33,7 @@ const AdminHeader: FC<AdminHeaderProps> = ({ children, pages, ...props }) => {
         boxShadow: 'none',
         minHeight: { xs: '50%', sm: '100%', md: '100%' },
         paddingX: { xs: 2, s: 5, md: 10, lg: 21, },
-        marginBottom: { xs: 2, s: 5, md: 10, lg: 5, },
+        marginBottom: { xs: 2, s: 5, md: 5, lg: 5, },
       }}
     >
       <Container
@@ -109,7 +109,7 @@ const AdminHeader: FC<AdminHeaderProps> = ({ children, pages, ...props }) => {
           </Box>
 
           {/* Mobile Menu */}
-          <Box sx={{ flexGrow: 1, display: { xs: 'flex', sm: 'flex', md: 'none' }, justifyContent: 'flex-end' }}>
+          <Box sx={{ flexGrow: 1, display: { xs: 'flex', sm: 'none', md: 'none', lg: 'none' }, justifyContent: 'flex-end' }}>
           <IconButton
               size="large"
               aria-label="menu"

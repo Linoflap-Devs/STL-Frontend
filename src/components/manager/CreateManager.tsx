@@ -16,6 +16,7 @@ import {
   IconButton,
   FormControl,
   FormHelperText,
+  Box,
 } from "@mui/material";
 
 import { Visibility, VisibilityOff } from "@mui/icons-material";
@@ -128,6 +129,29 @@ const CreateManager: React.FC<CreateManagerProps> = ({
     }
   };
 
+  const handleDummyData = () => {
+    setUser({
+      id: managers.length + 1,
+      firstname: "John",
+      lastname: "Doe",
+      region: "Region IV-A",
+      province: "Cavite",
+      city: "Dasmariñas",
+      barangay: "Salawag",
+      streetaddress: "123 Main St",
+      phonenumber: "0912 345 6789",
+      username: "johndoe",
+      password: "DummyPass123!",
+    })
+
+    setSelectState({
+      region: "Region IV-A",
+      province: "Cavite",
+      city: "Dasmariñas",
+      barangay: "Salawag",
+    });
+  }
+
   return (
     <Dialog
       open={open}
@@ -146,7 +170,23 @@ const CreateManager: React.FC<CreateManagerProps> = ({
         },
       }}
     >
-      <DialogTitle>Add Manager</DialogTitle>
+      <DialogTitle sx={{ display: 'flex', justifyContent: 'space-between', }} >
+        Add Manager
+        <Button
+          variant="contained"
+          onClick={handleDummyData}
+          sx={{
+            paddingX: 3.9,
+            paddingY: 0.9,
+            textTransform: "none",
+            fontSize: 12,
+            borderRadius: "8px",
+            backgroundColor: "#2563EB",
+            width: "auto",
+          }}
+        > Dummy Data
+        </Button>
+      </DialogTitle>
       <DialogContent>
         <Grid
           container
@@ -173,51 +213,44 @@ const CreateManager: React.FC<CreateManagerProps> = ({
                 </Typography>
 
                 {key === "password" ? (
-                  <Grid container spacing={1.5} alignItems="center">
-                    <Grid item xs={7}>
-                      <TextField
-                        fullWidth
-                        variant="outlined"
-                        placeholder={`Enter ${key}`}
-                        type={showPassword ? "text" : "password"}
-                        value={user[key as keyof typeof user] || SPACE}
-                        onChange={handleManagerChange}
-                        name={key}
-                        error={!!errors[key]}
-                        helperText={errors[key] || SPACE}
-                        InputProps={{
-                          endAdornment: (
-                            <IconButton
-                              sx={{ color: "#9ca3af" }}
-                              onClick={() => setShowPassword((prev) => !prev)}
-                              edge="end"
-                            >
-                              {showPassword ? (
-                                <VisibilityOff />
-                              ) : (
-                                <Visibility />
-                              )}
-                            </IconButton>
-                          ),
-                        }}
-                      />
-                    </Grid>
-                    <Grid item xs={5}>
-                      <Button
-                        variant="contained"
-                        color="secondary"
-                        sx={{
-                          width: "100%",
-                          textTransform: "none",
-                          backgroundColor: "#2563EB",
-                          borderRadius: "8px",
-                        }}
-                        onClick={handleGeneratePassword}
-                      >
-                        Generate
-                      </Button>
-                    </Grid>
+                <Grid container spacing={1.5} alignItems="center">
+                  <Grid item xs={7}>
+                    <TextField
+                      fullWidth
+                      variant="outlined"
+                      placeholder={`Enter ${key}`}
+                      type={showPassword ? "text" : "password"}
+                      value={user[key as keyof typeof user]}
+                      onChange={handleManagerChange}
+                      name={key}
+                      error={!!errors[key]}
+                      helperText={''}
+                      InputProps={{
+                        endAdornment: (
+                          <IconButton sx={{ color: "#9ca3af" }} onClick={() => setShowPassword((prev) => !prev)} edge="end">
+                            {showPassword ? <VisibilityOff /> : <Visibility />}
+                          </IconButton>
+                        ),
+                      }}
+                    />
                   </Grid>
+                  <Grid item xs={5}>
+                    <Button
+                      variant="contained"
+                      color="secondary"
+                      onClick={handleGeneratePassword}
+                      sx={{ width: "100%", textTransform: "none", backgroundColor: "#2563EB", borderRadius: "8px" }}
+                    >
+                      Generate
+                    </Button>
+                  </Grid>
+                  {errors[key] && (
+                    <Box sx={{ color: 'error.main', mt: "3px", marginLeft: '12px', fontSize: '0.85rem' }}>
+                      {errors[key]}
+                    </Box>
+                  )}
+                </Grid>
+
                 ) : key === "region" ||
                   key === "province" ||
                   key === "city" ||
@@ -264,7 +297,7 @@ const CreateManager: React.FC<CreateManagerProps> = ({
         <Button
           onClick={handleUserCreateSubmit}
           sx={{
-            mt: 6,
+            mt: 5,
             width: "100%",
             backgroundColor: "#2563EB",
             textTransform: "none",
@@ -276,22 +309,6 @@ const CreateManager: React.FC<CreateManagerProps> = ({
           variant="contained"
         >
           Add Manager
-        </Button>
-
-        <Button
-          onClick={onClose}
-          sx={{
-            mt: 2,
-            width: "100%",
-            backgroundColor: "#9CA3AF",
-            textTransform: "none",
-            fontSize: "12px",
-            padding: "0.8rem",
-            borderRadius: "8px",
-          }}
-          variant="contained"
-        >
-          Close
         </Button>
       </DialogContent>
     </Dialog>

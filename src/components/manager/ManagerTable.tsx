@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import Swal from "sweetalert2";
 import {
-Container,
+  Container,
   Typography,
   Box,
   Button,
@@ -108,11 +108,13 @@ const ManagerTable: React.FC<ManagerTableProps> = ({
     setPage(newPage);
   };
 
+  // rows per page
   const handleChangeRowsPerPage = (
     event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
-    setRowsPerPage(parseInt(event.target.value, 10));
-    setPage(0);
+    const newValue = parseInt(event.target.value, 10);
+    setRowsPerPage(newValue);
+    setPage(0); // Reset to first page when changing rows per page
   };
 
   // for menu open and close
@@ -156,19 +158,7 @@ const ManagerTable: React.FC<ManagerTableProps> = ({
   };
 
   return (
-    <Container
-      sx={{
-        marginTop: 4,
-        padding: 0,
-        maxWidth: {
-          xs: 300,
-          sm: 700,
-          md: 900,
-          lg: 1200,
-          xl: 1536,
-        },
-      }}
-    >
+    <Container>
       <Box
         sx={{
           display: "flex",
@@ -199,16 +189,6 @@ const ManagerTable: React.FC<ManagerTableProps> = ({
             }}
           >
             <Box
-              sx={{
-                maxWidth: 500,
-                padding: 0,
-                width: {
-                  xs: "100%",
-                  sm: "300px",
-                  md: "320px",
-                  lg: "1200px",
-                },
-              }}
             >
               <TextField
                 fullWidth
@@ -302,7 +282,10 @@ const ManagerTable: React.FC<ManagerTableProps> = ({
             </TableHead>
             <TableBody>
               {sortedUsers
-                .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                .slice(
+                  page * rowsPerPage,
+                  rowsPerPage > 0 ? page * rowsPerPage + rowsPerPage : sortedUsers.length
+                )
                 .map((user) => (
                   <TableRow key={user.id}>
                     <TableCell>
@@ -346,7 +329,7 @@ const ManagerTable: React.FC<ManagerTableProps> = ({
             }}
           >
             <TablePagination
-              rowsPerPageOptions={[10, 25, 50, 100]}
+              rowsPerPageOptions={[5, 10, 25, { label: 'All', value: -1 }]}
               component="div"
               count={managers.length}
               rowsPerPage={rowsPerPage}
