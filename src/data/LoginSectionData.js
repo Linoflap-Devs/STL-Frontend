@@ -13,6 +13,9 @@ export const LoginSectionData = {
   ),
   rememberMe: "Remember Me?",
   forgotPassword: "Forgot Password?",
+  forgotPasswordTitle: "Forgot Password",
+  forgotPasswordDescription: "Please enter your username to reset the password.",
+  resetPasswordButton: "Reset Password",
   buttonText: "Login",
   copyright: (
     <>

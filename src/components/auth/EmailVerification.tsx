@@ -1,23 +1,24 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Box,
   Typography,
   Button,
   TextField,
   IconButton,
+  Tooltip
 } from "@mui/material";
 
-import { Visibility, VisibilityOff } from "@mui/icons-material";
 import { LoginSectionData } from "../../data/LoginSectionData";
 import { useRouter } from "next/router";
 import { loginValidate } from "../../utils/validation";
+import ArrowBackIosNewIcon from '@mui/icons-material/ArrowBackIosNew';
 import LoginBackgroundSection from '../../components/auth/LoginBackgroundSection';
 
-const LoginPage = () => {
+const EmailVerification = () => {
   const router = useRouter();
-  const [credentials, setCredentials] = useState({ username: "", password: "" });
-  const [showPassword, setShowPassword] = useState(false);
+  const [credentials, setCredentials] = useState({ username: "", });
   const [errors, setErrors] = useState<{ username?: string; password?: string }>({});
+  const [isButtonDisabled, setIsButtonDisabled] = useState(true);
 
   // Validation
   const handleLogin = (e: React.FormEvent) => {
@@ -40,7 +41,9 @@ const LoginPage = () => {
     }
   };
 
-  const handleTogglePasswordVisibility = () => setShowPassword((prev) => !prev);
+  useEffect(() => {
+    setIsButtonDisabled(credentials.username.trim() === "");
+  }, [credentials.username]);
 
   return (
     <>
@@ -68,6 +71,24 @@ const LoginPage = () => {
             position: "relative",
           }}
         >
+        
+        <Tooltip title={"Back to Login"}>
+        <IconButton
+          aria-label="close"
+          href="/forgot-password"
+          sx={{
+            position: 'absolute',
+            left: 30,
+            top: 30,
+            color: '#D1D5D8'[300],
+            backgroundColor: '#374151',
+            fontWeight: 'bold',
+          }}
+        >
+          <ArrowBackIosNewIcon sx={{ fontSize: 25, fontWeight: 'bold' }} />
+        </IconButton>
+        </Tooltip>
+
           <Box
             sx={{
               width: { xs: "100%", sm: "100%", md: "100%" },
@@ -89,10 +110,10 @@ const LoginPage = () => {
               }}
             >
               <Typography variant="h4" sx={{ fontWeight: "bold" }}>
-                {LoginSectionData.cardTitle}
+                {LoginSectionData.forgotPasswordTitle}
               </Typography>
               <Typography sx={{ marginTop: 1, color: '#9CA3AF', fontSize: '12.5px' }}>
-                {LoginSectionData.cardDescription}
+                {LoginSectionData.forgotPasswordDescription}
               </Typography>
             </Box>
 
@@ -141,45 +162,6 @@ const LoginPage = () => {
                     mt: 1.7,
                   }}
                 ></Box>
-
-                <Box>
-                  <Typography
-                    sx={{
-                      display: "block",
-                      textAlign: "left",
-                      marginBottom: "0.5rem"
-                    }}
-                    color={errors.password ? "error" : "text.primary"}>
-                    Password
-                  </Typography>
-                  <TextField
-                    fullWidth
-                    variant="outlined"
-                    placeholder="Enter Password"
-                    type={showPassword ? "text" : "password"}
-                    value={credentials.password}
-                    onChange={(e) => setCredentials({ ...credentials, password: e.target.value })}
-                    sx={inputStyles}
-                    InputProps={{
-                      endAdornment: (
-                        <IconButton
-                          sx={{ color: '#9CA3AF', fontSize: '1.3rem', }}
-                          onClick={handleTogglePasswordVisibility}
-                          edge="end"
-                        >
-                          {showPassword ?
-                            <VisibilityOff sx={{ fontSize: 'inherit' }} /> :
-                            <Visibility sx={{ fontSize: 'inherit' }} />}
-                        </IconButton>
-                      ),
-                    }}
-                  />
-                  {errors.password && (
-                    <span style={inputErrorStyles}>
-                      {errors.password}
-                    </span>
-                  )}
-                </Box>
               </Box>
 
               <Button
@@ -188,39 +170,22 @@ const LoginPage = () => {
                 variant="contained"
                 fullWidth
                 sx={{
-                  marginTop: 3.5,
-                  py: 1.5,
-                  padding: "8px 20px",
-                  borderRadius: "8px",
-                  textTransform: "none",
-                  backgroundColor: "#2563EB",
-                  fontWeight: 'bold',
+                    marginTop: 1,
+                    py: 1.5,
+                    padding: "8px 20px",
+                    borderRadius: "8px",
+                    textTransform: "none",
+                    backgroundColor: isButtonDisabled ? "#D1D5D8 !important" : "#2563EB !important",
+                    color: isButtonDisabled ? "#F1F5F9 !important" : "#ffffff !important",
+                    fontWeight: 'bold',
+                    cursor: isButtonDisabled ? 'not-allowed' : 'pointer',
                 }}
-              >
-                {LoginSectionData.buttonText}
-              </Button>
-
-              {/* Forgot Password */}
-              <Typography
-                sx={{
-                  textAlign: "center",
-                  fontSize: 13,
-                  marginTop: '0.8rem',
-                  display: 'flex',
-                  justifyContent: 'center',
-                }}>
-                <a href="/forgot-password"
-                  style={{
-                    textDecoration: "none",
-                    color: "#2563EB",
-                    fontWeight: "bold"
-                  }}>
-                  {LoginSectionData.forgotPassword}
-                </a>
-              </Typography>
-
+                disabled={isButtonDisabled}
+                >
+                {LoginSectionData.resetPasswordButton}
+                </Button>
+            
             </form>
-
             <Box
               sx={{
                 position: "absolute",
@@ -257,5 +222,4 @@ const inputErrorStyles = {
   fontSize: "12px",
 };
 
-
-export default LoginPage;
+export default EmailVerification;

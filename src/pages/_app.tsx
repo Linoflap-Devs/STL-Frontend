@@ -8,7 +8,7 @@ import AdminHeader from '../components/layout/AdminHeader';
 const App = ({ Component, pageProps }: AppProps) => {
   const router = useRouter();
 
-  const excludedPaths = ['/'];
+  const excludedPaths = ['/', '/forgot-password', '/email-verification',];
   const isExcludedPath = excludedPaths.includes(router.pathname || 'Not available');
 
   if (isExcludedPath) {
@@ -25,7 +25,7 @@ const App = ({ Component, pageProps }: AppProps) => {
       <CssBaseline />
       <div>
         <AdminHeader pages={[]} />
-        <main style={{ flexGrow: 1 }}>
+        <main>
           <Component {...pageProps} />
         </main>
         <footer style={{ padding: '2rem' }}>
