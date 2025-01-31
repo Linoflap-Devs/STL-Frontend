@@ -42,7 +42,7 @@ const EmailVerification = () => {
 
   const handleNavigation = () => {
     if (!isButtonDisabled) {
-      router.push("/managers");
+      router.push("/password-reset");
     }
   };
 

@@ -16,9 +16,8 @@ import LoginBackgroundSection from '../../components/auth/LoginBackgroundSection
 
 const ForgotPassword = () => {
   const router = useRouter();
-  const [isButtonDisabled, setIsButtonDisabled] = useState(true);
 
-  // temporary validation
+  // temporary navigation
   const handleNavigation = () => {
     const router = useRouter();
     router.push('/set-password');
@@ -96,7 +95,7 @@ const ForgotPassword = () => {
               </Typography>
             </Box>
 
-            <Box style={{ width: "88%" }}>
+            <Box style={{ width: "75%" }}>
 
             <Button
             type="button"
