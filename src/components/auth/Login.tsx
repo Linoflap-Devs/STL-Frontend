@@ -57,9 +57,13 @@ const LoginPage = () => {
           alignItems: "center",
           bgcolor: "#2D2D2D",
           p: 4,
+          backgroundImage: `url('${LoginSectionData.image2}')`,
+          backgroundSize: "cover",
+          backgroundRepeat: "no-repeat",
+          backgroundPosition: "center",
         }}
       >
-        <Box component="img" src={LoginSectionData.image} alt="Logo" sx={{ maxWidth: "45%" }} />
+        <Box component="img" src={LoginSectionData.image} alt="Logo" sx={{ maxWidth: "40%" }} />
       </Box>
 
       {/* Right Section */}

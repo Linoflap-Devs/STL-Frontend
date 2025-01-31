@@ -159,7 +159,7 @@ const ManagerTable: React.FC<ManagerTableProps> = ({
           sm: 700,
           md: 900,
           lg: 1200,
-          xl: 1536,
+          xl: 1200,
           //1536
         },
       }}
@@ -183,193 +183,188 @@ const ManagerTable: React.FC<ManagerTableProps> = ({
       </Box>
 
       <TableContainer>
-        <Box sx={{ backgroundColor: "#1F2937" }}>
-          <Box
-            sx={{
-              paddingTop: 2.5,
-              paddingBottom: 2,
-              paddingX: 2,
-              display: "flex",
-              justifyContent: "space-between",
-            }}
-          >
-            <TextField
-              fullWidth
-              variant="outlined"
-              placeholder="Search"
-              value={searchQuery}
+        {!isAllSelected && selectedUserIds.size === 0 && (
+          <Box sx={{ backgroundColor: "#1F2937" }}>
+            <Box
               sx={{
-                maxWidth: "300px",
-                "& .MuiOutlinedInput-root": {
-                  padding: "8px 12px",
-                },
-                "& .MuiOutlinedInput-input": {
-                  padding: "0.5px 0",
-                },
+                paddingTop: 2.5,
+                paddingBottom: 2,
+                paddingX: 2,
+                display: "flex",
+                justifyContent: "space-between",
               }}
-              onChange={handleSearchChange}
-              InputProps={{
-                startAdornment: (
-                  <InputAdornment position="start">
-                    <SearchIcon sx={{ fontSize: 20, color: "#9CA3AF" }} />
-                  </InputAdornment>
-                ),
-              }}
-            />
-            <Button variant="contained" onClick={onCreate} sx={buttonStyles}>
-              {UserSectionData.addManagerButton}
-            </Button>
+            >
+              <TextField
+                fullWidth
+                variant="outlined"
+                placeholder="Search"
+                value={searchQuery}
+                sx={{
+                  maxWidth: "300px",
+                  "& .MuiOutlinedInput-root": {
+                    padding: "8px 12px",
+                  },
+                  "& .MuiOutlinedInput-input": {
+                    padding: "0.5px 0",
+                  },
+                }}
+                onChange={handleSearchChange}
+                InputProps={{
+                  startAdornment: (
+                    <InputAdornment position="start">
+                      <SearchIcon sx={{ fontSize: 20, color: "#9CA3AF" }} />
+                    </InputAdornment>
+                  ),
+                }}
+              />
+              <Button variant="contained" onClick={onCreate} sx={buttonStyles}>
+                {UserSectionData.addManagerButton}
+              </Button>
+            </Box>
           </Box>
+        )}
 
-          <Table size="small">
-            <TableHead>
-              <TableRow>
-                <TableCell>
-                  <Tooltip title="Select All">
-                    <Checkbox
-                      checked={isAllSelected}
-                      onChange={handleSelectAll}
-                    />
-                  </Tooltip>
-                </TableCell>
-                {!isAllSelected && selectedUserIds.size === 0 && (
-                  <>
-                    <SortableTableCell
-                      label="First Name"
-                      sortKey="firstname"
-                      sortConfig={sortConfig}
-                      onSort={onSortWrapper}
-                    />
-                    <SortableTableCell
-                      label="Last Name"
-                      sortKey="lastname"
-                      sortConfig={sortConfig}
-                      onSort={onSortWrapper}
-                    />
-                    <SortableTableCell
-                      label="Username"
-                      sortKey="username"
-                      sortConfig={sortConfig}
-                      onSort={onSortWrapper}
-                    />
-                    <SortableTableCell
-                      label="Phone Number"
-                      sortKey="phonenumber"
-                      sortConfig={sortConfig}
-                      onSort={onSortWrapper}
-                    />
-                    <SortableTableCell
-                      label="Region"
-                      sortKey="region"
-                      sortConfig={sortConfig}
-                      onSort={onSortWrapper}
-                    />
-                    <SortableTableCell
-                      label="Province"
-                      sortKey="province"
-                      sortConfig={sortConfig}
-                      onSort={onSortWrapper}
-                    />
-                    <SortableTableCell
-                      label="Registration Date"
-                      sortKey="regisdate"
-                      sortConfig={sortConfig}
-                      onSort={onSortWrapper}
-                      colSpan={selectedUserIds.size === 0 ? 2 : 1}  // Conditional colSpan
-                    />
-                  </>
-                )}
-                {selectedUserIds.size > 0 && (
-                  <TableCell colSpan={8} sx={{ padding: 0 }}>
-                    <Box
-                      sx={{
-                        display: "flex",
-                        justifyContent: "space-between",
-                        alignItems: "center",
-                        padding: 1,
-                      }}
-                    >
-                      <span>{selectedUserIds.size} Selected</span>
-                      <IconButton
-                        onClick={handleDeleteSelectedManagers}
-                        sx={{ padding: 0, color: "#D1D5D8", marginRight: 15, }}
-                      >
-                        <DeleteIcon />
-                      </IconButton>
-                    </Box>
-                  </TableCell>
-                )}
-              </TableRow>
-            </TableHead>
-
-            <TableBody>
-              {sortedUsers
-                .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                .map((user) => (
-                  <TableRow key={user.id}>
-                    <TableCell>
-                      <Checkbox
-                        checked={selectedUserIds.has(user.id!)}
-                        onChange={(event) =>
-                          handleSelectManager(event, user.id!)
-                        }
-                      />
-                    </TableCell>
-                    <TableCell>{user.firstname}</TableCell>
-                    <TableCell>{user.lastname}</TableCell>
-                    <TableCell>{user.username}</TableCell>
-                    <TableCell>{user.phonenumber}</TableCell>
-                    <TableCell>{user.region}</TableCell>
-                    <TableCell>{user.province}</TableCell>
-                    <TableCell>{user.regisdate}</TableCell>
-                    {/* {selectedUserIds.size > 0 && ( */}
-                      <TableCell>
-                        <IconButton
-                          onClick={(event) =>
-                            handleToggleMenu(event, user as User)
-                          }
-                        >
-                          <MoreHorizIcon />
-                        </IconButton>
-                      </TableCell>
-                    {/* )} */}
-                  </TableRow>
-                ))}
-            </TableBody>
-          </Table>
-
-          <Menu
-            anchorEl={anchorEl}
-            open={Boolean(anchorEl)}
-            onClose={() => handleToggleMenu()}
-            MenuListProps={{ "aria-labelledby": "basic-button" }}
-          >
-            <MenuItem onClick={() => handleEditClick(selectedUser!)}>
-              Update
-            </MenuItem>
-            <MenuItem onClick={handleDeleteUser}>Delete</MenuItem>
-          </Menu>
-
+        {selectedUserIds.size > 0 && (
           <Box
             sx={{
-              padding: "12px",
-              boxShadow: "0 2px 8px rgba(0, 0, 0, 0.4)",
+              width: "100%",
+              backgroundColor: "#1F2937",
+              paddingY: 3,
+              paddingX: 3,
+              display: "flex",
+              justifyContent: "flex-end",
+              alignItems: "center",
             }}
           >
-            <TablePagination
-              rowsPerPageOptions={[5, 10, 25, 100]}
-              component="div"
-              count={sortedUsers.length}
-              rowsPerPage={rowsPerPage}
-              page={page}
-              onPageChange={(event, newPage) =>
-                handleChangePage(event, newPage, setPage)
-              }
-              onRowsPerPageChange={(event) =>
-                handleChangeRowsPerPage(event, setRowsPerPage)
-              }
-            />
+            <Typography sx={{ color: "white", fontSize: 14, textTransform: "uppercase", fontWeight: 700, }}>
+              {selectedUserIds.size} Selected
+            </Typography>
+            <IconButton
+              onClick={handleDeleteSelectedManagers}
+              sx={{ padding: 0, color: "#D1D5D8", marginRight: 4, marginLeft: 3 }}
+            >
+              <DeleteIcon />
+            </IconButton>
           </Box>
+        )}
+
+        <Table size="small">
+          <TableHead>
+            <TableRow>
+              <TableCell>
+                <Tooltip title="Select All">
+                  <Checkbox checked={isAllSelected} onChange={handleSelectAll} />
+                </Tooltip>
+              </TableCell>
+              <>
+                <SortableTableCell
+                  label="First Name"
+                  sortKey="firstname"
+                  sortConfig={sortConfig}
+                  onSort={onSortWrapper}
+                />
+                <SortableTableCell
+                  label="Last Name"
+                  sortKey="lastname"
+                  sortConfig={sortConfig}
+                  onSort={onSortWrapper}
+                />
+                <SortableTableCell
+                  label="Username"
+                  sortKey="username"
+                  sortConfig={sortConfig}
+                  onSort={onSortWrapper}
+                />
+                <SortableTableCell
+                  label="Phone Number"
+                  sortKey="phonenumber"
+                  sortConfig={sortConfig}
+                  onSort={onSortWrapper}
+                />
+                <SortableTableCell
+                  label="Region"
+                  sortKey="region"
+                  sortConfig={sortConfig}
+                  onSort={onSortWrapper}
+                />
+                <SortableTableCell
+                  label="Province"
+                  sortKey="province"
+                  sortConfig={sortConfig}
+                  onSort={onSortWrapper}
+                />
+                <SortableTableCell
+                  label="Registration Date"
+                  sortKey="regisdate"
+                  sortConfig={sortConfig}
+                  onSort={onSortWrapper}
+                />
+              </>
+              <TableCell>Actions</TableCell>
+            </TableRow>
+          </TableHead>
+
+          <TableBody>
+            {sortedUsers
+              .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+              .map((user) => (
+                <TableRow key={user.id}>
+                  <TableCell>
+                    <Checkbox
+                      checked={selectedUserIds.has(user.id!)}
+                      onChange={(event) =>
+                        handleSelectManager(event, user.id!)
+                      }
+                    />
+                  </TableCell>
+                  <TableCell>{user.firstname}</TableCell>
+                  <TableCell>{user.lastname}</TableCell>
+                  <TableCell>{user.username}</TableCell>
+                  <TableCell>{user.phonenumber}</TableCell>
+                  <TableCell>{user.region}</TableCell>
+                  <TableCell>{user.province}</TableCell>
+                  <TableCell>{user.regisdate}</TableCell>
+                  <TableCell>
+                    <IconButton onClick={(event) => handleToggleMenu(event, user)}>
+                      <MoreHorizIcon />
+                    </IconButton>
+                  </TableCell>
+                </TableRow>
+              ))}
+          </TableBody>
+        </Table>
+
+        <Menu
+          anchorEl={anchorEl}
+          open={Boolean(anchorEl)}
+          onClose={() => handleToggleMenu()}
+          MenuListProps={{ "aria-labelledby": "basic-button" }}
+        >
+          <MenuItem onClick={() => handleEditClick(selectedUser!)}>Update</MenuItem>
+          <MenuItem onClick={handleDeleteUser}>Delete</MenuItem>
+        </Menu>
+
+
+        <Box
+          sx={{
+            padding: "12px",
+            boxShadow: "0 2px 8px rgba(0, 0, 0, 0.4)",
+            backgroundColor: "#1F2937"
+          }}
+        >
+          <TablePagination
+            rowsPerPageOptions={[5, 10, 25, 100]}
+            component="div"
+            count={sortedUsers.length}
+            rowsPerPage={rowsPerPage}
+            page={page}
+            onPageChange={(event, newPage) =>
+              handleChangePage(event, newPage, setPage)
+            }
+            onRowsPerPageChange={(event) =>
+              handleChangeRowsPerPage(event, setRowsPerPage)
+            }
+          />
         </Box>
 
         <Box

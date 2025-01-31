@@ -1,7 +1,7 @@
 export const LoginSectionData = {
 
   image: "/images/stl-logo.png",
-  image2: "/images/pexels-introspectivedsgn-4249023.jpg",
+  image2: "/images/STL_Assets_1.png",
   title: "Small Town Lottery",
   description: "Big wins. Stronger communities.",
   cardTitle: "Welcome!",

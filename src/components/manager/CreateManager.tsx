@@ -243,7 +243,12 @@ const CreateManager: React.FC<CreateManagerProps> = ({
                         helperText={''}
                         InputProps={{
                           endAdornment: (
-                            <IconButton sx={{ color: "#9ca3af" }} onClick={() => setShowPassword((prev) => !prev)} edge="end">
+                            <IconButton sx={{
+                              color: "#9ca3af"
+                            }}
+                              onClick={() => setShowPassword((prev) => !prev)}
+                              edge="end"
+                            >
                               {showPassword ? <VisibilityOff /> : <Visibility />}
                             </IconButton>
                           ),
@@ -255,13 +260,23 @@ const CreateManager: React.FC<CreateManagerProps> = ({
                         variant="contained"
                         color="secondary"
                         onClick={handleGeneratePassword}
-                        sx={{ width: "100%", textTransform: "none", backgroundColor: "#2563EB", borderRadius: "8px" }}
+                        sx={{
+                          width: "100%",
+                          textTransform: "none",
+                          backgroundColor: "#2563EB",
+                          borderRadius: "8px"
+                        }}
                       >
                         Generate
                       </Button>
                     </Grid>
                     {errors[key] && (
-                      <Box sx={{ color: 'error.main', mt: "3px", marginLeft: '12px', fontSize: '0.85rem' }}>
+                      <Box sx={{
+                        color: 'error.main',
+                        mt: "3px",
+                        marginLeft: '12px',
+                        fontSize: '0.85rem'
+                      }}>
                         {errors[key]}
                       </Box>
                     )}
