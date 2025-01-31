@@ -22,4 +22,32 @@ export const LoginSectionData = {
       Powered by <span style={{ fontWeight: "bold" }}>Linoflap Technology Philippines Inc.</span>
     </>
   ),
+  EmailVerificationTitle: "Check your email",
+  EmailVerificationDescription: (
+    <>
+      We sent a reset link to small...@gmail.com <br />
+      enter 6 digit code that mentioned in the email.
+    </>
+  ),
+  resendEmailDescription: (
+    <>
+      <span style={{ color: '#9CA3AF' }}>
+        Haven’t got the email yet?{' '}
+        <a 
+          href="/resend-email" 
+          style={{ fontWeight: 'bold', color: '#2563EB', textDecoration: 'none' }}
+        >
+          Resend email
+        </a>
+      </span>
+    </>
+  ),
+  PasswordResetTitle: "Password Reset",
+  PasswordResetDescription: (
+    <>
+      Your password has been successfully reset. Click <br />
+      confirm to set new password.
+    </>
+  ),
+  ConfirmButton: "Confirm",
 };

@@ -5,221 +5,131 @@ import {
   Button,
   TextField,
   IconButton,
-  Tooltip
+  Tooltip,
+  Grid
 } from "@mui/material";
-
-import { LoginSectionData } from "../../data/LoginSectionData";
 import { useRouter } from "next/router";
-import { loginValidate } from "../../utils/validation";
-import ArrowBackIosNewIcon from '@mui/icons-material/ArrowBackIosNew';
-import LoginBackgroundSection from '../../components/auth/LoginBackgroundSection';
+import ArrowBackIosNewIcon from "@mui/icons-material/ArrowBackIosNew";
+import LoginBackgroundSection from "../../components/auth/LoginBackgroundSection";
+import { LoginSectionData } from "../../data/LoginSectionData";
 
 const EmailVerification = () => {
   const router = useRouter();
-  const [credentials, setCredentials] = useState({ username: "", });
-  const [errors, setErrors] = useState<{ username?: string; password?: string }>({});
+  const [otp, setOtp] = useState(Array(6).fill(""));
   const [isButtonDisabled, setIsButtonDisabled] = useState(true);
 
-  // Validation
-  const handleLogin = (e: React.FormEvent) => {
-    e.preventDefault();
-    const validationErrors = loginValidate(credentials);
-    if (Object.keys(validationErrors).length === 0) {
-      console.log("Login Successful.", credentials)
-    } else {
-      setErrors(validationErrors);
-    }
-  }
+  useEffect(() => {
+    setIsButtonDisabled(otp.some((digit) => digit === ""));
+  }, [otp]);
 
-  // temporary validation
-  const handleNavigation = () => {
-    const validationErrors = loginValidate(credentials);
-    if (Object.keys(validationErrors).length === 0) {
-      router.push("/managers");
-    } else {
-      console.log("Validation failed.");
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>, index: number) => {
+    const value = e.target.value.replace(/[^0-9]/g, "");
+    if (value.length <= 1) {
+      const newOtp = [...otp];
+      newOtp[index] = value;
+      setOtp(newOtp);
+      if (value && index < 5) {
+        document.getElementById(`otp-input-${index + 1}`)?.focus();
+      }
     }
   };
 
-  useEffect(() => {
-    setIsButtonDisabled(credentials.username.trim() === "");
-  }, [credentials.username]);
+  const handleBackspace = (e: React.KeyboardEvent<HTMLDivElement>, index: number) => {
+    if (e.key === "Backspace" && !otp[index] && index > 0) {
+      document.getElementById(`otp-input-${index - 1}`)?.focus();
+    }
+  };
+
+  const handleNavigation = () => {
+    if (!isButtonDisabled) {
+      router.push("/managers");
+    }
+  };
 
   return (
-    <>
-      <Box
-        sx={{
-          display: "flex",
-          flexDirection: { xs: "column", sm: "row", md: "row", lg: "row" },
-          margin: 0,
-          height: "100vh",
-        }}
-      >
-        {/* Left Column (Text Section) */}
-        <LoginBackgroundSection
-          imageSrc={LoginSectionData.image2}
-          logoSrc={LoginSectionData.image}
-        />
+    <Box display="flex" flexDirection={{ xs: "column", md: "row" }} height="100vh">
+      <LoginBackgroundSection imageSrc={LoginSectionData.image2} logoSrc={LoginSectionData.image} />
 
-        {/* Right Column (Login Card Section) */}
-        <Box
-          sx={{
-            flex: 1,
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
-            position: "relative",
-          }}
-        >
-        
-        <Tooltip title={"Back to Login"}>
-        <IconButton
-          aria-label="close"
-          href="/forgot-password"
-          sx={{
-            position: 'absolute',
-            left: 30,
-            top: 30,
-            color: '#D1D5D8'[300],
-            backgroundColor: '#374151',
-            fontWeight: 'bold',
-          }}
-        >
-          <ArrowBackIosNewIcon sx={{ fontSize: 25, fontWeight: 'bold' }} />
-        </IconButton>
+      <Box flex={1} display="flex" justifyContent="center" alignItems="center" position="relative">
+        <Tooltip title="Back to Forgot Password">
+          <IconButton href="/forgot-password" sx={{ position: "absolute", left: 30, top: 30, color: "#D1D5D8", backgroundColor: "#374151" }}>
+            <ArrowBackIosNewIcon sx={{ fontSize: 25 }} />
+          </IconButton>
         </Tooltip>
 
-          <Box
-            sx={{
-              width: { xs: "100%", sm: "100%", md: "100%" },
-              maxWidth: 500,
-              padding: 3,
-              display: "flex",
-              flexDirection: "column",
-              justifyContent: "center",
-              alignItems: "center",
+        <Box sx={{ width: "100%", maxWidth: 600, textAlign: "center" }}>
+          <Typography variant="h4" fontWeight="bold">
+            {LoginSectionData.EmailVerificationTitle}
+          </Typography>
+          <Typography mt={1} color="#9CA3AF" fontSize={"12.5px"}>
+            {LoginSectionData.EmailVerificationDescription}
+          </Typography>
+
+          <Box display="flex" justifyContent="center" mt={3.5}>
+            <Grid container justifyContent="center" spacing={0.5} flexWrap="nowrap" direction="row">
+                {otp.map((digit, index) => (
+                    <Grid item key={index}>
+                        <TextField
+                            id={`otp-input-${index}`}
+                            value={digit}
+                            onChange={(e) => handleChange(e, index)}
+                            onKeyDown={(e) => handleBackspace(e, index)}
+                            variant="outlined"
+                            inputProps={{
+                                maxLength: 1,
+                                style: {
+                                    textAlign: "center",
+                                    fontSize: "16px",
+                                    width: "10px !important",
+                                    maxWidth: "20px",
+                                    height: "35px",
+                                    outline: "none",
+                                    borderRadius: "6px",
+                                    border: "1px solid #D1D5DB",
+                                },
+                            }}
+                            sx={{
+                                "& .MuiOutlinedInput-root": {
+                                    padding: "4px",
+                                    backgroundColor: "transparent !important",
+                                    "& fieldset": {
+                                        border: "none",
+                                    },
+                                },
+                            }}
+                        />
+                    </Grid>
+                ))}
+            </Grid>
+        </Box>
+
+          <Button
+            onClick={handleNavigation}
+            variant="contained"
+            sx={{ 
+                mt: 0.5,
+                py: 1,
+                borderRadius: "8px", 
+                ontWeight: "bold", 
+                textTransform: "none", 
+                width: '65%', 
+                marginTop: '2rem',
+                backgroundColor: isButtonDisabled ? "#D1D5D8 !important" : "#2563EB !important",
+                color: isButtonDisabled ? "#F1F5F9 !important" : "#ffffff !important",
+                fontWeight: 'bold',
+                cursor: isButtonDisabled ? 'not-allowed' : 'pointer',
             }}
+            disabled={isButtonDisabled}
           >
-            <Box
-              sx={{
-                display: "flex",
-                justifyContent: "center",
-                flexDirection: "column",
-                textAlign: "center",
-                marginBottom: '1rem',
-              }}
-            >
-              <Typography variant="h4" sx={{ fontWeight: "bold" }}>
-                {LoginSectionData.forgotPasswordTitle}
-              </Typography>
-              <Typography sx={{ marginTop: 1, color: '#9CA3AF', fontSize: '12.5px' }}>
-                {LoginSectionData.forgotPasswordDescription}
-              </Typography>
-            </Box>
-
-            <form onSubmit={handleLogin} style={{ width: "88%" }}>
-              <Box
-                sx={{
-                  display: "flex",
-                  flexDirection: "column",
-                  alignItems: "stretch",
-                  width: "100%",
-                }}
-              >
-                <Box sx={{ mb: '0.3rem' }}>
-                  <Typography
-                    sx={{
-                      display: "block",
-                      textAlign: "left",
-                      marginBottom: "0.5rem",
-                    }}
-                    color={errors.username ? "error" : "text.primary"}
-                  >
-                    Username
-                  </Typography>
-
-                  <TextField
-                    fullWidth
-                    variant="outlined"
-                    placeholder="Enter Username"
-                    value={credentials.username}
-                    onChange={(e) => setCredentials({ ...credentials, username: e.target.value })}
-                    error={!!errors.username}
-                    sx={inputStyles}
-                  />
-                  {errors.username && (
-                    <span style={inputErrorStyles}>
-                      {errors.username}
-                    </span>
-                  )}
-                </Box>
-
-                <Box
-                  sx={{
-                    display: "flex",
-                    justifyContent: "flex-end",
-                    width: "100%",
-                    mt: 1.7,
-                  }}
-                ></Box>
-              </Box>
-
-              <Button
-                type="submit"
-                onClick={handleNavigation}
-                variant="contained"
-                fullWidth
-                sx={{
-                    marginTop: 1,
-                    py: 1.5,
-                    padding: "8px 20px",
-                    borderRadius: "8px",
-                    textTransform: "none",
-                    backgroundColor: isButtonDisabled ? "#D1D5D8 !important" : "#2563EB !important",
-                    color: isButtonDisabled ? "#F1F5F9 !important" : "#ffffff !important",
-                    fontWeight: 'bold',
-                    cursor: isButtonDisabled ? 'not-allowed' : 'pointer',
-                }}
-                disabled={isButtonDisabled}
-                >
-                {LoginSectionData.resetPasswordButton}
-                </Button>
-            
-            </form>
-            <Box
-              sx={{
-                position: "absolute",
-                bottom: 35,
-                textAlign: "center",
-                color: "#FFFFFF",
-              }}
-            >
-              <Typography
-                sx={{ fontSize: "13px" }}>
-                {LoginSectionData.copyright}
-              </Typography>
-            </Box>
-          </Box>
+            {LoginSectionData.resetPasswordButton}
+          </Button>
+          <Typography mt={1.3} fontSize="13px">
+            {LoginSectionData.resendEmailDescription}
+          </Typography>
         </Box>
       </Box>
-    </>
+    </Box>
   );
-};
-
-const inputStyles = {
-  "& .MuiOutlinedInput-root": {
-    "& fieldset": { borderColor: "#D1D5DB", padding: "14px 40px 10px 14px", },
-    "&.Mui-error fieldset": { borderColor: "#F05252" },
-  },
-};
-
-const inputErrorStyles = {
-  display: "flex",
-  alignItems: "center",
-  gap: "4px",
-  color: "#F05252",
-  marginTop: "4px",
-  fontSize: "12px",
 };
 
 export default EmailVerification;
