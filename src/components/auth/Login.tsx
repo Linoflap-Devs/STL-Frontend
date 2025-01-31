@@ -7,9 +7,10 @@ import {
   IconButton,
 } from "@mui/material";
 
-import { Visibility, VisibilityOff, ErrorOutline } from "@mui/icons-material";
+import { Visibility, VisibilityOff } from "@mui/icons-material";
 import { LoginSectionData } from "../../data/LoginSectionData";
 import { useRouter } from "next/router";
+import { loginValidate } from "../../utils/validation";
 
 const LoginPage = () => {
   const router = useRouter();
@@ -17,27 +18,21 @@ const LoginPage = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [errors, setErrors] = useState<{ username?: string; password?: string }>({});
 
-  // Validation
-  const validate = () => {
-    const newErrors: { username?: string; password?: string } = {};
-    if (!credentials.username) newErrors.username = "Username is required";
-    if (!credentials.password) newErrors.password = "Password is required";
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
-  };
-
+  // validation
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
-    if (validate()) {
-      console.log("Login Successful", credentials);
+    const validationErrors = loginValidate(credentials);
+    if (Object.keys(validationErrors).length === 0) {
+      console.log("Login Successful.", credentials)
+    } else {
+      setErrors(validationErrors);
     }
-  };
+  }
 
-  // temporary link to admin w/ temporary validation
+  // temporary validation
   const handleNavigation = () => {
-    const isValid = validate();
-
-    if (isValid) {
+    const validationErrors = loginValidate(credentials);
+    if (Object.keys(validationErrors).length === 0) {
       router.push("/managers");
     } else {
       console.log("Validation failed.");
@@ -72,7 +67,7 @@ const LoginPage = () => {
           <Typography variant="h4" fontWeight="bold">
             {LoginSectionData.cardTitle}
           </Typography>
-          <Typography variant="body2" sx={{ mt: 1 }}>
+          <Typography variant="body2" sx={{ mt: 1, color: '#9CA3AF' }}>
             {LoginSectionData.cardDescription}
           </Typography>
 
@@ -101,7 +96,6 @@ const LoginPage = () => {
                 />
                 {errors.username && (
                   <span style={inputErrorStyles}>
-                    <ErrorOutline fontSize="small" color="error" />
                     {errors.username}
                   </span>
                 )}
@@ -109,7 +103,15 @@ const LoginPage = () => {
 
               {/* Password Input */}
               <Box>
-                <Typography sx={{ display: "block", textAlign: "left", marginBottom: "0.5rem" }} color={errors.password ? "error" : "text.primary"}>Password</Typography>
+                <Typography
+                  sx={{
+                    display: "block",
+                    textAlign: "left",
+                    marginBottom: "0.5rem"
+                  }}
+                  color={errors.password ? "error" : "text.primary"}>
+                  Password
+                </Typography>
                 <TextField
                   fullWidth
                   variant="outlined"
@@ -120,32 +122,59 @@ const LoginPage = () => {
                   sx={inputStyles}
                   InputProps={{
                     endAdornment: (
-                      <IconButton style={{}} onClick={handleTogglePasswordVisibility} edge="end">
-                        {showPassword ? <VisibilityOff /> : <Visibility />}
+                      <IconButton
+                        sx={{ color: '#9CA3AF', fontSize: '1.3rem', }}
+                        onClick={handleTogglePasswordVisibility}
+                        edge="end"
+                      >
+                        {showPassword ?
+                          <VisibilityOff sx={{ fontSize: 'inherit' }} /> :
+                          <Visibility sx={{ fontSize: 'inherit' }} />}
                       </IconButton>
                     ),
                   }}
                 />
                 {errors.password && (
                   <span style={inputErrorStyles}>
-                    <ErrorOutline fontSize="small" color="error" />
                     {errors.password}
                   </span>
                 )}
-
-                {/* Forgot Password */}
-                <Typography sx={{ textAlign: "right", fontSize: 13.9, marginTop: '0.4rem' }}>
-                  <a href="/forgot-password" style={{ textDecoration: "none", color: "#2563EB", fontWeight: "bold" }}>
-                    {LoginSectionData.forgotPassword}
-                  </a>
-                </Typography>
-
               </Box>
 
               {/* Login Button */}
-              <Button type="submit" variant="contained" color="primary" onClick={handleNavigation} sx={{ mt: 1, py: 1.5, fontSize: "16px", padding: "8px 20px", borderRadius: "8px", textTransform: "none", backgroundColor: "#2563EB", }}>
+              <Button type="submit"
+                variant="contained"
+                color="primary"
+                onClick={handleNavigation}
+                sx={{
+                  mt: 2,
+                  py: 1.5,
+                  fontSize: "16px",
+                  padding: "8px 20px",
+                  borderRadius: "8px",
+                  textTransform: "none",
+                  backgroundColor: "#2563EB",
+                }}>
                 Login
               </Button>
+
+              {/* Forgot Password */}
+              <Typography
+                sx={{
+                  textAlign: "center",
+                  fontSize: 13.9,
+                  marginTop: '-5px'
+
+                }}>
+                <a href="/forgot-password"
+                  style={{
+                    textDecoration: "none",
+                    color: "#2563EB",
+                    fontWeight: "bold"
+                  }}>
+                  {LoginSectionData.forgotPassword}
+                </a>
+              </Typography>
             </Box>
           </form>
         </Box>

@@ -50,3 +50,33 @@ export const validateUser = (user: User) => {
 
   return newErrors;
 };
+
+// Login validation function
+export const loginValidate = (credentials: { username?: string; password?: string }) => {
+  const newErrors: { username?: string; password?: string } = {};
+  const passwordRegex =
+    /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*])[A-Za-z\d!@#$%^&*]{8,}$/;
+
+  Object.entries(credentials).forEach(([key, value]) => {
+    switch (key) {
+      case "username":
+        if (!value) {
+          newErrors.username = "Username is required";
+        }
+        break;
+
+      case "password":
+        if (!value) {
+          newErrors.password = "Password is required";
+        } else if (!passwordRegex.test(value)) {
+          newErrors.password = "Invalid credentials. Please verify your details.";
+        }
+        break;
+
+      default:
+        break;
+    }
+  });
+
+  return newErrors;
+};
