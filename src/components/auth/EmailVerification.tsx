@@ -10,7 +10,7 @@ import {
 } from "@mui/material";
 import { useRouter } from "next/router";
 import ArrowBackIosNewIcon from "@mui/icons-material/ArrowBackIosNew";
-import LoginBackgroundSection from "../../components/auth/LoginBackgroundSection";
+import LoginBackgroundSection from "../layout/LoginBackgroundSection";
 import { LoginSectionData } from "../../data/LoginSectionData";
 
 const EmailVerification = () => {
@@ -42,7 +42,7 @@ const EmailVerification = () => {
 
   const handleNavigation = () => {
     if (!isButtonDisabled) {
-      router.push("/password-reset");
+      router.push("/set-password");
     }
   };
 

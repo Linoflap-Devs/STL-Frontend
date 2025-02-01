@@ -12,6 +12,8 @@ export const LoginSectionData = {
     </>
   ),
   rememberMe: "Remember Me?",
+  UsernameTitle: "Username",
+  PasswordTitle: "Password",
   forgotPassword: "Forgot Password?",
   forgotPasswordTitle: "Forgot Password",
   forgotPasswordDescription: "Please enter your username to reset the password.",
@@ -50,4 +52,8 @@ export const LoginSectionData = {
     </>
   ),
   ConfirmButton: "Confirm",
+  SetNewPasswordTitle: "Set a new password",
+  PasswordResetDescription: "Please enter your username to reset the password",
+  ConfirmPassword: "Confirm Password",
+  UpdatePassword: "Update Password",
 };

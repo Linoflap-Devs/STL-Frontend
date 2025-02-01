@@ -10,17 +10,15 @@ import {
 
 import { LoginSectionData } from "../../data/LoginSectionData";
 import { useRouter } from "next/router";
-import { loginValidate } from "../../utils/validation";
 import ArrowBackIosNewIcon from '@mui/icons-material/ArrowBackIosNew';
-import LoginBackgroundSection from '../../components/auth/LoginBackgroundSection';
+import LoginBackgroundSection from '../layout/LoginBackgroundSection';
 
-const ForgotPassword = () => {
+const PasswordReset = () => {
   const router = useRouter();
 
   // temporary navigation
   const handleNavigation = () => {
-    const router = useRouter();
-    router.push('/set-password');
+    router.push('/');
   }
 
   return (
@@ -138,4 +136,4 @@ const ForgotPassword = () => {
   );
 };
 
-export default ForgotPassword;
+export default PasswordReset;

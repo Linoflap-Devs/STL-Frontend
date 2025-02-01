@@ -1,23 +1,28 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Box,
   Typography,
   Button,
   TextField,
   IconButton,
+  Tooltip,
 } from "@mui/material";
 
 import { Visibility, VisibilityOff } from "@mui/icons-material";
 import { LoginSectionData } from "../../data/LoginSectionData";
 import { useRouter } from "next/router";
 import { loginValidate } from "../../utils/validation";
+import ArrowBackIosNewIcon from '@mui/icons-material/ArrowBackIosNew';
 import LoginBackgroundSection from '../layout/LoginBackgroundSection';
 
 const LoginPage = () => {
   const router = useRouter();
-  const [credentials, setCredentials] = useState({ username: "", password: "" });
-  const [showPassword, setShowPassword] = useState(false);
-  const [errors, setErrors] = useState<{ username?: string; password?: string }>({});
+  const [credentials, setCredentials] = useState({ newpassword: "", setpassword: "" });
+  const [showPassword, setShowPassword] = useState<boolean>(false);
+  const [showConfirmPassword, setConfirmPassword] = useState<boolean>(false);
+  
+  const [errors, setErrors] = useState<{ newpassword?: string; setpassword?: string }>({});
+  const [isButtonDisabled, setIsButtonDisabled] = useState(true);
 
   // Validation
   const handleLogin = (e: React.FormEvent) => {
@@ -30,17 +35,30 @@ const LoginPage = () => {
     }
   }
 
-  // temporary validation
+  // temporary navigation
   const handleNavigation = () => {
     const validationErrors = loginValidate(credentials);
     if (Object.keys(validationErrors).length === 0) {
-      router.push("/managers");
+      router.push("/password-reset");
     } else {
       console.log("Validation failed.");
     }
   };
+  
+  const handleTogglePasswordVisibility = (type: 'newpassword' | 'setpassword') => {
+    if (type === 'newpassword') {
+      setShowPassword((prev) => !prev);
+    } else if (type === 'setpassword') {
+      setConfirmPassword((prev) => !prev);
+    }
+  }
 
-  const handleTogglePasswordVisibility = () => setShowPassword((prev) => !prev);
+  useEffect(() => {
+    setIsButtonDisabled(
+      credentials.newpassword.trim() === "" &&
+        credentials.setpassword.trim() === ""
+    );
+  }, [credentials.newpassword, credentials.setpassword]);
 
   return (
     <>
@@ -68,6 +86,24 @@ const LoginPage = () => {
             position: "relative",
           }}
         >
+
+        <Tooltip title={"Back to Login"}>
+        <IconButton
+          aria-label="close"
+          href="/"
+          sx={{
+            position: 'absolute',
+            left: 30,
+            top: 30,
+            color: '#D1D5D8'[300],
+            backgroundColor: '#374151',
+            fontWeight: 'bold',
+          }}
+        >
+          <ArrowBackIosNewIcon sx={{ fontSize: 25, fontWeight: 'bold' }} />
+        </IconButton>
+        </Tooltip>
+
           <Box
             sx={{
               width: { xs: "100%", sm: "100%", md: "100%" },
@@ -89,10 +125,10 @@ const LoginPage = () => {
               }}
             >
               <Typography variant="h4" sx={{ fontWeight: "bold" }}>
-                {LoginSectionData.cardTitle}
+                {LoginSectionData.PasswordResetTitle}
               </Typography>
               <Typography sx={{ marginTop: 1, color: '#9CA3AF', fontSize: '12.5px' }}>
-                {LoginSectionData.cardDescription}
+                {LoginSectionData.PasswordResetDescription}
               </Typography>
             </Box>
 
@@ -105,51 +141,14 @@ const LoginPage = () => {
                   width: "100%",
                 }}
               >
-                <Box sx={{ mb: '0.3rem' }}>
-                  <Typography
-                    sx={{
-                      display: "block",
-                      textAlign: "left",
-                      marginBottom: "0.5rem",
-                    }}
-                    color={errors.username ? "error" : "text.primary"}
-                  >
-                    {LoginSectionData.UsernameTitle}
-                  </Typography>
-
-                  <TextField
-                    fullWidth
-                    variant="outlined"
-                    placeholder="Enter Username"
-                    value={credentials.username}
-                    onChange={(e) => setCredentials({ ...credentials, username: e.target.value })}
-                    error={!!errors.username}
-                    sx={inputStyles}
-                  />
-                  {errors.username && (
-                    <span style={inputErrorStyles}>
-                      {errors.username}
-                    </span>
-                  )}
-                </Box>
-
-                <Box
-                  sx={{
-                    display: "flex",
-                    justifyContent: "flex-end",
-                    width: "100%",
-                    mt: 1.7,
-                  }}
-                ></Box>
-
-                <Box>
+                <Box sx={{marginBottom: "1.5rem",}}>
                   <Typography
                     sx={{
                       display: "block",
                       textAlign: "left",
                       marginBottom: "0.5rem"
                     }}
-                    color={errors.password ? "error" : "text.primary"}>
+                    color={errors.newpassword ? "error" : "text.primary"}>
                     {LoginSectionData.PasswordTitle}
                   </Typography>
                   <TextField
@@ -157,14 +156,14 @@ const LoginPage = () => {
                     variant="outlined"
                     placeholder="Enter Password"
                     type={showPassword ? "text" : "password"}
-                    value={credentials.password}
-                    onChange={(e) => setCredentials({ ...credentials, password: e.target.value })}
+                    value={credentials.newpassword}
+                    onChange={(e) => setCredentials({ ...credentials, newpassword: e.target.value })}
                     sx={inputStyles}
                     InputProps={{
                       endAdornment: (
-                        <IconButton
+                        <IconButton 
                           sx={{ color: '#9CA3AF', fontSize: '1.3rem', }}
-                          onClick={handleTogglePasswordVisibility}
+                          onClick={() => handleTogglePasswordVisibility('newpassword')}
                           edge="end"
                         >
                           {showPassword ?
@@ -174,9 +173,48 @@ const LoginPage = () => {
                       ),
                     }}
                   />
-                  {errors.password && (
+                  {errors.newpassword && (
                     <span style={inputErrorStyles}>
-                      {errors.password}
+                      {errors.newpassword}
+                    </span>
+                  )}
+                </Box>
+
+                <Box>
+                  <Typography
+                    sx={{
+                      display: "block",
+                      textAlign: "left",
+                      marginBottom: "0.5rem"
+                    }}
+                    color={errors.setpassword ? "error" : "text.primary"}>
+                    {LoginSectionData.ConfirmPassword}
+                  </Typography>
+                  <TextField
+                    fullWidth
+                    variant="outlined"
+                    placeholder="Re-enter password"
+                    type={showConfirmPassword ? "text" : "password"}
+                    value={credentials.setpassword}
+                    onChange={(e) => setCredentials({ ...credentials, setpassword: e.target.value })}
+                    sx={inputStyles}
+                    InputProps={{
+                      endAdornment: (
+                        <IconButton
+                          sx={{ color: '#9CA3AF', fontSize: '1.3rem', }}
+                          onClick={() => handleTogglePasswordVisibility('setpassword')}
+                          edge="end"
+                        >
+                          {showConfirmPassword ?
+                            <VisibilityOff sx={{ fontSize: 'inherit' }} /> :
+                            <Visibility sx={{ fontSize: 'inherit' }} />}
+                        </IconButton>
+                      ),
+                    }}
+                  />
+                  {errors.setpassword && (
+                    <span style={inputErrorStyles}>
+                      {errors.setpassword}
                     </span>
                   )}
                 </Box>
@@ -193,32 +231,14 @@ const LoginPage = () => {
                   padding: "8px 20px",
                   borderRadius: "8px",
                   textTransform: "none",
-                  backgroundColor: "#2563EB",
                   fontWeight: 'bold',
+                  backgroundColor: isButtonDisabled ? "#D1D5D8 !important" : "#2563EB !important",
+                  color: isButtonDisabled ? "#F1F5F9 !important" : "#ffffff !important",
+                  cursor: isButtonDisabled ? 'not-allowed' : 'pointer',
                 }}
               >
-                {LoginSectionData.buttonText}
+                {LoginSectionData.UpdatePassword}
               </Button>
-
-              {/* Forgot Password */}
-              <Typography
-                sx={{
-                  textAlign: "center",
-                  fontSize: 13,
-                  marginTop: '0.8rem',
-                  display: 'flex',
-                  justifyContent: 'center',
-                }}>
-                <a href="/forgot-password"
-                  style={{
-                    textDecoration: "none",
-                    color: "#2563EB",
-                    fontWeight: "bold"
-                  }}>
-                  {LoginSectionData.forgotPassword}
-                </a>
-              </Typography>
-
             </form>
 
             <Box

@@ -12,7 +12,8 @@ import { LoginSectionData } from "../../data/LoginSectionData";
 import { useRouter } from "next/router";
 import { loginValidate } from "../../utils/validation";
 import ArrowBackIosNewIcon from '@mui/icons-material/ArrowBackIosNew';
-import LoginBackgroundSection from '../../components/auth/LoginBackgroundSection';
+import LoginBackgroundSection from '../layout/LoginBackgroundSection';
+import Swal from "sweetalert2";
 
 const ForgotPassword = () => {
   const router = useRouter();
@@ -177,8 +178,8 @@ const ForgotPassword = () => {
                     textTransform: "none",
                     backgroundColor: isButtonDisabled ? "#D1D5D8 !important" : "#2563EB !important",
                     color: isButtonDisabled ? "#F1F5F9 !important" : "#ffffff !important",
-                    fontWeight: 'bold',
                     cursor: isButtonDisabled ? 'not-allowed' : 'pointer',
+                    fontWeight: 'bold',
                 }}
                 disabled={isButtonDisabled}
                 >

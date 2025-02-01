@@ -1,14 +1,14 @@
-import React, { FC } from 'react';
-import AppBar from '@mui/material/AppBar';
-import Box from '@mui/material/Box';
-import Toolbar from '@mui/material/Toolbar';
-import Typography from '@mui/material/Typography';
-import IconButton from '@mui/material/IconButton';
-import MenuIcon from '@mui/icons-material/Menu';
-import Menu from '@mui/material/Menu';
-import MenuItem from '@mui/material/MenuItem';
-import Container from '@mui/material/Container';
-import { UserSectionData } from '../../data/AdminSectionData';
+import React, { FC } from "react";
+import AppBar from "@mui/material/AppBar";
+import Box from "@mui/material/Box";
+import Toolbar from "@mui/material/Toolbar";
+import Typography from "@mui/material/Typography";
+import IconButton from "@mui/material/IconButton";
+import MenuIcon from "@mui/icons-material/Menu";
+import Menu from "@mui/material/Menu";
+import MenuItem from "@mui/material/MenuItem";
+import Container from "@mui/material/Container";
+import { UserSectionData } from "../../data/AdminSectionData";
 
 interface AdminHeaderProps {
   children?: React.ReactNode;
@@ -27,25 +27,30 @@ const AdminHeader: FC<AdminHeaderProps> = ({ children, pages, ...props }) => {
   };
 
   return (
-    <AppBar position="static"
+    <AppBar
+      position="static"
+      className="shadow-none px-4 sm:px-6 md:px-10 lg:px-20 mb-4 sm:mb-5 md:mb-5"
       sx={{
-        backgroundColor: '#2D2D2D',
-        boxShadow: 'none',
-        minHeight: { xs: '50%', sm: '100%', md: '100%' },
-        paddingX: { xs: 2, s: 5, md: 10, lg: 21, },
-        marginBottom: { xs: 2, s: 5, md: 5, lg: 5, },
+        backgroundColor: "#2D2D2D",
       }}
     >
       <Container
         maxWidth="xl"
         sx={{
-          display: 'flex',
-          justifyContent: 'space-between',
-          alignItems: 'center',
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
         }}
       >
-        <Toolbar disableGutters sx={{ width: '100%', display: 'flex', justifyContent: 'space-between' }}>
-          <Box sx={{ display: 'flex', alignItems: 'center' }}>
+        <Toolbar
+          disableGutters
+          sx={{
+            width: "100%",
+            display: "flex",
+            justifyContent: "space-between",
+          }}
+        >
+          <Box sx={{ display: "flex", alignItems: "center" }}>
             <Box sx={{ textAlign: "center", marginY: 2.2 }}>
               <img
                 src={UserSectionData.image}
@@ -58,9 +63,9 @@ const AdminHeader: FC<AdminHeaderProps> = ({ children, pages, ...props }) => {
               <Typography
                 sx={{
                   marginBottom: 0,
-                  color: 'white',
-                  fontWeight: '700',
-                  lineHeight: '24.2px',
+                  color: "white",
+                  fontWeight: "700",
+                  lineHeight: "24.2px",
                   fontSize: 16,
                 }}
               >
@@ -69,9 +74,9 @@ const AdminHeader: FC<AdminHeaderProps> = ({ children, pages, ...props }) => {
 
               <Typography
                 sx={{
-                  color: 'white',
-                  fontWeight: '200',
-                  lineHeight: '15px',
+                  color: "white",
+                  fontWeight: "200",
+                  lineHeight: "15px",
                   fontSize: 12.5,
                 }}
               >
@@ -81,26 +86,35 @@ const AdminHeader: FC<AdminHeaderProps> = ({ children, pages, ...props }) => {
           </Box>
 
           {/* Right Side (Pages) */}
-          <Box sx={{ display: { xs: 'none', md: 'flex' }, justifyContent: 'flex-end', alignItems: 'center' }}>
+          <Box
+            sx={{
+              display: { xs: "none", md: "flex" },
+              justifyContent: "flex-end",
+              alignItems: "center",
+            }}
+          >
             {UserSectionData.pages.map((page) => (
               <Box
                 key={page}
                 component="a"
-                href={page === 'Manager' ? '/managers' : `/${page.toLowerCase()}`}
+                href={
+                  page === "Manager" ? "/managers" : `/${page.toLowerCase()}`
+                }
                 sx={{
-                  display: 'block',
-                  textAlign: 'center',
-                  textTransform: 'capitalize',
-                  color: 'white',
-                  paddingX: page === 'Manager' ? 3 : 'none',
-                  paddingY: page === 'Manager' ? 0.7 : 'none',
-                  borderRadius: page === 'Manager' ? '6px' : 'none',
-                  backgroundColor: page === 'Manager' ? '#A550A5' : 'transparent',
-                  width: 'auto',
+                  display: "block",
+                  textAlign: "center",
+                  textTransform: "capitalize",
+                  color: "white",
+                  paddingX: page === "Manager" ? 3 : "none",
+                  paddingY: page === "Manager" ? 0.7 : "none",
+                  borderRadius: page === "Manager" ? "6px" : "none",
+                  backgroundColor:
+                    page === "Manager" ? "#A550A5" : "transparent",
+                  width: "auto",
                   fontSize: 13.8,
                   fontWeight: 300,
                   marginX: 2,
-                  textDecoration: 'none',
+                  textDecoration: "none",
                 }}
               >
                 {page}
@@ -109,8 +123,14 @@ const AdminHeader: FC<AdminHeaderProps> = ({ children, pages, ...props }) => {
           </Box>
 
           {/* Mobile Menu */}
-          <Box sx={{ flexGrow: 1, display: { xs: 'flex', sm: 'none', md: 'none', lg: 'none' }, justifyContent: 'flex-end' }}>
-          <IconButton
+          <Box
+            sx={{
+              flexGrow: 1,
+              display: { xs: "flex", sm: "none", md: "none", lg: "none" },
+              justifyContent: "flex-end",
+            }}
+          >
+            <IconButton
               size="large"
               aria-label="menu"
               aria-controls="menu-appbar"
@@ -124,18 +144,18 @@ const AdminHeader: FC<AdminHeaderProps> = ({ children, pages, ...props }) => {
               id="menu-appbar"
               anchorEl={anchorEl}
               anchorOrigin={{
-                vertical: 'top',
-                horizontal: 'left',
+                vertical: "top",
+                horizontal: "left",
               }}
               keepMounted
               transformOrigin={{
-                vertical: 'top',
-                horizontal: 'left',
+                vertical: "top",
+                horizontal: "left",
               }}
               open={Boolean(anchorEl)}
               onClose={handleMenuClose}
               sx={{
-                display: { xs: 'block', md: 'none' },
+                display: { xs: "block", md: "none" },
               }}
             >
               {UserSectionData.pages.map((page) => (

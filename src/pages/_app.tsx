@@ -8,7 +8,7 @@ import AdminHeader from '../components/layout/AdminHeader';
 const App = ({ Component, pageProps }: AppProps) => {
   const router = useRouter();
 
-  const excludedPaths = ['/', '/forgot-password', '/email-verification', '/password-reset'];
+  const excludedPaths = ['/', '/forgot-password', '/email-verification', '/password-reset', '/set-password'];
   const isExcludedPath = excludedPaths.includes(router.pathname || 'Not available');
 
   if (isExcludedPath) {

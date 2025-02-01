@@ -52,10 +52,21 @@ export const validateUser = (user: User) => {
 };
 
 // Login validation function
-export const loginValidate = (credentials: { username?: string; password?: string }) => {
-  const newErrors: { username?: string; password?: string } = {};
+export const loginValidate = (credentials: {
+  username?: string;
+  password?: string;
+  newpassword?: string;
+  setpassword?: string;
+}) => {
+  const newErrors: {
+    username?: string;
+    password?: string;
+    newpassword?: string;
+    setpassword?: string;
+  } = {};
   const passwordRegex =
     /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*])[A-Za-z\d!@#$%^&*]{8,}$/;
+  const setPassword = "pass123";
 
   Object.entries(credentials).forEach(([key, value]) => {
     switch (key) {
@@ -68,8 +79,29 @@ export const loginValidate = (credentials: { username?: string; password?: strin
       case "password":
         if (!value) {
           newErrors.password = "Password is required";
+        } else if (value !== setPassword) {
+          newErrors.password =
+            "Invalid credentials. Please verify your details.";
+        }
+        break;
+
+        case "newpassword": // for setting a new password
+        if (!value) {
+          newErrors.newpassword = "Password is required";
         } else if (!passwordRegex.test(value)) {
-          newErrors.password = "Invalid credentials. Please verify your details.";
+          newErrors.newpassword =
+            "Password must be at least 8 characters long and include at least one uppercase letter, one lowercase letter, one number, and one special character.";
+        }
+        break;
+
+        case "setpassword": // for confirming the new password
+        if (!value) {
+          newErrors.setpassword = "Password is required";
+        } else if (value !== credentials.newpassword) {
+          newErrors.setpassword = "Password does not match.";
+        } else if (!passwordRegex.test(value)) {
+          newErrors.setpassword =
+            "Password must be at least 8 characters long and include at least one uppercase letter, one lowercase letter, one number, and one special character.";
         }
         break;
 

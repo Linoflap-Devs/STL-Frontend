@@ -150,20 +150,7 @@ const ManagerTable: React.FC<ManagerTableProps> = ({
   };
 
   return (
-    <Container
-      sx={{
-        marginTop: 4,
-        padding: 0,
-        maxWidth: {
-          xs: 300,
-          sm: 700,
-          md: 900,
-          lg: 1200,
-          xl: 1200,
-          //1536
-        },
-      }}
-    >
+    <div className="mt-4 w-full max-w-screen-sm sm:max-w-screen-md md:max-w-screen-lg lg:max-w-screen-xl xl:max-w-screen-2xl px-4 sm:px-6 md:px-8 lg:px-12 mx-auto">
       <Box
         sx={{
           display: "flex",
@@ -236,12 +223,24 @@ const ManagerTable: React.FC<ManagerTableProps> = ({
               alignItems: "center",
             }}
           >
-            <Typography sx={{ color: "white", fontSize: 14, textTransform: "uppercase", fontWeight: 700, }}>
+            <Typography
+              sx={{
+                color: "white",
+                fontSize: 14,
+                textTransform: "uppercase",
+                fontWeight: 700,
+              }}
+            >
               {selectedUserIds.size} Selected
             </Typography>
             <IconButton
               onClick={handleDeleteSelectedManagers}
-              sx={{ padding: 0, color: "#D1D5D8", marginRight: 4, marginLeft: 3 }}
+              sx={{
+                padding: 0,
+                color: "#D1D5D8",
+                marginRight: 4,
+                marginLeft: 3,
+              }}
             >
               <DeleteIcon />
             </IconButton>
@@ -253,7 +252,10 @@ const ManagerTable: React.FC<ManagerTableProps> = ({
             <TableRow>
               <TableCell>
                 <Tooltip title="Select All">
-                  <Checkbox checked={isAllSelected} onChange={handleSelectAll} />
+                  <Checkbox
+                    checked={isAllSelected}
+                    onChange={handleSelectAll}
+                  />
                 </Tooltip>
               </TableCell>
               <>
@@ -312,9 +314,7 @@ const ManagerTable: React.FC<ManagerTableProps> = ({
                   <TableCell>
                     <Checkbox
                       checked={selectedUserIds.has(user.id!)}
-                      onChange={(event) =>
-                        handleSelectManager(event, user.id!)
-                      }
+                      onChange={(event) => handleSelectManager(event, user.id!)}
                     />
                   </TableCell>
                   <TableCell>{user.firstname}</TableCell>
@@ -325,7 +325,9 @@ const ManagerTable: React.FC<ManagerTableProps> = ({
                   <TableCell>{user.province}</TableCell>
                   <TableCell>{user.regisdate}</TableCell>
                   <TableCell>
-                    <IconButton onClick={(event) => handleToggleMenu(event, user)}>
+                    <IconButton
+                      onClick={(event) => handleToggleMenu(event, user)}
+                    >
                       <MoreHorizIcon />
                     </IconButton>
                   </TableCell>
@@ -340,16 +342,17 @@ const ManagerTable: React.FC<ManagerTableProps> = ({
           onClose={() => handleToggleMenu()}
           MenuListProps={{ "aria-labelledby": "basic-button" }}
         >
-          <MenuItem onClick={() => handleEditClick(selectedUser!)}>Update</MenuItem>
+          <MenuItem onClick={() => handleEditClick(selectedUser!)}>
+            Update
+          </MenuItem>
           <MenuItem onClick={handleDeleteUser}>Delete</MenuItem>
         </Menu>
-
 
         <Box
           sx={{
             padding: "12px",
             boxShadow: "0 2px 8px rgba(0, 0, 0, 0.4)",
-            backgroundColor: "#1F2937"
+            backgroundColor: "#1F2937",
           }}
         >
           <TablePagination
@@ -379,7 +382,7 @@ const ManagerTable: React.FC<ManagerTableProps> = ({
           </Button>
         </Box>
       </TableContainer>
-    </Container>
+    </div>
   );
 };
 
