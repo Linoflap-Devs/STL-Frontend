@@ -14,6 +14,7 @@ import { useRouter } from "next/router";
 import { loginValidate } from "../../utils/validation";
 import ArrowBackIosNewIcon from '@mui/icons-material/ArrowBackIosNew';
 import LoginBackgroundSection from '../layout/LoginBackgroundSection';
+import Swal from "sweetalert2";
 
 const LoginPage = () => {
   const router = useRouter();
@@ -30,20 +31,32 @@ const LoginPage = () => {
     const validationErrors = loginValidate(credentials);
     if (Object.keys(validationErrors).length === 0) {
       console.log("Login Successful.", credentials)
+
+      Swal.fire({
+        title: 'Success!',
+        text: 'New password has been set, you will be directed to the login page.',
+        icon: 'success',
+        confirmButtonText: 'Redirect',
+        confirmButtonColor: '#7565DE',
+      }).then((result: { isConfirmed: any; }) => {
+        if (result.isConfirmed) {
+          window.location.href = '/';
+        }
+      })
     } else {
       setErrors(validationErrors);
     }
   }
 
-  // temporary navigation
-  const handleNavigation = () => {
-    const validationErrors = loginValidate(credentials);
-    if (Object.keys(validationErrors).length === 0) {
-      router.push("/password-reset");
-    } else {
-      console.log("Validation failed.");
-    }
-  };
+  // // temporary navigation
+  // const handleNavigation = () => {
+  //   const validationErrors = loginValidate(credentials);
+  //   if (Object.keys(validationErrors).length === 0) {
+  //     router.push("/password-reset");
+  //   } else {
+  //     console.log("Validation failed.");
+  //   }
+  // };
   
   const handleTogglePasswordVisibility = (type: 'newpassword' | 'setpassword') => {
     if (type === 'newpassword') {
@@ -222,7 +235,6 @@ const LoginPage = () => {
 
               <Button
                 type="submit"
-                onClick={handleNavigation}
                 variant="contained"
                 fullWidth
                 sx={{
