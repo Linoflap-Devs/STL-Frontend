@@ -1,34 +1,34 @@
 import React, { useState } from "react";
-import {
-  Box,
-  Typography,
-  Button,
-  TextField,
-  IconButton,
-} from "@mui/material";
-
+import { Box, Typography, Button, TextField, IconButton } from "@mui/material";
+import { inputStyles, inputErrorStyles } from "../../styles/theme";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
 import { LoginSectionData } from "../../data/LoginSectionData";
 import { useRouter } from "next/router";
 import { loginValidate } from "../../utils/validation";
-import LoginBackgroundSection from '../layout/LoginBackgroundSection';
+import LoginBackgroundSection from "../layout/LoginBackgroundSection";
 
 const LoginPage = () => {
   const router = useRouter();
-  const [credentials, setCredentials] = useState({ username: "", password: "" });
+  const [credentials, setCredentials] = useState({
+    username: "",
+    password: "",
+  });
   const [showPassword, setShowPassword] = useState(false);
-  const [errors, setErrors] = useState<{ username?: string; password?: string }>({});
+  const [errors, setErrors] = useState<{
+    username?: string;
+    password?: string;
+  }>({});
 
   // Validation
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
     const validationErrors = loginValidate(credentials);
     if (Object.keys(validationErrors).length === 0) {
-      console.log("Login Successful.", credentials)
+      console.log("Login Successful.", credentials);
     } else {
       setErrors(validationErrors);
     }
-  }
+  };
 
   // temporary validation
   const handleNavigation = () => {
@@ -85,13 +85,15 @@ const LoginPage = () => {
                 justifyContent: "center",
                 flexDirection: "column",
                 textAlign: "center",
-                marginBottom: '1rem',
+                marginBottom: "1rem",
               }}
             >
               <Typography variant="h4" sx={{ fontWeight: "bold" }}>
                 {LoginSectionData.cardTitle}
               </Typography>
-              <Typography sx={{ marginTop: 1, color: '#9CA3AF', fontSize: '12.5px' }}>
+              <Typography
+                sx={{ marginTop: 1, color: "#9CA3AF", fontSize: "12.5px" }}
+              >
                 {LoginSectionData.cardDescription}
               </Typography>
             </Box>
@@ -105,7 +107,7 @@ const LoginPage = () => {
                   width: "100%",
                 }}
               >
-                <Box sx={{ mb: '0.3rem' }}>
+                <Box sx={{ mb: "0.3rem" }}>
                   <Typography
                     sx={{
                       display: "block",
@@ -122,14 +124,17 @@ const LoginPage = () => {
                     variant="outlined"
                     placeholder="Enter Username"
                     value={credentials.username}
-                    onChange={(e) => setCredentials({ ...credentials, username: e.target.value })}
+                    onChange={(e) =>
+                      setCredentials({
+                        ...credentials,
+                        username: e.target.value,
+                      })
+                    }
                     error={!!errors.username}
                     sx={inputStyles}
                   />
                   {errors.username && (
-                    <span style={inputErrorStyles}>
-                      {errors.username}
-                    </span>
+                    <span style={inputErrorStyles}>{errors.username}</span>
                   )}
                 </Box>
 
@@ -147,9 +152,10 @@ const LoginPage = () => {
                     sx={{
                       display: "block",
                       textAlign: "left",
-                      marginBottom: "0.5rem"
+                      marginBottom: "0.5rem",
                     }}
-                    color={errors.password ? "error" : "text.primary"}>
+                    color={errors.password ? "error" : "text.primary"}
+                  >
                     {LoginSectionData.PasswordTitle}
                   </Typography>
                   <TextField
@@ -158,26 +164,31 @@ const LoginPage = () => {
                     placeholder="Enter Password"
                     type={showPassword ? "text" : "password"}
                     value={credentials.password}
-                    onChange={(e) => setCredentials({ ...credentials, password: e.target.value })}
+                    onChange={(e) =>
+                      setCredentials({
+                        ...credentials,
+                        password: e.target.value,
+                      })
+                    }
                     sx={inputStyles}
                     InputProps={{
                       endAdornment: (
                         <IconButton
-                          sx={{ color: '#9CA3AF', fontSize: '1.3rem', }}
+                          sx={{ color: "#9CA3AF", fontSize: "1.3rem" }}
                           onClick={handleTogglePasswordVisibility}
                           edge="end"
                         >
-                          {showPassword ?
-                            <VisibilityOff sx={{ fontSize: 'inherit' }} /> :
-                            <Visibility sx={{ fontSize: 'inherit' }} />}
+                          {showPassword ? (
+                            <VisibilityOff sx={{ fontSize: "inherit" }} />
+                          ) : (
+                            <Visibility sx={{ fontSize: "inherit" }} />
+                          )}
                         </IconButton>
                       ),
                     }}
                   />
                   {errors.password && (
-                    <span style={inputErrorStyles}>
-                      {errors.password}
-                    </span>
+                    <span style={inputErrorStyles}>{errors.password}</span>
                   )}
                 </Box>
               </Box>
@@ -194,7 +205,7 @@ const LoginPage = () => {
                   borderRadius: "8px",
                   textTransform: "none",
                   backgroundColor: "#2563EB",
-                  fontWeight: 'bold',
+                  fontWeight: "bold",
                 }}
               >
                 {LoginSectionData.buttonText}
@@ -205,20 +216,22 @@ const LoginPage = () => {
                 sx={{
                   textAlign: "center",
                   fontSize: 13,
-                  marginTop: '0.8rem',
-                  display: 'flex',
-                  justifyContent: 'center',
-                }}>
-                <a href="/forgot-password"
+                  marginTop: "0.8rem",
+                  display: "flex",
+                  justifyContent: "center",
+                }}
+              >
+                <a
+                  href="/forgot-password"
                   style={{
                     textDecoration: "none",
                     color: "#2563EB",
-                    fontWeight: "bold"
-                  }}>
+                    fontWeight: "bold",
+                  }}
+                >
                   {LoginSectionData.forgotPassword}
                 </a>
               </Typography>
-
             </form>
 
             <Box
@@ -229,8 +242,7 @@ const LoginPage = () => {
                 color: "#FFFFFF",
               }}
             >
-              <Typography
-                sx={{ fontSize: "13px" }}>
+              <Typography sx={{ fontSize: "13px" }}>
                 {LoginSectionData.copyright}
               </Typography>
             </Box>
@@ -240,22 +252,5 @@ const LoginPage = () => {
     </>
   );
 };
-
-const inputStyles = {
-  "& .MuiOutlinedInput-root": {
-    "& fieldset": { borderColor: "#D1D5DB", padding: "14px 40px 10px 14px", },
-    "&.Mui-error fieldset": { borderColor: "#F05252" },
-  },
-};
-
-const inputErrorStyles = {
-  display: "flex",
-  alignItems: "center",
-  gap: "4px",
-  color: "#F05252",
-  marginTop: "4px",
-  fontSize: "12px",
-};
-
 
 export default LoginPage;

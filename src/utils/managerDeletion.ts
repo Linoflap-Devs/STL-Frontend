@@ -39,7 +39,7 @@ export const managerDeletion = (
 
         Swal.fire({
           title: "Deleted!",
-          text: "The selected users have been deleted.",
+          text: "The selected managers have been deleted.",
           icon: "success",
           confirmButtonText: "OK",
         });
@@ -52,15 +52,27 @@ export const managerDeletion = (
 
   // Handle individual user selection
   const handleSelectManager = (
-    event: React.ChangeEvent<HTMLInputElement>,
-    userId: number
+    event:
+      | React.MouseEvent<HTMLTableRowElement, MouseEvent>
+      | React.ChangeEvent<HTMLInputElement>,
+    userId: number | undefined
   ) => {
-    const newSelectedUserIds = new Set(selectedUserIds);
-    if (event.target.checked) {
-      newSelectedUserIds.add(userId);
-    } else {
-      newSelectedUserIds.delete(userId);
+    if (userId === undefined) return;
+
+    // Handle row click (MouseEvent)
+    if (event.type === "click" && event.target instanceof HTMLTableRowElement) {
+      event.stopPropagation();
     }
+
+    const newSelectedUserIds = new Set(selectedUserIds);
+
+    // If the user is already selected, remove them, otherwise add them
+    if (newSelectedUserIds.has(userId)) {
+      newSelectedUserIds.delete(userId);
+    } else {
+      newSelectedUserIds.add(userId);
+    }
+
     setSelectedUserIds(newSelectedUserIds);
     setSelectedCount(newSelectedUserIds.size);
   };

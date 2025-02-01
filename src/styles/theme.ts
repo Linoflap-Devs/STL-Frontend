@@ -1,16 +1,16 @@
 // src/styles/theme.ts
-import { createTheme } from '@mui/material/styles';
+import { createTheme } from "@mui/material/styles";
 
 const darkTheme = createTheme({
   palette: {
-    mode: 'dark',
+    mode: "dark",
     background: {
-      default: '#252526',
-      paper: '#1F2937',
+      default: "#252526",
+      paper: "#1F2937",
     },
     text: {
-      primary: '#FFFFFF',
-      secondary: '#b0b0b0',
+      primary: "#FFFFFF",
+      secondary: "#b0b0b0",
     },
   },
   typography: {
@@ -20,38 +20,38 @@ const darkTheme = createTheme({
     MuiButton: {
       styleOverrides: {
         contained: {
-          color: '#ffffff',
+          color: "#ffffff",
           borderRadius: 5,
-          backgroundColor: '#3f51b5',
-          '&:hover': {
-            backgroundColor: '#303f9f',
+          backgroundColor: "#3f51b5",
+          "&:hover": {
+            backgroundColor: "#303f9f",
           },
         },
       },
     },
     MuiTextField: {
       defaultProps: {
-        variant: 'outlined',
+        variant: "outlined",
       },
       styleOverrides: {
         root: {
-          '& .MuiOutlinedInput-root': {
-            border: 'none',
+          "& .MuiOutlinedInput-root": {
+            border: "none",
             borderRadius: 5,
-            backgroundColor: '#374151',
-            transition: 'background-color 0.3s ease, border-color 0.3s ease',
-            '&:hover .MuiOutlinedInput-notchedOutline': {
-              borderColor: '#475569',
+            backgroundColor: "#374151",
+            transition: "background-color 0.3s ease, border-color 0.3s ease",
+            "&:hover .MuiOutlinedInput-notchedOutline": {
+              borderColor: "#475569",
             },
-            '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
-              borderColor: '#475569',
+            "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
+              borderColor: "#475569",
             },
           },
-          '& .MuiOutlinedInput-notchedOutline': {
-            borderColor: '#374151',
-            transition: 'border-color 0.3s ease',
+          "& .MuiOutlinedInput-notchedOutline": {
+            borderColor: "#374151",
+            transition: "border-color 0.3s ease",
           },
-          '& .MuiOutlinedInput-input': {
+          "& .MuiOutlinedInput-input": {
             fontSize: 14,
           },
         },
@@ -60,16 +60,16 @@ const darkTheme = createTheme({
     MuiTableContainer: {
       styleOverrides: {
         root: {
-          borderRadius: '10px',
+          borderRadius: "10px",
         },
       },
     },
     MuiTable: {
       styleOverrides: {
         root: {
-          backgroundColor: '#1F2937',
+          backgroundColor: "#1F2937",
           borderRadius: 5,
-          borderCollapse: 'collapse',
+          borderCollapse: "collapse",
           padding: 1,
         },
       },
@@ -77,24 +77,24 @@ const darkTheme = createTheme({
     MuiTableCell: {
       styleOverrides: {
         root: {
-          color: '#D1D5D8',
-          fontSize: '13px',
-          padding: 'auto',
+          color: "#D1D5D8",
+          fontSize: "13px",
+          padding: "auto",
           borderBottom: "1px solid #374151",
         },
         head: {
-          color: '#9CA3AF',
-          fontWeight: 'bold',
+          color: "#9CA3AF",
+          fontWeight: "bold",
         },
       },
     },
     MuiTableHead: {
       styleOverrides: {
         root: {
-          backgroundColor: '#374151',
+          backgroundColor: "#374151",
           lineHeight: "1.5rem",
-          textTransform: 'uppercase',
-          fontWeight: 'bold',
+          textTransform: "uppercase",
+          fontWeight: "bold",
         },
       },
     },
@@ -102,8 +102,11 @@ const darkTheme = createTheme({
       styleOverrides: {
         root: {
           borderBottom: "0.5px solid #374151",
-          '&:hover': {
-            backgroundColor: '#374151',
+          "&:hover": {
+            backgroundColor: "#374151",
+          },
+          "&.Mui-selected": {
+            backgroundColor: "#28313F",
           },
         },
       },
@@ -111,18 +114,18 @@ const darkTheme = createTheme({
     MuiCheckbox: {
       styleOverrides: {
         root: {
-          color: '#D1D5D8',
-          '&.Mui-checked': {
-            color: '#e5e7eb',
+          color: "#D1D5D8",
+          "&.Mui-checked": {
+            color: "#e5e7eb",
           },
-          '&:hover': {
-            backgroundColor: '#374151',
+          "&:hover": {
+            backgroundColor: "#374151",
           },
-          '& .MuiSvgIcon-root': {
-            fill: '#6C7480',
+          "& .MuiSvgIcon-root": {
+            fill: "#6C7480",
             padding: 0,
             margin: 0,
-            fontSize: '21px',
+            fontSize: "21px",
           },
         },
       },
@@ -170,54 +173,54 @@ const darkTheme = createTheme({
         paper: {
           boxShadow: "none",
           backgroundImage: "none",
-          borderRadius: '6px',
-          padding: '25px 8px 27px 8px',
+          borderRadius: "6px",
+          padding: "25px 8px 27px 8px",
         },
       },
     },
     MuiDialogContent: {
       styleOverrides: {
         root: {
-          height: 'auto',
+          height: "auto",
         },
       },
     },
     MuiDialogTitle: {
       styleOverrides: {
         root: {
-          fontSize: '25px',
-          fontWeight: '700',
-          marginBottom: '-0.4rem',
+          fontSize: "25px",
+          fontWeight: "700",
+          marginBottom: "-0.4rem",
         },
       },
     },
     MuiInput: {
       styleOverrides: {
         root: {
-          fontSize: '0.85rem',
-        }
-      }
-    },     
+          fontSize: "0.85rem",
+        },
+      },
+    },
     // sa loob ng text
     MuiOutlinedInput: {
       styleOverrides: {
         root: {
           backgroundColor: "#374151",
           color: "#ffffff",
-          fontSize: '0.85rem',
+          fontSize: "0.85rem",
           "&:hover fieldset": {
             borderColor: "#D1D5DB",
           },
           "&.Mui-error fieldset": {
             borderColor: "#F05252",
           },
-          width: '100% !important',
+          width: "100% !important",
         },
         input: {
           color: "#ffffff",
           padding: "9px 16px",
-          width: '100% !important',
-        }
+          width: "100% !important",
+        },
       },
     },
     MuiSelect: {
@@ -225,21 +228,21 @@ const darkTheme = createTheme({
         root: {
           backgroundColor: "#374151",
           borderColor: "#D1D5DB",
-          width: '100%',
+          width: "100%",
         },
         icon: {
           color: "#ffffff",
         },
         select: {
           padding: "9px 16px",
-          '& .MuiInputBase-input': {
-            color: '#D1D5DB',
-            padding: '9px 16px',
-            '&::placeholder': {
-              color: '#D1D5DB',
+          "& .MuiInputBase-input": {
+            color: "#D1D5DB",
+            padding: "9px 16px",
+            "&::placeholder": {
+              color: "#D1D5DB",
             },
-            '&:focus': {
-              color: '#ffffff',
+            "&:focus": {
+              color: "#ffffff",
             },
           },
         },
@@ -248,15 +251,14 @@ const darkTheme = createTheme({
     MuiFormControl: {
       styleOverrides: {
         root: {
-          color: "#fffff"
-        }
-      }
+          color: "#fffff",
+        },
+      },
     },
     MuiInputBase: {
       styleOverrides: {
         root: {
-          fontSize: '0.80rem',
-
+          fontSize: "0.80rem",
         },
         input: {
           "::placeholder": {
@@ -268,12 +270,49 @@ const darkTheme = createTheme({
     MuiFormHelperText: {
       styleOverrides: {
         root: {
-          fontSize: '0.80rem',
-          marginLeft: '0px',
-        }
-      }
+          fontSize: "0.80rem",
+          marginLeft: "0px",
+        },
+      },
     },
   },
 });
+
+export const buttonStyles = {
+  paddingX: 3.9,
+  paddingY: 0.9,
+  textTransform: "none",
+  fontSize: 12,
+  borderRadius: "8px",
+  backgroundColor: "#2563EB",
+  width: "auto",
+};
+
+export const deleteStyles = {
+  paddingX: 3,
+  paddingY: 0.9,
+  textTransform: "none",
+  fontSize: 12,
+  borderRadius: "8px",
+  backgroundColor: "#F05252",
+  width: "auto",
+  marginRight: "0.9rem",
+};
+
+export const inputStyles = {
+  "& .MuiOutlinedInput-root": {
+    "& fieldset": { borderColor: "#D1D5DB", padding: "14px 40px 10px 14px" },
+    "&.Mui-error fieldset": { borderColor: "#F05252" },
+  },
+};
+
+export const inputErrorStyles = {
+  display: "flex",
+  alignItems: "center",
+  gap: "4px",
+  color: "#F05252",
+  marginTop: "4px",
+  fontSize: "12px",
+};
 
 export default darkTheme;

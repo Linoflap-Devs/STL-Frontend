@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { UserSectionData } from "../../data/AdminSectionData";
+import { buttonStyles, deleteStyles } from "../../styles/theme";
 import {
-  Container,
   Typography,
   Box,
   Button,
@@ -30,7 +30,6 @@ import {
 import { managerDeletion } from "../../utils/managerDeletion";
 import SearchIcon from "@mui/icons-material/Search";
 import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
-import DeleteIcon from "@mui/icons-material/Delete";
 import Tooltip from "@mui/material/Tooltip";
 import Swal from "sweetalert2";
 
@@ -170,82 +169,73 @@ const ManagerTable: React.FC<ManagerTableProps> = ({
       </Box>
 
       <TableContainer>
-        {!isAllSelected && selectedUserIds.size === 0 && (
-          <Box sx={{ backgroundColor: "#1F2937" }}>
-            <Box
-              sx={{
-                paddingTop: 2.5,
-                paddingBottom: 2,
-                paddingX: 2,
-                display: "flex",
-                justifyContent: "space-between",
-              }}
-            >
-              <TextField
-                fullWidth
-                variant="outlined"
-                placeholder="Search"
-                value={searchQuery}
-                sx={{
-                  maxWidth: "300px",
-                  "& .MuiOutlinedInput-root": {
-                    padding: "8px 12px",
-                  },
-                  "& .MuiOutlinedInput-input": {
-                    padding: "0.5px 0",
-                  },
-                }}
-                onChange={handleSearchChange}
-                InputProps={{
-                  startAdornment: (
-                    <InputAdornment position="start">
-                      <SearchIcon sx={{ fontSize: 20, color: "#9CA3AF" }} />
-                    </InputAdornment>
-                  ),
-                }}
-              />
-              <Button variant="contained" onClick={onCreate} sx={buttonStyles}>
-                {UserSectionData.addManagerButton}
-              </Button>
-            </Box>
-          </Box>
-        )}
-
-        {selectedUserIds.size > 0 && (
+        <Box sx={{ backgroundColor: "#1F2937" }}>
           <Box
             sx={{
-              width: "100%",
-              backgroundColor: "#1F2937",
-              paddingY: 3,
-              paddingX: 3,
+              paddingTop: 2.5,
+              paddingBottom: 2,
+              paddingX: 2,
               display: "flex",
-              justifyContent: "flex-end",
+              justifyContent: "space-between",
               alignItems: "center",
             }}
           >
-            <Typography
+            <TextField
+              fullWidth
+              variant="outlined"
+              placeholder="Search"
+              value={searchQuery}
               sx={{
-                color: "white",
-                fontSize: 14,
-                textTransform: "uppercase",
-                fontWeight: 700,
+                maxWidth: "300px",
+                "& .MuiOutlinedInput-root": {
+                  padding: "8px 12px",
+                },
+                "& .MuiOutlinedInput-input": {
+                  padding: "0.5px 0",
+                },
+              }}
+              onChange={handleSearchChange}
+              InputProps={{
+                startAdornment: (
+                  <InputAdornment position="start">
+                    <SearchIcon sx={{ fontSize: 20, color: "#9CA3AF" }} />
+                  </InputAdornment>
+                ),
+              }}
+            />
+
+            <Box
+              sx={{
+                display: "flex",
+                justifyContent: "flex-end",
+                alignItems: "center",
               }}
             >
-              {selectedUserIds.size} Selected
-            </Typography>
-            <IconButton
-              onClick={handleDeleteSelectedManagers}
-              sx={{
-                padding: 0,
-                color: "#D1D5D8",
-                marginRight: 4,
-                marginLeft: 3,
-              }}
-            >
-              <DeleteIcon />
-            </IconButton>
+              <Box sx={{ display: "flex", alignItems: "center" }}>
+                {selectedUserIds.size > 0 && (
+                  <Button
+                    variant="contained"
+                    onClick={handleDeleteSelectedManagers}
+                    sx={deleteStyles}
+                  >
+                    Delete {selectedUserIds.size}{" "}
+                    {selectedUserIds.size === 1
+                      ? "Selected User"
+                      : "Selected Users"}
+                  </Button>
+                )}
+
+                <Button
+                  variant="contained"
+                  onClick={onCreate}
+                  sx={buttonStyles}
+                >
+                  {UserSectionData.addManagerButton}
+                </Button>
+              </Box>
+            </Box>
           </Box>
-        )}
+        </Box>
 
         <Table size="small">
           <TableHead>
@@ -310,7 +300,10 @@ const ManagerTable: React.FC<ManagerTableProps> = ({
             {sortedUsers
               .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
               .map((user) => (
-                <TableRow key={user.id}>
+                <TableRow
+                  key={user.id}
+                  selected={selectedUserIds.has(user.id!)}
+                >
                   <TableCell>
                     <Checkbox
                       checked={selectedUserIds.has(user.id!)}
@@ -384,16 +377,6 @@ const ManagerTable: React.FC<ManagerTableProps> = ({
       </TableContainer>
     </div>
   );
-};
-
-const buttonStyles = {
-  paddingX: 3.9,
-  paddingY: 0.9,
-  textTransform: "none",
-  fontSize: 12,
-  borderRadius: "8px",
-  backgroundColor: "#2563EB",
-  width: "auto",
 };
 
 export default ManagerTable;

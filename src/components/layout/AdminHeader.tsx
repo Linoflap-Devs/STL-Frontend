@@ -29,9 +29,11 @@ const AdminHeader: FC<AdminHeaderProps> = ({ children, pages, ...props }) => {
   return (
     <AppBar
       position="static"
-      className="shadow-none px-4 sm:px-6 md:px-10 lg:px-20 mb-4 sm:mb-5 md:mb-5"
+      className="px-4 sm:px-6 md:px-10 lg:px-20"
       sx={{
         backgroundColor: "#2D2D2D",
+        boxShadow: "none",
+        marginBottom: { xs: 2, s: 5, md: 5, lg: 6 },
       }}
     >
       <Container

@@ -21,6 +21,7 @@ import { Visibility, VisibilityOff } from "@mui/icons-material";
 import { SelectChangeEvent } from "@mui/material";
 import CloseIcon from '@mui/icons-material/Close';
 import Swal from "sweetalert2";
+import { inputStyles, inputErrorStyles } from "../../styles/theme";
 
 export interface CreateManagerProps {
   open: boolean;
@@ -241,6 +242,7 @@ const CreateManager: React.FC<CreateManagerProps> = ({
                         name={key}
                         error={!!errors[key]}
                         helperText={''}
+                        sx={inputStyles}
                         InputProps={{
                           endAdornment: (
                             <IconButton sx={{
@@ -318,6 +320,7 @@ const CreateManager: React.FC<CreateManagerProps> = ({
                     name={key}
                     error={!!errors[key]}
                     helperText={errors[key] || SPACE}
+                    sx={inputStyles}
                   />
                 )}
               </Grid>

@@ -1,25 +1,18 @@
 import React, { useState, useEffect } from "react";
-import {
-  Box,
-  Typography,
-  Button,
-  TextField,
-  IconButton,
-  Tooltip
-} from "@mui/material";
+import { Box, Typography, Button, IconButton, Tooltip } from "@mui/material";
 
 import { LoginSectionData } from "../../data/LoginSectionData";
 import { useRouter } from "next/router";
-import ArrowBackIosNewIcon from '@mui/icons-material/ArrowBackIosNew';
-import LoginBackgroundSection from '../layout/LoginBackgroundSection';
+import ArrowBackIosNewIcon from "@mui/icons-material/ArrowBackIosNew";
+import LoginBackgroundSection from "../layout/LoginBackgroundSection";
 
 const PasswordReset = () => {
   const router = useRouter();
 
   // temporary navigation
   const handleNavigation = () => {
-    router.push('/');
-  }
+    router.push("/");
+  };
 
   return (
     <>
@@ -47,23 +40,22 @@ const PasswordReset = () => {
             position: "relative",
           }}
         >
-        
-        <Tooltip title={"Back to Login"}>
-        <IconButton
-          aria-label="close"
-          href="/"
-          sx={{
-            position: 'absolute',
-            left: 30,
-            top: 30,
-            color: '#D1D5D8'[300],
-            backgroundColor: '#374151',
-            fontWeight: 'bold',
-          }}
-        >
-          <ArrowBackIosNewIcon sx={{ fontSize: 25, fontWeight: 'bold' }} />
-        </IconButton>
-        </Tooltip>
+          <Tooltip title={"Back to Login"}>
+            <IconButton
+              aria-label="close"
+              href="/"
+              sx={{
+                position: "absolute",
+                left: 30,
+                top: 30,
+                color: "#D1D5D8"[300],
+                backgroundColor: "#374151",
+                fontWeight: "bold",
+              }}
+            >
+              <ArrowBackIosNewIcon sx={{ fontSize: 25, fontWeight: "bold" }} />
+            </IconButton>
+          </Tooltip>
 
           <Box
             sx={{
@@ -82,39 +74,39 @@ const PasswordReset = () => {
                 justifyContent: "center",
                 flexDirection: "column",
                 textAlign: "center",
-                marginBottom: '1rem',
+                marginBottom: "1rem",
               }}
             >
               <Typography variant="h4" sx={{ fontWeight: "bold" }}>
                 {LoginSectionData.PasswordResetTitle}
               </Typography>
-              <Typography sx={{ marginTop: 1, color: '#9CA3AF', fontSize: '12.5px' }}>
+              <Typography
+                sx={{ marginTop: 1, color: "#9CA3AF", fontSize: "12.5px" }}
+              >
                 {LoginSectionData.PasswordResetDescription}
               </Typography>
             </Box>
 
             <Box style={{ width: "75%" }}>
-
-            <Button
-            type="button"
-            onClick={handleNavigation}
-            variant="contained"
-            fullWidth
-            sx={{
-                marginTop: 1,
-                py: 1.5,
-                padding: "8px 20px",
-                borderRadius: "8px",
-                textTransform: "none",
-                backgroundColor: "#2563EB !important",
-                color: "#F1F5F9 !important",
-                fontWeight: 'bold',
-                cursor: "pointer",
-            }}
-            >
-            {LoginSectionData.ConfirmButton}
-            </Button>
-            
+              <Button
+                type="button"
+                onClick={handleNavigation}
+                variant="contained"
+                fullWidth
+                sx={{
+                  marginTop: 1,
+                  py: 1.5,
+                  padding: "8px 20px",
+                  borderRadius: "8px",
+                  textTransform: "none",
+                  backgroundColor: "#2563EB !important",
+                  color: "#F1F5F9 !important",
+                  fontWeight: "bold",
+                  cursor: "pointer",
+                }}
+              >
+                {LoginSectionData.ConfirmButton}
+              </Button>
             </Box>
             <Box
               sx={{
@@ -124,8 +116,7 @@ const PasswordReset = () => {
                 color: "#FFFFFF",
               }}
             >
-              <Typography
-                sx={{ fontSize: "13px" }}>
+              <Typography sx={{ fontSize: "13px" }}>
                 {LoginSectionData.copyright}
               </Typography>
             </Box>

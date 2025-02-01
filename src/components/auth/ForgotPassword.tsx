@@ -5,20 +5,23 @@ import {
   Button,
   TextField,
   IconButton,
-  Tooltip
+  Tooltip,
 } from "@mui/material";
 
 import { LoginSectionData } from "../../data/LoginSectionData";
 import { useRouter } from "next/router";
 import { loginValidate } from "../../utils/validation";
-import ArrowBackIosNewIcon from '@mui/icons-material/ArrowBackIosNew';
-import LoginBackgroundSection from '../layout/LoginBackgroundSection';
-import Swal from "sweetalert2";
+import ArrowBackIosNewIcon from "@mui/icons-material/ArrowBackIosNew";
+import LoginBackgroundSection from "../layout/LoginBackgroundSection";
+import { inputStyles, inputErrorStyles } from "../../styles/theme";
 
 const ForgotPassword = () => {
   const router = useRouter();
-  const [credentials, setCredentials] = useState({ username: "", });
-  const [errors, setErrors] = useState<{ username?: string; password?: string }>({});
+  const [credentials, setCredentials] = useState({ username: "" });
+  const [errors, setErrors] = useState<{
+    username?: string;
+    password?: string;
+  }>({});
   const [isButtonDisabled, setIsButtonDisabled] = useState(true);
 
   // Validation
@@ -26,11 +29,11 @@ const ForgotPassword = () => {
     e.preventDefault();
     const validationErrors = loginValidate(credentials);
     if (Object.keys(validationErrors).length === 0) {
-      console.log("Login Successful.", credentials)
+      console.log("Login Successful.", credentials);
     } else {
       setErrors(validationErrors);
     }
-  }
+  };
 
   // temporary validation
   const handleNavigation = () => {
@@ -72,23 +75,22 @@ const ForgotPassword = () => {
             position: "relative",
           }}
         >
-        
-        <Tooltip title={"Back to Login"}>
-        <IconButton
-          aria-label="close"
-          href="/"
-          sx={{
-            position: 'absolute',
-            left: 30,
-            top: 30,
-            color: '#D1D5D8'[300],
-            backgroundColor: '#374151',
-            fontWeight: 'bold',
-          }}
-        >
-          <ArrowBackIosNewIcon sx={{ fontSize: 25, fontWeight: 'bold' }} />
-        </IconButton>
-        </Tooltip>
+          <Tooltip title={"Back to Login"}>
+            <IconButton
+              aria-label="close"
+              href="/"
+              sx={{
+                position: "absolute",
+                left: 30,
+                top: 30,
+                color: "#D1D5D8"[300],
+                backgroundColor: "#374151",
+                fontWeight: "bold",
+              }}
+            >
+              <ArrowBackIosNewIcon sx={{ fontSize: 25, fontWeight: "bold" }} />
+            </IconButton>
+          </Tooltip>
 
           <Box
             sx={{
@@ -107,13 +109,15 @@ const ForgotPassword = () => {
                 justifyContent: "center",
                 flexDirection: "column",
                 textAlign: "center",
-                marginBottom: '1rem',
+                marginBottom: "1rem",
               }}
             >
               <Typography variant="h4" sx={{ fontWeight: "bold" }}>
                 {LoginSectionData.forgotPasswordTitle}
               </Typography>
-              <Typography sx={{ marginTop: 1, color: '#9CA3AF', fontSize: '12.5px' }}>
+              <Typography
+                sx={{ marginTop: 1, color: "#9CA3AF", fontSize: "12.5px" }}
+              >
                 {LoginSectionData.forgotPasswordDescription}
               </Typography>
             </Box>
@@ -127,7 +131,7 @@ const ForgotPassword = () => {
                   width: "100%",
                 }}
               >
-                <Box sx={{ mb: '0.3rem' }}>
+                <Box sx={{ mb: "0.3rem" }}>
                   <Typography
                     sx={{
                       display: "block",
@@ -144,14 +148,17 @@ const ForgotPassword = () => {
                     variant="outlined"
                     placeholder="Enter Username"
                     value={credentials.username}
-                    onChange={(e) => setCredentials({ ...credentials, username: e.target.value })}
+                    onChange={(e) =>
+                      setCredentials({
+                        ...credentials,
+                        username: e.target.value,
+                      })
+                    }
                     error={!!errors.username}
                     sx={inputStyles}
                   />
                   {errors.username && (
-                    <span style={inputErrorStyles}>
-                      {errors.username}
-                    </span>
+                    <span style={inputErrorStyles}>{errors.username}</span>
                   )}
                 </Box>
 
@@ -171,21 +178,24 @@ const ForgotPassword = () => {
                 variant="contained"
                 fullWidth
                 sx={{
-                    marginTop: 1,
-                    py: 1.5,
-                    padding: "8px 20px",
-                    borderRadius: "8px",
-                    textTransform: "none",
-                    backgroundColor: isButtonDisabled ? "#D1D5D8 !important" : "#2563EB !important",
-                    color: isButtonDisabled ? "#F1F5F9 !important" : "#ffffff !important",
-                    cursor: isButtonDisabled ? 'not-allowed' : 'pointer',
-                    fontWeight: 'bold',
+                  marginTop: 1,
+                  py: 1.5,
+                  padding: "8px 20px",
+                  borderRadius: "8px",
+                  textTransform: "none",
+                  backgroundColor: isButtonDisabled
+                    ? "#D1D5D8 !important"
+                    : "#2563EB !important",
+                  color: isButtonDisabled
+                    ? "#F1F5F9 !important"
+                    : "#ffffff !important",
+                  cursor: isButtonDisabled ? "not-allowed" : "pointer",
+                  fontWeight: "bold",
                 }}
                 disabled={isButtonDisabled}
-                >
+              >
                 {LoginSectionData.resetPasswordButton}
-                </Button>
-            
+              </Button>
             </form>
             <Box
               sx={{
@@ -195,8 +205,7 @@ const ForgotPassword = () => {
                 color: "#FFFFFF",
               }}
             >
-              <Typography
-                sx={{ fontSize: "13px" }}>
+              <Typography sx={{ fontSize: "13px" }}>
                 {LoginSectionData.copyright}
               </Typography>
             </Box>
@@ -206,22 +215,5 @@ const ForgotPassword = () => {
     </>
   );
 };
-
-const inputStyles = {
-  "& .MuiOutlinedInput-root": {
-    "& fieldset": { borderColor: "#D1D5DB", padding: "14px 40px 10px 14px", },
-    "&.Mui-error fieldset": { borderColor: "#F05252" },
-  },
-};
-
-const inputErrorStyles = {
-  display: "flex",
-  alignItems: "center",
-  gap: "4px",
-  color: "#F05252",
-  marginTop: "4px",
-  fontSize: "12px",
-};
-
 
 export default ForgotPassword;

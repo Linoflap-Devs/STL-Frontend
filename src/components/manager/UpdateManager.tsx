@@ -21,6 +21,7 @@ import { Visibility, VisibilityOff } from "@mui/icons-material";
 import { SelectChangeEvent } from "@mui/material";
 import CloseIcon from '@mui/icons-material/Close';
 import Swal from "sweetalert2";
+import { inputStyles, inputErrorStyles } from "../../styles/theme";
 
 interface UpdateManagerProps {
   open: boolean;
@@ -250,6 +251,7 @@ const UpdateManager: React.FC<UpdateManagerProps> = React.memo(
                           name={key}
                           error={!!errors[key]}
                           helperText={""}
+                          sx={inputStyles}
                           InputProps={{
                             endAdornment: (
                               <IconButton
@@ -329,6 +331,7 @@ const UpdateManager: React.FC<UpdateManagerProps> = React.memo(
                       name={key}
                       error={!!errors[key]}
                       helperText={errors[key]}
+                      sx={inputStyles}
                     />
                   )}
                 </Grid>
