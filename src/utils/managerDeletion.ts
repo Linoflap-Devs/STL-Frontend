@@ -33,6 +33,8 @@ export const managerDeletion = (
       showCancelButton: true,
       confirmButtonText: "Yes, delete them",
       cancelButtonText: "Cancel",
+      confirmButtonColor: "#4683D4",
+      cancelButtonColor: "#D43D38",
     }).then((result) => {
       if (result.isConfirmed) {
         onDelete(Array.from(selectedUserIds));

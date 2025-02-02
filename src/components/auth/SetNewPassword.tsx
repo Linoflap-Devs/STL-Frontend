@@ -55,16 +55,6 @@ const LoginPage = () => {
     }
   };
 
-  // // temporary navigation
-  // const handleNavigation = () => {
-  //   const validationErrors = loginValidate(credentials);
-  //   if (Object.keys(validationErrors).length === 0) {
-  //     router.push("/password-reset");
-  //   } else {
-  //     console.log("Validation failed.");
-  //   }
-  // };
-
   const handleTogglePasswordVisibility = (
     type: "newpassword" | "setpassword"
   ) => {

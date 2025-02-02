@@ -29,6 +29,8 @@ import {
 } from "../../utils/sortPaginationSearch";
 import { managerDeletion } from "../../utils/managerDeletion";
 import SearchIcon from "@mui/icons-material/Search";
+import SearchOffIcon from "@mui/icons-material/SearchOff";
+import PersonOffIcon from "@mui/icons-material/PersonOff";
 import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
 import Tooltip from "@mui/material/Tooltip";
 import Swal from "sweetalert2";
@@ -297,35 +299,89 @@ const ManagerTable: React.FC<ManagerTableProps> = ({
           </TableHead>
 
           <TableBody>
-            {sortedUsers
-              .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-              .map((user) => (
-                <TableRow
-                  key={user.id}
-                  selected={selectedUserIds.has(user.id!)}
-                >
-                  <TableCell>
-                    <Checkbox
-                      checked={selectedUserIds.has(user.id!)}
-                      onChange={(event) => handleSelectManager(event, user.id!)}
-                    />
-                  </TableCell>
-                  <TableCell>{user.firstname}</TableCell>
-                  <TableCell>{user.lastname}</TableCell>
-                  <TableCell>{user.username}</TableCell>
-                  <TableCell>{user.phonenumber}</TableCell>
-                  <TableCell>{user.region}</TableCell>
-                  <TableCell>{user.province}</TableCell>
-                  <TableCell>{user.regisdate}</TableCell>
-                  <TableCell>
-                    <IconButton
-                      onClick={(event) => handleToggleMenu(event, user)}
+            {managers.length === 0 ? (
+              <TableRow>
+                <TableCell colSpan={9} align="center">
+                  <Box
+                    sx={{
+                      display: "flex",
+                      flexDirection: "column",
+                      alignItems: "center",
+                      py: 5,
+                    }}
+                  >
+                    <PersonOffIcon sx={{ fontSize: 50, color: "gray" }} />
+                    <Typography
+                      variant="h6"
+                      color="textSecondary"
+                      sx={{ mt: 2, fontWeight: 500 }}
                     >
-                      <MoreHorizIcon />
-                    </IconButton>
-                  </TableCell>
-                </TableRow>
-              ))}
+                      No managers available
+                    </Typography>
+                    <Typography variant="body2" color="textSecondary">
+                      Add a new manager to get started.
+                    </Typography>
+                  </Box>
+                </TableCell>
+              </TableRow>
+            ) : sortedUsers.length === 0 ? (
+              <TableRow>
+                <TableCell colSpan={9} align="center">
+                  <Box
+                    sx={{
+                      display: "flex",
+                      flexDirection: "column",
+                      alignItems: "center",
+                      py: 5,
+                    }}
+                  >
+                    <SearchOffIcon sx={{ fontSize: 50, color: "gray" }} />
+                    <Typography
+                      variant="h6"
+                      color="textSecondary"
+                      sx={{ mt: 2, fontWeight: 500 }}
+                    >
+                      No results found
+                    </Typography>
+                    <Typography variant="body2" color="textSecondary">
+                      Try adjusting your search criteria.
+                    </Typography>
+                  </Box>
+                </TableCell>
+              </TableRow>
+            ) : (
+              sortedUsers
+                .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                .map((user) => (
+                  <TableRow
+                    key={user.id}
+                    selected={selectedUserIds.has(user.id!)}
+                  >
+                    <TableCell>
+                      <Checkbox
+                        checked={selectedUserIds.has(user.id!)}
+                        onChange={(event) =>
+                          handleSelectManager(event, user.id!)
+                        }
+                      />
+                    </TableCell>
+                    <TableCell>{user.firstname}</TableCell>
+                    <TableCell>{user.lastname}</TableCell>
+                    <TableCell>{user.username}</TableCell>
+                    <TableCell>{user.phonenumber}</TableCell>
+                    <TableCell>{user.region}</TableCell>
+                    <TableCell>{user.province}</TableCell>
+                    <TableCell>{user.regisdate}</TableCell>
+                    <TableCell>
+                      <IconButton
+                        onClick={(event) => handleToggleMenu(event, user)}
+                      >
+                        <MoreHorizIcon />
+                      </IconButton>
+                    </TableCell>
+                  </TableRow>
+                ))
+            )}
           </TableBody>
         </Table>
 

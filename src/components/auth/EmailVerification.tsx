@@ -6,7 +6,7 @@ import {
   TextField,
   IconButton,
   Tooltip,
-  Grid
+  Grid,
 } from "@mui/material";
 import { useRouter } from "next/router";
 import ArrowBackIosNewIcon from "@mui/icons-material/ArrowBackIosNew";
@@ -22,7 +22,7 @@ const EmailVerification = () => {
     setIsButtonDisabled(otp.some((digit) => digit === ""));
   }, [otp]);
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>, index: number) => {
+  const handleChange = ( e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>, index: number ) => {
     const value = e.target.value.replace(/[^0-9]/g, "");
     if (value.length <= 1) {
       const newOtp = [...otp];
@@ -34,7 +34,7 @@ const EmailVerification = () => {
     }
   };
 
-  const handleBackspace = (e: React.KeyboardEvent<HTMLDivElement>, index: number) => {
+  const handleBackspace = ( e: React.KeyboardEvent<HTMLDivElement>, index: number ) => {
     if (e.key === "Backspace" && !otp[index] && index > 0) {
       document.getElementById(`otp-input-${index - 1}`)?.focus();
     }
@@ -47,12 +47,34 @@ const EmailVerification = () => {
   };
 
   return (
-    <Box display="flex" flexDirection={{ xs: "column", md: "row" }} height="100vh">
-      <LoginBackgroundSection imageSrc={LoginSectionData.image2} logoSrc={LoginSectionData.image} />
+    <Box
+      display="flex"
+      flexDirection={{ xs: "column", md: "row" }}
+      height="100vh"
+    >
+      <LoginBackgroundSection
+        imageSrc={LoginSectionData.image2}
+        logoSrc={LoginSectionData.image}
+      />
 
-      <Box flex={1} display="flex" justifyContent="center" alignItems="center" position="relative">
+      <Box
+        flex={1}
+        display="flex"
+        justifyContent="center"
+        alignItems="center"
+        position="relative"
+      >
         <Tooltip title="Back to Forgot Password">
-          <IconButton href="/forgot-password" sx={{ position: "absolute", left: 30, top: 30, color: "#D1D5D8", backgroundColor: "#374151" }}>
+          <IconButton
+            href="/forgot-password"
+            sx={{
+              position: "absolute",
+              left: 30,
+              top: 30,
+              color: "#D1D5D8",
+              backgroundColor: "#374151",
+            }}
+          >
             <ArrowBackIosNewIcon sx={{ fontSize: 25 }} />
           </IconButton>
         </Tooltip>
@@ -66,58 +88,68 @@ const EmailVerification = () => {
           </Typography>
 
           <Box display="flex" justifyContent="center" mt={3.5}>
-            <Grid container justifyContent="center" spacing={0.5} flexWrap="nowrap" direction="row">
-                {otp.map((digit, index) => (
-                    <Grid item key={index}>
-                        <TextField
-                            id={`otp-input-${index}`}
-                            value={digit}
-                            onChange={(e) => handleChange(e, index)}
-                            onKeyDown={(e) => handleBackspace(e, index)}
-                            variant="outlined"
-                            inputProps={{
-                                maxLength: 1,
-                                style: {
-                                    textAlign: "center",
-                                    fontSize: "16px",
-                                    width: "10px !important",
-                                    maxWidth: "20px",
-                                    height: "35px",
-                                    outline: "none",
-                                    borderRadius: "6px",
-                                    border: "1px solid #D1D5DB",
-                                },
-                            }}
-                            sx={{
-                                "& .MuiOutlinedInput-root": {
-                                    padding: "4px",
-                                    backgroundColor: "transparent !important",
-                                    "& fieldset": {
-                                        border: "none",
-                                    },
-                                },
-                            }}
-                        />
-                    </Grid>
-                ))}
+            <Grid
+              container
+              justifyContent="center"
+              spacing={0.5}
+              flexWrap="nowrap"
+              direction="row"
+            >
+              {otp.map((digit, index) => (
+                <Grid item key={index}>
+                  <TextField
+                    id={`otp-input-${index}`}
+                    value={digit}
+                    onChange={(e) => handleChange(e, index)}
+                    onKeyDown={(e) => handleBackspace(e, index)}
+                    variant="outlined"
+                    inputProps={{
+                      maxLength: 1,
+                      style: {
+                        textAlign: "center",
+                        fontSize: "16px",
+                        width: "10px !important",
+                        maxWidth: "20px",
+                        height: "35px",
+                        outline: "none",
+                        borderRadius: "6px",
+                        border: "1px solid #D1D5DB",
+                      },
+                    }}
+                    sx={{
+                      "& .MuiOutlinedInput-root": {
+                        padding: "4px",
+                        backgroundColor: "transparent !important",
+                        "& fieldset": {
+                          border: "none",
+                        },
+                      },
+                    }}
+                  />
+                </Grid>
+              ))}
             </Grid>
-        </Box>
+          </Box>
 
           <Button
             onClick={handleNavigation}
             variant="contained"
-            sx={{ 
-                mt: 0.5,
-                py: 1,
-                borderRadius: "8px", 
-                ontWeight: "bold", 
-                textTransform: "none", 
-                width: '65%', 
-                marginTop: '2rem',
-                backgroundColor: isButtonDisabled ? "#D1D5D8 !important" : "#2563EB !important",
-                color: isButtonDisabled ? "#F1F5F9 !important" : "#ffffff !important",
-                fontWeight: 'bold',
-                cursor: isButtonDisabled ? 'not-allowed' : 'pointer',
+            sx={{
+              mt: 0.5,
+              py: 1,
+              borderRadius: "8px",
+              ontWeight: "bold",
+              textTransform: "none",
+              width: "65%",
+              marginTop: "2rem",
+              backgroundColor: isButtonDisabled
+                ? "#D1D5D8 !important"
+                : "#2563EB !important",
+              color: isButtonDisabled
+                ? "#F1F5F9 !important"
+                : "#ffffff !important",
+              fontWeight: "bold",
+              cursor: isButtonDisabled ? "not-allowed" : "pointer",
             }}
             disabled={isButtonDisabled}
           >
