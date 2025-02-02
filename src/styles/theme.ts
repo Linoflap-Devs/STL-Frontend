@@ -297,6 +297,9 @@ export const deleteStyles = {
   backgroundColor: "#F05252",
   width: "auto",
   marginRight: "0.9rem",
+  '&:hover': {
+    backgroundColor: '#D43D38',
+  }
 };
 
 export const inputStyles = {

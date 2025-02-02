@@ -97,7 +97,7 @@ const ManagerTable: React.FC<ManagerTableProps> = ({
     regisdate: "",
   });
 
-  // Step 1: Apply filtering to managers data based on searchQuery and filters
+  // Apply filtering to managers data based on searchQuery and filters
   const filteredUsers = filterData(managers, { ...filters, searchQuery }, [
     "firstname",
     "lastname",
@@ -107,7 +107,7 @@ const ManagerTable: React.FC<ManagerTableProps> = ({
     "province",
   ]);
 
-  // Step 2: Apply sorting on the filtered data
+  // Apply sorting on the filtered data
   const sortedFilteredUsers: User[] = sortData(filteredUsers, {
     key: sortConfig.key,
     direction: sortConfig.direction,
@@ -126,8 +126,8 @@ const ManagerTable: React.FC<ManagerTableProps> = ({
     onDelete,
     page,
     rowsPerPage
-  );  
-  
+  );
+
   // Search handling
   const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setSearchQuery(event.target.value);
@@ -249,7 +249,7 @@ const ManagerTable: React.FC<ManagerTableProps> = ({
                   ),
                 }}
               />
-
+              
               <FilterListIcon
                 onClick={handleFilterToggle}
                 sx={{ marginLeft: 5, color: "#9CA3AF", cursor: "pointer" }}
@@ -314,7 +314,6 @@ const ManagerTable: React.FC<ManagerTableProps> = ({
                   sortConfig={sortConfig}
                   onSort={onSortWrapper}
                   isFilterVisible={isFilterVisible}
-                  onFilterToggle={handleFilterToggle}
                   filterValue={filters.firstname}
                   onFilterChange={handleFilterChange("firstname")}
                 />
@@ -325,7 +324,6 @@ const ManagerTable: React.FC<ManagerTableProps> = ({
                   sortConfig={sortConfig}
                   onSort={onSortWrapper}
                   isFilterVisible={isFilterVisible}
-                  onFilterToggle={handleFilterToggle}
                   filterValue={filters.lastname}
                   onFilterChange={handleFilterChange("lastname")}
                 />
@@ -336,7 +334,6 @@ const ManagerTable: React.FC<ManagerTableProps> = ({
                   sortConfig={sortConfig}
                   onSort={onSortWrapper}
                   isFilterVisible={isFilterVisible}
-                  onFilterToggle={handleFilterToggle}
                   filterValue={filters.username}
                   onFilterChange={handleFilterChange("username")}
                 />
@@ -347,7 +344,6 @@ const ManagerTable: React.FC<ManagerTableProps> = ({
                   sortConfig={sortConfig}
                   onSort={onSortWrapper}
                   isFilterVisible={isFilterVisible}
-                  onFilterToggle={handleFilterToggle}
                   filterValue={filters.phonenumber}
                   onFilterChange={handleFilterChange("phonenumber")}
                 />
@@ -358,7 +354,6 @@ const ManagerTable: React.FC<ManagerTableProps> = ({
                   sortConfig={sortConfig}
                   onSort={onSortWrapper}
                   isFilterVisible={isFilterVisible}
-                  onFilterToggle={handleFilterToggle}
                   filterValue={filters.region}
                   onFilterChange={handleFilterChange("region")}
                 />
@@ -369,7 +364,6 @@ const ManagerTable: React.FC<ManagerTableProps> = ({
                   sortConfig={sortConfig}
                   onSort={onSortWrapper}
                   isFilterVisible={isFilterVisible}
-                  onFilterToggle={handleFilterToggle}
                   filterValue={filters.province}
                   onFilterChange={handleFilterChange("province")}
                 />
@@ -380,7 +374,6 @@ const ManagerTable: React.FC<ManagerTableProps> = ({
                   sortConfig={sortConfig}
                   onSort={onSortWrapper}
                   isFilterVisible={isFilterVisible}
-                  onFilterToggle={handleFilterToggle}
                   filterValue={filters.regisdate}
                   onFilterChange={handleFilterChange("regisdate")}
                 />

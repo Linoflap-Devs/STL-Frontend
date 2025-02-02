@@ -5,6 +5,7 @@ import KeyboardDoubleArrowDownIcon from "@mui/icons-material/KeyboardDoubleArrow
 import ManagerTable, { User } from "~/components/manager/ManagerTable";
 import TextField from "@mui/material/TextField";
 import { filterStyles } from "../styles/theme";
+import { Tooltip } from "@mui/material";
 
 // SortConfig interface
 interface SortConfig {
@@ -18,7 +19,6 @@ interface SortableTableCellProps {
   sortConfig: SortConfig;
   onSort: (sortKey: keyof User) => void;
   isFilterVisible: boolean;
-  onFilterToggle: () => void;
   filterValue: string;
   onFilterChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   colSpan?: number;
@@ -30,7 +30,6 @@ export const SortableTableCell: React.FC<SortableTableCellProps> = ({
   sortConfig,
   onSort,
   isFilterVisible,
-  onFilterToggle,
   filterValue,
   onFilterChange,
 }) => {
@@ -42,19 +41,27 @@ export const SortableTableCell: React.FC<SortableTableCellProps> = ({
     <TableCell sx={{ cursor: "pointer" }} onClick={handleSort}>
       {sortConfig.key === sortKey &&
         (sortConfig.direction === "asc" ? (
-          <KeyboardDoubleArrowUpIcon sx={{ fontSize: 16, marginLeft: 1 }} />
+          <Tooltip title={`Sort ${label} by Ascending`}>
+            <KeyboardDoubleArrowUpIcon
+              sx={{ fontSize: 16, marginLeft: "0px" }}
+            />
+          </Tooltip>
         ) : (
-          <KeyboardDoubleArrowDownIcon sx={{ fontSize: 16, marginLeft: 1 }} />
-        ))}{" "}
+          <Tooltip title={`Sort ${label} by Descending`}>
+            <KeyboardDoubleArrowDownIcon
+              sx={{ fontSize: 16, marginLeft: "0px" }}
+            />
+          </Tooltip>
+        ))}
       {label}
       {isFilterVisible && (
         <div>
           <TextField
             id="filter-input"
-            placeholder={`Filter by ${label}`} // No label
-            variant="filled" // Set the variant to 'filled'
-            value={filterValue} // Controlled value
-            onChange={onFilterChange} // Handle change
+            placeholder={`Filter by ${label}`}
+            variant="filled"
+            value={filterValue}
+            onChange={onFilterChange}
             fullWidth
             sx={filterStyles}
           />
