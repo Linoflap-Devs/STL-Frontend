@@ -1,8 +1,10 @@
 import React, { useState } from "react";
 import TableCell from "@mui/material/TableCell";
-import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
-import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
+import KeyboardDoubleArrowUpIcon from "@mui/icons-material/KeyboardDoubleArrowUp";
+import KeyboardDoubleArrowDownIcon from "@mui/icons-material/KeyboardDoubleArrowDown";
 import ManagerTable, { User } from "~/components/manager/ManagerTable";
+import TextField from "@mui/material/TextField";
+import { filterStyles } from "../styles/theme";
 
 // SortConfig interface
 interface SortConfig {
@@ -10,21 +12,27 @@ interface SortConfig {
   direction: "asc" | "desc";
 }
 
-// SortableTableCellProps interface
 interface SortableTableCellProps {
   label: string;
   sortKey: keyof User;
   sortConfig: SortConfig;
   onSort: (sortKey: keyof User) => void;
+  isFilterVisible: boolean;
+  onFilterToggle: () => void;
+  filterValue: string;
+  onFilterChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   colSpan?: number;
 }
 
-// SortableTableCell component
 export const SortableTableCell: React.FC<SortableTableCellProps> = ({
   label,
   sortKey,
   sortConfig,
   onSort,
+  isFilterVisible,
+  onFilterToggle,
+  filterValue,
+  onFilterChange,
 }) => {
   const handleSort = () => {
     onSort(sortKey);
@@ -32,23 +40,32 @@ export const SortableTableCell: React.FC<SortableTableCellProps> = ({
 
   return (
     <TableCell sx={{ cursor: "pointer" }} onClick={handleSort}>
-      {label}
-      {sortConfig.key === sortKey && (
-        sortConfig.direction === "asc" ? (
-          <KeyboardArrowUpIcon sx={{ fontSize: 16, marginLeft: 1 }} />
+      {sortConfig.key === sortKey &&
+        (sortConfig.direction === "asc" ? (
+          <KeyboardDoubleArrowUpIcon sx={{ fontSize: 16, marginLeft: 1 }} />
         ) : (
-          <KeyboardArrowDownIcon sx={{ fontSize: 16, marginLeft: 1 }} />
-        )
+          <KeyboardDoubleArrowDownIcon sx={{ fontSize: 16, marginLeft: 1 }} />
+        ))}{" "}
+      {label}
+      {isFilterVisible && (
+        <div>
+          <TextField
+            id="filter-input"
+            placeholder={`Filter by ${label}`} // No label
+            variant="filled" // Set the variant to 'filled'
+            value={filterValue} // Controlled value
+            onChange={onFilterChange} // Handle change
+            fullWidth
+            sx={filterStyles}
+          />
+        </div>
       )}
     </TableCell>
   );
 };
 
 // Sorting function
-export const sortData = (
-  data: Array<{ [key: string]: any }>,
-  sortConfig: { key: string; direction: "asc" | "desc" }
-) => {
+export function sortData(data: User[], sortConfig: { key: keyof User; direction: "asc" | "desc" }): User[] {
   return [...data].sort((a, b) => {
     const valueA = a[sortConfig.key];
     const valueB = b[sortConfig.key];
@@ -82,7 +99,9 @@ export const sortData = (
 export const handleSort = (
   sortKey: keyof User,
   sortConfig: { key: keyof User; direction: "asc" | "desc" },
-  setSortConfig: React.Dispatch<React.SetStateAction<{ key: keyof User; direction: "asc" | "desc" }>>
+  setSortConfig: React.Dispatch<
+    React.SetStateAction<{ key: keyof User; direction: "asc" | "desc" }>
+  >
 ) => {
   let direction: "asc" | "desc" = "asc";
 
@@ -111,19 +130,26 @@ export const handleChangeRowsPerPage = (
   setRowsPerPage(newValue);
 };
 
-// Search Function
+// Search and Filter Function
 export const filterData = (
   data: User[],
-  searchQuery: string,
-  fields: (keyof User)[]
-): User[] => {
-  return data.filter(item =>
-    fields.some(field => {
-      const value = item[field];
-      if (typeof value === 'string') {
-        return value.toLowerCase().includes(searchQuery.toLowerCase());
-      }
-      return String(value).toLowerCase().includes(searchQuery.toLowerCase());
-    })
-  );
+  filters: { [key: string]: string },
+  filterKeys: string[]
+) => {
+  return data.filter((item) => {
+    return filterKeys.every((key) => {
+      const filterValue = filters[key] || "";
+      const searchValue = filters.searchQuery || "";
+      return (
+        (filterValue
+          ? item[key]?.toLowerCase().includes(filterValue.toLowerCase())
+          : true) &&
+        (searchValue
+          ? Object.values(item).some((val) =>
+              typeof val === 'string' && val.toLowerCase().includes(searchValue.toLowerCase())
+            )
+          : true)
+      );
+    });
+  });
 };

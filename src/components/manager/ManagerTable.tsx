@@ -31,6 +31,8 @@ import { managerDeletion } from "../../utils/managerDeletion";
 import SearchIcon from "@mui/icons-material/Search";
 import SearchOffIcon from "@mui/icons-material/SearchOff";
 import PersonOffIcon from "@mui/icons-material/PersonOff";
+import FilterListIcon from "@mui/icons-material/FilterList";
+import FilterListOffIcon from "@mui/icons-material/FilterListOff";
 import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
 import Tooltip from "@mui/material/Tooltip";
 import Swal from "sweetalert2";
@@ -49,6 +51,7 @@ export interface User {
   username: string;
   password?: string;
   regisdate?: string;
+  [key: string]: any;
 }
 
 interface ManagerTableProps {
@@ -66,6 +69,8 @@ const ManagerTable: React.FC<ManagerTableProps> = ({
 }) => {
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+  const [isFilterVisible, setIsFilterVisible] = useState(false);
+  const [isFilterActive, setIsFilterActive] = useState(false);
   const [selectedUserIds, setSelectedUserIds] = useState<Set<number>>(
     new Set()
   );
@@ -73,6 +78,7 @@ const ManagerTable: React.FC<ManagerTableProps> = ({
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
   const [searchQuery, setSearchQuery] = useState<string>("");
+
   const onSortWrapper = (sortKey: keyof User) => {
     handleSort(sortKey, sortConfig, setSortConfig);
   };
@@ -81,18 +87,31 @@ const ManagerTable: React.FC<ManagerTableProps> = ({
     direction: "asc" | "desc";
   }>({ key: "id", direction: "asc" });
 
-  // Search filter data
-  const sortedUsers: User[] = sortData(
-    filterData(managers, searchQuery, [
-      "firstname",
-      "lastname",
-      "username",
-      "phonenumber",
-      "region",
-      "province",
-    ]),
-    sortConfig
-  ) as User[];
+  const [filters, setFilters] = useState<{ [key: string]: string }>({
+    firstname: "",
+    lastname: "",
+    username: "",
+    phonenumber: "",
+    region: "",
+    province: "",
+    regisdate: "",
+  });
+
+  // Step 1: Apply filtering to managers data based on searchQuery and filters
+  const filteredUsers = filterData(managers, { ...filters, searchQuery }, [
+    "firstname",
+    "lastname",
+    "username",
+    "phonenumber",
+    "region",
+    "province",
+  ]);
+
+  // Step 2: Apply sorting on the filtered data
+  const sortedFilteredUsers: User[] = sortData(filteredUsers, {
+    key: sortConfig.key,
+    direction: sortConfig.direction,
+  });
 
   const {
     handleSelectAll,
@@ -100,19 +119,35 @@ const ManagerTable: React.FC<ManagerTableProps> = ({
     handleDeleteSelectedManagers,
     handleSelectManager,
   } = managerDeletion(
-    sortedUsers,
+    sortedFilteredUsers,
     selectedUserIds,
     setSelectedUserIds,
     setSelectedCount,
     onDelete
   );
 
-  // search handling
+  // Search handling
   const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setSearchQuery(event.target.value);
   };
 
-  // for menu
+  // Filter icon handling
+  const handleFilterToggle = () => {
+    setIsFilterActive((prevState) => !prevState);
+    setIsFilterVisible((prev) => !prev);
+  };
+
+  // Filter change handler
+  const handleFilterChange =
+    (key: string) => (e: React.ChangeEvent<HTMLInputElement>) => {
+      const newFilterValue = e.target.value;
+      setFilters((prevFilters) => ({
+        ...prevFilters,
+        [key]: newFilterValue,
+      }));
+    };
+
+  // Menu handling
   const handleToggleMenu = (
     event?: React.MouseEvent<HTMLButtonElement>,
     user?: User
@@ -182,29 +217,49 @@ const ManagerTable: React.FC<ManagerTableProps> = ({
               alignItems: "center",
             }}
           >
-            <TextField
-              fullWidth
-              variant="outlined"
-              placeholder="Search"
-              value={searchQuery}
+            <Box
               sx={{
-                maxWidth: "300px",
-                "& .MuiOutlinedInput-root": {
-                  padding: "8px 12px",
-                },
-                "& .MuiOutlinedInput-input": {
-                  padding: "0.5px 0",
-                },
+                display: "flex",
+                justifyContent: "flex-start",
+                alignItems: "center",
               }}
-              onChange={handleSearchChange}
-              InputProps={{
-                startAdornment: (
-                  <InputAdornment position="start">
-                    <SearchIcon sx={{ fontSize: 20, color: "#9CA3AF" }} />
-                  </InputAdornment>
-                ),
-              }}
-            />
+            >
+              <TextField
+                fullWidth
+                variant="outlined"
+                placeholder="Search"
+                value={searchQuery}
+                sx={{
+                  maxWidth: "300px",
+                  "& .MuiOutlinedInput-root": {
+                    padding: "8px 12px",
+                  },
+                  "& .MuiOutlinedInput-input": {
+                    padding: "0.5px 0",
+                  },
+                }}
+                onChange={handleSearchChange}
+                InputProps={{
+                  startAdornment: (
+                    <InputAdornment position="start">
+                      <SearchIcon sx={{ fontSize: 20, color: "#9CA3AF" }} />
+                    </InputAdornment>
+                  ),
+                }}
+              />
+
+              <FilterListIcon
+                onClick={handleFilterToggle}
+                sx={{ marginLeft: 5, color: "#9CA3AF", cursor: "pointer" }}
+                style={{ display: isFilterActive ? "none" : "block" }}
+              />
+
+              <FilterListOffIcon
+                onClick={handleFilterToggle}
+                sx={{ marginLeft: 5, color: "#9CA3AF", cursor: "pointer" }}
+                style={{ display: isFilterActive ? "block" : "none" }}
+              />
+            </Box>
 
             <Box
               sx={{
@@ -256,42 +311,76 @@ const ManagerTable: React.FC<ManagerTableProps> = ({
                   sortKey="firstname"
                   sortConfig={sortConfig}
                   onSort={onSortWrapper}
+                  isFilterVisible={isFilterVisible}
+                  onFilterToggle={handleFilterToggle}
+                  filterValue={filters.firstname}
+                  onFilterChange={handleFilterChange("firstname")}
                 />
+
                 <SortableTableCell
                   label="Last Name"
                   sortKey="lastname"
                   sortConfig={sortConfig}
                   onSort={onSortWrapper}
+                  isFilterVisible={isFilterVisible}
+                  onFilterToggle={handleFilterToggle}
+                  filterValue={filters.lastname}
+                  onFilterChange={handleFilterChange("lastname")}
                 />
+
                 <SortableTableCell
                   label="Username"
                   sortKey="username"
                   sortConfig={sortConfig}
                   onSort={onSortWrapper}
+                  isFilterVisible={isFilterVisible}
+                  onFilterToggle={handleFilterToggle}
+                  filterValue={filters.username}
+                  onFilterChange={handleFilterChange("username")}
                 />
+
                 <SortableTableCell
                   label="Phone Number"
                   sortKey="phonenumber"
                   sortConfig={sortConfig}
                   onSort={onSortWrapper}
+                  isFilterVisible={isFilterVisible}
+                  onFilterToggle={handleFilterToggle}
+                  filterValue={filters.phonenumber}
+                  onFilterChange={handleFilterChange("phonenumber")}
                 />
+
                 <SortableTableCell
                   label="Region"
                   sortKey="region"
                   sortConfig={sortConfig}
                   onSort={onSortWrapper}
+                  isFilterVisible={isFilterVisible}
+                  onFilterToggle={handleFilterToggle}
+                  filterValue={filters.region}
+                  onFilterChange={handleFilterChange("region")}
                 />
+
                 <SortableTableCell
                   label="Province"
                   sortKey="province"
                   sortConfig={sortConfig}
                   onSort={onSortWrapper}
+                  isFilterVisible={isFilterVisible}
+                  onFilterToggle={handleFilterToggle}
+                  filterValue={filters.province}
+                  onFilterChange={handleFilterChange("province")}
                 />
+
                 <SortableTableCell
                   label="Registration Date"
                   sortKey="regisdate"
                   sortConfig={sortConfig}
                   onSort={onSortWrapper}
+                  isFilterVisible={isFilterVisible}
+                  onFilterToggle={handleFilterToggle}
+                  filterValue={filters.regisdate}
+                  onFilterChange={handleFilterChange("regisdate")}
                 />
               </>
               <TableCell>Actions</TableCell>
@@ -324,7 +413,7 @@ const ManagerTable: React.FC<ManagerTableProps> = ({
                   </Box>
                 </TableCell>
               </TableRow>
-            ) : sortedUsers.length === 0 ? (
+            ) : sortedFilteredUsers.length === 0 ? (
               <TableRow>
                 <TableCell colSpan={9} align="center">
                   <Box
@@ -350,7 +439,7 @@ const ManagerTable: React.FC<ManagerTableProps> = ({
                 </TableCell>
               </TableRow>
             ) : (
-              sortedUsers
+              sortedFilteredUsers
                 .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                 .map((user) => (
                   <TableRow
@@ -407,7 +496,7 @@ const ManagerTable: React.FC<ManagerTableProps> = ({
           <TablePagination
             rowsPerPageOptions={[5, 10, 25, 100]}
             component="div"
-            count={sortedUsers.length}
+            count={sortedFilteredUsers.length}
             rowsPerPage={rowsPerPage}
             page={page}
             onPageChange={(event, newPage) =>
