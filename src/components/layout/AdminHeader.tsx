@@ -100,8 +100,12 @@ const AdminHeader: FC<AdminHeaderProps> = ({ children, pages, ...props }) => {
                 key={page}
                 component="a"
                 href={
-                  page === "Manager" ? "/managers" : `/${page.toLowerCase()}`
-                }
+                  page === "Manager"
+                    ? "/managers"
+                  : page === "Logout"
+                    ? "/"
+                    : `/${page.toLowerCase()}`
+                }                
                 sx={{
                   display: "block",
                   textAlign: "center",

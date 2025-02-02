@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import TableCell from "@mui/material/TableCell";
-import KeyboardDoubleArrowUpIcon from "@mui/icons-material/KeyboardDoubleArrowUp";
-import KeyboardDoubleArrowDownIcon from "@mui/icons-material/KeyboardDoubleArrowDown";
+import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
+import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import ManagerTable, { User } from "~/components/manager/ManagerTable";
 import TextField from "@mui/material/TextField";
 import { filterStyles } from "../styles/theme";
@@ -39,20 +39,19 @@ export const SortableTableCell: React.FC<SortableTableCellProps> = ({
 
   return (
     <TableCell sx={{ cursor: "pointer" }} onClick={handleSort}>
-      {sortConfig.key === sortKey &&
-        (sortConfig.direction === "asc" ? (
-          <Tooltip title={`Sort ${label} by Ascending`}>
-            <KeyboardDoubleArrowUpIcon
-              sx={{ fontSize: 16, marginLeft: "0px" }}
-            />
-          </Tooltip>
-        ) : (
-          <Tooltip title={`Sort ${label} by Descending`}>
-            <KeyboardDoubleArrowDownIcon
-              sx={{ fontSize: 16, marginLeft: "0px" }}
-            />
-          </Tooltip>
-        ))}
+      {sortConfig.key === sortKey && (
+        <Tooltip
+          title={`Sort ${label} by ${sortConfig.direction === "asc" ? "Ascending" : "Descending"}`}
+        >
+          <span>
+            {sortConfig.direction === "asc" ? (
+              <KeyboardArrowUpIcon sx={{ fontSize: 16, marginRight: 1 }} />
+            ) : (
+              <KeyboardArrowDownIcon sx={{ fontSize: 16, marginRight: 1 }} />
+            )}
+          </span>
+        </Tooltip>
+      )}
       {label}
       {isFilterVisible && (
         <div>
@@ -64,10 +63,12 @@ export const SortableTableCell: React.FC<SortableTableCellProps> = ({
             onChange={onFilterChange}
             fullWidth
             sx={filterStyles}
+            onClick={(e) => e.stopPropagation()}
           />
         </div>
       )}
     </TableCell>
+
   );
 };
 
@@ -156,10 +157,10 @@ export const filterData = (
           : true) &&
         (searchValue
           ? Object.values(item).some(
-              (val) =>
-                typeof val === "string" &&
-                val.toLowerCase().includes(searchValue.toLowerCase())
-            )
+            (val) =>
+              typeof val === "string" &&
+              val.toLowerCase().includes(searchValue.toLowerCase())
+          )
           : true)
       );
     });

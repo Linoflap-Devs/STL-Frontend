@@ -25,7 +25,6 @@ const LoginPage = () => {
   });
   const [showPassword, setShowPassword] = useState<boolean>(false);
   const [showConfirmPassword, setConfirmPassword] = useState<boolean>(false);
-
   const [errors, setErrors] = useState<{
     newpassword?: string;
     setpassword?: string;

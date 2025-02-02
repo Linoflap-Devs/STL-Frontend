@@ -1,6 +1,7 @@
 import ManagerTable, { User } from "~/components/manager/ManagerTable";
 import { formatKey } from "../utils/format";
 
+// forms validation
 export const validateUser = (user: User) => {
   const newErrors: { [key: string]: string } = {};
   const nameRegex = /^[A-Za-z\s]+$/;
@@ -85,7 +86,7 @@ export const loginValidate = (credentials: {
         }
         break;
 
-        case "newpassword": // for setting a new password
+      case "newpassword": // for setting a new password
         if (!value) {
           newErrors.newpassword = "Password is required";
         } else if (!passwordRegex.test(value)) {
@@ -94,7 +95,7 @@ export const loginValidate = (credentials: {
         }
         break;
 
-        case "setpassword": // for confirming the new password
+      case "setpassword": // for confirming the new password
         if (!value) {
           newErrors.setpassword = "Password is required";
         } else if (value !== credentials.newpassword) {

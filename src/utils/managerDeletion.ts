@@ -13,17 +13,22 @@ export const managerDeletion = (
   const handleSelectAll = (event: React.ChangeEvent<HTMLInputElement>) => {
     const newSelectedUserIds = new Set<number>();
     const usersForCurrentPage = sortedFilteredUsers.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage);
-  
-    if (event.target.checked) {
+
+    const allOnPageSelected = usersForCurrentPage.every((user) =>
+      selectedUserIds.has(user.id!)
+    );
+
+    if (allOnPageSelected) {
+      usersForCurrentPage.forEach((user) => newSelectedUserIds.delete(user.id!));
+    } else {
       usersForCurrentPage.forEach((user) => newSelectedUserIds.add(user.id!));
     }
-  
     setSelectedUserIds(newSelectedUserIds);
     setSelectedCount(newSelectedUserIds.size);
   };
-  
+
   const isAllSelected =
-  sortedFilteredUsers.length > 0 && selectedUserIds.size === sortedFilteredUsers.length;
+    sortedFilteredUsers.length > 0 && selectedUserIds.size === sortedFilteredUsers.length;
 
   // Delete selected users
   const handleDeleteSelectedManagers = () => {
