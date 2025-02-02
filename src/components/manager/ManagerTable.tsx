@@ -123,9 +123,11 @@ const ManagerTable: React.FC<ManagerTableProps> = ({
     selectedUserIds,
     setSelectedUserIds,
     setSelectedCount,
-    onDelete
-  );
-
+    onDelete,
+    page,
+    rowsPerPage
+  );  
+  
   // Search handling
   const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setSearchQuery(event.target.value);

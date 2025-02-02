@@ -65,7 +65,10 @@ export const SortableTableCell: React.FC<SortableTableCellProps> = ({
 };
 
 // Sorting function
-export function sortData(data: User[], sortConfig: { key: keyof User; direction: "asc" | "desc" }): User[] {
+export function sortData(
+  data: User[],
+  sortConfig: { key: keyof User; direction: "asc" | "desc" }
+): User[] {
   return [...data].sort((a, b) => {
     const valueA = a[sortConfig.key];
     const valueB = b[sortConfig.key];
@@ -93,7 +96,7 @@ export function sortData(data: User[], sortConfig: { key: keyof User; direction:
 
     return 0;
   });
-};
+}
 
 // Handle sorting
 export const handleSort = (
@@ -145,8 +148,10 @@ export const filterData = (
           ? item[key]?.toLowerCase().includes(filterValue.toLowerCase())
           : true) &&
         (searchValue
-          ? Object.values(item).some((val) =>
-              typeof val === 'string' && val.toLowerCase().includes(searchValue.toLowerCase())
+          ? Object.values(item).some(
+              (val) =>
+                typeof val === "string" &&
+                val.toLowerCase().includes(searchValue.toLowerCase())
             )
           : true)
       );

@@ -2,25 +2,28 @@ import ManagerTable, { User } from "~/components/manager/ManagerTable";
 import Swal from "sweetalert2";
 
 export const managerDeletion = (
-  sortedUsers: User[],
+  sortedFilteredUsers: User[],
   selectedUserIds: Set<number>,
   setSelectedUserIds: React.Dispatch<React.SetStateAction<Set<number>>>,
   setSelectedCount: React.Dispatch<React.SetStateAction<number>>,
-  onDelete: (ids: number[]) => void
+  onDelete: (ids: number[]) => void,
+  page: number,
+  rowsPerPage: number
 ) => {
-  // Select all users checkbox
   const handleSelectAll = (event: React.ChangeEvent<HTMLInputElement>) => {
     const newSelectedUserIds = new Set<number>();
+    const usersForCurrentPage = sortedFilteredUsers.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage);
+  
     if (event.target.checked) {
-      sortedUsers.forEach((user) => newSelectedUserIds.add(user.id!));
+      usersForCurrentPage.forEach((user) => newSelectedUserIds.add(user.id!));
     }
+  
     setSelectedUserIds(newSelectedUserIds);
     setSelectedCount(newSelectedUserIds.size);
   };
-
-  // Check if all users are selected
+  
   const isAllSelected =
-    sortedUsers.length > 0 && selectedUserIds.size === sortedUsers.length;
+  sortedFilteredUsers.length > 0 && selectedUserIds.size === sortedFilteredUsers.length;
 
   // Delete selected users
   const handleDeleteSelectedManagers = () => {
@@ -61,7 +64,6 @@ export const managerDeletion = (
   ) => {
     if (userId === undefined) return;
 
-    // Handle row click (MouseEvent)
     if (event.type === "click" && event.target instanceof HTMLTableRowElement) {
       event.stopPropagation();
     }

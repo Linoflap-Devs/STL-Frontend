@@ -319,15 +319,15 @@ export const filterStyles = {
   marginTop: 0,
   marginBottom: 0,
   padding: "4px",
-  backgroundColor: 'none',
+  backgroundColor: "none",
   "& .MuiFilledInput-root": {
     paddingTop: "8px",
     paddingBottom: "8px",
-    backgroundColor: 'transparent  !important',
+    backgroundColor: "transparent  !important",
   },
   "& .MuiInputBase-input": {
     padding: 0,
   },
-}
+};
 
 export default darkTheme;
