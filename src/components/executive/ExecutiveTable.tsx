@@ -28,7 +28,9 @@ import {
   handleChangeRowsPerPage,
   filterData,
 } from "../../utils/sortPaginationSearch";
+import { executiveDeletion } from "../../utils/executiveDeletion";
 import SearchIcon from "@mui/icons-material/Search";
+import PersonOffIcon from "@mui/icons-material/PersonOff";
 import SearchOffIcon from "@mui/icons-material/SearchOff";
 import FilterListIcon from "@mui/icons-material/FilterList";
 import FilterListOffIcon from "@mui/icons-material/FilterListOff";
@@ -36,7 +38,7 @@ import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
 import Swal from "sweetalert2";
 
 // define executives interface
-export interface Executive {
+export interface User {
   id?: number;
   firstname: string;
   lastname: string;
@@ -63,13 +65,14 @@ export interface Executive {
 }
 
 interface ExecutiveTableProps {
-  executives: Executive[];
+  executives: User[];
   onCreate: () => void;
   onClose: () => void;
+  onDelete: (ids: number[]) => void;
 }
 
-const ExecutiveTable: React.FC<ExecutiveTableProps> = ({ executives, onCreate, onClose, }) => {
-  const [selectedUser, setSelectedUser] = useState<Executive | null>(null);
+const ExecutiveTable: React.FC<ExecutiveTableProps> = ({ executives, onCreate, onClose, onDelete }) => {
+  const [selectedExecutive, setselectedExecutive] = useState<User | null>(null);
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [isFilterVisible, setIsFilterVisible] = useState(false);
   const [isFilterActive, setIsFilterActive] = useState(false);
@@ -79,33 +82,98 @@ const ExecutiveTable: React.FC<ExecutiveTableProps> = ({ executives, onCreate, o
   const [rowsPerPage, setRowsPerPage] = useState(5);
   const [searchQuery, setSearchQuery] = useState<string>("");
 
+  const onSortWrapper = (sortKey: keyof User) => {
+    handleSort(sortKey, sortConfig, setSortConfig);
+  };
   const [sortConfig, setSortConfig] = useState<{
-    key: keyof Executive;
+    key: keyof User;
     direction: "asc" | "desc";
   }>({ key: "id", direction: "asc" });
 
-  const handleSortWrapper = (sortKey: keyof Executive) => {
-    handleSort(sortKey, sortConfig, setSortConfig);
-  };
+  const [filters, setFilters] = useState<{ [key: string]: string }>({
+    firstname: "",
+    lastname: "",
+    username: "",
+    phonenumber: "",
+    region: "",
+    province: "",
+    regisdate: "",
+  });
 
-  // menu handling
-  const handleToggleMenu = (event?: React.MouseEvent<HTMLButtonElement>, executive?: Executive) => {
-    setAnchorEl(event?.currentTarget || null);
-    setSelectedUser(executive || null);
-  };
+  const filteredExecutives = filterData(executives, { ...filters, searchQuery }, [
+    "firstname",
+    "lastname",
+    "username",
+    "phonenumber",
+    "region",
+    "province",
+  ]);
 
-  const handleSelectManager = (event: React.ChangeEvent<HTMLInputElement>, id: number) => {
-    const newSelectedUserIds = new Set(selectedUserIds);
-    if (event.target.checked) {
-      newSelectedUserIds.add(id);
-    } else {
-      newSelectedUserIds.delete(id);
-    }
-    setSelectedUserIds(newSelectedUserIds);
-  };
+  const sortedFilteredExecutive: User[] = sortData(filteredExecutives, {
+    key: sortConfig.key,
+    direction: sortConfig.direction,
+  });
+
+  const {
+    handleSelectAll,
+    isAllSelected,
+    handleDeleteSelectedManagers,
+    handleSelectManager,
+  } = executiveDeletion(
+    sortedFilteredExecutive,
+    selectedUserIds,
+    setSelectedUserIds,
+    setSelectedCount,
+    onDelete,
+    page,
+    rowsPerPage
+  );
 
   const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setSearchQuery(event.target.value);
+  };
+
+  const handleFilterToggle = () => {
+    setIsFilterActive((prevState) => !prevState);
+    setIsFilterVisible((prev) => !prev);
+  };
+
+  const handleFilterChange =
+    (key: string) => (e: React.ChangeEvent<HTMLInputElement>) => {
+      const newFilterValue = e.target.value;
+      setFilters((prevFilters) => ({
+        ...prevFilters,
+        [key]: newFilterValue,
+      }));
+    };
+
+  // menu handling
+  const handleToggleMenu = (event?: React.MouseEvent<HTMLButtonElement>, executive?: User) => {
+    setAnchorEl(event?.currentTarget || null);
+    setselectedExecutive(executive || null);
+  };
+
+  const handleDeleteExecutive = () => {
+    if (selectedExecutive) {
+      Swal.fire({
+        title: "Are you sure?",
+        text: "You won't be able to revert this",
+        icon: "warning",
+        showCancelButton: true,
+        cancelButtonText: "Cancel",
+        confirmButtonText: "Yes, delete it!",
+      }).then((result) => {
+        if (result.isConfirmed) {
+          onDelete([selectedExecutive.id!]);
+          Swal.fire({
+            title: "Deleted!",
+            text: "The manager has been successfully deleted.",
+            icon: "success",
+            confirmButtonText: "OK",
+          });
+        }
+      });
+    }
   };
 
   return (
@@ -118,14 +186,28 @@ const ExecutiveTable: React.FC<ExecutiveTableProps> = ({ executives, onCreate, o
 
       <TableContainer>
         <Box sx={{ backgroundColor: "#1F2937" }}>
-          <Box sx={{ paddingTop: 2.5, paddingBottom: 2, paddingX: 2, display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-            <Box sx={{ display: "flex", justifyContent: "flex-start", alignItems: "center" }}>
+          <Box
+            sx={{
+              paddingTop: 2.5,
+              paddingBottom: 2,
+              paddingX: 2,
+              display: "flex",
+              justifyContent: "space-between",
+              alignItems: "center",
+            }}
+          >
+            <Box
+              sx={{
+                display: "flex",
+                justifyContent: "flex-start",
+                alignItems: "center",
+              }}
+            >
               <TextField
                 fullWidth
                 variant="outlined"
                 placeholder="Search"
                 value={searchQuery}
-                onChange={handleSearchChange}
                 sx={{
                   maxWidth: "300px",
                   "& .MuiOutlinedInput-root": {
@@ -135,6 +217,7 @@ const ExecutiveTable: React.FC<ExecutiveTableProps> = ({ executives, onCreate, o
                     padding: "0.5px 0",
                   },
                 }}
+                onChange={handleSearchChange}
                 InputProps={{
                   startAdornment: (
                     <InputAdornment position="start">
@@ -144,22 +227,45 @@ const ExecutiveTable: React.FC<ExecutiveTableProps> = ({ executives, onCreate, o
                 }}
               />
               <FilterListIcon
-                onClick={() => setIsFilterVisible(!isFilterVisible)}
+                onClick={handleFilterToggle}
                 sx={{ marginLeft: 5, color: "#9CA3AF", cursor: "pointer" }}
                 style={{ display: isFilterActive ? "none" : "block" }}
               />
+
               <FilterListOffIcon
-                onClick={() => setIsFilterVisible(!isFilterVisible)}
+                onClick={handleFilterToggle}
                 sx={{ marginLeft: 5, color: "#9CA3AF", cursor: "pointer" }}
                 style={{ display: isFilterActive ? "block" : "none" }}
               />
             </Box>
 
-            <Box sx={{ display: "flex", justifyContent: "flex-end", alignItems: "center" }}>
+            <Box
+              sx={{
+                display: "flex",
+                justifyContent: "flex-end",
+                alignItems: "center",
+              }}
+            >
               <Box sx={{ display: "flex", alignItems: "center" }}>
+                {selectedUserIds.size > 0 && (
+                  <Button
+                    variant="contained"
+                    //onClick={handleDeleteSelectedManagers}
+                    sx={deleteStyles}
+                  >
+                    Delete {selectedUserIds.size}{" "}
+                    {selectedUserIds.size === 1
+                      ? "Selected User"
+                      : "Selected Users"}
+                  </Button>
+                )}
 
-                <Button variant="contained" onClick={onCreate} sx={buttonStyles}>
-                  {UserSectionData.addExecutiveButton}
+                <Button
+                  variant="contained"
+                  onClick={onCreate}
+                  sx={buttonStyles}
+                >
+                  {UserSectionData.addManagerButton}
                 </Button>
               </Box>
             </Box>
@@ -171,37 +277,158 @@ const ExecutiveTable: React.FC<ExecutiveTableProps> = ({ executives, onCreate, o
             <TableRow>
               <TableCell>
 
-
               </TableCell>
+              <>
+                <SortableTableCell
+                  label="First Name"
+                  sortKey="firstname"
+                  sortConfig={sortConfig}
+                  onSort={onSortWrapper}
+                  isFilterVisible={isFilterVisible}
+                  filterValue={filters.firstname}
+                  onFilterChange={handleFilterChange("firstname")}
+                />
+                <SortableTableCell
+                  label="Last Name"
+                  sortKey="lastname"
+                  sortConfig={sortConfig}
+                  onSort={onSortWrapper}
+                  isFilterVisible={isFilterVisible}
+                  filterValue={filters.lastname}
+                  onFilterChange={handleFilterChange("lastname")}
+                />
+                <SortableTableCell
+                  label="Username"
+                  sortKey="username"
+                  sortConfig={sortConfig}
+                  onSort={onSortWrapper}
+                  isFilterVisible={isFilterVisible}
+                  filterValue={filters.username}
+                  onFilterChange={handleFilterChange("username")}
+                />
+                <SortableTableCell
+                  label="Phone Number"
+                  sortKey="phonenumber"
+                  sortConfig={sortConfig}
+                  onSort={onSortWrapper}
+                  isFilterVisible={isFilterVisible}
+                  filterValue={filters.phonenumber}
+                  onFilterChange={handleFilterChange("phonenumber")}
+                />
+                <SortableTableCell
+                  label="Region"
+                  sortKey="region"
+                  sortConfig={sortConfig}
+                  onSort={onSortWrapper}
+                  isFilterVisible={isFilterVisible}
+                  filterValue={filters.region}
+                  onFilterChange={handleFilterChange("region")}
+                />
+                <SortableTableCell
+                  label="Province"
+                  sortKey="province"
+                  sortConfig={sortConfig}
+                  onSort={onSortWrapper}
+                  isFilterVisible={isFilterVisible}
+                  filterValue={filters.province}
+                  onFilterChange={handleFilterChange("province")}
+                />
+                <SortableTableCell
+                  label="Registration Date"
+                  sortKey="regisdate"
+                  sortConfig={sortConfig}
+                  onSort={onSortWrapper}
+                  isFilterVisible={isFilterVisible}
+                  filterValue={filters.regisdate}
+                  onFilterChange={handleFilterChange("regisdate")}
+                />
+              </>
               <TableCell>Actions</TableCell>
             </TableRow>
           </TableHead>
 
           <TableBody>
-            {executives
-              .filter(executive => executive.firstname.toLowerCase().includes(searchQuery.toLowerCase()) || executive.lastname.toLowerCase().includes(searchQuery.toLowerCase())) // Basic search filter
-              .map((executive) => (
-                <TableRow key={executive.id} selected={selectedUserIds.has(executive.id!)}>
-                  <TableCell>
-                    <Checkbox
-                      checked={selectedUserIds.has(executive.id!)}
-                      onChange={(event) => handleSelectManager(event, executive.id!)}
-                    />
-                  </TableCell>
-                  <TableCell>{executive.firstname}</TableCell>
-                  <TableCell>{executive.lastname}</TableCell>
-                  <TableCell>{executive.username}</TableCell>
-                  <TableCell>{executive.region}</TableCell>
-                  <TableCell>{executive.province}</TableCell>
-                  <TableCell>{executive.city}</TableCell>
-                  <TableCell>{executive.barangay}</TableCell>
-                  <TableCell>
-                    <IconButton onClick={(event) => handleToggleMenu(event, executive)}>
-                      <MoreHorizIcon />
-                    </IconButton>
-                  </TableCell>
-                </TableRow>
-              ))}
+            {sortedFilteredExecutive.length === 0 ? (
+              <TableRow>
+                <TableCell colSpan={9} align="center">
+                  <Box
+                    sx={{
+                      display: "flex",
+                      flexDirection: "column",
+                      alignItems: "center",
+                      py: 5,
+                    }}
+                  >
+                    <PersonOffIcon sx={{ fontSize: 50, color: "gray" }} />
+                    <Typography
+                      variant="h6"
+                      color="textSecondary"
+                      sx={{ mt: 2, fontWeight: 500 }}
+                    >
+                      No managers available
+                    </Typography>
+                    <Typography variant="body2" color="textSecondary">
+                      Add a new manager to get started.
+                    </Typography>
+                  </Box>
+                </TableCell>
+              </TableRow>
+            ) : executives.length === 0 ? (
+              <TableRow>
+                <TableCell colSpan={9} align="center">
+                  <Box
+                    sx={{
+                      display: "flex",
+                      flexDirection: "column",
+                      alignItems: "center",
+                      py: 5,
+                    }}
+                  >
+                    <SearchOffIcon sx={{ fontSize: 50, color: "gray" }} />
+                    <Typography
+                      variant="h6"
+                      color="textSecondary"
+                      sx={{ mt: 2, fontWeight: 500 }}
+                    >
+                      No results found
+                    </Typography>
+                    <Typography variant="body2" color="textSecondary">
+                      Try adjusting your search criteria.
+                    </Typography>
+                  </Box>
+                </TableCell>
+              </TableRow>
+            ) : (
+              sortedFilteredExecutive
+                .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                .map((executive) => (
+                  <TableRow
+                    key={executive.id}
+                    selected={selectedUserIds.has(executive.id!)}
+                  >
+                    <TableCell>
+                      <Checkbox
+                        checked={selectedUserIds.has(executive.id!)}
+                      //onChange={(event) => handleSelectManager(event, user.id!)}
+                      />
+                    </TableCell>
+                    <TableCell>{executive.firstname}</TableCell>
+                    <TableCell>{executive.lastname}</TableCell>
+                    <TableCell>{executive.username}</TableCell>
+                    <TableCell>{executive.phonenumber}</TableCell>
+                    <TableCell>{executive.region}</TableCell>
+                    <TableCell>{executive.province}</TableCell>
+                    <TableCell>{executive.regisdate}</TableCell>
+                    <TableCell>
+                      <IconButton
+                        onClick={(event) => handleToggleMenu(event, executive)}
+                      >
+                        <MoreHorizIcon />
+                      </IconButton>
+                    </TableCell>
+                  </TableRow>
+                ))
+            )}
           </TableBody>
         </Table>
 
@@ -211,13 +438,37 @@ const ExecutiveTable: React.FC<ExecutiveTableProps> = ({ executives, onCreate, o
           onClose={() => handleToggleMenu()}
           MenuListProps={{ "aria-labelledby": "basic-button" }}
         >
-          <MenuItem>Update</MenuItem>
+          <MenuItem>
+            Update
+          </MenuItem>
           <MenuItem>Delete</MenuItem>
         </Menu>
 
-        <Box sx={{ padding: "12px", boxShadow: "0 2px 8px rgba(0, 0, 0, 0.4)", backgroundColor: "#1F2937" }}></Box>
+        <Box
+          sx={{
+            padding: "12px",
+            boxShadow: "0 2px 8px rgba(0, 0, 0, 0.4)",
+            backgroundColor: "#1F2937",
+          }}
+        >
+          <TablePagination
+            rowsPerPageOptions={[5, 10, 25, 100]}
+            component="div"
+            count={sortedFilteredExecutive.length}
+            rowsPerPage={rowsPerPage}
+            page={page}
+            onPageChange={(event, newPage) => handleChangePage(event, newPage, setPage)}
+            onRowsPerPageChange={(event) => handleChangeRowsPerPage(event, setRowsPerPage)}
+          />
+        </Box>
 
-        <Box sx={{ display: "flex", justifyContent: "flex-end", paddingTop: 2.3 }}>
+        <Box
+          sx={{
+            display: "flex",
+            justifyContent: "flex-end",
+            paddingTop: 2.3,
+          }}
+        >
           <Button variant="contained" sx={buttonStyles}>
             {UserSectionData.exportAsCSVButton}
           </Button>
@@ -228,3 +479,4 @@ const ExecutiveTable: React.FC<ExecutiveTableProps> = ({ executives, onCreate, o
 };
 
 export default ExecutiveTable;
+

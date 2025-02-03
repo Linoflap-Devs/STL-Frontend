@@ -61,19 +61,12 @@ interface ManagerTableProps {
   onDelete: (ids: number[]) => void;
 }
 
-const ManagerTable: React.FC<ManagerTableProps> = ({
-  managers,
-  onCreate,
-  onEdit,
-  onDelete,
-}) => {
+const ManagerTable: React.FC<ManagerTableProps> = ({ managers, onCreate, onEdit, onDelete, }) => {
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [isFilterVisible, setIsFilterVisible] = useState(false);
   const [isFilterActive, setIsFilterActive] = useState(false);
-  const [selectedUserIds, setSelectedUserIds] = useState<Set<number>>(
-    new Set()
-  );
+  const [selectedUserIds, setSelectedUserIds] = useState<Set<number>>( new Set() );
   const [selectedCount, setSelectedCount] = useState<number>(0);
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
@@ -97,7 +90,6 @@ const ManagerTable: React.FC<ManagerTableProps> = ({
     regisdate: "",
   });
 
-  // Apply filtering to managers data based on searchQuery and filters
   const filteredUsers = filterData(managers, { ...filters, searchQuery }, [
     "firstname",
     "lastname",
@@ -107,7 +99,6 @@ const ManagerTable: React.FC<ManagerTableProps> = ({
     "province",
   ]);
 
-  // Apply sorting on the filtered data
   const sortedFilteredUsers: User[] = sortData(filteredUsers, {
     key: sortConfig.key,
     direction: sortConfig.direction,
