@@ -7,17 +7,18 @@ const ExecutivePage = () => {
   const [selectedExecutive, setSelectedExecutive] = useState<Executive | null>(null);
   const [executives, setExecutives] = useState<Executive[]>([]);
 
-  // Open the modal for creating a new executive
+  // open modal for create execs
   const handleExecutiveCreate = (executive: Executive | null = null) => {
     setSelectedExecutive(executive);
     setModalOpen(true);
   };
 
-  // Handle the form submission
+  // handle form submission
   const handleSubmitExecutive = (userData: Executive | null) => {
     if (userData) {
       console.log('Submitted user data:', userData);
 
+      setExecutives((prevExecutives) => [...prevExecutives, userData]);
     } else {
       console.log('No user data submitted');
     }
@@ -26,7 +27,6 @@ const ExecutivePage = () => {
 
   return (
     <>  
-      {/* Executive Table Component */}
       <ExecutiveTable
         executives={executives}
         onCreate={handleExecutiveCreate}

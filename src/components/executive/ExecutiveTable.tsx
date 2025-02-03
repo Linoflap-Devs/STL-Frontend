@@ -35,7 +35,7 @@ import FilterListOffIcon from "@mui/icons-material/FilterListOff";
 import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
 import Swal from "sweetalert2";
 
-// define user interface
+// define executives interface
 export interface Executive {
   id?: number;
   firstname: string;
@@ -52,10 +52,10 @@ export interface Executive {
   streetaddress: string;
 
   // Assigned Location
-  assignedRegion: string; // Select
-  assignedProvince: string; // Select
-  assignedCity?: string; // Select
-  assignedBarangay?: string; // Select
+  assignedRegion: string;
+  assignedProvince: string;
+  assignedCity?: string;
+  assignedBarangay?: string;
   assignedAddress: string;
 
   regisdate?: string;
@@ -63,7 +63,7 @@ export interface Executive {
 }
 
 interface ExecutiveTableProps {
-  executives: Executive[]; 
+  executives: Executive[];
   onCreate: () => void;
   onClose: () => void;
 }
@@ -88,7 +88,7 @@ const ExecutiveTable: React.FC<ExecutiveTableProps> = ({ executives, onCreate, o
     handleSort(sortKey, sortConfig, setSortConfig);
   };
 
-  // Menu handling
+  // menu handling
   const handleToggleMenu = (event?: React.MouseEvent<HTMLButtonElement>, executive?: Executive) => {
     setAnchorEl(event?.currentTarget || null);
     setSelectedUser(executive || null);
@@ -104,31 +104,9 @@ const ExecutiveTable: React.FC<ExecutiveTableProps> = ({ executives, onCreate, o
     setSelectedUserIds(newSelectedUserIds);
   };
 
-  const handleDeleteSelectedManagers = () => {
-    Swal.fire({
-      title: 'Are you sure?',
-      text: 'You will not be able to recover these users!',
-      icon: 'warning',
-      showCancelButton: true,
-      confirmButtonColor: '#3085d6',
-      cancelButtonColor: '#d33',
-      confirmButtonText: 'Yes, delete them!',
-    }).then((result) => {
-      if (result.isConfirmed) {
-        // Add logic to delete the selected users
-        setSelectedUserIds(new Set());
-        Swal.fire('Deleted!', 'Your selected users have been deleted.', 'success');
-      }
-    });
-  };
-
   const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setSearchQuery(event.target.value);
   };
-
-  useEffect(() => {
-    // Fetch executive data here and set it using setExecutives
-  }, []);
 
   return (
     <div className="mt-4 w-full max-w-screen-sm sm:max-w-screen-md md:max-w-screen-lg lg:max-w-screen-xl xl:max-w-screen-xl px-4 sm:px-6 md:px-8 lg:px-12 mx-auto">
@@ -179,11 +157,6 @@ const ExecutiveTable: React.FC<ExecutiveTableProps> = ({ executives, onCreate, o
 
             <Box sx={{ display: "flex", justifyContent: "flex-end", alignItems: "center" }}>
               <Box sx={{ display: "flex", alignItems: "center" }}>
-                {selectedUserIds.size > 0 && (
-                  <Button variant="contained" onClick={handleDeleteSelectedManagers} sx={deleteStyles}>
-                    Delete {selectedUserIds.size} {selectedUserIds.size === 1 ? "Selected User" : "Selected Users"}
-                  </Button>
-                )}
 
                 <Button variant="contained" onClick={onCreate} sx={buttonStyles}>
                   {UserSectionData.addExecutiveButton}
@@ -197,6 +170,8 @@ const ExecutiveTable: React.FC<ExecutiveTableProps> = ({ executives, onCreate, o
           <TableHead>
             <TableRow>
               <TableCell>
+
+
               </TableCell>
               <TableCell>Actions</TableCell>
             </TableRow>
