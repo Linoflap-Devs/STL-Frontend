@@ -61,7 +61,7 @@ const CreateManager: React.FC<CreateManagerProps> = ({
     barangay: userData?.barangay ?? SPACE,
   });
 
-  //form handlings
+  // form handlings
   const handleManagerChange = (
     e: React.ChangeEvent<{ name?: string; value: unknown }>
   ) => {
@@ -80,7 +80,7 @@ const CreateManager: React.FC<CreateManagerProps> = ({
   };
 
   // handle create submit
-  const handleUserCreateSubmit = () => {
+  const handleManagerCreateSubmit = () => {
     const generatedId = managers.length + 1;
     const combinedUserData = {
       ...user,
@@ -329,7 +329,7 @@ const CreateManager: React.FC<CreateManagerProps> = ({
         </Grid>
 
         <Button
-          onClick={handleUserCreateSubmit}
+          onClick={handleManagerCreateSubmit}
           sx={{
             mt: 4,
             width: "100%",

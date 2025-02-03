@@ -18,6 +18,7 @@ import {
   Menu,
   MenuItem,
   Checkbox,
+  Tooltip,
 } from "@mui/material";
 import {
   SortableTableCell,
@@ -29,121 +30,124 @@ import {
 } from "../../utils/sortPaginationSearch";
 import SearchIcon from "@mui/icons-material/Search";
 import SearchOffIcon from "@mui/icons-material/SearchOff";
-import PersonOffIcon from "@mui/icons-material/PersonOff";
 import FilterListIcon from "@mui/icons-material/FilterList";
 import FilterListOffIcon from "@mui/icons-material/FilterListOff";
 import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
-import Tooltip from "@mui/material/Tooltip";
 import Swal from "sweetalert2";
 
 // define user interface
 export interface Executive {
-    id?: number;
-    // Personal Information
-    firstname: string;
-    lastname: string;
-    phonenumber: string;
-    username: string;
-    password?: string; // Will be generated
-  
-    // Home Address
-    region: string; // Select
-    province: string; // Select
-    city?: string; // Select
-    barangay?: string; // Select
-    streetaddress: string;
-  
-    // Assigned Location
-    assignedRegion: string; // Select
-    assignedProvince: string; // Select
-    assignedCity?: string; // Select
-    assignedBarangay?: string; // Select
-    assignedAddress: string;
-  
-    regisdate?: string;
-    [key: string]: any;
-  }
+  id?: number;
+  firstname: string;
+  lastname: string;
+  phonenumber: string;
+  username: string;
+  password?: string;
 
-  interface ExecutiveTableProps {
+  // Home Address
+  region: string; // Select
+  province: string; // Select
+  city?: string; // Select
+  barangay?: string; // Select
+  streetaddress: string;
+
+  // Assigned Location
+  assignedRegion: string; // Select
+  assignedProvince: string; // Select
+  assignedCity?: string; // Select
+  assignedBarangay?: string; // Select
+  assignedAddress: string;
+
+  regisdate?: string;
+  [key: string]: any;
+}
+
+interface ExecutiveTableProps {
+  executives: Executive[]; 
   onCreate: () => void;
   onClose: () => void;
-  }
+}
 
-  const ExecutiveTable: React.FC<ExecutiveTableProps> = ({ onCreate,  }) => {
-    const [selectedUser, setSelectedUser] = useState<Executive | null>(null);
+const ExecutiveTable: React.FC<ExecutiveTableProps> = ({ executives, onCreate, onClose, }) => {
+  const [selectedUser, setSelectedUser] = useState<Executive | null>(null);
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [isFilterVisible, setIsFilterVisible] = useState(false);
   const [isFilterActive, setIsFilterActive] = useState(false);
-  const [selectedUserIds, setSelectedUserIds] = useState<Set<number>>(
-    new Set()
-  );
+  const [selectedUserIds, setSelectedUserIds] = useState<Set<number>>(new Set());
   const [selectedCount, setSelectedCount] = useState<number>(0);
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
   const [searchQuery, setSearchQuery] = useState<string>("");
 
-  const onSortWrapper = (sortKey: keyof Executive) => {
-    handleSort(sortKey, sortConfig, setSortConfig);
-  };
   const [sortConfig, setSortConfig] = useState<{
     key: keyof Executive;
     direction: "asc" | "desc";
   }>({ key: "id", direction: "asc" });
 
+  const handleSortWrapper = (sortKey: keyof Executive) => {
+    handleSort(sortKey, sortConfig, setSortConfig);
+  };
 
   // Menu handling
-  const handleToggleMenu = (
-    event?: React.MouseEvent<HTMLButtonElement>,
-    executive?: Executive
-  ) => {
+  const handleToggleMenu = (event?: React.MouseEvent<HTMLButtonElement>, executive?: Executive) => {
     setAnchorEl(event?.currentTarget || null);
     setSelectedUser(executive || null);
   };
 
+  const handleSelectManager = (event: React.ChangeEvent<HTMLInputElement>, id: number) => {
+    const newSelectedUserIds = new Set(selectedUserIds);
+    if (event.target.checked) {
+      newSelectedUserIds.add(id);
+    } else {
+      newSelectedUserIds.delete(id);
+    }
+    setSelectedUserIds(newSelectedUserIds);
+  };
+
+  const handleDeleteSelectedManagers = () => {
+    Swal.fire({
+      title: 'Are you sure?',
+      text: 'You will not be able to recover these users!',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Yes, delete them!',
+    }).then((result) => {
+      if (result.isConfirmed) {
+        // Add logic to delete the selected users
+        setSelectedUserIds(new Set());
+        Swal.fire('Deleted!', 'Your selected users have been deleted.', 'success');
+      }
+    });
+  };
+
+  const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchQuery(event.target.value);
+  };
+
+  useEffect(() => {
+    // Fetch executive data here and set it using setExecutives
+  }, []);
+
   return (
     <div className="mt-4 w-full max-w-screen-sm sm:max-w-screen-md md:max-w-screen-lg lg:max-w-screen-xl xl:max-w-screen-xl px-4 sm:px-6 md:px-8 lg:px-12 mx-auto">
-      <Box
-        sx={{
-          display: "flex",
-          flexDirection: "row",
-          justifyContent: "space-between",
-          alignItems: "center",
-          marginBottom: 2.5,
-        }}
-      >
-        <Typography
-          variant="h5"
-          sx={{ fontWeight: "bold", marginBottom: 0 }}
-          gutterBottom
-        >
+      <Box sx={{ display: "flex", flexDirection: "row", justifyContent: "space-between", alignItems: "center", marginBottom: 2.5 }}>
+        <Typography variant="h5" sx={{ fontWeight: "bold", marginBottom: 0 }} gutterBottom>
           {UserSectionData.titleExecutive}
         </Typography>
       </Box>
 
       <TableContainer>
         <Box sx={{ backgroundColor: "#1F2937" }}>
-          <Box
-            sx={{
-              paddingTop: 2.5,
-              paddingBottom: 2,
-              paddingX: 2,
-              display: "flex",
-              justifyContent: "space-between",
-              alignItems: "center",
-            }}
-          >
-            <Box
-              sx={{
-                display: "flex",
-                justifyContent: "flex-start",
-                alignItems: "center",
-              }}
-            >
+          <Box sx={{ paddingTop: 2.5, paddingBottom: 2, paddingX: 2, display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+            <Box sx={{ display: "flex", justifyContent: "flex-start", alignItems: "center" }}>
               <TextField
                 fullWidth
                 variant="outlined"
                 placeholder="Search"
                 value={searchQuery}
+                onChange={handleSearchChange}
                 sx={{
                   maxWidth: "300px",
                   "& .MuiOutlinedInput-root": {
@@ -153,7 +157,6 @@ export interface Executive {
                     padding: "0.5px 0",
                   },
                 }}
-                //onChange={handleSearchChange}
                 InputProps={{
                   startAdornment: (
                     <InputAdornment position="start">
@@ -162,46 +165,27 @@ export interface Executive {
                   ),
                 }}
               />
-
               <FilterListIcon
-                //onClick={handleFilterToggle}
+                onClick={() => setIsFilterVisible(!isFilterVisible)}
                 sx={{ marginLeft: 5, color: "#9CA3AF", cursor: "pointer" }}
                 style={{ display: isFilterActive ? "none" : "block" }}
               />
-
               <FilterListOffIcon
-                //onClick={handleFilterToggle}
+                onClick={() => setIsFilterVisible(!isFilterVisible)}
                 sx={{ marginLeft: 5, color: "#9CA3AF", cursor: "pointer" }}
                 style={{ display: isFilterActive ? "block" : "none" }}
               />
             </Box>
 
-            <Box
-              sx={{
-                display: "flex",
-                justifyContent: "flex-end",
-                alignItems: "center",
-              }}
-            >
+            <Box sx={{ display: "flex", justifyContent: "flex-end", alignItems: "center" }}>
               <Box sx={{ display: "flex", alignItems: "center" }}>
                 {selectedUserIds.size > 0 && (
-                  <Button
-                    variant="contained"
-                    //onClick={handleDeleteSelectedManagers}
-                    sx={deleteStyles}
-                  >
-                    Delete {selectedUserIds.size}{" "}
-                    {selectedUserIds.size === 1
-                      ? "Selected User"
-                      : "Selected Users"}
+                  <Button variant="contained" onClick={handleDeleteSelectedManagers} sx={deleteStyles}>
+                    Delete {selectedUserIds.size} {selectedUserIds.size === 1 ? "Selected User" : "Selected Users"}
                   </Button>
                 )}
 
-                <Button
-                  variant="contained"
-                  onClick={onCreate}
-                  sx={buttonStyles}
-                >
+                <Button variant="contained" onClick={onCreate} sx={buttonStyles}>
                   {UserSectionData.addExecutiveButton}
                 </Button>
               </Box>
@@ -213,46 +197,36 @@ export interface Executive {
           <TableHead>
             <TableRow>
               <TableCell>
-                <Tooltip title="Select All">
-                  <Checkbox
-                    //checked={isAllSelected}
-                    //onChange={handleSelectAll}
-                  />
-                </Tooltip>
               </TableCell>
-
               <TableCell>Actions</TableCell>
             </TableRow>
           </TableHead>
 
           <TableBody>
-
-                  <TableRow
-                    //key={user.id}
-                    //selected={selectedUserIds.has(user.id!)}
-                  >
-                    <TableCell>
-                      <Checkbox
-                        //checked={selectedUserIds.has(user.id!)}
-                        //onChange={(event) => handleSelectManager(event, user.id!) }
-                      />
-                    </TableCell>
-                    <TableCell> </TableCell>
-                    <TableCell> </TableCell>
-                    <TableCell> </TableCell>
-                    <TableCell> </TableCell>
-                    <TableCell> </TableCell>
-                    <TableCell> </TableCell>
-                    <TableCell> </TableCell>
-                    <TableCell>
-                      <IconButton
-                        onClick={(event) => handleToggleMenu(event)}
-                      >
-                        <MoreHorizIcon />
-                      </IconButton>
-                    </TableCell>
-                  </TableRow>
-
+            {executives
+              .filter(executive => executive.firstname.toLowerCase().includes(searchQuery.toLowerCase()) || executive.lastname.toLowerCase().includes(searchQuery.toLowerCase())) // Basic search filter
+              .map((executive) => (
+                <TableRow key={executive.id} selected={selectedUserIds.has(executive.id!)}>
+                  <TableCell>
+                    <Checkbox
+                      checked={selectedUserIds.has(executive.id!)}
+                      onChange={(event) => handleSelectManager(event, executive.id!)}
+                    />
+                  </TableCell>
+                  <TableCell>{executive.firstname}</TableCell>
+                  <TableCell>{executive.lastname}</TableCell>
+                  <TableCell>{executive.username}</TableCell>
+                  <TableCell>{executive.region}</TableCell>
+                  <TableCell>{executive.province}</TableCell>
+                  <TableCell>{executive.city}</TableCell>
+                  <TableCell>{executive.barangay}</TableCell>
+                  <TableCell>
+                    <IconButton onClick={(event) => handleToggleMenu(event, executive)}>
+                      <MoreHorizIcon />
+                    </IconButton>
+                  </TableCell>
+                </TableRow>
+              ))}
           </TableBody>
         </Table>
 
@@ -262,28 +236,13 @@ export interface Executive {
           onClose={() => handleToggleMenu()}
           MenuListProps={{ "aria-labelledby": "basic-button" }}
         >
-          <MenuItem>
-            Update
-          </MenuItem>
+          <MenuItem>Update</MenuItem>
           <MenuItem>Delete</MenuItem>
         </Menu>
 
-        <Box
-          sx={{
-            padding: "12px",
-            boxShadow: "0 2px 8px rgba(0, 0, 0, 0.4)",
-            backgroundColor: "#1F2937",
-          }}
-        >
-        </Box>
+        <Box sx={{ padding: "12px", boxShadow: "0 2px 8px rgba(0, 0, 0, 0.4)", backgroundColor: "#1F2937" }}></Box>
 
-        <Box
-          sx={{
-            display: "flex",
-            justifyContent: "flex-end",
-            paddingTop: 2.3,
-          }}
-        >   
+        <Box sx={{ display: "flex", justifyContent: "flex-end", paddingTop: 2.3 }}>
           <Button variant="contained" sx={buttonStyles}>
             {UserSectionData.exportAsCSVButton}
           </Button>

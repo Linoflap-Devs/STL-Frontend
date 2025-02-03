@@ -34,34 +34,35 @@ export interface CreateExecutiveProps {
 
 const CreateExecutive: React.FC<CreateExecutiveProps> = ({ open, onClose, onSubmit, userData }) => {
   const SPACE: string = "";
+  const [selectedUser, setSelectedUser] = useState<Executive | null>(null);
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
   const [showPassword, setShowPassword] = useState(false);
-  const [user, setUser] = useState({
+  const [executive, setExecutive] = useState({
     id: userData?.id ?? SPACE,
-  
+
     // Personal Information
     firstname: userData?.firstname ?? SPACE,
     lastname: userData?.lastname ?? SPACE,
     phonenumber: userData?.phonenumber ?? SPACE,
     username: userData?.username ?? SPACE,
     password: SPACE,
-  
+
     // Home Address
     region: userData?.region ?? SPACE,
     province: userData?.province ?? SPACE,
     city: userData?.city ?? SPACE,
     barangay: userData?.barangay ?? SPACE,
     streetaddress: userData?.streetaddress ?? SPACE,
-  
+
     // Assigned Location
     assignedRegion: userData?.assignedRegion ?? SPACE,
     assignedProvince: userData?.assignedProvince ?? SPACE,
     assignedCity: userData?.assignedCity ?? SPACE,
     assignedBarangay: userData?.assignedBarangay ?? SPACE,
     assignedAddress: userData?.assignedAddress ?? SPACE,
-  
+
     regisdate: userData?.regisdate ?? SPACE,
-  });  
+  });
 
   const [selectState, setSelectState] = useState({
     region: userData?.region ?? SPACE,
@@ -73,27 +74,95 @@ const CreateExecutive: React.FC<CreateExecutiveProps> = ({ open, onClose, onSubm
     assignedProvince: userData?.assignedProvince ?? SPACE,
     assignedCity: userData?.assignedCity ?? SPACE,
     assignedBarangay: userData?.assignedBarangay ?? SPACE,
-    assignedAddress: userData?.assignedAddress ?? SPACE,
   });
 
-  //form handlings
-  const handleManagerChange = (
+  // form handlings
+  const handleExecutiveChange = (
     e: React.ChangeEvent<{ name?: string; value: unknown }>
   ) => {
     const { name, value } = e.target;
-    setUser((prevUser) => ({ ...prevUser, [name as string]: value as string }));
+    setExecutive((prevExecutive) => ({ ...prevExecutive, [name as string]: value as string }));
   };
+  
+  
+  const handleSelectExecutiveChange = (
+    e: SelectChangeEvent<string | number>,
+    key: string
+  ) => {
+    setSelectState((prevState) => ({
+      ...prevState,
+      [key]: String(e.target.value),
+    }));
 
-  const handleSelectChange = (e: SelectChangeEvent<string>, name: string) => {
-    setSelectState((prevState) => ({ ...prevState, [name]: e.target.value }));
+    setExecutive((prevExecutive) => ({
+      ...prevExecutive,
+      [key]: String(e.target.value),
+    }));
   };
 
   // generate password
   const handleGeneratePassword = () => {
-    const generatedPassword = "0912Gg33*12"; // hardcoded
-    setUser((prevUser) => ({ ...prevUser, password: generatedPassword }));
+    const generatedPassword = "0912Gg33*12";
+    setExecutive((prevExecutive) => ({ ...prevExecutive, password: generatedPassword }));
   };
 
+  const handleExecutiveCreateSubmit = () => {
+    const generatedId = userData?.id ? userData.id + 1 : 1;
+    const combinedUserData = {
+      ...executive,
+      ...selectState,
+      id: generatedId,
+    };
+    const validationErrors = validateUser(combinedUserData);
+    console.log("Submitted data:", combinedUserData);
+
+    setErrors(validationErrors);
+
+    if (Object.keys(validationErrors).length === 0) {
+      console.log("Valid user data, submitting...");
+
+      Swal.fire({
+        title: "Did you input the correct credentials?",
+        icon: "question",
+        showCancelButton: true,
+        cancelButtonText: "No, let me check",
+        confirmButtonText: "Yes, I did",
+      }).then((result) => {
+        if (result.isConfirmed) {
+          onSubmit(combinedUserData);
+          onClose();
+
+          Swal.fire({
+            title: "Success!",
+            text: "Manager added successfully.",
+            icon: "success",
+            confirmButtonText: "OK",
+          });
+
+          setExecutive({
+            ...executive,
+            firstname: "",
+            lastname: "",
+            username: "",
+            password: "",
+          });
+          setSelectState({
+            region: "",
+            province: "",
+            city: "",
+            barangay: "",
+            assignedRegion: "",
+            assignedProvince: "",
+            assignedCity: "",
+            assignedBarangay: "",
+          });
+        }
+      });
+    } else {
+      console.log("Validation errors:", validationErrors);
+    }
+  };
+  
   return (
     <Dialog
       open={open}
@@ -106,8 +175,8 @@ const CreateExecutive: React.FC<CreateExecutiveProps> = ({ open, onClose, onSubm
             xs: "90%",
             sm: "80%",
             md: "600px",
-            lg: "650px",
-            xl: "800px",
+            lg: "700px",
+            xl: "1150px",
           },
         },
       }}
@@ -116,7 +185,6 @@ const CreateExecutive: React.FC<CreateExecutiveProps> = ({ open, onClose, onSubm
         Add Executive
         <Button
           variant="contained"
-          //onClick={handleDummyData}
           sx={{
             marginLeft: 2,
             paddingX: 3,
@@ -151,93 +219,154 @@ const CreateExecutive: React.FC<CreateExecutiveProps> = ({ open, onClose, onSubm
           rowSpacing={2.5}
           columnSpacing={{ xs: 1, sm: 3, md: 2.5 }}
         >
-          {Object.keys(user).map((key) =>
-            !["id"].includes(key) ? (
-              <Grid
-                item
-                xs={12}
-                sm={4}
-                sx={{ padding: { xs: 0, sm: 0 } }}
-                key={key}
-              >
-                <Typography
-                  sx={{
-                    textAlign: "left",
-                    marginBottom: "0.3rem",
-                    fontSize: "0.90rem",
-                  }}
-                >
+          {/* Column 1 - Personal Information */}
+          <Grid item xs={12} sm={4}>
+            <Typography variant="h6" sx={{ marginBottom: "1rem" }}>
+              Personal Information
+            </Typography>
+            {["firstname", "lastname", "phonenumber", "username", "password"].map(
+              (key) => (
+                <Grid item xs={12} key={key} sx={{ marginBottom: "1rem" }}>
+                  <Typography sx={{ fontSize: "0.90rem", marginBottom: "0.3rem" }}>
+                    {formatKey(key)}
+                  </Typography>
+                  {key === "password" ? (
+                    <Grid container spacing={1.5} alignItems="center">
+                      <Grid item xs={7}>
+                        <TextField
+                          fullWidth
+                          variant="outlined"
+                          placeholder={`Enter ${key}`}
+                          type={showPassword ? "text" : "password"}
+                          value={executive[key as keyof typeof executive]}
+                          onChange={handleExecutiveChange}
+                          name={key}
+                          error={!!errors[key]}
+                          helperText={errors[key] || ""}
+                          sx={inputStyles}
+                          InputProps={{
+                            endAdornment: (
+                              <IconButton
+                                sx={{ color: "#9ca3af" }}
+                                onClick={() => setShowPassword((prev) => !prev)}
+                                edge="end"
+                              >
+                                {showPassword ? <VisibilityOff /> : <Visibility />}
+                              </IconButton>
+                            ),
+                          }}
+                        />
+                      </Grid>
+                      <Grid item xs={5}>
+                        <Button
+                          variant="contained"
+                          color="secondary"
+                          sx={{
+                            width: "100%",
+                            textTransform: "none",
+                            backgroundColor: "#2563EB",
+                            borderRadius: "8px",
+                          }}
+                        >
+                          Generate
+                        </Button>
+                      </Grid>
+                    </Grid>
+                  ) : ( // other text fields
+                    <TextField
+                      fullWidth
+                      variant="outlined"
+                      placeholder={`Enter ${formatKey(key)}`}
+                      value={executive[key as keyof typeof executive] || SPACE}
+                      onChange={handleExecutiveChange}
+                      name={key}
+                      error={!!errors[key]}
+                      helperText={errors[key] || SPACE}
+                      sx={inputStyles}
+                    />
+                  )}
+                </Grid>
+              )
+            )}
+          </Grid>
+
+          {/* Column 2 - Home Address */}
+          <Grid item xs={12} sm={4}>
+            <Typography variant="h6" sx={{ marginBottom: "1rem" }}>
+              Home Address
+            </Typography>
+            {["region", "province", "city", "barangay", "streetaddress"].map(
+              (key) => (
+                <Grid item xs={12} key={key} sx={{ marginBottom: "1rem" }}>
+                  <Typography sx={{ fontSize: "0.90rem", marginBottom: "0.3rem" }}>
+                    {formatKey(key)}
+                  </Typography>
+                  {["region", "province", "city", "barangay"].includes(key) ? (
+                    <FormControl fullWidth error={!!errors[key]}>
+                      <Select
+                        displayEmpty
+                        value={selectState[key as keyof typeof selectState] || SPACE}
+                        onChange={(e) => handleSelectExecutiveChange(e, key)}
+                        name={key}
+                        inputProps={{ "aria-label": formatKey(key) }}
+                      >
+                        <MenuItem value="" disabled>
+                          Select a {formatKey(key)}
+                        </MenuItem>
+                        <MenuItem value="10">10</MenuItem>
+                        <MenuItem value="25">25</MenuItem>
+                        <MenuItem value="50">50</MenuItem>
+                        <MenuItem value="100">100</MenuItem>
+                      </Select>
+                      {errors[key] && <FormHelperText>{errors[key]}</FormHelperText>}
+                    </FormControl>
+                  ) : (
+                    <TextField
+                      fullWidth
+                      variant="outlined"
+                      placeholder={`Enter ${formatKey(key)}`}
+                      value={executive[key as keyof typeof executive] || SPACE}
+                      onChange={handleExecutiveChange}
+                      name={key}
+                      error={!!errors[key]}
+                      helperText={errors[key] || SPACE}
+                      sx={inputStyles}
+                    />
+                  )}
+                </Grid>
+              )
+            )}
+          </Grid>
+
+          {/* Column 3 - Assigned Location */}
+          <Grid item xs={12} sm={4}>
+            <Typography variant="h6" sx={{ marginBottom: "1rem" }}>
+              Assigned Location
+            </Typography>
+            {[
+              "assignedRegion",
+              "assignedProvince",
+              "assignedCity",
+              "assignedBarangay",
+              "assignedAddress",
+            ].map((key) => (
+              <Grid item xs={12} key={key} sx={{ marginBottom: "1rem" }}>
+                <Typography sx={{ fontSize: "0.90rem", marginBottom: "0.3rem" }}>
                   {formatKey(key)}
                 </Typography>
-
-                {key === "password" ? (
-                  <Grid container spacing={1.5} alignItems="center">
-                    <Grid item xs={7}>
-                      <TextField
-                        fullWidth
-                        variant="outlined"
-                        placeholder={`Enter ${key}`}
-                        type={showPassword ? "text" : "password"}
-                        value={user[key as keyof typeof user]}
-                        onChange={handleManagerChange}
-                        name={key}
-                        error={!!errors[key]}
-                        helperText={''}
-                        sx={inputStyles}
-                        InputProps={{
-                          endAdornment: (
-                            <IconButton sx={{
-                              color: "#9ca3af"
-                            }}
-                              onClick={() => setShowPassword((prev) => !prev)}
-                              edge="end"
-                            >
-                              {showPassword ? <VisibilityOff /> : <Visibility />}
-                            </IconButton>
-                          ),
-                        }}
-                      />
-                    </Grid>
-                    <Grid item xs={5}>
-                      <Button
-                        variant="contained"
-                        color="secondary"
-                        onClick={handleGeneratePassword}
-                        sx={{
-                          width: "100%",
-                          textTransform: "none",
-                          backgroundColor: "#2563EB",
-                          borderRadius: "8px"
-                        }}
-                      >
-                        Generate
-                      </Button>
-                    </Grid>
-                    {errors[key] && (
-                      <Box sx={{
-                        color: 'error.main',
-                        mt: "3px",
-                        marginLeft: '12px',
-                        fontSize: '0.85rem'
-                      }}>
-                        {errors[key]}
-                      </Box>
-                    )}
-                  </Grid>
-
-                ) : key === "region" ||
-                  key === "province" ||
-                  key === "city" ||
-                  key === "barangay" ? (
+                {[
+                  "assignedRegion",
+                  "assignedProvince",
+                  "assignedCity",
+                  "assignedBarangay",
+                ].includes(key) ? (
                   <FormControl fullWidth error={!!errors[key]}>
                     <Select
                       displayEmpty
-                      value={selectState[key as keyof typeof selectState] || SPACE}
-                      //onChange={(e) => handleSelectChange(e, key)}
+                      value={executive[key as keyof typeof executive] || SPACE}
+                      onChange={(e) => handleSelectExecutiveChange(e, key)}
                       name={key}
-                      inputProps={{
-                        "aria-label": formatKey(key),
-                      }}
+                      inputProps={{ "aria-label": formatKey(key) }}
                     >
                       <MenuItem value="" disabled>
                         Select a {formatKey(key)}
@@ -247,17 +376,15 @@ const CreateExecutive: React.FC<CreateExecutiveProps> = ({ open, onClose, onSubm
                       <MenuItem value="50">50</MenuItem>
                       <MenuItem value="100">100</MenuItem>
                     </Select>
-                    {errors[key] && (
-                      <FormHelperText>{errors[key]}</FormHelperText>
-                    )}
+                    {errors[key] && <FormHelperText>{errors[key]}</FormHelperText>}
                   </FormControl>
                 ) : (
                   <TextField
                     fullWidth
                     variant="outlined"
                     placeholder={`Enter ${formatKey(key)}`}
-                    value={user[key as keyof typeof user] || SPACE}
-                    onChange={handleManagerChange}
+                    value={executive[key as keyof typeof executive] || SPACE}
+                    onChange={handleExecutiveChange}
                     name={key}
                     error={!!errors[key]}
                     helperText={errors[key] || SPACE}
@@ -265,14 +392,14 @@ const CreateExecutive: React.FC<CreateExecutiveProps> = ({ open, onClose, onSubm
                   />
                 )}
               </Grid>
-            ) : null
-          )}
+            ))}
+          </Grid>
         </Grid>
 
         <Button
-          //onClick={handleExecutiveCreateSubmit}
+          onClick={handleExecutiveCreateSubmit}
           sx={{
-            mt: 4,
+            mt: 3,
             width: "100%",
             backgroundColor: "#2563EB",
             textTransform: "none",

@@ -25,7 +25,7 @@ const UsersPage = () => {
     setUpdateModalOpen(false);
     setSelectedManager(null);
   };
-
+  
   const handleSubmitUser = (userData: User | null) => {
     if (userData) {
       //console.log('Submitted user data: ', userData);
