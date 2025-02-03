@@ -65,6 +65,8 @@ export const loginValidate = (credentials: {
     newpassword?: string;
     setpassword?: string;
   } = {};
+
+  const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
   const passwordRegex =
     /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*])[A-Za-z\d!@#$%^&*]{8,}$/;
   const setPassword = "pass123";
@@ -74,6 +76,8 @@ export const loginValidate = (credentials: {
       case "username":
         if (!value) {
           newErrors.username = "Username is required";
+        } else if (!emailRegex.test(value)) {
+          newErrors.username = "Please enter a valid email address.."
         }
         break;
 

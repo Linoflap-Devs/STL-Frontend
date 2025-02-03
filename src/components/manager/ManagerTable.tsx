@@ -188,7 +188,7 @@ const ManagerTable: React.FC<ManagerTableProps> = ({
   };
 
   return (
-    <div className="mt-4 w-full max-w-screen-sm sm:max-w-screen-md md:max-w-screen-lg lg:max-w-screen-xl xl:max-w-screen-2xl px-4 sm:px-6 md:px-8 lg:px-12 mx-auto">
+    <div className="mt-4 w-full max-w-screen-sm sm:max-w-screen-md md:max-w-screen-lg lg:max-w-screen-xl xl:max-w-screen-xl px-4 sm:px-6 md:px-8 lg:px-12 mx-auto">
       <Box
         sx={{
           display: "flex",
@@ -249,7 +249,7 @@ const ManagerTable: React.FC<ManagerTableProps> = ({
                   ),
                 }}
               />
-              
+
               <FilterListIcon
                 onClick={handleFilterToggle}
                 sx={{ marginLeft: 5, color: "#9CA3AF", cursor: "pointer" }}

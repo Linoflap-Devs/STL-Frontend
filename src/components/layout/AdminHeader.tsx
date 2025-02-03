@@ -102,10 +102,12 @@ const AdminHeader: FC<AdminHeaderProps> = ({ children, pages, ...props }) => {
                 href={
                   page === "Manager"
                     ? "/managers"
-                  : page === "Logout"
-                    ? "/"
-                    : `/${page.toLowerCase()}`
-                }                
+                    : page === "Executive"
+                      ? "/executives"
+                      : page === "Logout"
+                        ? "/"
+                        : `/${page.toLowerCase()}`
+                }
                 sx={{
                   display: "block",
                   textAlign: "center",
