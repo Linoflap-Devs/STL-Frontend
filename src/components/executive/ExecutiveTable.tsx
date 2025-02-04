@@ -69,9 +69,10 @@ interface ExecutiveTableProps {
   onCreate: () => void;
   onClose: () => void;
   onDelete: (ids: number[]) => void;
+  onEdit: (executive: User) => void;
 }
 
-const ExecutiveTable: React.FC<ExecutiveTableProps> = ({ executives, onCreate, onClose, onDelete }) => {
+const ExecutiveTable: React.FC<ExecutiveTableProps> = ({ executives, onCreate, onClose, onDelete, onEdit }) => {
   const [selectedExecutive, setselectedExecutive] = useState<User | null>(null);
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [isFilterVisible, setIsFilterVisible] = useState(false);
@@ -174,6 +175,12 @@ const ExecutiveTable: React.FC<ExecutiveTableProps> = ({ executives, onCreate, o
         }
       });
     }
+  };
+
+  const handleExecutiveEdit = (user: { [key: string]: any }) => {
+    const typedUser = user as User;
+    onEdit(typedUser);
+    handleToggleMenu();
   };
 
   return (
@@ -446,7 +453,7 @@ const ExecutiveTable: React.FC<ExecutiveTableProps> = ({ executives, onCreate, o
           onClose={() => handleToggleMenu()}
           MenuListProps={{ "aria-labelledby": "basic-button" }}
         >
-          <MenuItem>
+          <MenuItem onClick={() => handleExecutiveEdit(selectedExecutive!)}>
             Update
           </MenuItem>
           <MenuItem onClick={handleDeleteExecutive}>Delete</MenuItem>

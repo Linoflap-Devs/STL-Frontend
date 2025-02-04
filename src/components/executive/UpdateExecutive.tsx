@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Dialog,
   DialogContent,
@@ -25,101 +25,132 @@ import CloseIcon from '@mui/icons-material/Close';
 import Swal from "sweetalert2";
 import { inputStyles, inputErrorStyles } from "../../styles/theme";
 
-export interface CreateExecutiveProps {
+export interface UpdateExecutiveProps {
   open: boolean;
   onClose: () => void;
-  onSubmit: (userData: User | null) => void;
+  onSubmit: (updatedExecutive: User) => void;
   userData: User | null;
-  executives: User[];
+  executives: User | null;
 }
 
-const CreateExecutive: React.FC<CreateExecutiveProps> = ({ open, onClose, onSubmit, userData, executives }) => {
-  const SPACE: string = "";
-  const [selectedUser, setSelectedUser] = useState<User | null>(null);
-  const [errors, setErrors] = useState<{ [key: string]: string }>({});
-  const [showPassword, setShowPassword] = useState(false);
-  const [executive, setExecutive] = useState({
-    id: userData?.id ?? SPACE,
+const UpdateExecutives: React.FC<UpdateExecutiveProps> = React.memo(
+  ({ open, onClose, onSubmit, executives }) => {
+    const [executive, setExecutive] = useState<User | null>(null);
+    const [errors, setErrors] = useState<{ [key: string]: string }>({});
+    const [showPassword, setShowPassword] = useState(false);
+    const SPACE: string = "";
+    const [selectState, setSelectState] = useState({
+      region: executive?.region ?? SPACE,
+      province: executive?.province ?? SPACE,
+      city: executive?.city ?? SPACE,
+      barangay: executive?.barangay ?? SPACE,
 
-    // Personal Information
-    firstname: userData?.firstname ?? SPACE,
-    lastname: userData?.lastname ?? SPACE,
-    phonenumber: userData?.phonenumber ?? SPACE,
-    username: userData?.username ?? SPACE,
-    password: SPACE,
+      assignedRegion: executive?.region ?? SPACE,
+      assignedProvince: executive?.region ?? SPACE,
+      assignedCity: executive?.region ?? SPACE,
+      assignedBarangay: executive?.region ?? SPACE,
+    });
 
-    // Home Address
-    region: userData?.region ?? SPACE,
-    province: userData?.province ?? SPACE,
-    city: userData?.city ?? SPACE,
-    barangay: userData?.barangay ?? SPACE,
-    streetaddress: userData?.streetaddress ?? SPACE,
+    // Custom order for fields
+    const customFieldOrder = [
+      "firstname",
+      "lastname",
+      "region",
+      "province",
+      "city",
+      "barangay",
+      "streetaddress",
+      "phonenumber",
+      "username",
+      "password",
+    ];
 
-    // Assigned Location
-    assignedRegion: userData?.assignedRegion ?? SPACE,
-    assignedProvince: userData?.assignedProvince ?? SPACE,
-    assignedCity: userData?.assignedCity ?? SPACE,
-    assignedBarangay: userData?.assignedBarangay ?? SPACE,
-    assignedAddress: userData?.assignedAddress ?? SPACE,
+    useEffect(() => {
+        if (executives) {
+        setExecutive(executives)
+          setSelectState({
+            region: executives.region ?? SPACE,
+            province: executives.province ?? SPACE,
+            city: executives.city ?? SPACE,
+            barangay: executives.barangay ?? SPACE,
 
-    regisdate: userData?.regisdate ?? SPACE,
-  });
+            assignedRegion: executives.assignedRegion ?? SPACE,
+            assignedProvince: executives.assignedProvince ?? SPACE,
+            assignedCity: executives.assignedCity ?? SPACE,
+            assignedBarangay: executives.assignedBarangay ?? SPACE,
+          });
+        }
+    }, [executives]);
+    
 
-  const [selectState, setSelectState] = useState({
-    region: userData?.region ?? SPACE,
-    province: userData?.province ?? SPACE,
-    city: userData?.city ?? SPACE,
-    barangay: userData?.barangay ?? SPACE,
+    const handleExecutiveChange = (
+      e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+    ) => {
+      const { name, value } = e.target;
 
-    assignedRegion: userData?.assignedRegion ?? SPACE,
-    assignedProvince: userData?.assignedProvince ?? SPACE,
-    assignedCity: userData?.assignedCity ?? SPACE,
-    assignedBarangay: userData?.assignedBarangay ?? SPACE,
-  });
+      setExecutive((prevExecutive) => {
+        if (prevExecutive === null) {
+          return {
+            id: undefined,
+            firstname: SPACE,
+            lastname: SPACE,
+            region: SPACE,
+            province: SPACE,
+            city: SPACE,
+            barangay: SPACE,
+            streetaddress: SPACE,
+            phonenumber: SPACE,
+            username: SPACE,
+            password: SPACE,
+            regisdate: SPACE,
+            assignedRegion: SPACE,
+            assignedProvince: SPACE,
+            assignedAddress: SPACE,
+            assignedCity: SPACE,
+            assignedBarangay: SPACE,
+            [name]: value,
+          };
+        }
 
-  // form handlings
-  const handleExecutiveChange = (
-    e: React.ChangeEvent<{ name?: string; value: unknown }>
-  ) => {
-    const { name, value } = e.target;
-    setExecutive((prevExecutive) => ({ ...prevExecutive, [name as string]: value as string }));
-  };
-
-  const handleSelectExecutiveChange = (
-    e: SelectChangeEvent<string | number>,
-    key: string
-  ) => {
-    setSelectState((prevState) => ({
-      ...prevState,
-      [key]: String(e.target.value),
-    }));
-
-    setExecutive((prevExecutive) => ({
-      ...prevExecutive,
-      [key]: String(e.target.value),
-    }));
-  };
-
-  // generate password
-  const handleGeneratePassword = () => {
-    const generatedPassword = "0912Gg33*12";
-    setExecutive((prevExecutive) => ({ ...prevExecutive, password: generatedPassword }));
-  };
-
-  const handleExecutiveCreateSubmit = () => {
-    const generatedId = executives.length + 1;
-    const combinedUserData = {
-      ...executive,
-      ...selectState,
-      id: generatedId,
+        return {
+          ...prevExecutive,
+          [name]: value,
+        };
+      });
     };
-    const validationErrors = validateUser(combinedUserData);
-    console.log("Submitted data:", combinedUserData);
 
-    setErrors(validationErrors);
+    const handleSelectExecutiveChange = (e: SelectChangeEvent<string>, name: string) => {
+      const value = e.target.value.toString();
 
-    if (Object.keys(validationErrors).length === 0) {
-      console.log("Valid user data, submitting...");
+      setSelectState((prevState) => ({
+        ...prevState,
+        [name]: value,
+      }));
+
+      setExecutive((prevExecutive) => {
+        if (prevExecutive) {
+          return {
+            ...prevExecutive,
+            [name]: value,
+          };
+        }
+        return prevExecutive;
+      });
+    };
+
+    const handleExecutiveUpdateSubmit = () => {
+      //console.log(user);
+      if (!executive) {
+        setErrors({ general: "User data is missing." });
+        return;
+      }
+
+      const validationErrors = validateUser(executive);
+
+      if (Object.keys(validationErrors).length > 0) {
+        setErrors(validationErrors);
+        return;
+      }
 
       Swal.fire({
         title: "Did you input the correct credentials?",
@@ -129,77 +160,41 @@ const CreateExecutive: React.FC<CreateExecutiveProps> = ({ open, onClose, onSubm
         confirmButtonText: "Yes, I did",
       }).then((result) => {
         if (result.isConfirmed) {
-          onSubmit(combinedUserData);
-          onClose();
+          const updatedExecutiveData = {
+            id: executive.id ?? 0,
+            firstname: executive.firstname ?? SPACE,
+            lastname: executive.lastname ?? SPACE,
+            phonenumber: executive.phonenumber ?? SPACE,
+            username: executive.username ?? SPACE,
+            region: executive.region ?? SPACE,
+            province: executive.province ?? SPACE,
+            city: executive.city ?? SPACE,
+            barangay: executive.barangay ?? SPACE,
+            streetaddress: executive.streetaddress ?? SPACE,
+            assignedRegion: executive.assignedRegion ?? SPACE,
+            assignedProvince: executive.assignedProvince ?? SPACE,
+            assignedCity: executive.assignedCity ?? SPACE,
+            assignedBarangay: executive.assignedBarangay ?? SPACE,
+            assignedAddress: executive.assignedAddress ?? SPACE,
+            regisdate: executive.regisdate ?? SPACE,
+            password: executive.password ?? SPACE,
+          };
+
+          console.log("Update User Data...");
+          onSubmit(updatedExecutiveData);
 
           Swal.fire({
-            title: "Success!",
-            text: "Manager added successfully.",
+            title: "Updated!",
+            text: "The manager's information has been successfully updated.",
             icon: "success",
             confirmButtonText: "OK",
           });
 
-          setExecutive({
-            ...executive,
-            firstname: "",
-            lastname: "",
-            username: "",
-            password: "",
-            assignedAddress: "",
-          });
-          setSelectState({
-            region: "",
-            province: "",
-            city: "",
-            barangay: "",
-            assignedRegion: "",
-            assignedProvince: "",
-            assignedCity: "",
-            assignedBarangay: "",
-          });
+          onClose();
+          setExecutive(null);
         }
       });
-    } else {
-      console.log("Validation errors:", validationErrors);
-    }
-  };
-
-  const handleDummyData = () => {
-    setExecutive({
-      id: executives.length + 1,
-      // Personal Information
-      firstname: "John",
-      lastname: "Doe",
-      phonenumber: "0912 345 6789",
-      username: "johndoe",
-      password: "DummyPass123!",
-      // Home Address
-      region: "Region IV-A",
-      province: "Cavite",
-      city: "Dasmariñas",
-      barangay: "Salawag",
-      streetaddress: "123 Main St",
-      // Assigned Location
-      assignedRegion: "100",
-      assignedProvince: "100",
-      assignedCity: "100",
-      assignedBarangay: "100",
-      assignedAddress: "123 Main St",
-
-      regisdate: new Date().toISOString(),
-    });
-
-    setSelectState({
-      region: "10",
-      province: "25",
-      city: "50",
-      barangay: "100",
-      assignedRegion: "100",
-      assignedProvince: "100",
-      assignedCity: "100",
-      assignedBarangay: "100",
-    });
-  };
+    };
 
   return (
     <Dialog
@@ -220,22 +215,7 @@ const CreateExecutive: React.FC<CreateExecutiveProps> = ({ open, onClose, onSubm
       }}
     >
       <DialogTitle sx={{ display: 'flex', justifyContent: 'justify', }} >
-        Add Executive
-        <Button
-          onClick={handleDummyData}
-          variant="contained"
-          sx={{
-            marginLeft: 2,
-            paddingX: 3,
-            paddingY: 0.5,
-            textTransform: "none",
-            fontSize: 12,
-            borderRadius: "8px",
-            backgroundColor: "#2563EB",
-            width: "auto",
-          }}
-        > Dummy Data
-        </Button>
+        Update Executive
 
         <IconButton
           aria-label="close"
@@ -277,7 +257,7 @@ const CreateExecutive: React.FC<CreateExecutiveProps> = ({ open, onClose, onSubm
                           variant="outlined"
                           placeholder={`Enter ${key}`}
                           type={showPassword ? "text" : "password"}
-                          value={executive[key as keyof typeof executive]}
+                          value={executive?.[key as keyof typeof executive]?.toString() || SPACE}
                           onChange={handleExecutiveChange}
                           name={key}
                           error={!!errors[key]}
@@ -316,7 +296,7 @@ const CreateExecutive: React.FC<CreateExecutiveProps> = ({ open, onClose, onSubm
                       fullWidth
                       variant="outlined"
                       placeholder={`Enter ${formatKey(key)}`}
-                      value={executive[key as keyof typeof executive] || SPACE}
+                      value={executive?.[key as keyof typeof executive]?.toString() || SPACE}
                       onChange={handleExecutiveChange}
                       name={key}
                       error={!!errors[key]}
@@ -364,7 +344,7 @@ const CreateExecutive: React.FC<CreateExecutiveProps> = ({ open, onClose, onSubm
                       fullWidth
                       variant="outlined"
                       placeholder={`Enter ${formatKey(key)}`}
-                      value={executive[key as keyof typeof executive] || SPACE}
+                      value={executive?.[key as keyof typeof executive]?.toString() || SPACE}
                       onChange={handleExecutiveChange}
                       name={key}
                       error={!!errors[key]}
@@ -402,7 +382,7 @@ const CreateExecutive: React.FC<CreateExecutiveProps> = ({ open, onClose, onSubm
                   <FormControl fullWidth error={!!errors[key]}>
                     <Select
                       displayEmpty
-                      value={executive[key as keyof typeof executive] || SPACE}
+                      value={executive?.[key as keyof typeof executive]?.toString() || SPACE}
                       onChange={(e) => handleSelectExecutiveChange(e, key)}
                       name={key}
                       inputProps={{ "aria-label": formatKey(key) }}
@@ -422,7 +402,7 @@ const CreateExecutive: React.FC<CreateExecutiveProps> = ({ open, onClose, onSubm
                     fullWidth
                     variant="outlined"
                     placeholder={`Enter ${formatKey(key)}`}
-                    value={executive[key as keyof typeof executive] || SPACE}
+                    value={executive?.[key as keyof typeof executive]?.toString() || SPACE}
                     onChange={handleExecutiveChange}
                     name={key}
                     error={!!errors[key]}
@@ -436,7 +416,7 @@ const CreateExecutive: React.FC<CreateExecutiveProps> = ({ open, onClose, onSubm
         </Grid>
 
         <Button
-          onClick={handleExecutiveCreateSubmit}
+          onClick={handleExecutiveUpdateSubmit}
           sx={{
             mt: 3,
             width: "100%",
@@ -453,7 +433,8 @@ const CreateExecutive: React.FC<CreateExecutiveProps> = ({ open, onClose, onSubm
         </Button>
       </DialogContent>
     </Dialog>
-  );
-};
+    );
+}
+);
 
-export default CreateExecutive;
+export default UpdateExecutives;
