@@ -51,6 +51,7 @@ const CreateManager: React.FC<CreateManagerProps> = ({
     phonenumber: userData?.phonenumber ?? SPACE,
     username: userData?.username ?? SPACE,
     password: SPACE,
+    regisdate: userData?.regisdate ?? SPACE,
   });
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
   const [showPassword, setShowPassword] = useState(false);
@@ -120,6 +121,7 @@ const CreateManager: React.FC<CreateManagerProps> = ({
             lastname: "",
             username: "",
             password: "",
+            regisdate: "",
           });
           setSelectState({ region: "", province: "", city: "", barangay: "" });
         }
@@ -143,6 +145,8 @@ const CreateManager: React.FC<CreateManagerProps> = ({
       phonenumber: "0912 345 6789",
       username: "johndoe",
       password: "DummyPass123!",
+
+      regisdate: new Date().toISOString(),
     })
 
     setSelectState({

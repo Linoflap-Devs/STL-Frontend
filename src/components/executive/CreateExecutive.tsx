@@ -16,7 +16,7 @@ import {
 } from "@mui/material";
 import { validateUser } from "../../utils/validation";
 import { formatKey } from "../../utils/format";
-import { Executive } from "./ExecutiveTable";
+import { User } from "./ExecutiveTable";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
 import { UserSectionData } from "../../data/AdminSectionData";
 
@@ -28,13 +28,14 @@ import { inputStyles, inputErrorStyles } from "../../styles/theme";
 export interface CreateExecutiveProps {
   open: boolean;
   onClose: () => void;
-  onSubmit: (userData: Executive | null) => void;
-  userData: Executive | null;
+  onSubmit: (userData: User | null) => void;
+  userData: User | null;
+  executives: User[];
 }
 
-const CreateExecutive: React.FC<CreateExecutiveProps> = ({ open, onClose, onSubmit, userData }) => {
+const CreateExecutive: React.FC<CreateExecutiveProps> = ({ open, onClose, onSubmit, userData, executives }) => {
   const SPACE: string = "";
-  const [selectedUser, setSelectedUser] = useState<Executive | null>(null);
+  const [selectedUser, setSelectedUser] = useState<User | null>(null);
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
   const [showPassword, setShowPassword] = useState(false);
   const [executive, setExecutive] = useState({
@@ -83,8 +84,7 @@ const CreateExecutive: React.FC<CreateExecutiveProps> = ({ open, onClose, onSubm
     const { name, value } = e.target;
     setExecutive((prevExecutive) => ({ ...prevExecutive, [name as string]: value as string }));
   };
-  
-  
+
   const handleSelectExecutiveChange = (
     e: SelectChangeEvent<string | number>,
     key: string
@@ -107,7 +107,7 @@ const CreateExecutive: React.FC<CreateExecutiveProps> = ({ open, onClose, onSubm
   };
 
   const handleExecutiveCreateSubmit = () => {
-    const generatedId = userData?.id ? userData.id + 1 : 1;
+    const generatedId = executives.length + 1;
     const combinedUserData = {
       ...executive,
       ...selectState,
@@ -145,6 +145,7 @@ const CreateExecutive: React.FC<CreateExecutiveProps> = ({ open, onClose, onSubm
             lastname: "",
             username: "",
             password: "",
+            assignedAddress: "",
           });
           setSelectState({
             region: "",
@@ -162,7 +163,44 @@ const CreateExecutive: React.FC<CreateExecutiveProps> = ({ open, onClose, onSubm
       console.log("Validation errors:", validationErrors);
     }
   };
-  
+
+  const handleDummyData = () => {
+    setExecutive({
+      id: executives.length + 1,
+      // Personal Information
+      firstname: "John",
+      lastname: "Doe",
+      phonenumber: "0912 345 6789",
+      username: "johndoe",
+      password: "DummyPass123!",
+      // Home Address
+      region: "Region IV-A",
+      province: "Cavite",
+      city: "Dasmariñas",
+      barangay: "Salawag",
+      streetaddress: "123 Main St",
+      // Assigned Location
+      assignedRegion: "100",
+      assignedProvince: "100",
+      assignedCity: "100",
+      assignedBarangay: "100",
+      assignedAddress: "123 Main St",
+
+      regisdate: new Date().toISOString(),
+    });
+
+    setSelectState({
+      region: "10",
+      province: "25",
+      city: "50",
+      barangay: "100",
+      assignedRegion: "100",
+      assignedProvince: "100",
+      assignedCity: "100",
+      assignedBarangay: "100",
+    });
+  };
+
   return (
     <Dialog
       open={open}
@@ -184,6 +222,7 @@ const CreateExecutive: React.FC<CreateExecutiveProps> = ({ open, onClose, onSubm
       <DialogTitle sx={{ display: 'flex', justifyContent: 'justify', }} >
         Add Executive
         <Button
+          onClick={handleDummyData}
           variant="contained"
           sx={{
             marginLeft: 2,
@@ -272,7 +311,7 @@ const CreateExecutive: React.FC<CreateExecutiveProps> = ({ open, onClose, onSubm
                         </Button>
                       </Grid>
                     </Grid>
-                  ) : ( // other text fields
+                  ) : (
                     <TextField
                       fullWidth
                       variant="outlined"

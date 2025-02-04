@@ -1,20 +1,20 @@
 import React, { useState } from 'react';
-import ExecutiveTable, { Executive } from '~/components/executive/ExecutiveTable';
+import ExecutiveTable, { User } from '~/components/executive/ExecutiveTable';
 import CreateExecutive from '~/components/executive/CreateExecutive';
 
 const ExecutivePage = () => {
   const [isModalOpen, setModalOpen] = useState(false);
-  const [selectedExecutive, setSelectedExecutive] = useState<Executive | null>(null);
-  const [executives, setExecutives] = useState<Executive[]>([]);
+  const [selectedExecutive, setSelectedExecutive] = useState<User | null>(null);
+  const [executives, setExecutives] = useState<User[]>([]);
 
   // open modal for create execs
-  const handleExecutiveCreate = (executive: Executive | null = null) => {
+  const handleExecutiveCreate = (executive: User | null = null) => {
     setSelectedExecutive(executive);
     setModalOpen(true);
   };
-
+  
   // handle form submission
-  const handleSubmitExecutive = (userData: Executive | null) => {
+  const handleSubmitExecutive = (userData: User | null) => {
     if (userData) {
       console.log('Submitted user data:', userData);
 
@@ -25,18 +25,25 @@ const ExecutivePage = () => {
     setModalOpen(false);
   };
 
+  const handleDeleteExecutive = (ids: number[]) => {
+    const updatedExecutives= executives.filter(executive => !ids.includes(executive.id!));
+    setExecutives(updatedExecutives);
+  };
+
   return (
     <>  
       <ExecutiveTable
         executives={executives}
         onCreate={handleExecutiveCreate}
         onClose={() => setModalOpen(false)}
+        onDelete={handleDeleteExecutive}
       />      
       <CreateExecutive
         open={isModalOpen}
         onClose={() => setModalOpen(false)}
         onSubmit={handleSubmitExecutive}
         userData={selectedExecutive}
+        executives={executives}
       />
     </>
   );

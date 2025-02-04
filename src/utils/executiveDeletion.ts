@@ -1,4 +1,4 @@
-import ExecutiveTable, { User } from "~/components/executive/ExecutiveTable";
+import ManagerTable, { User } from "~/components/manager/ManagerTable";
 import Swal from "sweetalert2";
 
 export const executiveDeletion = (
@@ -14,14 +14,14 @@ export const executiveDeletion = (
     const newSelectedUserIds = new Set<number>();
     const usersForCurrentPage = sortedFilteredExecutive.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage);
 
-    const allOnPageSelected = usersForCurrentPage.every((executive) =>
-      selectedExecutiveIds.has(executive.id!)
+    const allOnPageSelected = usersForCurrentPage.every((user) =>
+      selectedExecutiveIds.has(user.id!)
     );
 
     if (allOnPageSelected) {
-      usersForCurrentPage.forEach((executive) => newSelectedUserIds.delete(executive.id!));
+      usersForCurrentPage.forEach((user) => newSelectedUserIds.delete(user.id!));
     } else {
-      usersForCurrentPage.forEach((executive) => newSelectedUserIds.add(executive.id!));
+      usersForCurrentPage.forEach((user) => newSelectedUserIds.add(user.id!));
     }
     setSelectedExecutiveIds(newSelectedUserIds);
     setSelectedCount(newSelectedUserIds.size);
@@ -31,7 +31,7 @@ export const executiveDeletion = (
   sortedFilteredExecutive.length > 0 && selectedExecutiveIds.size === sortedFilteredExecutive.length;
 
   // Delete selected users
-  const handleDeleteSelectedManagers = () => {
+  const handleDeleteSelectedExecutives = () => {
     if (selectedExecutiveIds.size === 0) return;
 
     Swal.fire({
@@ -61,7 +61,7 @@ export const executiveDeletion = (
   };
 
   // Handle individual user selection
-  const handleSelectManager = (
+  const handleSelectExecutive = (
     event:
       | React.MouseEvent<HTMLTableRowElement, MouseEvent>
       | React.ChangeEvent<HTMLInputElement>,
@@ -74,7 +74,7 @@ export const executiveDeletion = (
     }
 
     const newSelectedUserIds = new Set(selectedExecutiveIds);
-
+    
     // If the user is already selected, remove them, otherwise add them
     if (newSelectedUserIds.has(userId)) {
       newSelectedUserIds.delete(userId);
@@ -89,7 +89,7 @@ export const executiveDeletion = (
   return {
     handleSelectAll,
     isAllSelected,
-    handleDeleteSelectedManagers,
-    handleSelectManager,
+    handleDeleteSelectedExecutives,
+    handleSelectExecutive,
   };
 };

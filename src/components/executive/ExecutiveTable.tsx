@@ -109,16 +109,16 @@ const ExecutiveTable: React.FC<ExecutiveTableProps> = ({ executives, onCreate, o
     "province",
   ]);
 
-  const sortedFilteredExecutive: User[] = sortData(filteredExecutives, {
+  const sortedFilteredExecutive = sortData(filteredExecutives, {
     key: sortConfig.key,
     direction: sortConfig.direction,
-  });
+  }) as User[];
 
   const {
     handleSelectAll,
     isAllSelected,
-    handleDeleteSelectedManagers,
-    handleSelectManager,
+    handleDeleteSelectedExecutives,
+    handleSelectExecutive,
   } = executiveDeletion(
     sortedFilteredExecutive,
     selectedUserIds,
@@ -225,6 +225,7 @@ const ExecutiveTable: React.FC<ExecutiveTableProps> = ({ executives, onCreate, o
                     </InputAdornment>
                   ),
                 }}
+
               />
               <FilterListIcon
                 onClick={handleFilterToggle}
@@ -237,8 +238,8 @@ const ExecutiveTable: React.FC<ExecutiveTableProps> = ({ executives, onCreate, o
                 sx={{ marginLeft: 5, color: "#9CA3AF", cursor: "pointer" }}
                 style={{ display: isFilterActive ? "block" : "none" }}
               />
-            </Box>
 
+            </Box>
             <Box
               sx={{
                 display: "flex",
@@ -250,7 +251,7 @@ const ExecutiveTable: React.FC<ExecutiveTableProps> = ({ executives, onCreate, o
                 {selectedUserIds.size > 0 && (
                   <Button
                     variant="contained"
-                    //onClick={handleDeleteSelectedManagers}
+                    onClick={handleDeleteSelectedExecutives}
                     sx={deleteStyles}
                   >
                     Delete {selectedUserIds.size}{" "}
@@ -265,7 +266,7 @@ const ExecutiveTable: React.FC<ExecutiveTableProps> = ({ executives, onCreate, o
                   onClick={onCreate}
                   sx={buttonStyles}
                 >
-                  {UserSectionData.addManagerButton}
+                  {UserSectionData.addExecutiveButton}
                 </Button>
               </Box>
             </Box>
@@ -276,7 +277,12 @@ const ExecutiveTable: React.FC<ExecutiveTableProps> = ({ executives, onCreate, o
           <TableHead>
             <TableRow>
               <TableCell>
-
+                <Tooltip title="Select All">
+                  <Checkbox
+                    checked={isAllSelected}
+                    onChange={handleSelectAll}
+                  />
+                </Tooltip>
               </TableCell>
               <>
                 <SortableTableCell
@@ -365,10 +371,10 @@ const ExecutiveTable: React.FC<ExecutiveTableProps> = ({ executives, onCreate, o
                       color="textSecondary"
                       sx={{ mt: 2, fontWeight: 500 }}
                     >
-                      No managers available
+                      No executives available
                     </Typography>
                     <Typography variant="body2" color="textSecondary">
-                      Add a new manager to get started.
+                      Add a new executive to get started.
                     </Typography>
                   </Box>
                 </TableCell>
@@ -409,7 +415,9 @@ const ExecutiveTable: React.FC<ExecutiveTableProps> = ({ executives, onCreate, o
                     <TableCell>
                       <Checkbox
                         checked={selectedUserIds.has(executive.id!)}
-                      //onChange={(event) => handleSelectManager(event, user.id!)}
+                        onChange={(event) =>
+                          handleSelectExecutive(event, executive.id!)
+                        }
                       />
                     </TableCell>
                     <TableCell>{executive.firstname}</TableCell>
@@ -441,7 +449,7 @@ const ExecutiveTable: React.FC<ExecutiveTableProps> = ({ executives, onCreate, o
           <MenuItem>
             Update
           </MenuItem>
-          <MenuItem>Delete</MenuItem>
+          <MenuItem onClick={handleDeleteExecutive}>Delete</MenuItem>
         </Menu>
 
         <Box
