@@ -42,8 +42,7 @@ interface UpdateManagerProps {
   manager: User | null;
 }
 
-const UpdateManager: React.FC<UpdateManagerProps> = React.memo(
-  ({ open, onClose, onSubmit, manager }) => {
+const UpdateManager: React.FC<UpdateManagerProps> = React.memo( ({ open, onClose, onSubmit, manager }) => {
     const [user, setUser] = useState<User | null>(manager);
     const [errors, setErrors] = useState<{ [key: string]: string }>({});
     const [showPassword, setShowPassword] = useState(false);

@@ -33,8 +33,7 @@ export interface UpdateExecutiveProps {
   executives: User | null;
 }
 
-const UpdateExecutives: React.FC<UpdateExecutiveProps> = React.memo(
-  ({ open, onClose, onSubmit, executives }) => {
+const UpdateExecutives: React.FC<UpdateExecutiveProps> = React.memo( ({ open, onClose, onSubmit, executives }) => {
     const [executive, setExecutive] = useState<User | null>(null);
     const [errors, setErrors] = useState<{ [key: string]: string }>({});
     const [showPassword, setShowPassword] = useState(false);

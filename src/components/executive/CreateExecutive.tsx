@@ -23,7 +23,7 @@ import { UserSectionData } from "../../data/AdminSectionData";
 import { SelectChangeEvent } from "@mui/material";
 import CloseIcon from '@mui/icons-material/Close';
 import Swal from "sweetalert2";
-import { inputStyles, inputErrorStyles } from "../../styles/theme";
+import { inputStyles } from "../../styles/theme";
 
 export interface CreateExecutiveProps {
   open: boolean;
