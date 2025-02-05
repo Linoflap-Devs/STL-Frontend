@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { UserSectionData } from "../../data/AdminSectionData";
-import { buttonStyles, deleteStyles } from "../../styles/theme";
+import { buttonStyles, deleteStyles, } from "../../styles/theme";
 import {
   Typography,
   Box,
@@ -18,7 +18,6 @@ import {
   Menu,
   MenuItem,
   Checkbox,
-  SvgIcon,
 } from "@mui/material";
 import {
   SortableTableCell,

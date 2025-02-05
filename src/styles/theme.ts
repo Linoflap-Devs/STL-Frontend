@@ -1,4 +1,3 @@
-// src/styles/theme.ts
 import { createTheme } from "@mui/material/styles";
 
 const darkTheme = createTheme({
@@ -231,7 +230,7 @@ const darkTheme = createTheme({
       styleOverrides: {
         root: {
           backgroundColor: "#374151",
-          borderColor: "#D1D5DB",
+          borderColor: "#D1D5DB !important",
           width: "100%",
         },
         icon: {
@@ -311,6 +310,30 @@ export const inputStyles = {
     "& fieldset": { borderColor: "#D1D5DB", padding: "14px 40px 10px 14px" },
     "&.Mui-error fieldset": { borderColor: "#F05252" },
   },
+};
+
+export const selectStyles = {
+  "& .MuiOutlinedInput-root": {
+    "& fieldset": { 
+      borderColor: "#D1D5DB !important",
+      padding: "14px 40px 10px 14px",
+    },
+    "&:hover fieldset": { borderColor: "#D1D5DB !important" },
+    "&.Mui-focused fieldset": { borderColor: "#3576CA !important" },
+    "&.Mui-error fieldset": { borderColor: "#F05252 !important" },
+  },
+
+  "& .MuiSelect-select": {
+    color: "#9CA3AF !important",
+  },
+
+  "& .MuiSelect-select[aria-placeholder]": {
+    color: "#9CA3AF !important",
+  },
+
+  "& .MuiSelect-select:has(option[value=''])": {
+    color: "#D1D5DB !important",
+  }
 };
 
 export const inputErrorStyles = {

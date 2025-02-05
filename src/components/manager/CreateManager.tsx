@@ -21,7 +21,7 @@ import { Visibility, VisibilityOff } from "@mui/icons-material";
 import { SelectChangeEvent } from "@mui/material";
 import CloseIcon from '@mui/icons-material/Close';
 import Swal from "sweetalert2";
-import { inputStyles, inputErrorStyles } from "../../styles/theme";
+import { inputStyles, inputErrorStyles, selectStyles } from "../../styles/theme";
 
 export interface CreateManagerProps {
   open: boolean;
@@ -64,7 +64,7 @@ const CreateManager: React.FC<CreateManagerProps> = ({
 
   // form handlings
   const handleManagerChange = (
-    e: React.ChangeEvent<{ name?: string; value: unknown }>
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
     const { name, value } = e.target;
     setUser((prevUser) => ({ ...prevUser, [name as string]: value as string }));
@@ -292,9 +292,11 @@ const CreateManager: React.FC<CreateManagerProps> = ({
                   key === "province" ||
                   key === "city" ||
                   key === "barangay" ? (
-                  <FormControl fullWidth error={!!errors[key]}>
+                  <FormControl sx={selectStyles} fullWidth error={!!errors[key]}>
                     <Select
                       displayEmpty
+                      sx={{ color: selectState[key as keyof typeof selectState] ? '#9CA3AF' : 'white' }}
+
                       value={selectState[key as keyof typeof selectState] || SPACE}
                       onChange={(e) => handleSelectChange(e, key)}
                       name={key}
