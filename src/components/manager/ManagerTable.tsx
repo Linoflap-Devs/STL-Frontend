@@ -18,6 +18,7 @@ import {
   Menu,
   MenuItem,
   Checkbox,
+  SvgIcon,
 } from "@mui/material";
 import {
   SortableTableCell,

@@ -143,7 +143,7 @@ const CreateManager: React.FC<CreateManagerProps> = ({
       barangay: "Salawag",
       streetaddress: "123 Main St",
       phonenumber: "0912 345 6789",
-      username: "johndoe",
+      username: "johndoe@username.com",
       password: "DummyPass123!",
 
       regisdate: new Date().toISOString(),
@@ -206,7 +206,7 @@ const CreateManager: React.FC<CreateManagerProps> = ({
         >
           <CloseIcon sx={{ fontSize: 20, fontWeight: 'bold' }} />
         </IconButton>
-
+        
       </DialogTitle>
       <DialogContent>
         <Grid
@@ -215,7 +215,7 @@ const CreateManager: React.FC<CreateManagerProps> = ({
           columnSpacing={{ xs: 1, sm: 3, md: 2.5 }}
         >
           {Object.keys(user).map((key) =>
-            !["id"].includes(key) ? (
+            !["id", "regisdate"].includes(key) ? (
               <Grid
                 item
                 xs={12}

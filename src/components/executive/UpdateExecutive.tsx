@@ -138,7 +138,6 @@ const UpdateExecutives: React.FC<UpdateExecutiveProps> = React.memo( ({ open, on
     };
 
     const handleExecutiveUpdateSubmit = () => {
-      //console.log(user);
       if (!executive) {
         setErrors({ general: "User data is missing." });
         return;

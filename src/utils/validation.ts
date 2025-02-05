@@ -30,11 +30,9 @@ export const validateUser = (user: User) => {
         }
         break;
       case "username":
-        if (emailRegex.test(value)) {
+        if (!emailRegex.test(value)) {
+          newErrors[key] = "Please enter a valid email address."
           break;
-        }
-        if (restrictedCharsRegex.test(value)) {
-          newErrors[key] = "Username cannot contain special characters.";
         }
         break;
       case "password":
@@ -75,7 +73,7 @@ export const loginValidate = (credentials: {
         if (!value) {
           newErrors.username = "Username is required";
         } else if (!emailRegex.test(value)) {
-          newErrors.username = "Please enter a valid email address.."
+          newErrors.username = "Please enter a valid email address."
         }
         break;
 

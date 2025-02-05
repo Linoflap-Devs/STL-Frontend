@@ -171,7 +171,7 @@ const CreateExecutive: React.FC<CreateExecutiveProps> = ({ open, onClose, onSubm
       firstname: "John",
       lastname: "Doe",
       phonenumber: "0912 345 6789",
-      username: "johndoe",
+      username: "johndoe@username.com",
       password: "DummyPass123!",
       // Home Address
       region: "Region IV-A",
@@ -281,7 +281,7 @@ const CreateExecutive: React.FC<CreateExecutiveProps> = ({ open, onClose, onSubm
                           onChange={handleExecutiveChange}
                           name={key}
                           error={!!errors[key]}
-                          helperText={errors[key] || ""}
+                          helperText={""}
                           sx={inputStyles}
                           InputProps={{
                             endAdornment: (
@@ -310,6 +310,16 @@ const CreateExecutive: React.FC<CreateExecutiveProps> = ({ open, onClose, onSubm
                           Generate
                         </Button>
                       </Grid>
+                    {errors[key] && (
+                      <Box sx={{
+                        color: 'error.main',
+                        mt: "3px",
+                        marginLeft: '12px',
+                        fontSize: '0.85rem'
+                      }}>
+                        {errors[key]}
+                      </Box>
+                    )}
                     </Grid>
                   ) : (
                     <TextField
