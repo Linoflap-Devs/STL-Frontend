@@ -1,3 +1,5 @@
+// src\pages\index.tsx
+
 import React from 'react';
 import LoginPage from '../components/auth/Login';
 

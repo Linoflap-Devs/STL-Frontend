@@ -226,6 +226,27 @@ const darkTheme = createTheme({
         },
       },
     },
+
+    MuiInputBase: {
+      styleOverrides: {
+        root: {
+          fontSize: "0.80rem",
+        },
+        input: {
+          "::placeholder": {
+            color: "#9CA3AF",
+          },
+        },
+      },
+    },
+    MuiFormHelperText: {
+      styleOverrides: {
+        root: {
+          fontSize: "0.80rem",
+          marginLeft: "0px",
+        },
+      },
+    },
     MuiSelect: {
       styleOverrides: {
         root: {
@@ -248,33 +269,6 @@ const darkTheme = createTheme({
               color: "#ffffff",
             },
           },
-        },
-      },
-    },
-    MuiFormControl: {
-      styleOverrides: {
-        root: {
-          color: "#fffff",
-        },
-      },
-    },
-    MuiInputBase: {
-      styleOverrides: {
-        root: {
-          fontSize: "0.80rem",
-        },
-        input: {
-          "::placeholder": {
-            color: "#9CA3AF",
-          },
-        },
-      },
-    },
-    MuiFormHelperText: {
-      styleOverrides: {
-        root: {
-          fontSize: "0.80rem",
-          marginLeft: "0px",
         },
       },
     },
@@ -318,22 +312,8 @@ export const selectStyles = {
       borderColor: "#D1D5DB !important",
       padding: "14px 40px 10px 14px",
     },
-    "&:hover fieldset": { borderColor: "#D1D5DB !important" },
-    "&.Mui-focused fieldset": { borderColor: "#3576CA !important" },
-    "&.Mui-error fieldset": { borderColor: "#F05252 !important" },
-  },
 
-  "& .MuiSelect-select": {
-    color: "#9CA3AF !important",
   },
-
-  "& .MuiSelect-select[aria-placeholder]": {
-    color: "#9CA3AF !important",
-  },
-
-  "& .MuiSelect-select:has(option[value=''])": {
-    color: "#D1D5DB !important",
-  }
 };
 
 export const inputErrorStyles = {

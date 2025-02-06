@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import axiosInstance from '~/utils/axiosInstance';
 import ManagerTable, { User } from '~/components/manager/ManagerTable';
 import CreateManager from '~/components/manager/CreateManager';
 import UpdateManager from '~/components/manager/UpdateManager';

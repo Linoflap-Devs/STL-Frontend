@@ -1,11 +1,14 @@
+// src\components\auth\Login.tsx
+
 import React, { useState } from "react";
 import { Box, Typography, Button, TextField, IconButton } from "@mui/material";
 import { inputStyles, inputErrorStyles } from "../../styles/theme";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
 import { LoginSectionData } from "../../data/LoginSectionData";
 import { useRouter } from "next/router";
-import { loginValidate } from "../../utils/validation";
+import { loginValidate } from "../../utils/loginValidate";
 import LoginBackgroundSection from "../layout/LoginBackgroundSection";
+import { login } from '../../utils/api/login'; // db
 
 const LoginPage = () => {
   const router = useRouter();
@@ -19,26 +22,27 @@ const LoginPage = () => {
     password?: string;
   }>({});
 
-  // Validation
-  const handleLogin = (e: React.FormEvent) => {
+// Validation
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-    const validationErrors = loginValidate(credentials);
+
+    // Wait for the async validation to complete
+    const validationErrors = await loginValidate(credentials);
+
     if (Object.keys(validationErrors).length === 0) {
-      console.log("Login Successful.", credentials);
+      login(credentials)
+        .then(() => {
+          router.push("/managers");
+        })
+        .catch((error) => {
+          alert(error.message);
+        });
     } else {
+
       setErrors(validationErrors);
     }
   };
 
-  // temporary validation
-  const handleNavigation = () => {
-    const validationErrors = loginValidate(credentials);
-    if (Object.keys(validationErrors).length === 0) {
-      router.push("/managers");
-    } else {
-      console.log("Validation failed.");
-    }
-  };
 
   const handleTogglePasswordVisibility = () => setShowPassword((prev) => !prev);
 
@@ -195,7 +199,6 @@ const LoginPage = () => {
 
               <Button
                 type="submit"
-                onClick={handleNavigation}
                 variant="contained"
                 fullWidth
                 sx={{
