@@ -1,55 +1,71 @@
+// src\utils\loginValidate.ts
+
 import axios from 'axios';
+import { loginUser } from './api/login';
 
 export const verifyCredentials = async (username: string, password: string): Promise<boolean> => {
-  try {
-    const response = await axios.post('/api/verify-login', { username, password });
-
-    return response.data.isValid;
-  } catch (error) {
-    console.error("Error verifying credentials:", error);
-    return false;
-  }
-};
-
-export const loginValidate = async (credentials: {
-  username?: string;
-  password?: string;
-  newpassword?: string;
-  setpassword?: string;
-}) => {
-  const newErrors: {
-    username?: string;
-    password?: string;
-    newpassword?: string;
-    setpassword?: string;
-  } = {};
-
-  const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
-  const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*])[A-Za-z\d!@#$%^&*]{8,}$/;
-
-  if (credentials.username === undefined || credentials.password === undefined) {
-    newErrors.username = "Username and Password are required.";
-    return newErrors;
-  }
-
-  if (!credentials.username) {
-    newErrors.username = "Username is required";
-  } else if (!emailRegex.test(credentials.username)) {
-    newErrors.username = "Please enter a valid email address.";
-  }
-
-  if (!credentials.password) {
-    newErrors.password = "Password is required";
-  } else if (!passwordRegex.test(credentials.password)) {
-    newErrors.password = "Password must be at least 8 characters, including an uppercase letter, number, and special character.";
-  }
-
-  if (Object.keys(newErrors).length === 0) {
-    const isValid = await verifyCredentials(credentials.username, credentials.password);
-    if (!isValid) {
-      newErrors.password = "Invalid username or password.";
+    try {
+      const response = await loginUser({ username, password });
+      return response.token ? true : false;
+    } catch (error: any) {
+      if (axios.isAxiosError(error)) {
+        if (error.response) {
+          const status = error.response.status;
+  
+          if (status === 401) {
+            // unauthorized - invalid credentials
+            throw new Error('Invalid username or password.');
+          } else if (status === 404) {
+            // endpoint not found
+            throw new Error('Login service unavailable. Please try again later.');
+          } else if (status >= 500) {
+            // server error
+            throw new Error('Server error. Please try again later.');
+          }
+        } else if (error.request) {
+          // no response received
+          throw new Error('Network error. Please check your connection.');
+        }
+      }
+      
+      throw new Error('An unexpected error occurred.');
     }
-  }
+  };
 
-  return newErrors;
-};
+// export const loginValidate = async (credentials: {
+//   username?: string;
+//   password?: string;
+//   newpassword?: string;
+//   setpassword?: string;
+// }) => {
+//   const newErrors: {
+//     username?: string;
+//     password?: string;
+//     newpassword?: string;
+//     setpassword?: string;
+//   } = {};
+
+//   const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+//   const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*])[A-Za-z\d!@#$%^&*]{8,}$/;
+
+//   if (!credentials.username) {
+//     newErrors.username = "Username is required";
+//   }
+
+//   if (!credentials.password) {
+//     newErrors.password = "Password is required";
+//   }
+
+//   if (Object.keys(newErrors).length === 0) {
+//     try {
+//       const isValid = await verifyCredentials(credentials.username!, credentials.password!);
+//       if (!isValid) {
+//         newErrors.password = "Invalid username or password.";
+//       }
+//     } catch (error: any) {
+//       newErrors.password = error.message || "ssssss";
+//     }
+//   }
+
+//   return newErrors;
+// };

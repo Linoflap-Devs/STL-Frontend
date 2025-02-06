@@ -6,9 +6,9 @@ import { inputStyles, inputErrorStyles } from "../../styles/theme";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
 import { LoginSectionData } from "../../data/LoginSectionData";
 import { useRouter } from "next/router";
-import { loginValidate } from "../../utils/loginValidate";
+import { verifyCredentials } from "../../utils/loginValidate";
 import LoginBackgroundSection from "../layout/LoginBackgroundSection";
-import { login } from '../../utils/api/login'; // db
+import { loginUser } from '../../utils/api/login'; // db
 
 const LoginPage = () => {
   const router = useRouter();
@@ -22,15 +22,14 @@ const LoginPage = () => {
     password?: string;
   }>({});
 
-// Validation
+  // Validation
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    // Wait for the async validation to complete
-    const validationErrors = await loginValidate(credentials);
+    const validationErrors = await verifyCredentials(credentials.username!, credentials.password!);
 
     if (Object.keys(validationErrors).length === 0) {
-      login(credentials)
+      loginUser(credentials)
         .then(() => {
           router.push("/managers");
         })
@@ -38,14 +37,13 @@ const LoginPage = () => {
           alert(error.message);
         });
     } else {
-
+      // If there are validation errors, set them to display in the form
       setErrors(validationErrors);
     }
   };
 
 
   const handleTogglePasswordVisibility = () => setShowPassword((prev) => !prev);
-
   return (
     <>
       <Box
