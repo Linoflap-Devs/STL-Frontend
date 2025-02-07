@@ -19,26 +19,27 @@ const LoginPage = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [errors, setErrors] = useState<{ username?: string; password?: string; general?: string }>({});
 
-// submit login
-const handleLogin = async (e: React.FormEvent) => {
-  e.preventDefault();
+  // submit login
+  const handleLogin = async (e: React.FormEvent) => {
+    e.preventDefault();
 
-  const validationErrors = await verifyCredentials(credentials.username!, credentials.password!);
+    const validationErrors = await verifyCredentials(credentials.username!, credentials.password!);
 
-  if (Object.keys(validationErrors).length === 0) {
-    loginUser(credentials)
-      .then(() => {
-        router.push("/managers");
-      })
-      .catch((error) => {
-        setErrors({ general: error.message });
-      });
-  } else {
-    setErrors(validationErrors);
-  }
-};
+    if (Object.keys(validationErrors).length === 0) {
+      loginUser(credentials)
+        .then(() => {
+          router.push("/managers");
+        })
+        .catch((error) => {
+          setErrors({ general: error.message });
+        });
+    } else {  
+      setErrors(validationErrors);
+    }
+  };
 
   const handleTogglePasswordVisibility = () => setShowPassword((prev) => !prev);
+
   return (
     <>
       <Box
