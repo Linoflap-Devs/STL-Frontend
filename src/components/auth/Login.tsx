@@ -17,31 +17,26 @@ const LoginPage = () => {
     password: "",
   });
   const [showPassword, setShowPassword] = useState(false);
-  const [errors, setErrors] = useState<{
-    username?: string;
-    password?: string;
-  }>({});
+  const [errors, setErrors] = useState<{ username?: string; password?: string; general?: string }>({});
 
-  // Validation
-  const handleLogin = async (e: React.FormEvent) => {
-    e.preventDefault();
+// submit login
+const handleLogin = async (e: React.FormEvent) => {
+  e.preventDefault();
 
-    const validationErrors = await verifyCredentials(credentials.username!, credentials.password!);
+  const validationErrors = await verifyCredentials(credentials.username!, credentials.password!);
 
-    if (Object.keys(validationErrors).length === 0) {
-      loginUser(credentials)
-        .then(() => {
-          router.push("/managers");
-        })
-        .catch((error) => {
-          alert(error.message);
-        });
-    } else {
-      // If there are validation errors, set them to display in the form
-      setErrors(validationErrors);
-    }
-  };
-
+  if (Object.keys(validationErrors).length === 0) {
+    loginUser(credentials)
+      .then(() => {
+        router.push("/managers");
+      })
+      .catch((error) => {
+        setErrors({ general: error.message });
+      });
+  } else {
+    setErrors(validationErrors);
+  }
+};
 
   const handleTogglePasswordVisibility = () => setShowPassword((prev) => !prev);
   return (
@@ -116,7 +111,7 @@ const LoginPage = () => {
                       textAlign: "left",
                       marginBottom: "0.5rem",
                     }}
-                    color={errors.username ? "error" : "text.primary"}
+                    color={errors.username || errors.general ? "error" : "text.primary"}
                   >
                     {LoginSectionData.UsernameTitle}
                   </Typography>
@@ -138,6 +133,12 @@ const LoginPage = () => {
                   {errors.username && (
                     <span style={inputErrorStyles}>{errors.username}</span>
                   )}
+
+                  {errors.general && (
+                    <span style={inputErrorStyles}>
+                      {errors.general}
+                    </span>
+                  )}
                 </Box>
 
                 <Box
@@ -156,7 +157,7 @@ const LoginPage = () => {
                       textAlign: "left",
                       marginBottom: "0.5rem",
                     }}
-                    color={errors.password ? "error" : "text.primary"}
+                    color={errors.password || errors.general ? "error" : "text.primary"}
                   >
                     {LoginSectionData.PasswordTitle}
                   </Typography>
@@ -172,6 +173,7 @@ const LoginPage = () => {
                         password: e.target.value,
                       })
                     }
+                    error={!!errors.password || !!errors.general}
                     sx={inputStyles}
                     InputProps={{
                       endAdornment: (
@@ -191,6 +193,12 @@ const LoginPage = () => {
                   />
                   {errors.password && (
                     <span style={inputErrorStyles}>{errors.password}</span>
+                  )}
+
+                  {errors.general && (
+                    <span style={inputErrorStyles}>
+                      {errors.general}
+                    </span>
                   )}
                 </Box>
               </Box>
