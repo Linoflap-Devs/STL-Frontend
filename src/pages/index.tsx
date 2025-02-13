@@ -1,14 +1,22 @@
-// src\pages\index.tsx
+// src\pages\index.tsx.
 
-import React from 'react';
-import LoginPage from '../components/auth/Login';
+import { useEffect } from "react";
+import { useRouter } from "next/router";
 
-const Homepage = () => {
-  return (
-    <div className="min-h-screen">
-      <LoginPage />
-    </div>
-  );
-};
+export default function Home() {
+  const router = useRouter();
 
-export default Homepage;
+  useEffect(() => {
+    const token = localStorage.getItem("token") || sessionStorage.getItem("token");
+
+    if (!token) {
+      console.log("No token found, redirecting to login...");
+      router.replace("/auth/login");
+    } else {
+      console.log("Token found, redirecting to dashboard...");
+      router.replace("/managers");
+    }
+  }, [router]);
+
+  return null;
+}

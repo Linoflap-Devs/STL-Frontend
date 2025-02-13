@@ -15,7 +15,6 @@ import MenuIcon from "@mui/icons-material/Menu";
 import { styled, useTheme } from "@mui/material/styles";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import { UserSectionData } from "../../data/AdminSectionData";
-import router from "next/router";
 import { useRouter } from "next/router";
 
 import HomeIcon from "@mui/icons-material/Home";

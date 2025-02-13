@@ -1,4 +1,5 @@
 // src/pages/_app.tsx
+
 import { AppProps } from 'next/app';
 import Layout from '../layout';
 import { useRouter } from 'next/router';
@@ -9,7 +10,7 @@ import darkTheme from '../styles/theme';
 const App = ({ Component, pageProps }: AppProps) => {
   const router = useRouter();
 
-  const excludedPaths = ['/', '/forgot-password', '/email-verification', '/password-reset', '/set-password'];
+  const excludedPaths = ['/auth/login', '/forgot-password', '/email-verification', '/password-reset', '/set-password'];
   const isExcludedPath = excludedPaths.includes(router.pathname || 'Not available');
 
   if (isExcludedPath) {

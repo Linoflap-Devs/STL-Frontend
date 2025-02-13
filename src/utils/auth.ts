@@ -1,4 +1,4 @@
-// src\utils\auth.ts in the frontend
+// src\utils\auth.ts
 
 export async function getUser() {
     try {
@@ -16,13 +16,12 @@ export async function getUser() {
     }
   }
   
-  // src\utils\auth.ts in the frontend. this is on another page
   export async function logout() {
     await fetch("/logout", {
       method: "POST",
       credentials: "include",
     });
   
-    window.location.href = "/"; // Redirect to login
+    window.location.href = "/auth/login"; // Redirect to login
   }
   
