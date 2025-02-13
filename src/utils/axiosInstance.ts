@@ -2,62 +2,57 @@ import axios from "axios";
 
 const axiosInstance = axios.create({
   baseURL: process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000",
+  withCredentials: true,
 });
 
 // Function to refresh the token when a 401 Unauthorized error occurs
 axiosInstance.interceptors.response.use(
-  (response) => response, // If response is successful, return it as-is
+  (response) => response,
   async (error) => {
-    // Check if the error status is 401 (Unauthorized), meaning the access token has expired
     if (error.response?.status === 401) {
       try {
-        // Send a request to refresh the token using the stored refresh token
         const refreshResponse = await axios.post(
-          `${process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000"}/tokenRefresh`, // Backend endpoint for refreshing token
-          {
-            refreshToken: localStorage.getItem("refreshToken"), // Retrieve refresh token from localStorage
-          }
+          `${process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000"}/tokenRefresh`, // backend endpoint for refreshing token
+          {},
+          { withCredentials: true }
         );
 
-        // Get the new access token from the response
         const newAccessToken = refreshResponse.data.accessToken;
 
         // Store the new access token in localStorage
         localStorage.setItem("accessToken", newAccessToken);
 
-        // Update the failed request's Authorization header with the new access token
         error.config.headers.Authorization = `Bearer ${newAccessToken}`;
 
-        // Retry the original request with the new token
         return axiosInstance(error.config);
       } catch (refreshError) {
         console.error("Session expired, logging out...");
 
-        // If refreshing the token fails, attempt to log out the user
         try {
-          await axiosInstance.delete("/logout"); // Send a request to backend logout endpoint
+          await axiosInstance.delete("/logout");
         } catch (err) {
-          console.error("Error during logout:", err); // Log any errors during logout
+          console.error("Error during logout:", err);
         }
 
-        // Remove access and refresh tokens from localStorage to fully log out the user
-        localStorage.removeItem("accessToken");
-        localStorage.removeItem("refreshToken");
+        // Remove access token and refresh token cookies to fully log out the user
+        document.cookie = "accessToken=; max-age=0; path=/"; 
+        document.cookie = "refreshToken=; max-age=0; path=/"; 
 
-        // Redirect the user to the login page
+        // Redirect to login page
         window.location.href = "/auth/login";
       }
     }
 
-    // Reject the error if it's not a 401 or if token refresh fails
     return Promise.reject(error);
   }
 );
 
-// Add access token to requests
+// Interceptor to add the Authorization header with the access token for each request
 axiosInstance.interceptors.request.use(
   (config) => {
     const accessToken = localStorage.getItem("accessToken");
+
+    // If access token exists, add it to the request header
     if (accessToken) {
       config.headers["Authorization"] = `Bearer ${accessToken}`;
     }

@@ -1,38 +1,34 @@
 // src/hooks/useAuth.ts for handling HOC (Higher-Order Component) or Hook to protect pages.
-// this just reads the user's role from localStorage.
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 
-// Define protected routes and role-based access control
-const protectedRoutes: { [key: string]: number[] } = {
-  "/dashboard": [1, 2],
-  "/manager": [1, 2, 3],
+// Helper function to get cookies by name
+const getCookie = (name: string) => {
+  const value = `; ${document.cookie}`;
+  const parts = value.split(`; ${name}=`);
+  if (parts.length === 2) return parts.pop()?.split(";").shift();
+  return undefined;
 };
 
 export const useAuth = () => {
   const router = useRouter();
-  const [user, setUser] = useState<{ userType: number } | null | undefined>(undefined); // Use `undefined` for loading state
+  const [user, setUser] = useState<{ userType: number } | null | undefined>(undefined);
 
   useEffect(() => {
-    const token = localStorage.getItem("authToken");
-    const storedUser = localStorage.getItem("user");
+    const token = getCookie("authToken");
+    const storedUser = getCookie("user");
 
     if (!token || !storedUser) {
-      router.replace("/auth/login"); // Redirect if not authenticated
+      // Avoid redirecting if already on the login page
+      if (window.location.pathname !== "/auth/login") {
+        router.replace("/auth/login");
+      }
       return;
     }
 
     const parsedUser = JSON.parse(storedUser);
     setUser(parsedUser);
-
-    // Get the required roles for the current route
-    const allowedRoles = protectedRoutes[router.pathname] || [];
-
-    // Check if the user's role is allowed
-    if (allowedRoles.length > 0 && !allowedRoles.includes(parsedUser.userType)) {
-      router.replace("/unauthorized");
-    }
   }, [router]);
 
   return user;

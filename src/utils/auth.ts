@@ -13,19 +13,17 @@ export async function getUser() {
 // Logout user
 export async function logout() {
   try {
-    const accessToken = localStorage.getItem("accessToken");
-
-    if (!accessToken) throw new Error("No access token found");
-
     await axiosInstance.post("/logout", null, {
-      headers: { Authorization: `Bearer ${accessToken}` },
+      withCredentials: true,
     });
 
-    localStorage.removeItem("accessToken");
-    localStorage.removeItem("refreshToken");
+    // Remove cookies by setting them to expire
+    document.cookie = "accessToken=; Max-Age=0; path=/;";
+    document.cookie = "refreshToken=; Max-Age=0; path=/;";
 
     window.location.href = "/auth/login";
   } catch (error) {
     console.error("Logout error:", error);
   }
 }
+

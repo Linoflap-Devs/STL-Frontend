@@ -1,5 +1,3 @@
-// src\utils\api\login.ts
-
 import axios from 'axios';
 import axiosInstance from '../axiosInstance';
 
@@ -9,6 +7,7 @@ interface LoginPayload {
 }
 
 interface LoginResponse {
+  refreshToken: any;
   UserTypeId(UserTypeId: any): unknown;
   data: any;
   token: string;
@@ -22,10 +21,14 @@ export const loginUser = async (payload: LoginPayload): Promise<LoginResponse> =
   try {
     const response = await axiosInstance.post<LoginResponse>('/auth/login', payload);
 
-    localStorage.setItem('authToken', response.data.token);
-    
-    console.log("Stored Token:", localStorage.getItem("authToken"));
+    localStorage.setItem('accessToken', response.data.token);
 
+    document.cookie = `refreshToken=${response.data.refreshToken}; path=/; secure; HttpOnly; SameSite=Strict`;
+
+    console.log("Stored Access Token in Memory:", localStorage.getItem("accessToken"));
+    console.log("Stored Refresh Token in Cookie:", document.cookie);
+
+    // Return the login response data
     return response.data;
   } catch (error: unknown) {
     if (axios.isAxiosError(error) && error.response) {
@@ -38,5 +41,4 @@ export const loginUser = async (payload: LoginPayload): Promise<LoginResponse> =
     }
   }
 };
-
 
