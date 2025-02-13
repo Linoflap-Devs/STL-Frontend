@@ -1,9 +1,10 @@
+// src/pages/_app.tsx
 import { AppProps } from 'next/app';
+import Layout from '../layout';
 import { useRouter } from 'next/router';
 import '../styles/globals.css';
 import { ThemeProvider, CssBaseline } from '@mui/material';
 import darkTheme from '../styles/theme';
-import AdminHeader from '../components/layout/AdminHeader';
 
 const App = ({ Component, pageProps }: AppProps) => {
   const router = useRouter();
@@ -23,14 +24,9 @@ const App = ({ Component, pageProps }: AppProps) => {
   return (
     <ThemeProvider theme={darkTheme}>
       <CssBaseline />
-      <div>
-        <AdminHeader pages={[]} />
-        <main>
-          <Component {...pageProps} />
-        </main>
-        <footer style={{ padding: '2rem' }}>
-        </footer>
-      </div>
+      <Layout>
+        <Component {...pageProps} />
+      </Layout>
     </ThemeProvider>
   );
 };

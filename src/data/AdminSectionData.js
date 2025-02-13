@@ -1,8 +1,8 @@
 export const UserSectionData = {
-    titleHeader: "Welcome, User!",
+    titleHeader: "Wendell Ravago",
     userRole: "Admin",
     image: "/images/stl-logo.png",
-    pages: ['Manager', 'Executive', 'Logout'],
+    pages: ['Dashboard', 'Managers', 'Executive', 'Betting Summary', 'Winning Summary', 'Draw Summary'],
     titleManager: "Small Town Lottery Manager",
     titleExecutive: "Small Town Lottery Executive",
     addManagerButton: "Add Manager",

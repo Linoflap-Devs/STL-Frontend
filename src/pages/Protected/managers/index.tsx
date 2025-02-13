@@ -42,7 +42,7 @@ const UsersPage = () => {
     setSelectedManager(user);
     setUpdateModalOpen(true);
   };
-
+  
   const closeUpdateModal = () => {
     setUpdateModalOpen(false);
     setSelectedManager(null);
@@ -81,7 +81,7 @@ const UsersPage = () => {
         onCreate={handleUserCreate}
         onEdit={handleUserEdit}
         managers={managers}
-        onDelete={handleDeleteManager} 
+        onDelete={handleDeleteManager}
       />
       <CreateManager
         open={isModalOpen}

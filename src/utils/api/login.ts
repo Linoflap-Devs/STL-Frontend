@@ -9,6 +9,7 @@ interface LoginPayload {
 }
 
 interface LoginResponse {
+  UserTypeId(UserTypeId: any): unknown;
   role: string;
   data: any;
   token: string;
