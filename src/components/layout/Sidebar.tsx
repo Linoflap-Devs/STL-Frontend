@@ -16,6 +16,7 @@ import { styled, useTheme } from "@mui/material/styles";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import { UserSectionData } from "../../data/AdminSectionData";
 import { useRouter } from "next/router";
+import { logout } from "../../utils/auth"
 
 import HomeIcon from "@mui/icons-material/Home";
 import BusinessIcon from "@mui/icons-material/Business";
@@ -25,9 +26,6 @@ import CasinoIcon from '@mui/icons-material/Casino';
 import FaxIcon from '@mui/icons-material/Fax';
 import PaymentsIcon from '@mui/icons-material/Payments';
 import LogoutIcon from '@mui/icons-material/Logout';
-import { Logout } from "@mui/icons-material";
-
-import { logout } from "../../utils/auth"
 
 const drawerWidth = 240;
 
@@ -35,7 +33,7 @@ const Sidebar = () => {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("md"));
   const [mobileOpen, setMobileOpen] = useState(false);
-  const [dateTime, setDateTime] = useState(new Date());
+  const [dateTime, setDateTime] = useState<Date | null>(null);
 
   const router = useRouter();
   const currentPath = router.asPath;
@@ -49,7 +47,7 @@ const Sidebar = () => {
     return () => clearInterval(interval);
   }, []);
 
-  if (!dateTime) return null;
+  if (!dateTime) return <p>Loading...</p>;
 
   const formattedDate = dateTime.toLocaleDateString("en-PH", {
     month: "long",
@@ -63,7 +61,6 @@ const Sidebar = () => {
     second: "2-digit",
     hour12: true,
   });
-
   const handleDrawerToggle = () => {
     setMobileOpen(!mobileOpen);
   };

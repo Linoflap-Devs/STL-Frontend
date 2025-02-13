@@ -28,7 +28,7 @@ const LoginPage = () => {
     if (Object.keys(validationErrors).length === 0) {
       loginUser(credentials)
         .then(() => {
-          router.push("/managers");
+          router.push("/dashboard");
         })
         .catch((error) => {
           setErrors({ general: error.message });

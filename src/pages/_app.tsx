@@ -1,23 +1,31 @@
-// src/pages/_app.tsx
-
-import { AppProps } from 'next/app';
-import Layout from '../layout';
-import { useRouter } from 'next/router';
-import '../styles/globals.css';
-import { ThemeProvider, CssBaseline } from '@mui/material';
-import darkTheme from '../styles/theme';
+import { AppProps } from "next/app";
+import { useRouter } from "next/router";
+import { ThemeProvider, CssBaseline } from "@mui/material";
+import Layout from "../layout";
+import darkTheme from "../styles/theme";
+import "../styles/globals.css";
+import { useAuth } from "../hooks/useAuth";
 
 const App = ({ Component, pageProps }: AppProps) => {
   const router = useRouter();
+  const user = useAuth(); // Handles auth & redirects
 
-  const excludedPaths = ['/auth/login', '/forgot-password', '/email-verification', '/password-reset', '/set-password'];
-  const isExcludedPath = excludedPaths.includes(router.pathname || 'Not available');
+  const excludedPaths = [
+    "/",
+    "/auth/login",
+    "/forgot-password",
+    "/email-verification",
+    "/password-reset",
+    "/set-password",
+    "/unauthorized",
+  ];
+  const isExcludedPath = excludedPaths.includes(router.pathname);
 
-  if (isExcludedPath) {
+  // Only show loading on protected pages
+  if (!isExcludedPath && user === undefined) {
     return (
       <ThemeProvider theme={darkTheme}>
         <CssBaseline />
-        <Component {...pageProps} />
       </ThemeProvider>
     );
   }
@@ -25,9 +33,13 @@ const App = ({ Component, pageProps }: AppProps) => {
   return (
     <ThemeProvider theme={darkTheme}>
       <CssBaseline />
-      <Layout>
+      {isExcludedPath ? (
         <Component {...pageProps} />
-      </Layout>
+      ) : (
+        <Layout>
+          <Component {...pageProps} />
+        </Layout>
+      )}
     </ThemeProvider>
   );
 };

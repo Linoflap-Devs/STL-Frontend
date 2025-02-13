@@ -16,7 +16,6 @@ interface LoginResponse {
   user: {
     id: number;
     username: string;
-    email: string;
   };
 }
 
@@ -25,6 +24,8 @@ export const loginUser = async (payload: LoginPayload): Promise<LoginResponse> =
     const response = await axiosInstance.post<LoginResponse>('/auth/login', payload);
 
     localStorage.setItem('authToken', response.data.token);
+    
+    console.log("Stored Token:", localStorage.getItem("authToken"));
 
     return response.data;
   } catch (error: unknown) {

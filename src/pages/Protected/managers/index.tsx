@@ -1,9 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import axiosInstance from '~/utils/axiosInstance';
 import ManagerTable, { User } from '~/components/manager/ManagerTable';
 import CreateManager from '~/components/manager/CreateManager';
 import UpdateManager from '~/components/manager/UpdateManager';
-import { useRouter } from 'next/router';
 
 const UsersPage = () => {
   const [managers, setManagers] = useState<User[]>([]);
@@ -11,26 +9,6 @@ const UsersPage = () => {
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
   const [isUpdateModalOpen, setUpdateModalOpen] = useState(false);
   const [selectedManager, setSelectedManager] = useState<User | null>(null);
-  const router = useRouter();
-
-  useEffect(() => {
-    const token = localStorage.getItem('authToken');
-  
-    if (!token) {
-      router.push('/');
-      return;
-    }
-
-    axiosInstance.get('/users/getUsers')
-      .then(response => setManagers(response.data))
-      .catch(error => {
-        console.error('Authentication error:', error);
-        if (error.response?.status === 401) {
-          localStorage.removeItem('authToken');
-          router.push('/');
-        }
-      });
-  }, []);
 
   const handleUserCreate = () => {
     setSelectedUser(null);

@@ -27,6 +27,10 @@ const nextConfig = {
         source: '/managers',
         destination: '/Protected/managers',
       },
+      {
+        source: '/dashboard',
+        destination: '/Protected/dashboard',
+      },
     ];
   },
 };
