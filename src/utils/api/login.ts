@@ -15,17 +15,15 @@ interface LoginResponse {
   };
 }
 
-export const loginUser = async (payload: LoginPayload, router: any): Promise<LoginResponse> => {  // Changed unknown to 'any' for router
+export const loginUser = async (payload: LoginPayload, router: any): Promise<LoginResponse> => {
   try {
-    console.log("Executing loginUser function...");
-
+    //console.log("Executing loginUser function...");
     const response = await axiosInstance.post('/auth/login', payload);
 
     console.log("Full API Response:", response);
     console.log("Extracted Data Object:", response.data.data);
 
     const apiData = response.data.data;
-
     console.log("Token from Response:", apiData?.token);
     console.log("Refresh Token from Response:", apiData?.refresh);
 
@@ -39,7 +37,6 @@ export const loginUser = async (payload: LoginPayload, router: any): Promise<Log
 
     document.cookie = `refreshToken=${apiData.refresh}; Path=/; Secure; SameSite=Strict; Max-Age=86400`;
     console.log("Stored Refresh Token in Cookie:", document.cookie);
-
     router.push("/dashboard");
 
     return {

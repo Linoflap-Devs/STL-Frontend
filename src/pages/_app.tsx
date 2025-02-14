@@ -9,11 +9,10 @@ import { useEffect, useState } from "react";
 
 const App = ({ Component, pageProps }: AppProps) => {
   const router = useRouter();
-  const { token, user } = useAuth(); // Handles authentication
-  const [loading, setLoading] = useState(true); // Manage loading state
-  const [isAuthChecked, setIsAuthChecked] = useState(false); // Track if auth check is done
+  const { token, user } = useAuth();
+  const [loading, setLoading] = useState(true);
+  const [isAuthChecked, setIsAuthChecked] = useState(false);
   
-  // Define public (unauthenticated) pages
   const excludedPaths = [
     "/",
     "/auth/login",
