@@ -5,11 +5,15 @@ import Layout from "../layout";
 import darkTheme from "../styles/theme";
 import "../styles/globals.css";
 import { useAuth } from "../hooks/useAuth";
+import { useEffect, useState } from "react";
 
 const App = ({ Component, pageProps }: AppProps) => {
   const router = useRouter();
-  const user = useAuth(); // Handles auth & redirects
-
+  const { token, user } = useAuth(); // Handles authentication
+  const [loading, setLoading] = useState(true); // Manage loading state
+  const [isAuthChecked, setIsAuthChecked] = useState(false); // Track if auth check is done
+  
+  // Define public (unauthenticated) pages
   const excludedPaths = [
     "/",
     "/auth/login",
@@ -19,13 +23,26 @@ const App = ({ Component, pageProps }: AppProps) => {
     "/set-password",
     "/unauthorized",
   ];
+
   const isExcludedPath = excludedPaths.includes(router.pathname);
 
-  // Only show loading on protected pages
-  if (!isExcludedPath && user === undefined) {
+  useEffect(() => {
+    if (token === null) {
+      setLoading(true);
+    } else if (!isExcludedPath && !token) {
+      console.warn("No token found, redirecting to login...");
+      router.push("/auth/login");
+    } else {
+      setLoading(false);
+      setIsAuthChecked(true);
+    }
+  }, [token, isExcludedPath]);
+
+  if (!isExcludedPath && loading && !isAuthChecked) {
     return (
       <ThemeProvider theme={darkTheme}>
         <CssBaseline />
+        <div>Loading...</div>
       </ThemeProvider>
     );
   }

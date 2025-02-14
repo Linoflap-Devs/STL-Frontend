@@ -7,29 +7,46 @@ interface LoginPayload {
 }
 
 interface LoginResponse {
-  refreshToken: any;
-  UserTypeId(UserTypeId: any): unknown;
-  data: any;
   token: string;
+  refreshToken: string;
   user: {
     id: number;
     username: string;
   };
 }
 
-export const loginUser = async (payload: LoginPayload): Promise<LoginResponse> => {
+export const loginUser = async (payload: LoginPayload, router: any): Promise<LoginResponse> => {  // Changed unknown to 'any' for router
   try {
-    const response = await axiosInstance.post<LoginResponse>('/auth/login', payload);
+    console.log("Executing loginUser function...");
 
-    localStorage.setItem('accessToken', response.data.token);
+    const response = await axiosInstance.post('/auth/login', payload);
 
-    document.cookie = `refreshToken=${response.data.refreshToken}; path=/; secure; HttpOnly; SameSite=Strict`;
+    console.log("Full API Response:", response);
+    console.log("Extracted Data Object:", response.data.data);
 
-    console.log("Stored Access Token in Memory:", localStorage.getItem("accessToken"));
+    const apiData = response.data.data;
+
+    console.log("Token from Response:", apiData?.token);
+    console.log("Refresh Token from Response:", apiData?.refresh);
+
+    if (!apiData?.token) {
+      throw new Error("Access token is missing from response!");
+    }
+
+    localStorage.setItem('accessToken', apiData.token);
+    localStorage.setItem('refreshToken', apiData.refresh);
+    console.log("Stored Token in localStorage:", localStorage.getItem("accessToken"));
+
+    document.cookie = `refreshToken=${apiData.refresh}; Path=/; Secure; SameSite=Strict; Max-Age=86400`;
     console.log("Stored Refresh Token in Cookie:", document.cookie);
 
-    // Return the login response data
-    return response.data;
+    router.push("/dashboard");
+
+    return {
+      token: apiData.token,
+      refreshToken: apiData.refresh,
+      user: response.data.user ?? { id: 0, username: "Unknown" }
+    };
   } catch (error: unknown) {
     if (axios.isAxiosError(error) && error.response) {
       const errorMessage = error.response?.data?.message || 'Login failed. Please check your credentials.';
@@ -41,4 +58,3 @@ export const loginUser = async (payload: LoginPayload): Promise<LoginResponse> =
     }
   }
 };
-

@@ -194,28 +194,31 @@ const Sidebar = () => {
         })}
 
        {/* this is on Sidebar.tsx */}
-        <Box
-          component="a"
-          href="/logout"
-          onClick={handleLogout}
-          sx={{
-            display: "flex",
-            textTransform: "capitalize",
-            paddingX: 2,
-            paddingY: 0.7,
-            borderRadius: "6px",
-            width: "auto",
-            fontSize: 13,
-            fontWeight: 300,
-            textDecoration: "none",
-            marginTop: "auto",
-            position: "absolute",
-            bottom: 35,
-          }}
-        >
-          <LogoutIcon />
-          <Typography sx={{ ml: 1, fontSize: 14 }}>Logout</Typography>
-        </Box>
+      <Box
+        component="a"
+        href="/logout"
+        onClick={(e) => {
+          e.preventDefault(); // Prevent the default anchor behavior (refresh/reload)
+          handleLogout(); // Trigger the logout process
+        }}
+        sx={{
+          display: "flex",
+          textTransform: "capitalize",
+          paddingX: 2,
+          paddingY: 0.7,
+          borderRadius: "6px",
+          width: "auto",
+          fontSize: 13,
+          fontWeight: 300,
+          textDecoration: "none",
+          marginTop: "auto",
+          position: "absolute",
+          bottom: 35,
+        }}
+      >
+        <LogoutIcon />
+        <Typography sx={{ ml: 1, fontSize: 14 }}>Logout</Typography>
+      </Box>
 
       </Box>
     </>
