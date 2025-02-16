@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/router";
-import axiosInstance, { refreshToken } from "../utils/axiosInstance";
+import axiosInstance from "../utils/axiosInstance";
 
 export function useAuth() {
   const [token, setToken] = useState<string | null>(null);
@@ -11,36 +11,17 @@ export function useAuth() {
     console.log("Checking authentication status...");
 
     const storedToken = localStorage.getItem("accessToken");
-    const tokenExpiration = localStorage.getItem("tokenExpiration");
     const storedUser = localStorage.getItem("user");
     const parsedUser = storedUser ? JSON.parse(storedUser) : null;
 
-    const now = Date.now();
-
-    if (storedToken && tokenExpiration) {
-      const expiresAt = parseInt(tokenExpiration, 10);
-
-      if (now < expiresAt) {
-        setToken(storedToken);
-        setUser(parsedUser);
-      } else {
-        console.warn("Token expired, attempting refresh...");
-        handleTokenRefresh();
-      }
+    if (storedToken) {
+      setToken(storedToken);
+      setUser(parsedUser);
     } else {
       console.warn("No valid token found, clearing session...");
       clearSession();
     }
   }, []);
-
-  async function handleTokenRefresh() {
-    const newAccessToken = await refreshToken();
-    if (newAccessToken) {
-      setToken(newAccessToken);
-    } else {
-      clearSession();
-    }
-  }
 
   function clearSession() {
     localStorage.removeItem("accessToken");
@@ -48,7 +29,7 @@ export function useAuth() {
     localStorage.removeItem("user");
     setToken(null);
     setUser(null);
-    router.replace("/auth/login");
+    //router.replace("/auth/login"); // commented this because of duplicate redirection on _app.
   }
 
   return { token, user };

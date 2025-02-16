@@ -6,6 +6,8 @@ import darkTheme from "../styles/theme";
 import "../styles/globals.css";
 import { useAuth } from "../hooks/useAuth";
 import { useEffect, useState } from "react";
+import axiosInstance, { AxiosError } from "axios";
+import { useTokenRefresher } from "../hooks/useTokenRefresher";
 
 const App = ({ Component, pageProps }: AppProps) => {
   const router = useRouter();
@@ -14,7 +16,6 @@ const App = ({ Component, pageProps }: AppProps) => {
   const [isAuthChecked, setIsAuthChecked] = useState(false);
 
   const publicPaths = ["/auth/login", "/"];
-
   const noLayout = [
     "/auth/forgot-password",
     "/auth/email-verification",
@@ -26,20 +27,36 @@ const App = ({ Component, pageProps }: AppProps) => {
   const isPublicPath = publicPaths.includes(router.pathname);
   const isNoLayoutPath = noLayout.includes(router.pathname);
 
+  useTokenRefresher();
+
   useEffect(() => {
-    if (!token && !isPublicPath) {
-      console.warn("No token found, redirecting to login...");
-      router.replace("/auth/login");
-    } else if (token) {
-      console.warn("User is authenticated, redirecting to dashboard...");
-      router.replace("/");
-    } else {
+    const checkAuth = async () => {
+      if (!token && !isPublicPath) {
+        console.warn("No token found, redirecting...");
+        router.replace("/auth/login");
+        return;
+      }
+  
+      if (token) {
+        try {
+          await axiosInstance.get("/dashboard");
+          console.warn("User is authenticated, staying on page...");
+        } catch (error) {
+          const axiosError = error as AxiosError;
+          if (axiosError.response?.status === 401) {
+            console.warn("Token expired, waiting for refresh...");
+            return;
+          }
+        }
+      }
+
       setLoading(false);
       setIsAuthChecked(true);
-    }
+    };
+  
+    checkAuth();
   }, [token, isPublicPath]);
 
-  // Show null until authentication is checked
   if (loading && !isAuthChecked) {
     return (
       <ThemeProvider theme={darkTheme}>
@@ -47,14 +64,6 @@ const App = ({ Component, pageProps }: AppProps) => {
         {null}
       </ThemeProvider>
     );
-  }
-
-  if (token) {
-    return null;
-  }
-
-  if (!token && !isPublicPath) {
-    return null;
   }
 
   return (
