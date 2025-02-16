@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/router";
-import { isTokenExpired } from "../utils/tokenUtils";
+import axiosInstance, { refreshToken } from "../utils/axiosInstance";
 
 export function useAuth() {
   const [token, setToken] = useState<string | null>(null);
@@ -11,24 +11,45 @@ export function useAuth() {
     console.log("Checking authentication status...");
 
     const storedToken = localStorage.getItem("accessToken");
-    console.log("Token retrieved:", storedToken);
-
+    const tokenExpiration = localStorage.getItem("tokenExpiration");
     const storedUser = localStorage.getItem("user");
     const parsedUser = storedUser ? JSON.parse(storedUser) : null;
 
-    if (storedToken && !isTokenExpired(storedToken)) {
-      setToken(storedToken);
-      setUser(parsedUser);
-    } else {
+    const now = Date.now();
 
-      console.warn("No valid token found or token expired, redirecting to login...");
-      localStorage.removeItem("accessToken");
-      localStorage.removeItem("user");
-      setToken(null);
-      setUser(null);
-      router.push("/auth/login");
+    if (storedToken && tokenExpiration) {
+      const expiresAt = parseInt(tokenExpiration, 10);
+
+      if (now < expiresAt) {
+        setToken(storedToken);
+        setUser(parsedUser);
+      } else {
+        console.warn("Token expired, attempting refresh...");
+        handleTokenRefresh();
+      }
+    } else {
+      console.warn("No valid token found, clearing session...");
+      clearSession();
     }
-  }, [router]);
+  }, []);
+
+  async function handleTokenRefresh() {
+    const newAccessToken = await refreshToken();
+    if (newAccessToken) {
+      setToken(newAccessToken);
+    } else {
+      clearSession();
+    }
+  }
+
+  function clearSession() {
+    localStorage.removeItem("accessToken");
+    localStorage.removeItem("tokenExpiration");
+    localStorage.removeItem("user");
+    setToken(null);
+    setUser(null);
+    router.replace("/auth/login");
+  }
 
   return { token, user };
 }

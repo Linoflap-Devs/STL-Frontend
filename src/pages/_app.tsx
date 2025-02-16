@@ -9,47 +9,60 @@ import { useEffect, useState } from "react";
 
 const App = ({ Component, pageProps }: AppProps) => {
   const router = useRouter();
-  const { token, user } = useAuth();
+  const { token } = useAuth();
   const [loading, setLoading] = useState(true);
   const [isAuthChecked, setIsAuthChecked] = useState(false);
-  
-  const excludedPaths = [
-    "/",
-    "/auth/login",
-    "/forgot-password",
-    "/email-verification",
-    "/password-reset",
-    "/set-password",
-    "/unauthorized",
+
+  const publicPaths = ["/auth/login", "/"];
+
+  const noLayout = [
+    "/auth/forgot-password",
+    "/auth/email-verification",
+    "/auth/password-reset",
+    "/auth/set-password",
+    "/auth/unauthorized",
   ];
 
-  const isExcludedPath = excludedPaths.includes(router.pathname);
+  const isPublicPath = publicPaths.includes(router.pathname);
+  const isNoLayoutPath = noLayout.includes(router.pathname);
 
   useEffect(() => {
-    if (token === null) {
-      setLoading(true);
-    } else if (!isExcludedPath && !token) {
+    if (!token && !isPublicPath) {
       console.warn("No token found, redirecting to login...");
-      router.push("/auth/login");
+      router.replace("/auth/login");
+    } else if (token) {
+      console.warn("User is authenticated, redirecting to dashboard...");
+      router.replace("/");
     } else {
       setLoading(false);
       setIsAuthChecked(true);
     }
-  }, [token, isExcludedPath]);
+  }, [token, isPublicPath]);
 
-  if (!isExcludedPath && loading && !isAuthChecked) {
+  // Show null until authentication is checked
+  if (loading && !isAuthChecked) {
     return (
       <ThemeProvider theme={darkTheme}>
         <CssBaseline />
-        <div>Loading...</div>
+        {null}
       </ThemeProvider>
     );
+  }
+
+  if (token) {
+    return null;
+  }
+
+  if (!token && !isPublicPath) {
+    return null;
   }
 
   return (
     <ThemeProvider theme={darkTheme}>
       <CssBaseline />
-      {isExcludedPath ? (
+      {isNoLayoutPath ? (
+        <Component {...pageProps} />
+      ) : isPublicPath ? (
         <Component {...pageProps} />
       ) : (
         <Layout>

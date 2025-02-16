@@ -4,14 +4,13 @@ import { Box, Typography, Button, IconButton, Tooltip } from "@mui/material";
 import { LoginSectionData } from "../../data/LoginSectionData";
 import { useRouter } from "next/router";
 import ArrowBackIosNewIcon from "@mui/icons-material/ArrowBackIosNew";
-import LoginBackgroundSection from "../layout/LoginBackgroundSection";
 
 const PasswordReset = () => {
   const router = useRouter();
 
   // temporary navigation
   const handleNavigation = () => {
-    router.push("/");
+    router.push("/auth/login");
   };
 
   return (
@@ -19,55 +18,66 @@ const PasswordReset = () => {
       <Box
         sx={{
           display: "flex",
-          flexDirection: { xs: "column", sm: "row", md: "row", lg: "row" },
           margin: 0,
           height: "100vh",
+          backgroundImage: `url(${LoginSectionData.image2})`,
+          backgroundSize: "cover",
+          backgroundRepeat: "no-repeat",
+          backgroundPosition: "center",
         }}
       >
-        {/* Left Column (Text Section) */}
-        <LoginBackgroundSection
-          imageSrc={LoginSectionData.image2}
-          logoSrc={LoginSectionData.image}
-        />
-
-        {/* Right Column (Login Card Section) */}
         <Box
           sx={{
-            flex: 1,
+            position: "absolute",
+            width: "100%",
+            height: "100%",
+            backgroundColor: "#242424D9",
+            zIndex: 1,
+          }}
+        />
+        {/* start content */}
+        <Box
+          sx={{
+            position: "relative",
+            zIndex: 2,
             display: "flex",
+            width: "100%",
             justifyContent: "center",
             alignItems: "center",
-            position: "relative",
           }}
         >
-          <Tooltip title={"Back to Login"}>
-            <IconButton
-              aria-label="close"
-              href="/"
-              sx={{
-                position: "absolute",
-                left: 30,
-                top: 30,
-                color: "#D1D5D8"[300],
-                backgroundColor: "#374151",
-                fontWeight: "bold",
-              }}
-            >
-              <ArrowBackIosNewIcon sx={{ fontSize: 25, fontWeight: "bold" }} />
-            </IconButton>
-          </Tooltip>
-
           <Box
             sx={{
               width: { xs: "100%", sm: "100%", md: "100%" },
-              maxWidth: 500,
-              padding: 3,
+              maxWidth: 470,
+              p: "9rem 0.3rem",
               display: "flex",
               flexDirection: "column",
-              justifyContent: "center",
               alignItems: "center",
+              backgroundColor: "#242424",
+              borderRadius: "8px",
+              position: "relative",
             }}
           >
+            <Tooltip title={"Back to Login"}>
+              <IconButton
+                aria-label="close"
+                href="/"
+                sx={{
+                  position: "absolute",
+                  left: 30,
+                  top: 40,
+                  color: "#D1D5D8"[300],
+                  backgroundColor: "#374151",
+                  fontWeight: "bold",
+                }}
+              >
+                <ArrowBackIosNewIcon
+                  sx={{ fontSize: 23, fontWeight: "bold" }}
+                />
+              </IconButton>
+            </Tooltip>
+
             <Box
               sx={{
                 display: "flex",
@@ -77,49 +87,85 @@ const PasswordReset = () => {
                 marginBottom: "1rem",
               }}
             >
+              <Box
+                component="img"
+                src={LoginSectionData.image}
+                alt="altLogo"
+                sx={{
+                  maxWidth: {
+                    xs: "10%",
+                    sm: "35%",
+                    md: "32%",
+                    lg: "32%",
+                    xl: "32%",
+                  },
+                  margin: "0 auto",
+                  display: "block",
+                  marginBottom: "0.6rem",
+                  marginTop: "-2rem",
+                }}
+                loading="lazy"
+              />
+
               <Typography variant="h4" sx={{ fontWeight: "bold" }}>
                 {LoginSectionData.PasswordResetTitle}
               </Typography>
               <Typography
-                sx={{ marginTop: 1, color: "#9CA3AF", fontSize: "12.5px" }}
+                sx={{ marginTop: 0.4, color: "#9CA3AF", fontSize: "12.5px" }}
               >
                 {LoginSectionData.PasswordResetDescription}
               </Typography>
             </Box>
 
-            <Box style={{ width: "75%" }}>
-              <Button
-                type="button"
-                onClick={handleNavigation}
-                variant="contained"
-                fullWidth
-                sx={{
-                  marginTop: 1,
-                  py: 1.5,
-                  padding: "8px 20px",
-                  borderRadius: "8px",
-                  textTransform: "none",
-                  backgroundColor: "#2563EB !important",
-                  color: "#F1F5F9 !important",
-                  fontWeight: "bold",
-                  cursor: "pointer",
-                }}
-              >
-                {LoginSectionData.ConfirmButton}
-              </Button>
-            </Box>
             <Box
               sx={{
-                position: "absolute",
-                bottom: 35,
-                textAlign: "center",
-                color: "#FFFFFF",
+                display: "flex",
+                flexDirection: "column",
+                alignItems: "stretch",
+                width: "100%",
               }}
             >
-              <Typography sx={{ fontSize: "13px" }}>
-                {LoginSectionData.copyright}
-              </Typography>
+              <Box
+                sx={{
+                  display: "flex",
+                  justifyContent: "flex-end",
+                  mt: 1.7,
+                }}
+              ></Box>
             </Box>
+
+            <Button
+              type="button"
+              onClick={handleNavigation}
+              variant="contained"
+              fullWidth
+              sx={{
+                marginTop: 0,
+                py: 1.5,
+                width: "90%",
+                padding: "8px 20px",
+                borderRadius: "8px",
+                textTransform: "none",
+                backgroundColor: "#2563EB !important",
+                color: "#F1F5F9 !important",
+                fontWeight: "bold",
+                cursor: "pointer",
+              }}
+            >
+              {LoginSectionData.ConfirmButton}
+            </Button>
+          </Box>
+          <Box
+            sx={{
+              position: "absolute",
+              bottom: 60,
+              textAlign: "center",
+              color: "#FFFFFF",
+            }}
+          >
+            <Typography sx={{ fontSize: "13px" }}>
+              {LoginSectionData.copyright}
+            </Typography>
           </Box>
         </Box>
       </Box>

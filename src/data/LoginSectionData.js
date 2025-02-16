@@ -1,18 +1,17 @@
 export const LoginSectionData = {
 
   image: "/images/stl-logo.png",
-  image2: "/images/STL_Assets_1.png",
+  image2: "/images/stl_bg.png",
   title: "Small Town Lottery",
   description: "Big wins. Stronger communities.",
   cardTitle: "Welcome!",
   cardDescription: (
     <>
-      Let’s make your experience smarter, smoother, <br />
-      and more personalized.
+      Welcome back! Please enter your details.
     </>
   ),
   rememberMe: "Remember Me?",
-  UsernameTitle: "Username",
+  EmailAddressTitle: "Email Address",
   PasswordTitle: "Password",
   forgotPassword: "Forgot Password?",
   forgotPasswordTitle: "Forgot Password",
@@ -47,13 +46,16 @@ export const LoginSectionData = {
   PasswordResetTitle: "Password Reset",
   PasswordResetDescription: (
     <>
-      Your password has been successfully reset. Click <br />
-      confirm to set new password.
+      Your password has been successfully reset. Click confirm to set new <br />
+       password.
     </>
   ),
   ConfirmButton: "Confirm",
   SetNewPasswordTitle: "Set a new password",
-  PasswordResetDescription: "Please enter your username to reset the password",
+  SetNewPasswordDescription: "Please enter new password.",
   ConfirmPassword: "Confirm Password",
   UpdatePassword: "Update Password",
 };
+
+
+

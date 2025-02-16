@@ -10,9 +10,8 @@ import {
 
 import { LoginSectionData } from "../../data/LoginSectionData";
 import { useRouter } from "next/router";
-import { loginValidate } from "../../utils/validation";
+//import { loginValidate } from "../../utils/validation";
 import ArrowBackIosNewIcon from "@mui/icons-material/ArrowBackIosNew";
-import LoginBackgroundSection from "../layout/LoginBackgroundSection";
 import { inputStyles, inputErrorStyles } from "../../styles/theme";
 
 const ForgotPassword = () => {
@@ -27,7 +26,7 @@ const ForgotPassword = () => {
   // Validation
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
-    const validationErrors = loginValidate(credentials);
+    const validationErrors = credentials;
     if (Object.keys(validationErrors).length === 0) {
       console.log("Login Successful.", credentials);
     } else {
@@ -37,7 +36,7 @@ const ForgotPassword = () => {
 
   // temporary validation
   const handleNavigation = () => {
-    const validationErrors = loginValidate(credentials);
+    const validationErrors = credentials;
     if (Object.keys(validationErrors).length === 0) {
       router.push("/email-verification");
     } else {
@@ -54,55 +53,66 @@ const ForgotPassword = () => {
       <Box
         sx={{
           display: "flex",
-          flexDirection: { xs: "column", sm: "row", md: "row", lg: "row" },
           margin: 0,
           height: "100vh",
+          backgroundImage: `url(${LoginSectionData.image2})`,
+          backgroundSize: "cover",
+          backgroundRepeat: "no-repeat",
+          backgroundPosition: "center",
         }}
       >
-        {/* Left Column (Text Section) */}
-        <LoginBackgroundSection
-          imageSrc={LoginSectionData.image2}
-          logoSrc={LoginSectionData.image}
-        />
-
-        {/* Right Column (Login Card Section) */}
         <Box
           sx={{
-            flex: 1,
+            position: "absolute",
+            width: "100%",
+            height: "100%",
+            backgroundColor: "#242424D9",
+            zIndex: 1,
+          }}
+        />
+        {/* start content */}
+        <Box
+          sx={{
+            position: "relative",
+            zIndex: 2,
             display: "flex",
+            width: "100%",
             justifyContent: "center",
             alignItems: "center",
-            position: "relative",
           }}
         >
-          <Tooltip title={"Back to Login"}>
-            <IconButton
-              aria-label="close"
-              href="/"
-              sx={{
-                position: "absolute",
-                left: 30,
-                top: 30,
-                color: "#D1D5D8"[300],
-                backgroundColor: "#374151",
-                fontWeight: "bold",
-              }}
-            >
-              <ArrowBackIosNewIcon sx={{ fontSize: 25, fontWeight: "bold" }} />
-            </IconButton>
-          </Tooltip>
-
           <Box
             sx={{
               width: { xs: "100%", sm: "100%", md: "100%" },
               maxWidth: 500,
-              padding: 3,
+              p: "8rem 1rem",
               display: "flex",
               flexDirection: "column",
-              justifyContent: "center",
               alignItems: "center",
+              backgroundColor: "#242424",
+              borderRadius: "8px",
+              position: "relative",
             }}
           >
+            <Tooltip title={"Back to Login"}>
+              <IconButton
+                aria-label="close"
+                href="/"
+                sx={{
+                  position: "absolute",
+                  left: 30,
+                  top: 40,
+                  color: "#D1D5D8"[300],
+                  backgroundColor: "#374151",
+                  fontWeight: "bold",
+                }}
+              >
+                <ArrowBackIosNewIcon
+                  sx={{ fontSize: 23, fontWeight: "bold" }}
+                />
+              </IconButton>
+            </Tooltip>
+
             <Box
               sx={{
                 display: "flex",
@@ -112,11 +122,31 @@ const ForgotPassword = () => {
                 marginBottom: "1rem",
               }}
             >
+              <Box
+                component="img"
+                src={LoginSectionData.image}
+                alt="altLogo"
+                sx={{
+                  maxWidth: {
+                    xs: "10%",
+                    sm: "35%",
+                    md: "32%",
+                    lg: "32%",
+                    xl: "32%",
+                  },
+                  margin: "0 auto",
+                  display: "block",
+                  marginBottom: "0.6rem",
+                  marginTop: '-4rem',
+                }}
+                loading="lazy"
+              />
+
               <Typography variant="h4" sx={{ fontWeight: "bold" }}>
                 {LoginSectionData.forgotPasswordTitle}
               </Typography>
               <Typography
-                sx={{ marginTop: 1, color: "#9CA3AF", fontSize: "12.5px" }}
+                sx={{ marginTop: 0.4, color: "#9CA3AF", fontSize: "12.5px" }}
               >
                 {LoginSectionData.forgotPasswordDescription}
               </Typography>
@@ -140,13 +170,13 @@ const ForgotPassword = () => {
                     }}
                     color={errors.username ? "error" : "text.primary"}
                   >
-                    Username
+                    {LoginSectionData.EmailAddressTitle}
                   </Typography>
 
                   <TextField
                     fullWidth
                     variant="outlined"
-                    placeholder="Enter Username"
+                    placeholder="Enter Email Address"
                     value={credentials.username}
                     onChange={(e) =>
                       setCredentials({
@@ -197,18 +227,18 @@ const ForgotPassword = () => {
                 {LoginSectionData.resetPasswordButton}
               </Button>
             </form>
-            <Box
-              sx={{
-                position: "absolute",
-                bottom: 35,
-                textAlign: "center",
-                color: "#FFFFFF",
-              }}
-            >
-              <Typography sx={{ fontSize: "13px" }}>
-                {LoginSectionData.copyright}
-              </Typography>
-            </Box>
+          </Box>
+          <Box
+            sx={{
+              position: "absolute",
+              bottom: 60,
+              textAlign: "center",
+              color: "#FFFFFF",
+            }}
+          >
+            <Typography sx={{ fontSize: "13px" }}>
+              {LoginSectionData.copyright}
+            </Typography>
           </Box>
         </Box>
       </Box>

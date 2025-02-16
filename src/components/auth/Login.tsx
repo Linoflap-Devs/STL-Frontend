@@ -7,8 +7,7 @@ import { Visibility, VisibilityOff } from "@mui/icons-material";
 import { LoginSectionData } from "../../data/LoginSectionData";
 import { useRouter } from "next/router";
 import { verifyCredentials } from "../../utils/loginValidate";
-import LoginBackgroundSection from "../layout/LoginBackgroundSection";
-import { loginUser } from '../../utils/api/login'; // db
+import { loginUser } from "../../utils/api/login"; // db
 
 const LoginPage = () => {
   const router = useRouter();
@@ -17,15 +16,20 @@ const LoginPage = () => {
     password: "",
   });
   const [showPassword, setShowPassword] = useState(false);
-  const [errors, setErrors] = useState<{ username?: string; password?: string; general?: string }>({});
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [errors, setErrors] = useState<{
+    username?: string;
+    password?: string;
+    general?: string;
+  }>({});
+
+  //const [isAuthenticated, setIsAuthenticated] = useState(false);
 
   useEffect(() => {
     console.log("Checking authentication status...");
 
-    // Fetch the token
+    // Fetching the token
     const token = localStorage.getItem("accessToken");
-    console.log("🔍 Checking localStorage:", localStorage.getItem("accessToken"));
+    console.log("Checking localStorage:", localStorage.getItem("accessToken"));
 
     if (!token) {
       console.log("No valid auth found! Redirecting to login...");
@@ -46,11 +50,17 @@ const LoginPage = () => {
       console.log("Token inside useAuth.ts:", token);
 
       setTimeout(() => {
-        console.log("🔹 Verifying stored token:", localStorage.getItem("accessToken"));
+        console.log(
+          "Verifying stored token:",
+          localStorage.getItem("accessToken")
+        );
         router.replace("/dashboard");
       }, 100);
     } catch (error) {
-      setErrors((prev) => ({ ...prev, general: "Login failed. Please try again." }));
+      setErrors((prev) => ({
+        ...prev,
+        general: "Login failed. Please try again.",
+      }));
     }
   };
 
@@ -61,36 +71,48 @@ const LoginPage = () => {
       <Box
         sx={{
           display: "flex",
-          flexDirection: { xs: "column", sm: "row", md: "row", lg: "row" },
           margin: 0,
           height: "100vh",
+          backgroundImage: `url(${LoginSectionData.image2})`,
+          backgroundSize: "cover",
+          backgroundRepeat: "no-repeat",
+          backgroundPosition: "center",
         }}
       >
-        {/* Left Column (Text Section) */}
-        <LoginBackgroundSection
-          imageSrc={LoginSectionData.image2}
-          logoSrc={LoginSectionData.image}
-        />
-
-        {/* Right Column (Login Card Section) */}
+        {/* overlay  */}
         <Box
           sx={{
-            flex: 1,
+            position: "absolute",
+            top: 0,
+            left: 0,
+            width: "100%",
+            height: "100%",
+            backgroundColor: "#242424D9",
+            zIndex: 1,
+          }}
+        />
+        {/* start content */}
+        <Box
+          sx={{
+            position: "relative",
+            zIndex: 2,
             display: "flex",
+            width: "100%",
             justifyContent: "center",
             alignItems: "center",
-            position: "relative",
           }}
         >
           <Box
             sx={{
               width: { xs: "100%", sm: "100%", md: "100%" },
               maxWidth: 500,
-              padding: 3,
+              p: "2.5rem 1.2rem",
               display: "flex",
               flexDirection: "column",
               justifyContent: "center",
               alignItems: "center",
+              backgroundColor: "#242424",
+              borderRadius: "8px",
             }}
           >
             <Box
@@ -102,11 +124,32 @@ const LoginPage = () => {
                 marginBottom: "1rem",
               }}
             >
-              <Typography variant="h4" sx={{ fontWeight: "bold" }}>
+              <Box
+                component="img"
+                src={LoginSectionData.image}
+                alt="altLogo"
+                sx={{
+                  maxWidth: {
+                    xs: "10%",
+                    sm: "35%",
+                    md: "32%",
+                    lg: "32%",
+                    xl: "32%",
+                  },
+                  margin: "0 auto",
+                  display: "block",
+                  marginBottom: "0.7rem",
+                }}
+                loading="lazy"
+              />
+              <Typography
+                variant="h4"
+                sx={{ fontWeight: "bold", marginTop: "-0.5rem" }}
+              >
                 {LoginSectionData.cardTitle}
               </Typography>
               <Typography
-                sx={{ marginTop: 1, color: "#9CA3AF", fontSize: "12.5px" }}
+                sx={{ marginTop: 0.3, color: "#9CA3AF", fontSize: "12.5px" }}
               >
                 {LoginSectionData.cardDescription}
               </Typography>
@@ -128,15 +171,19 @@ const LoginPage = () => {
                       textAlign: "left",
                       marginBottom: "0.5rem",
                     }}
-                    color={errors.username || errors.general ? "error" : "text.primary"}
+                    color={
+                      errors.username || errors.general
+                        ? "error"
+                        : "text.primary"
+                    }
                   >
-                    {LoginSectionData.UsernameTitle}
+                    {LoginSectionData.EmailAddressTitle}
                   </Typography>
 
                   <TextField
                     fullWidth
                     variant="outlined"
-                    placeholder="Enter Username"
+                    placeholder="Enter Email Address"
                     value={credentials.username}
                     onChange={(e) =>
                       setCredentials({
@@ -152,9 +199,7 @@ const LoginPage = () => {
                   )}
 
                   {errors.general && (
-                    <span style={inputErrorStyles}>
-                      {errors.general}
-                    </span>
+                    <span style={inputErrorStyles}>{errors.general}</span>
                   )}
                 </Box>
 
@@ -174,7 +219,11 @@ const LoginPage = () => {
                       textAlign: "left",
                       marginBottom: "0.5rem",
                     }}
-                    color={errors.password || errors.general ? "error" : "text.primary"}
+                    color={
+                      errors.password || errors.general
+                        ? "error"
+                        : "text.primary"
+                    }
                   >
                     {LoginSectionData.PasswordTitle}
                   </Typography>
@@ -213,9 +262,7 @@ const LoginPage = () => {
                   )}
 
                   {errors.general && (
-                    <span style={inputErrorStyles}>
-                      {errors.general}
-                    </span>
+                    <span style={inputErrorStyles}>{errors.general}</span>
                   )}
                 </Box>
               </Box>
@@ -248,7 +295,7 @@ const LoginPage = () => {
                 }}
               >
                 <a
-                  href="/forgot-password"
+                  href="/auth/forgot-password"
                   style={{
                     textDecoration: "none",
                     color: "#2563EB",
@@ -263,7 +310,7 @@ const LoginPage = () => {
             <Box
               sx={{
                 position: "absolute",
-                bottom: 35,
+                bottom: 60,
                 textAlign: "center",
                 color: "#FFFFFF",
               }}
