@@ -39,8 +39,10 @@ const App = ({ Component, pageProps }: AppProps) => {
   
       if (token) {
         try {
-          await axiosInstance.get("/dashboard");
-          console.warn("User is authenticated, staying on page...");
+          await axiosInstance.get("/users/getUsers");
+          console.warn("User is authenticated, redirecting to dashboard...");
+          router.replace("/dashboard");
+
         } catch (error) {
           const axiosError = error as AxiosError;
           if (axiosError.response?.status === 401) {
