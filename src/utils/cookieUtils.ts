@@ -1,6 +1,6 @@
 // utils/cookieUtils.ts
 
-export function getRefreshTokenFromCookie(p0: string) {
+export function getRefreshTokenFromCookie() {
   const cookieName = 'refreshToken=';
   const decodedCookie = decodeURIComponent(document.cookie);
   const cookiesArray = decodedCookie.split(';');

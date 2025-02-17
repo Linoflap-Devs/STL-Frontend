@@ -2,101 +2,54 @@ import { useState, useEffect, useCallback } from "react";
 import { useRouter } from "next/router";
 import axios from "axios";
 import { isTokenExpired } from "../utils/tokenUtils";
-import { getRefreshTokenFromCookie } from "../utils/cookieUtils";
 
+// Refresh token logic
+const refreshAccessToken = async () => {
+    
+  const storedRefreshToken = localStorage.getItem("refreshToken");
+
+  if (!storedRefreshToken) {
+    console.error("No refresh token found.");
+    console.error(storedRefreshToken)
+  }
+
+  try {
+    const response = await axios.post(
+      `${process.env.NEXT_PUBLIC_API_URL}/auth/tokenRefresh`,
+      { refresh: storedRefreshToken },
+      { withCredentials: true }
+    );
+
+    if (response.status === 200) {
+      const newAccessToken = response.data.accessToken;
+      localStorage.setItem("accessToken", newAccessToken);
+      return newAccessToken;
+    }
+
+    throw new Error("Failed to refresh token");
+  } catch (error) {
+    console.error("Error refreshing access token:", error);
+    localStorage.removeItem("accessToken");
+    localStorage.removeItem("user");
+    return null;
+  }
+};
+
+// Custom hook for authentication
 export function useAuth() {
   const [token, setToken] = useState<string | null>(null);
   const [user, setUser] = useState<any>(null);
   const router = useRouter();
 
-  // Function to handle token refresh
-  const refreshToken = async () => {
-    console.log("Attempting to refresh token...");
-  
-    try {
-      const refreshTokenCookie = getRefreshTokenFromCookie("refreshToken");
-  
-      if (!refreshTokenCookie) {
-        console.error("No refresh token found in cookies.");
-        return null;
-      }
-  
-      console.log("Found refresh token, sending request for a new access token...");
-  
-      const storedToken = localStorage.getItem("accessToken");
-      const storedRefreshToken = localStorage.getItem("refreshToken");
-  
-      if (storedRefreshToken) {
-        try {
-          const response = await axios.post(
-            `${process.env.NEXT_PUBLIC_API_URL}/auth/tokenRefresh`,
-            { refresh: storedRefreshToken },
-            {
-              withCredentials: true,
-              headers: {
-                "Authorization": `Bearer ${storedToken}`,
-                "X-XSRF-TOKEN": getRefreshTokenFromCookie("XSRF-TOKEN"),
-              },
-            }
-          );
-  
-          console.log("Token Refresh Response:", response.data);
-  
-          const newToken = response.data.accessToken;
-          const newRefreshToken = response.data.refreshToken;
-  
-          if (newToken) {
-            console.log("New token received:", newToken);
-  
-            // Store new access token in localStorage
-            localStorage.setItem("accessToken", newToken);
-            setToken(newToken);
-  
-            // Store new refresh token in localStorage and cookie
-            if (newRefreshToken) {
-              localStorage.setItem("refreshToken", newRefreshToken);
-              document.cookie = `refreshToken=${newRefreshToken}; Path=/; SameSite=None; Max-Age=86400;`;
-  
-              console.log("New refresh token stored in cookie:", newRefreshToken);
-            }
-  
-            return newToken;
-          } else {
-            console.error("No new token received from the server.");
-            return null;
-          }
-  
-        } catch (error) {
-          console.error("Error refreshing token:", error);
-          return null;
-        }
-      } else {
-        console.error("Refresh token is missing from localStorage.");
-        return null;
-      }
-  
-    } catch (error) {
-      console.error("Error refreshing token:", error);
-  
-      localStorage.removeItem("accessToken");
-      localStorage.removeItem("refreshToken");
-      localStorage.removeItem("user");
-      console.log("Redirecting to login page due to token refresh failure...");
-      router.replace("/auth/login");
-      return null;
-    }
-  };
-  
-
   const checkAuth = useCallback(async () => {
     console.log("Checking authentication status...");
 
     const storedToken = localStorage.getItem("accessToken");
+    const storedRefreshToken = localStorage.getItem("refreshToken");
     const storedUser = localStorage.getItem("user");
     const parsedUser = storedUser ? JSON.parse(storedUser) : null;
 
     console.log("Stored token:", storedToken);
-    //console.log("Stored user:", parsedUser);
 
     if (storedToken) {
       console.log("Token found, checking if it's expired...");
@@ -108,23 +61,31 @@ export function useAuth() {
       } else {
         console.warn("Token expired. Attempting to refresh...");
 
-        // Try to refresh the token
-        const refreshedToken = await refreshToken();
+        if (storedRefreshToken) {
+          const refreshedToken = await refreshAccessToken();
 
-        if (refreshedToken) {
-          console.log("Token refreshed successfully.");
-          setUser(parsedUser);
+          if (refreshedToken) {
+            console.log("Token refreshed successfully.");
+            setToken(refreshedToken);
+            setUser(parsedUser);
+            localStorage.setItem("accessToken", refreshedToken);
+          } else {
+            console.warn("Token refresh failed. Logging out...");
+            if (router.pathname !== "/auth/login") {
+              console.log("Redirecting to login...");
+              router.replace("/auth/login");
+            }
+          }
         } else {
-          console.warn("Token refresh failed. Logging out...");
+          console.warn("No refresh token found.");
           if (router.pathname !== "/auth/login") {
-            console.log("Redirecting to login...");
+            console.log("Redirecting to login page...");
             router.replace("/auth/login");
           }
         }
       }
     } else {
       console.warn("No token found in localStorage.");
-      // If no token is found, redirect only if not already on login page
       if (router.pathname !== "/auth/login") {
         console.log("Redirecting to login page...");
         router.replace("/auth/login");
