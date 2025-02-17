@@ -104,7 +104,7 @@ const LoginPage = () => {
         >
           <Box
             sx={{
-              width: { xs: "100%", sm: "100%", md: "100%" },
+              width: { xs: "40%", sm: "40%", md: "40%" },
               maxWidth: 500,
               p: "2.5rem 1.2rem",
               display: "flex",
@@ -310,7 +310,7 @@ const LoginPage = () => {
             <Box
               sx={{
                 position: "absolute",
-                bottom: 60,
+                bottom: 25,
                 textAlign: "center",
                 color: "#FFFFFF",
               }}

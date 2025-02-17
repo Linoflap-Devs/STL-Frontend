@@ -32,18 +32,21 @@ export const loginUser = async (payload: LoginPayload, router: any): Promise<Log
       throw new Error("Access token is missing from response!");
     }
 
+    // Store tokens in localStorage and cookies
     localStorage.setItem('accessToken', apiData.token);
-    //localStorage.setItem('refreshToken', apiData.refresh);
+    localStorage.setItem('refreshToken', apiData.refresh);
+    
     console.log("Stored Token in localStorage:", localStorage.getItem("accessToken"));
+    console.log("Stored Refresh Token in localStorage:", localStorage.getItem("refreshToken"));
 
-    //document.cookie = `refreshToken=${apiData.refresh}; Path=/; Secure; SameSite=Strict; Max-Age=86400`;
-    //console.log("Stored Refresh Token in Cookie:", document.cookie);
-
+    document.cookie = `refreshToken=${apiData.refresh}; Path=/; Secure; SameSite=Strict; Max-Age=86400`;
+    console.log("Stored Refresh Token in Cookie:", document.cookie);
+    
     router.push("/dashboard");
 
     return {
       token: apiData.token,
-      refreshToken: "",
+      refreshToken: apiData.refresh,
       user: response.data.user ?? { id: 0, username: "Unknown" }
     };
   } catch (error: unknown) {
@@ -57,3 +60,4 @@ export const loginUser = async (payload: LoginPayload, router: any): Promise<Log
     }
   }
 };
+

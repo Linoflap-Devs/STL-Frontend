@@ -16,7 +16,7 @@ const EmailVerification = () => {
   const router = useRouter();
   const [otp, setOtp] = useState(Array(6).fill(""));
   const [isButtonDisabled, setIsButtonDisabled] = useState(true);
-
+  
   useEffect(() => {
     setIsButtonDisabled(otp.some((digit) => digit === ""));
   }, [otp]);
