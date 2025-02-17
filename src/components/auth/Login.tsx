@@ -47,7 +47,7 @@ const LoginPage = () => {
 
       console.log("Login successful! Storing token...");
       const token = localStorage.getItem("accessToken");
-      console.log("Token inside useAuth.ts:", token);
+      //console.log("Token inside useAuth.ts:", token);
 
       setTimeout(() => {
         console.log(

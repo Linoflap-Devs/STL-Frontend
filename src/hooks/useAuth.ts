@@ -2,33 +2,29 @@ import { useState, useEffect, useCallback } from "react";
 import { useRouter } from "next/router";
 import axios from "axios";
 import { isTokenExpired } from "../utils/tokenUtils";
-import { getCookie } from "../utils/cookieUtils";
+import { getRefreshTokenFromCookie } from "../utils/cookieUtils";
 
 export function useAuth() {
   const [token, setToken] = useState<string | null>(null);
   const [user, setUser] = useState<any>(null);
   const router = useRouter();
-  
+
   // Function to handle token refresh
   const refreshToken = async () => {
     console.log("Attempting to refresh token...");
   
     try {
-      console.log("All cookies:", document.cookie);
-  
-      const refreshTokenCookie = getCookie("refreshToken");
-  
-      console.log("Refresh cookie:", refreshTokenCookie);
+      const refreshTokenCookie = getRefreshTokenFromCookie("refreshToken");
   
       if (!refreshTokenCookie) {
         console.error("No refresh token found in cookies.");
         return null;
       }
-
+  
       console.log("Found refresh token, sending request for a new access token...");
   
       const storedToken = localStorage.getItem("accessToken");
-      const storedRefreshToken = refreshTokenCookie || localStorage.getItem("refreshToken");
+      const storedRefreshToken = localStorage.getItem("refreshToken");
   
       if (storedRefreshToken) {
         try {
@@ -37,16 +33,33 @@ export function useAuth() {
             { refresh: storedRefreshToken },
             {
               withCredentials: true,
+              headers: {
+                "Authorization": `Bearer ${storedToken}`,
+                "X-XSRF-TOKEN": getRefreshTokenFromCookie("XSRF-TOKEN"),
+              },
             }
           );
   
           console.log("Token Refresh Response:", response.data);
   
           const newToken = response.data.accessToken;
+          const newRefreshToken = response.data.refreshToken;
+  
           if (newToken) {
             console.log("New token received:", newToken);
+  
+            // Store new access token in localStorage
             localStorage.setItem("accessToken", newToken);
             setToken(newToken);
+  
+            // Store new refresh token in localStorage and cookie
+            if (newRefreshToken) {
+              localStorage.setItem("refreshToken", newRefreshToken);
+              document.cookie = `refreshToken=${newRefreshToken}; Path=/; SameSite=None; Max-Age=86400;`;
+  
+              console.log("New refresh token stored in cookie:", newRefreshToken);
+            }
+  
             return newToken;
           } else {
             console.error("No new token received from the server.");
@@ -58,14 +71,13 @@ export function useAuth() {
           return null;
         }
       } else {
-        console.error("Refresh token is missing.");
+        console.error("Refresh token is missing from localStorage.");
         return null;
       }
   
     } catch (error) {
       console.error("Error refreshing token:", error);
   
-      // If refresh fails, log out and redirect to login
       localStorage.removeItem("accessToken");
       localStorage.removeItem("refreshToken");
       localStorage.removeItem("user");
@@ -75,6 +87,7 @@ export function useAuth() {
     }
   };
   
+
   const checkAuth = useCallback(async () => {
     console.log("Checking authentication status...");
 
@@ -111,6 +124,7 @@ export function useAuth() {
       }
     } else {
       console.warn("No token found in localStorage.");
+      // If no token is found, redirect only if not already on login page
       if (router.pathname !== "/auth/login") {
         console.log("Redirecting to login page...");
         router.replace("/auth/login");

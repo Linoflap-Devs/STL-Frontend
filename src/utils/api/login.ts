@@ -1,5 +1,6 @@
-import axios from 'axios';
 import axiosInstance from '../axiosInstance';
+import { setCookie } from "../../utils/cookieUtils";
+import axios from 'axios';
 
 interface LoginPayload {
   username: string;
@@ -32,16 +33,17 @@ export const loginUser = async (payload: LoginPayload, router: any): Promise<Log
       throw new Error("Access token is missing from response!");
     }
 
-    // Store tokens in localStorage and cookies
+    // Store access and refresh tokens in localStorage
     localStorage.setItem('accessToken', apiData.token);
     localStorage.setItem('refreshToken', apiData.refresh);
-    
-    console.log("Stored Token in localStorage:", localStorage.getItem("accessToken"));
-    console.log("Stored Refresh Token in localStorage:", localStorage.getItem("refreshToken"));
 
-    document.cookie = `refreshToken=${apiData.refresh}; Path=/; Secure; SameSite=Strict; Max-Age=86400`;
+    document.cookie = `refreshToken=${apiData.refresh}; Path=/; SameSite=None; Max-Age=86400;`;
+
+    // Store refresh token in cookie as well (with expiration)
+    setCookie('refreshToken', apiData.refresh, 1, '/');
     console.log("Stored Refresh Token in Cookie:", document.cookie);
-    
+
+    // Redirect to dashboard page
     router.push("/dashboard");
 
     return {
@@ -60,4 +62,3 @@ export const loginUser = async (payload: LoginPayload, router: any): Promise<Log
     }
   }
 };
-
