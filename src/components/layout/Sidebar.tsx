@@ -16,7 +16,6 @@ import { styled, useTheme } from "@mui/material/styles";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import { UserSectionData } from "../../data/AdminSectionData";
 import { useRouter } from "next/router";
-import { logout } from "../../utils/auth"
 
 import HomeIcon from "@mui/icons-material/Home";
 import BusinessIcon from "@mui/icons-material/Business";
@@ -66,11 +65,7 @@ const Sidebar = () => {
   };
 
   const handleLogout = async () => {
-    try {
-      await logout();
-    } catch (error) {
-      console.error("Logout failed:", error);
-    }
+
   };
 
   const drawerContent = (
