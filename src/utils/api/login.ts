@@ -27,6 +27,8 @@ interface DecodedToken {
 export const loginUser = async (payload: LoginPayload, router: any): Promise<LoginResponse> => {
   try {
     console.log("Executing loginUser function...");
+
+    // Send login request
     const response = await axiosInstance.post('/auth/login', payload);
 
     console.log("Full API Response:", response);
@@ -34,15 +36,15 @@ export const loginUser = async (payload: LoginPayload, router: any): Promise<Log
 
     const apiData = response.data.data;
 
-    console.log("Token from Response:", apiData?.token);
-    console.log("Refresh Token from Response:", apiData?.refresh);
+    const token = apiData?.token;
 
-    if (!apiData?.token) {
+    if (!token) {
       throw new Error("Access token is missing from response!");
     }
 
-    // Decode JWT token to extract user info
-    const decoded: DecodedToken = jwtDecode(apiData.token);
+    console.log("Token from Response:", token);
+
+    const decoded: DecodedToken = jwtDecode(token);
     console.log("Decoded Token Data:", decoded);
 
     const user = {
@@ -53,8 +55,7 @@ export const loginUser = async (payload: LoginPayload, router: any): Promise<Log
 
     console.log("Extracted User:", user);
 
-    // Store tokens and user in localStorage
-    localStorage.setItem('accessToken', apiData.token);
+    localStorage.setItem('accessToken', token);
     localStorage.setItem('refreshToken', apiData.refresh);
     localStorage.setItem('user', JSON.stringify(user));
 
@@ -62,11 +63,10 @@ export const loginUser = async (payload: LoginPayload, router: any): Promise<Log
 
     console.log("Stored User in localStorage:", localStorage.getItem('user'));
 
-    // Redirect to dashboard page
     router.push("/dashboard");
 
     return {
-      token: apiData.token,
+      token,
       refreshToken: apiData.refresh,
       user
     };
