@@ -22,22 +22,42 @@ const LoginPage = () => {
     general?: string;
   }>({});
 
+  useEffect(() => {
+    console.log("Checking authentication status...");
+
+    // Fetching the token
+    const token = localStorage.getItem("accessToken");
+    console.log("Checking localStorage:", localStorage.getItem("accessToken"));
+
+    if (!token) {
+      console.log("No valid auth found! Redirecting to login...");
+      router.replace("/auth/login");
+    }
+  }, []);
+
   // submit login
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
+    setErrors({});
 
-    const validationErrors = await verifyCredentials(credentials.username!, credentials.password!);
+    try {
+      const userData = await loginUser(credentials, router);
 
-    if (Object.keys(validationErrors).length === 0) {
-      loginUser(credentials)
-        .then(() => {
-          router.push("/dashboard");
-        })
-        .catch((error) => {
-          setErrors({ general: error.message });
-        });
-    } else {  
-      setErrors(validationErrors);
+      console.log("Login successful! Storing token...");
+      const token = localStorage.getItem("accessToken");
+
+      setTimeout(() => {
+        console.log(
+          "Verifying stored token:",
+          localStorage.getItem("accessToken")
+        );
+        router.replace("/dashboard");
+      }, 100);
+    } catch (error) {
+      setErrors((prev) => ({
+        ...prev,
+        general: "Login failed. Please try again.",
+      }));
     }
   };
 
