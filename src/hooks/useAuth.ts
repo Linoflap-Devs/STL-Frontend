@@ -54,8 +54,7 @@ export function useAuth() {
       handleLogout();
       return;
     }
-  
-    // Remove the old access token from localStorage before sending the refresh request
+
     localStorage.removeItem("accessToken");
   
     try {
@@ -63,8 +62,8 @@ export function useAuth() {
   
       const response = await axiosInstance.post(
         "/auth/tokenRefresh",
-        { refresh: refreshToken }, // ✅ Fixed request body key
-        { withCredentials: true }   // ✅ Include credentials (cookies)
+        { refresh: refreshToken },
+        { withCredentials: true } 
       );
   
       console.log("Token refresh response:", response.data);
@@ -74,13 +73,11 @@ export function useAuth() {
         const newRefreshToken = response.data.data.refresh;
   
         console.log("New tokens received. Updating localStorage and cookies.");
-  
-        // Store the access token in localStorage
+
+        // Store the tokens
         localStorage.setItem("accessToken", newAccessToken);
-  
-        // Store the refresh token as a cookie
         document.cookie = `refreshToken=${newRefreshToken}; path=/; secure; samesite=strict`;
-  
+
         setToken(newAccessToken);
       } else {
         console.warn("Failed to refresh token. Logging out.");
@@ -117,7 +114,6 @@ export function useAuth() {
       handleLogout();
     }
   }, [handleLogout, router]);
-
   
   useEffect(() => {
     console.log("Checking authentication status...");

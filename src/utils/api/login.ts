@@ -30,20 +30,17 @@ export const loginUser = async (payload: LoginPayload, router: any): Promise<Log
 
     // Send login request
     const response = await axiosInstance.post('/auth/login', payload);
-
     console.log("Full API Response:", response);
     console.log("Extracted Data Object:", response.data.data);
 
     const apiData = response.data.data;
-
     const token = apiData?.token;
 
     if (!token) {
       throw new Error("Access token is missing from response!");
     }
-
     console.log("Token from Response:", token);
-
+    
     const decoded: DecodedToken = jwtDecode(token);
     console.log("Decoded Token Data:", decoded);
 
@@ -60,7 +57,6 @@ export const loginUser = async (payload: LoginPayload, router: any): Promise<Log
     localStorage.setItem('user', JSON.stringify(user));
 
     document.cookie = `refreshToken=${apiData.refresh}; Path=/; SameSite=None; Max-Age=86400;`;
-
     console.log("Stored User in localStorage:", localStorage.getItem('user'));
 
     router.push("/dashboard");
