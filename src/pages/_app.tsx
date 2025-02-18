@@ -22,6 +22,7 @@ const App = ({ Component, pageProps }: AppProps) => {
 
   const isExcludedPath = excludedPaths.includes(router.pathname);
 
+
   return (
     <ThemeProvider theme={darkTheme}>
       <CssBaseline />
