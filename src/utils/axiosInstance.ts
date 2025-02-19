@@ -17,8 +17,8 @@ const refreshAccessToken = async () => {
 
     console.log("Refreshing token...");
 
-    const response = await axios.post(
-      `${process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000"}/auth/tokenRefresh`,
+    const response = await axiosInstance.post(
+      "/auth/tokenRefresh",
       { refresh: refreshToken },
       { withCredentials: true }
     );
