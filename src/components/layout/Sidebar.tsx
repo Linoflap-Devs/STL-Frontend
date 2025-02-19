@@ -146,6 +146,8 @@ const Sidebar = () => {
               ? "/managers"
               : page === "Executive"
                 ? "/executives"
+              : page === "Betting Summary"
+                ? "/betting-summary"
                 : page === "Logout"
                   ? "/"
                   : `/${page.toLowerCase()}`;

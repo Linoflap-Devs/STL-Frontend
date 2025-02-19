@@ -19,8 +19,9 @@ const App = ({ Component, pageProps }: AppProps) => {
     "/auth/password-reset",
     "/auth/set-password",
   ];
-  
+
   const isExcludedPath = excludedPaths.includes(router.pathname);
+
 
   return (
     <ThemeProvider theme={darkTheme}>

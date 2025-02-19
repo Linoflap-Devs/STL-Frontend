@@ -28,6 +28,10 @@ const nextConfig = {
         destination: '/Protected/managers',
       },
       {
+        source: '/betting-summary',
+        destination: '/Protected/betting-summary',
+      },
+      {
         source: '/dashboard',
         destination: '/Protected/dashboard',
       },
