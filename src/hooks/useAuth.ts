@@ -20,7 +20,6 @@ export function useAuth() {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState<boolean>(true);
 
-  // Function to handle logout cleanly
   const handleLogout = useCallback(() => {
     console.warn("Logging out user...");
     localStorage.removeItem("accessToken");
@@ -72,16 +71,15 @@ export function useAuth() {
     }
   }, [handleLogout, router]);
 
+
   // checking authentication status
   useEffect(() => {
     console.log("Checking authentication status...");
 
     const storedToken = localStorage.getItem("accessToken");
-
     if (!storedToken) {
       console.warn("No token found.");
       if (!isLoading) {
-        //handleLogout();
         refreshAccessToken(handleLogout, setToken)
       }
       return;
@@ -89,7 +87,6 @@ export function useAuth() {
 
     if (isTokenExpired(storedToken)) {
       console.warn("Token expired.");
-      // handleLogout();
       refreshAccessToken(handleLogout, setToken)
       return;
     }
@@ -97,7 +94,6 @@ export function useAuth() {
     // Decode the token and set user from the decoded data
     const decodedToken = decodeToken(storedToken);
     if (decodedToken) {
-      //verifyUser(storedToken);
       setUser(decodedToken.user);
       setToken(storedToken);
     }

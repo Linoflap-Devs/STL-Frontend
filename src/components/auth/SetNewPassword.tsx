@@ -13,7 +13,7 @@ import { LoginSectionData } from "../../data/LoginSectionData";
 import { useRouter } from "next/router";
 //import { loginValidate } from "../../utils/validation";
 import ArrowBackIosNewIcon from "@mui/icons-material/ArrowBackIosNew";
- import { inputStyles, inputErrorStyles } from "../../styles/theme";
+import { inputStyles, inputErrorStyles } from "../../styles/theme";
 import Swal from "sweetalert2";
 
 const LoginPage = () => {
@@ -27,31 +27,64 @@ const LoginPage = () => {
   const [errors, setErrors] = useState<{
     newpassword?: string;
     setpassword?: string;
+    passwordMismatch?: string;
+    passwordLimit?: string;
   }>({});
   const [isButtonDisabled, setIsButtonDisabled] = useState(true);
 
-  // Validation
-  const handleLogin = (e: React.FormEvent) => {
-    e.preventDefault();
-    const validationErrors = credentials;
-    if (Object.keys(validationErrors).length === 0) {
-      console.log("Login Successful.", credentials);
 
-      Swal.fire({
-        title: "Success!",
-        text: "New password has been set, you will be directed to the login page.",
-        icon: "success",
-        confirmButtonText: "Redirect",
-        confirmButtonColor: "#7565DE",
-      }).then((result: { isConfirmed: any }) => {
-        if (result.isConfirmed) {
-          window.location.href = "/";
-        }
-      });
+   // Validation Function
+   const validatePasswords = () => {
+    const { newpassword, setpassword } = credentials;
+    const trimmedNewPassword = newpassword.trim();
+    const trimmedSetPassword = setpassword.trim();
+  
+    let newErrors: { passwordMismatch?: string; passwordLimit?: string } = {};
+  
+    // Step 1: Check if passwords match
+    if (trimmedNewPassword !== trimmedSetPassword) {
+      newErrors.passwordMismatch = "Passwords do not match";
     } else {
-      setErrors(validationErrors);
+      // Step 2: If passwords match, validate password strength
+      const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).{8,}$/;
+      if (!passwordRegex.test(trimmedNewPassword)) {
+        newErrors.passwordLimit =
+          "Password must be at least 8 characters long and include at least one uppercase letter, one lowercase letter, one number, and one special character.";
+      }
     }
+  
+    // Set errors in state
+    setErrors(newErrors);
+  
+    // Return true if there are no errors
+    return Object.keys(newErrors).length === 0;
   };
+  
+
+    const handleLogin = (e: React.FormEvent) => {
+      e.preventDefault();
+    
+      // Stop submission if passwords don't match or don't meet criteria
+      if (!validatePasswords()) return;
+    
+      // If no errors exist, show the success alert
+      if (!errors.passwordLimit && !errors.passwordMismatch) {
+        console.log("Login Successful.", credentials);
+    
+        Swal.fire({
+          title: "Success!",
+          text: "New password has been set, you will be directed to the login page.",
+          icon: "success",
+          confirmButtonText: "Redirect",
+          confirmButtonColor: "#7565DE",
+        }).then((result) => {
+          if (result.isConfirmed) {
+            window.location.href = "/";
+          }
+        });
+      }
+    };
+    
 
   const handleTogglePasswordVisibility = (
     type: "newpassword" | "setpassword"
@@ -206,39 +239,46 @@ const LoginPage = () => {
                       {LoginSectionData.PasswordTitle}
                     </Typography>
                     <TextField
-                      fullWidth
-                      variant="outlined"
-                      placeholder="Enter Password"
-                      type={showPassword ? "text" : "password"}
-                      value={credentials.newpassword}
-                      onChange={(e) =>
-                        setCredentials({
-                          ...credentials,
-                          newpassword: e.target.value,
-                        })
-                      }
-                      sx={inputStyles}
-                      InputProps={{
-                        endAdornment: (
-                          <IconButton
-                            sx={{ color: "#9CA3AF", fontSize: "1.3rem" }}
-                            onClick={() =>
-                              handleTogglePasswordVisibility("newpassword")
-                            }
-                            edge="end"
-                          >
-                            {showPassword ? (
-                              <VisibilityOff sx={{ fontSize: "inherit" }} />
-                            ) : (
-                              <Visibility sx={{ fontSize: "inherit" }} />
-                            )}
-                          </IconButton>
-                        ),
-                      }}
-                    />
-                    {errors.newpassword && (
+                        fullWidth
+                        variant="outlined"
+                        placeholder="Enter Password"
+                        type={showPassword ? "text" : "password"}
+                        value={credentials.newpassword}
+                        onChange={(e) =>
+                          setCredentials({
+                            ...credentials,
+                            newpassword: e.target.value,
+                          })
+                        }
+                        sx={{
+                          ...inputStyles,
+                          "& .MuiOutlinedInput-root": {
+                            "& fieldset": {
+                              borderColor: errors.passwordLimit ? "#F05252 !important" : undefined,
+                            },
+                          },
+                        }}
+                        InputProps={{
+                          endAdornment: (
+                            <IconButton
+                              sx={{ color: "#9CA3AF", fontSize: "1.3rem" }}
+                              onClick={() => handleTogglePasswordVisibility("newpassword")}
+                              edge="end"
+                            >
+                              {showPassword ? (
+                                <VisibilityOff sx={{ fontSize: "inherit" }} />
+                              ) : (
+                                <Visibility sx={{ fontSize: "inherit" }} />
+                              )}
+                            </IconButton>
+                          ),
+                        }}
+                      />
+                      
+
+                    {/* {errors.newpassword && (
                       <span style={inputErrorStyles}>{errors.newpassword}</span>
-                    )}
+                    )} */}
                   </Box>
 
                   <Box>
@@ -264,7 +304,14 @@ const LoginPage = () => {
                           setpassword: e.target.value,
                         })
                       }
-                      sx={inputStyles}
+                      sx={{
+                        ...inputStyles,
+                        "& .MuiOutlinedInput-root": {
+                          "& fieldset": {
+                            borderColor: errors.passwordMismatch ? "#F05252 !important" : undefined,
+                          },
+                        },
+                      }}
                       InputProps={{
                         endAdornment: (
                           <IconButton
@@ -283,30 +330,40 @@ const LoginPage = () => {
                         ),
                       }}
                     />
-                    {errors.setpassword && (
+                    {errors.passwordLimit && (
+                        <Typography sx={{ color: "#F05252", fontSize: "12px", marginTop: "5px" }}>
+                          {errors.passwordLimit}
+                        </Typography>
+                      )}
+                    {/* {errors.setpassword && (
                       <span style={inputErrorStyles}>{errors.setpassword}</span>
-                    )}
+                    )} */}
                   </Box>
                 </Box>
-
+                    {errors.passwordMismatch && (
+                      <Typography
+                      sx={{ color: "#F05252", fontSize: "12px", marginTop: "5px" }}
+                      >
+                        {errors.passwordMismatch}
+                      </Typography>
+                    )}
                 <Button
                   type="submit"
                   variant="contained"
                   fullWidth
                   sx={{
                     marginTop: 4,
-                    py: 1.5,
+                    py: 1.5,  
                     padding: "8px 20px",
                     borderRadius: "8px",
                     textTransform: "none",
                     fontWeight: "bold",
-                    backgroundColor: isButtonDisabled
-                      ? "#D1D5D8 !important"
-                      : "#2563EB !important",
-                    color: isButtonDisabled
-                      ? "#F1F5F9 !important"
-                      : "#ffffff !important",
+                    backgroundColor: isButtonDisabled ? "#D1D5D8" : "#CCA1FD",
+                    color: isButtonDisabled ? "#F1F5F9" : "#ffffff",
                     cursor: isButtonDisabled ? "not-allowed" : "pointer",
+                    "&:hover": {
+                      backgroundColor: isButtonDisabled ? "#D1D5D8" : "#A070D3", // Change hover color
+                    },
                   }}
                 >
                   {LoginSectionData.UpdatePassword}
@@ -318,13 +375,18 @@ const LoginPage = () => {
           <Box
             sx={{
               position: "absolute",
-              bottom: 60,
+              bottom: 10,
               textAlign: "center",
               color: "#FFFFFF",
             }}
           >
-            <Typography sx={{ fontSize: "13px" }}>
-              {LoginSectionData.copyright}
+            <Typography>
+              <span  style={{ fontSize: "12px", color: "#FFFFFF" }}>
+                Powered by
+              </span>
+              <span style={{ color: "#D4AEFE" }}>
+                {LoginSectionData.copyright}
+              </span>
             </Typography>
           </Box>
         </Box>

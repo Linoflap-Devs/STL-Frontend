@@ -1,5 +1,12 @@
 import { createTheme } from "@mui/material/styles";
+import {Montserrat} from "@next/font/google"
 
+// Load Montserrat font properly
+const montserrat = Montserrat({
+  subsets: ["latin"],
+  weight: ["400", "700"], // Load Regular (400) and Bold (700)
+  display: "swap",
+});
 const darkTheme = createTheme({
   palette: {
     mode: "dark",
@@ -13,18 +20,19 @@ const darkTheme = createTheme({
     },
   },
   typography: {
-    fontFamily: '"Inter", sans-serif',
+    fontFamily:  montserrat.style.fontFamily,
   },
   components: {
     MuiButton: {
       styleOverrides: {
         contained: {
-          color: "#ffffff",
+          color: "#ffffff", 
           borderRadius: 5,
-          backgroundColor: "#3f51b5",
+          backgroundColor: "#CCA1FD",
           "&:hover": {
-            backgroundColor: "#303f9f",
-          },
+            backgroundColor: "#A070D3",
+          // backgroundColor: "#65308B",
+   },
         },
       },
     },
@@ -52,6 +60,9 @@ const darkTheme = createTheme({
           },
           "& .MuiOutlinedInput-input": {
             fontSize: 14,
+          },
+          "&.Mui-error .MuiOutlinedInput-notchedOutline": {
+            borderColor: "#d32f2f", // Default MUI error color (red)
           },
         },
       },
@@ -301,7 +312,8 @@ export const deleteStyles = {
 
 export const inputStyles = {
   "& .MuiOutlinedInput-root": {
-    "& fieldset": { borderColor: "#D1D5DB", padding: "14px 40px 10px 14px" },
+    "& fieldset": { borderColor: "#D1D5DB", 
+      padding: "14px 40px 10px 14px" },
     "&.Mui-error fieldset": { borderColor: "#F05252" },
   },
 };
@@ -341,3 +353,4 @@ export const filterStyles = {
 };
 
 export default darkTheme;
+      

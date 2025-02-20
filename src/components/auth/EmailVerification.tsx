@@ -7,17 +7,29 @@ import {
   IconButton,
   Tooltip,
   Grid,
+  CircularProgress
 } from "@mui/material";
 import { useRouter } from "next/router";
 import ArrowBackIosNewIcon from "@mui/icons-material/ArrowBackIosNew";
-import { LoginSectionData } from "../../data/LoginSectionData";
+import {
+  LoginSectionData
+}
+  from "../../data/LoginSectionData";
 
 const EmailVerification = () => {
   const router = useRouter();
   const [otp, setOtp] = useState(Array(6).fill(""));
-  const [isButtonDisabled, setIsButtonDisabled] = useState(true);
-  
+  const [isButtonDisabled, setIsButtonDisabled] = useState(false);
+  const [isOtpValid, setIsOtpValid] = useState(true);
+  //will be replaced with backend response.
+  const correctOTP = "123456";
+  const [isLoading, setIsLoading] = useState(false);
+  const [isOtpVerified, setIsOTPVerified] = useState(false);
+
+  const [userEmail, setUserEmail] = useState("example@email.com");
+
   useEffect(() => {
+    //disable only if the OTP is incomplete
     setIsButtonDisabled(otp.some((digit) => digit === ""));
   }, [otp]);
 
@@ -46,10 +58,29 @@ const EmailVerification = () => {
   };
 
   const handleNavigation = () => {
-    if (!isButtonDisabled) {
-      router.push("/set-password");
-    }
+    setIsLoading(true);
+    setIsOtpValid(true); // Reset validity status before checking OTP
+    setIsOTPVerified(false); // Reset verification state before checking OTP
+
+    setTimeout(() => {
+      setIsLoading(false);
+      if (otp.join("") === correctOTP) {
+        setIsOTPVerified(true);
+      } else {
+        setIsOtpValid(false);
+      }
+    }, 2000); // Simulate API response time
   };
+  const VerifyEmailDescription = (userEmail: string) => {
+    return {
+      EmailVerificationDescription: `We have sent a verification code to ${userEmail}. Please check your email and enter the code below.`,
+    };
+  };
+  // Ensure invalid OTP message resets when OTP changes
+  useEffect(() => {
+    setIsOtpValid(true);
+  }, [otp]);
+
 
   return (
     <Box
@@ -105,7 +136,7 @@ const EmailVerification = () => {
                 position: "absolute",
                 left: 30,
                 top: 40,
-                color: "#D1D5D8"[300],
+                color: "#D1D5D8",
                 backgroundColor: "#374151",
                 fontWeight: "bold",
               }}
@@ -138,83 +169,140 @@ const EmailVerification = () => {
             <Typography variant="h4" fontWeight="bold">
               {LoginSectionData.EmailVerificationTitle}
             </Typography>
-            <Typography mt={1} color="#9CA3AF" fontSize={"12.5px"}>
-              {LoginSectionData.EmailVerificationDescription}
-            </Typography>
+            {!isOtpVerified && (
+              <Typography mt={1} color="#9CA3AF" fontSize={"12.5px"}>
+                {userEmail && VerifyEmailDescription(userEmail).EmailVerificationDescription}
+              </Typography>
+            )}
 
-            <Box display="flex" justifyContent="center" mt={3.5}>
-              <Grid
-                container
-                justifyContent="center"
-                spacing={0.5}
-                flexWrap="nowrap"
-                direction="row"
-              >
-                {otp.map((digit, index) => (
-                  <Grid item key={index}>
-                    <TextField
-                      id={`otp-input-${index}`}
-                      value={digit}
-                      onChange={(e) => handleChange(e, index)}
-                      onKeyDown={(e) => handleBackspace(e, index)}
-                      variant="outlined"
-                      inputProps={{
-                        maxLength: 1,
-                        style: {
-                          textAlign: "center",
-                          fontSize: "16px",
-                          width: "10px !important",
-                          maxWidth: "20px",
-                          height: "35px",
-                          outline: "none",
-                          borderRadius: "6px",
-                          border: "1px solid #D1D5DB",
-                        },
-                      }}
-                      sx={{
-                        "& .MuiOutlinedInput-root": {
-                          padding: "4px",
-                          backgroundColor: "transparent !important",
-                          "& fieldset": {
-                            border: "none",
+            {!isOtpValid && (
+              <Typography color="red" mt={1.5} fontSize="13px">
+                Invalid OTP. Please check your email and enter the correct OTP.
+              </Typography>
+            )}
+            {isLoading && !isOtpVerified && <CircularProgress color="primary" />}
+
+            {isOtpVerified && (
+              <>
+                <Typography mt={1} color="#9CA3AF" fontSize={"12.5px"}>
+                  Your password has been successfully reset. Click confirm to set new password.
+                </Typography>
+                <Button
+                  onClick={handleNavigation}
+                  variant="contained"
+                  sx={{
+                    mt: 0.5,
+                    py: 1,
+                    borderRadius: "8px",
+                    fontWeight: "bold",
+                    textTransform: "none",
+                    width: "85%",
+                    marginTop: "2rem",
+                    backgroundColor: isButtonDisabled
+                      ? "#D1D5D8"
+                      : "#CCA1D",
+                    color: isButtonDisabled
+                      ? "#F1F5F"
+                      : "#ffffff",
+                    cursor: isButtonDisabled ? "not-allowed" : "pointer",
+                  }}
+                  disabled={isButtonDisabled}
+                >
+                  Confirm
+                </Button>
+              </>
+            )}
+
+            {isOtpVerified && isLoading && (
+              <Button onClick={handleNavigation} disabled={isButtonDisabled}>
+                {LoginSectionData.resetPasswordButton}
+              </Button>
+            )}
+
+            {!isOtpVerified && (
+              <Box display="flex" justifyContent="center" mt={3.5}>
+                <Grid
+                  container
+                  justifyContent="center"
+                  spacing={0.5}
+                  flexWrap="nowrap"
+                  direction="row"
+                >
+                  {otp.map((digit, index) => (
+                    <Grid item key={index}>
+                      <TextField
+                        id={`otp-input-${index}`}
+                        value={digit}
+                        onChange={(e) => handleChange(e, index)}
+                        onKeyDown={(e) => handleBackspace(e, index)}
+                        variant="outlined"
+                        inputProps={{
+                          maxLength: 1,
+                          style: {
+                            textAlign: "center",
+                            fontSize: "16px",
+                            width: "10px !important",
+                            maxWidth: "20px",
+                            height: "35px",
+                            outline: "none",
+                            borderRadius: "6px",
+                            border: otp.every((d) => d !== "")
+                              ? isOtpValid
+                                ? "2px solid #CCA1FD"  // If all fields are filled and OTP is valid, set border to purple
+                                : "2px solid #F05252"  // If all fields are filled but OTP is invalid, set border to red
+                              : "1px solid #D1D5DB"   // If not all fields are filled, set border to gray
+
                           },
-                        },
-                      }}
-                    />
-                  </Grid>
-                ))}
-              </Grid>
-            </Box>
-
-            <Button
-              onClick={handleNavigation}
-              variant="contained"
-              sx={{
-                mt: 0.5,
-                py: 1,
-                borderRadius: "8px",
-                ontWeight: "bold",
-                textTransform: "none",
-                width: "85%",
-                marginTop: "2rem",
-                backgroundColor: isButtonDisabled
-                  ? "#D1D5D8 !important"
-                  : "#2563EB !important",
-                color: isButtonDisabled
-                  ? "#F1F5F9 !important"
-                  : "#ffffff !important",
-                fontWeight: "bold",
-                cursor: isButtonDisabled ? "not-allowed" : "pointer",
-              }}
-              disabled={isButtonDisabled}
-            >
-              {LoginSectionData.resetPasswordButton}
-            </Button>
-            <Typography mt={1.3} fontSize="13px">
-              {LoginSectionData.resendEmailDescription}
-            </Typography>
+                        }}
+                        sx={{
+                          "& .MuiOutlinedInput-root": {
+                            padding: "4px",
+                            backgroundColor: "transparent !important",
+                            "& fieldset": {
+                              border: "none",
+                            },
+                          },
+                        }}
+                      />
+                    </Grid>
+                  ))}
+                </Grid>
+              </Box>
+            )}
+            {!isOtpVerified && (
+              <Button
+                //to be revised
+                onClick={handleNavigation}
+                variant="contained"
+                sx={{
+                  mt: 0.5,
+                  py: 1,
+                  borderRadius: "8px",
+                  fontWeight: "bold",
+                  textTransform: "none",
+                  width: "85%",
+                  marginTop: "2rem",
+                  backgroundColor: isButtonDisabled
+                    ? "#D1D5D8"
+                    : "#CCA1D",
+                  color: isButtonDisabled
+                    ? "#F1F5F"
+                    : "#ffffff",
+                  cursor: isButtonDisabled ? "not-allowed" : "pointer",
+                }}
+                disabled={isButtonDisabled}
+              >
+                {LoginSectionData.resetPasswordButton}
+              </Button>
+            )}
+            {!isOtpVerified && (
+              <Typography mt={1.3} fontSize="13px">
+                {LoginSectionData.resendEmailDescription}
+              </Typography>
+            )}
           </Box>
         </Box>
+
         <Box
           sx={{
             position: "absolute",

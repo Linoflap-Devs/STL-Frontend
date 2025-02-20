@@ -17,18 +17,43 @@ import { inputStyles, inputErrorStyles } from "../../styles/theme";
 const ForgotPassword = () => {
   const router = useRouter();
   const [credentials, setCredentials] = useState({ username: "" });
+
   const [errors, setErrors] = useState<{
     username?: string;
     password?: string;
   }>({});
-  const [isButtonDisabled, setIsButtonDisabled] = useState(true);
 
-  // Validation
+  //By default button is disabled.
+  const [isButtonDisabled, setIsButtonDisabled] = useState(false);
+
+
+  //check whether the email fields i empty or invalid.
+  // Function to validate email field
+  const validateCredentials = (credentials: { username: string }) => {
+    let errors: { username?: string } = {};
+
+    if (!credentials.username.trim()) {
+      errors.username = "Email Address is Required.";
+    } else if (
+      //Regular Expression(regex) - for validating email format
+      !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(credentials.username)
+    ) {
+      errors.username = "Please enter a valid email address.";
+    }
+
+    return errors;
+  };
+
+  // Handle form submission
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
-    const validationErrors = credentials;
+    const validationErrors = validateCredentials(credentials);
+
+    //If no errors exist, returns an empty array ( [] )
+    //if array is empty, meaning no errors exist.
     if (Object.keys(validationErrors).length === 0) {
       console.log("Login Successful.", credentials);
+      setErrors({}); // Clear errors if successful
     } else {
       setErrors(validationErrors);
     }
@@ -36,17 +61,21 @@ const ForgotPassword = () => {
 
   // temporary validation
   const handleNavigation = () => {
-    const validationErrors = credentials;
+    const validationErrors = validateCredentials(credentials);
+    // setErrors(validationErrors)
+    //If no errors exist, returns an empty array ( [] )
+    //if array is empty, meaning no errors exist.
     if (Object.keys(validationErrors).length === 0) {
       router.push("/email-verification");
     } else {
-      console.log("Validation failed.");
+      setErrors(validationErrors)
     }
   };
 
-  useEffect(() => {
-    setIsButtonDisabled(credentials.username.trim() === "");
-  }, [credentials.username]);
+  // Disable button if email is empty
+  // useEffect(() => {
+  //   setIsButtonDisabled(credentials.username.trim() === "");
+  // }, [credentials.username]);
 
   return (
     <>
@@ -185,11 +214,15 @@ const ForgotPassword = () => {
                       })
                     }
                     error={!!errors.username}
+                    helperText={errors.username}
                     sx={inputStyles}
                   />
-                  {errors.username && (
-                    <span style={inputErrorStyles}>{errors.username}</span>
+                  {/* {errors.username === "required" && (
+                    <span style={inputErrorStyles}>Email Address is Required.</span>
                   )}
+                  {errors.username === "invalid" && (
+                    <span style={inputErrorStyles}>Please enter a valid email address.</span> */}
+                  {/* )} */}
                 </Box>
 
                 <Box
@@ -213,16 +246,16 @@ const ForgotPassword = () => {
                   padding: "8px 20px",
                   borderRadius: "8px",
                   textTransform: "none",
-                  backgroundColor: isButtonDisabled
-                    ? "#D1D5D8 !important"
-                    : "#2563EB !important",
-                  color: isButtonDisabled
-                    ? "#F1F5F9 !important"
-                    : "#ffffff !important",
+                  backgroundColor: isButtonDisabled ? "#2563EB" : "#CCA1FD",
+                  color: isButtonDisabled ? "#F1F5F9" : "#ffffff",
                   cursor: isButtonDisabled ? "not-allowed" : "pointer",
                   fontWeight: "bold",
+                  "&:hover": {
+                    backgroundColor: isButtonDisabled ? "#CCA1FD" : "#A070D3",
+                  },
                 }}
-                disabled={isButtonDisabled}
+
+                disabled={false}
               >
                 {LoginSectionData.resetPasswordButton}
               </Button>

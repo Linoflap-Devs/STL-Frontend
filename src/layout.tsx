@@ -17,7 +17,7 @@ const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
           transition: 'margin 0.3s ease-out',
         }}
       >
-        <div style={{ marginTop: '64px' }}>{children}</div>
+        <div style={{ marginTop: '20px' }}>{children}</div>
       </Box>
     </Box>
   );

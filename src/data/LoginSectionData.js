@@ -20,7 +20,7 @@ export const LoginSectionData = {
   buttonText: "Login",
   copyright: (
     <>
-      Powered by <span style={{ fontWeight: "bold" }}>Linoflap Technology Philippines Inc.</span>
+      <span style={{ fontWeight: "bold" }}> Linoflap Technology Philippines Inc.</span>
     </>
   ),
   EmailVerificationTitle: "Check your email",
@@ -56,6 +56,3 @@ export const LoginSectionData = {
   ConfirmPassword: "Confirm Password",
   UpdatePassword: "Update Password",
 };
-
-
-
