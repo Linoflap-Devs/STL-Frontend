@@ -7,7 +7,7 @@ const drawerWidth = 240;
 const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
 
   return (
-    <Box sx={{ display: 'flex', height: '100vh', overflow: 'hidden' }}>
+    <Box sx={{ display: 'flex', overflow: 'hidden' }}>
       <Sidebar />
       <Box
         component="main"

@@ -1,5 +1,8 @@
 import React from "react";
-import BettingSummary from "~/components/betting-summary/BettorsvsBetsPlaced";
+import BetsPlacedvsTotalWinningsPage from "~/components/betting-summary/BetsPlacedvsTotalWinnings";
+import BettorsvsBetsPlacedPage from "~/components/betting-summary/BettorsvsBetsPlaced";
+import BetTimePage from "~/components/betting-summary/BetTime";
+
 import { Box, Typography } from '@mui/material';
 
 const BettingSummaryPage = () => {
@@ -9,8 +12,11 @@ const BettingSummaryPage = () => {
         <Typography sx={{ fontWeight: 700, fontSize: 20 }}>
           Small Town Lottery Betting Summary
         </Typography>
+
+      <BettorsvsBetsPlacedPage />
+      <BetsPlacedvsTotalWinningsPage />
+      <BetTimePage />
       </Box>
-      <BettingSummary />
     </div>
   );
 };

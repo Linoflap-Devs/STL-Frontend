@@ -72,7 +72,6 @@ const Sidebar = () => {
     <>
       <Box sx={{ paddingX: "1rem" }}>
         <Box sx={{ marginTop: "1.6rem", justifyContent: "left" }} />
-
         <Box sx={{ display: "flex", alignItems: "center", }}>
           <Box sx={{ textAlign: "center", marginY: 2, justifyContent: "center" }}>
             <img
@@ -117,6 +116,7 @@ const Sidebar = () => {
             paddingY: "0.6rem",
             display: "flex",
             flexDirection: "column",
+            marginBottom: 4,
           }}
         >
           <Typography

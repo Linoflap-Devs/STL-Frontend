@@ -45,21 +45,24 @@ export function useAuth() {
     }
   };
 
-  // Function to verify token and fetch user details
   const verifyUser = useCallback(async (storedToken: string) => {
+    if (user) {
+      console.log("User is already logged in, skipping verification.");
+      return;
+    }
+  
     try {
       const response = await axiosInstance.get("/users/getCurrentUser", {
         headers: { Authorization: `Bearer ${storedToken}` },
         withCredentials: true,
       });
-
+  
       console.log("Response:", response.data);
-
+  
       if (response.data?.success === true) {
-
         setUser(response.data.user);
         localStorage.setItem("user", JSON.stringify(response.data.UserId));
-
+  
         router.push("/dashboard");
       } else {
         console.warn("User verification failed with success code:", response.data?.success);
@@ -69,8 +72,7 @@ export function useAuth() {
       console.error("Authentication error:", error);
       handleLogout();
     }
-  }, [handleLogout, router]);
-
+  }, [user, handleLogout, router]);
 
   // checking authentication status
   useEffect(() => {

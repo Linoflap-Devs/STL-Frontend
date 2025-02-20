@@ -11,7 +11,7 @@ const darkTheme = createTheme({
   palette: {
     mode: "dark",
     background: {
-      default: "#252526",
+      default: "#181A1B",
       paper: "#1F2937",
     },
     text: {
