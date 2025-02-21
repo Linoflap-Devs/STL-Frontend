@@ -16,6 +16,7 @@ import { styled, useTheme } from "@mui/material/styles";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import { UserSectionData } from "../../data/AdminSectionData";
 import { useRouter } from "next/router";
+import axiosInstance from "../../utils/axiosInstance";
 
 import HomeIcon from "@mui/icons-material/Home";
 import BusinessIcon from "@mui/icons-material/Business";
@@ -65,9 +66,14 @@ const Sidebar = () => {
   };
 
   const handleLogout = async () => {
-
+    try {
+      await axiosInstance.delete("/auth/logout");
+      window.location.href = "/auth/login";
+    } catch (error) {
+      console.error("Logout failed:", error);
+    }
   };
-
+  
   const drawerContent = (
     <>
       <Box sx={{ paddingX: "1rem" }}>
@@ -195,8 +201,8 @@ const Sidebar = () => {
         component="a"
         href="/logout"
         onClick={(e) => {
-          e.preventDefault(); // Prevent the default anchor behavior (refresh/reload)
-          handleLogout(); // Trigger the logout process
+          e.preventDefault();
+          handleLogout();
         }}
         sx={{
           display: "flex",
@@ -220,6 +226,11 @@ const Sidebar = () => {
       </Box>
     </>
   );
+
+
+
+
+
 
   return (
     <>

@@ -7,10 +7,6 @@ const fetchHistoricalSummary = async (queryParams: Record<string, any>) => {
 
         const response = await axiosInstance.get("/transactions/getHistorical", {
             params: queryParams,
-            headers: {
-                "Authorization": `Bearer ${token}`,
-                "Content-Type": "application/json",
-            },
             withCredentials: true,
         });
         

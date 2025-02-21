@@ -1,6 +1,7 @@
-import axios from "axios";
-import { refreshAccessToken } from "~/hooks/useRefreshToken";
+// src\utils\axiosInstance.ts
 
+import axios from "axios";
+  
 const axiosInstance = axios.create({
   baseURL: process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000",
   headers: {
@@ -9,56 +10,22 @@ const axiosInstance = axios.create({
   withCredentials: true,
 });
 
-// Attach token to requests
-axiosInstance.interceptors.request.use(
-  async (config) => {
-    const token = localStorage.getItem("accessToken");
-    if (token) {
-      config.headers.Authorization = `Bearer ${token}`;
-    }
-    return config;
-  },
-  (error) => Promise.reject(error)
-);
-
-// Axios response interceptor - Auto-refresh token on 401/403
+// Response interceptor to handle token expiration
 axiosInstance.interceptors.response.use(
   (response) => response,
   async (error) => {
-    const originalRequest = error.config;
+    if (error.response?.status === 403 && error.response?.data?.message === "Token expired.") {
+      try {
+        // Send refresh token request
+        await axiosInstance.post("/auth/tokenRefresh", {}, { withCredentials: true });
 
-    if (error.response?.status === 403 || error.response?.status === 401) {
-      console.warn("Access token expired. Attempting refresh...");
-
-      if (!originalRequest._retry) {
-        originalRequest._retry = true;
-
-        try {
-          const newToken = await refreshAccessToken(
-            () => {
-              console.warn("Logging out due to failed refresh.");
-              localStorage.removeItem("accessToken");
-              localStorage.removeItem("user");
-              window.location.href = "/auth/login";
-            },
-            (token) => {
-              if (token) {
-                localStorage.setItem("accessToken", token);
-              }
-            }
-          );
-
-          if (newToken) {
-            axiosInstance.defaults.headers.common["Authorization"] = `Bearer ${newToken}`;
-            originalRequest.headers.Authorization = `Bearer ${newToken}`;
-            return axiosInstance(originalRequest);
-          }
-        } catch (refreshError) {
-          console.error("Token refresh failed:", refreshError);
-        }
+        // Retry the failed request
+        return axiosInstance(error.config);
+      } catch (refreshError) {
+        console.error("Refresh token failed", refreshError);
+        window.location.href = "/auth/login";
       }
     }
-
     return Promise.reject(error);
   }
 );
