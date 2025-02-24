@@ -82,12 +82,12 @@ const LoginPage = () => {
             sx={{
               width: { xs: "40%", sm: "40%", md: "40%" },
               maxWidth: 500,
-              p: "2.5rem 1.2rem",
+              p: "2.4rem 0.5rem",
               display: "flex",
               flexDirection: "column",
               justifyContent: "center",
               alignItems: "center",
-              backgroundColor: "#242424",
+              backgroundColor: "#181A1B",
               borderRadius: "8px",
             }}
           >
@@ -131,7 +131,7 @@ const LoginPage = () => {
               </Typography>
             </Box>
 
-            <form onSubmit={handleLogin} style={{ width: "88%" }}>
+            <form onSubmit={handleLogin} style={{ width: "85%" }}>
               <Box
                 sx={{
                   display: "flex",
@@ -253,8 +253,8 @@ const LoginPage = () => {
                   padding: "8px 20px",
                   borderRadius: "8px",
                   textTransform: "none",
-                  backgroundColor: "#2563EB",
-                  fontWeight: "bold",
+                  backgroundColor: "#CCA1FD",
+                  color: '#181A1B',
                 }}
               >
                 {LoginSectionData.buttonText}
@@ -265,7 +265,7 @@ const LoginPage = () => {
                 sx={{
                   textAlign: "center",
                   fontSize: 13,
-                  marginTop: "0.8rem",
+                  marginTop: "0.5rem",
                   display: "flex",
                   justifyContent: "center",
                 }}
@@ -274,8 +274,7 @@ const LoginPage = () => {
                   href="/auth/forgot-password"
                   style={{
                     textDecoration: "none",
-                    color: "#2563EB",
-                    fontWeight: "bold",
+                    color: "#D4AEFE",
                   }}
                 >
                   {LoginSectionData.forgotPassword}

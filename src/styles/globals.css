@@ -34,9 +34,9 @@ body {
 
 /* for input types in login */
 input:-webkit-autofill {
-  background-color: #374151 !important; 
+  background-color: #282828 !important; 
   color: white !important;
-  -webkit-box-shadow: 0 0 0 30px #374151 inset !important;
+  -webkit-box-shadow: 0 0 0 30px #282828 inset !important;
   -webkit-text-fill-color: white !important;
 }
 

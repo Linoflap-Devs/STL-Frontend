@@ -45,7 +45,7 @@ const darkTheme = createTheme({
           "& .MuiOutlinedInput-root": {
             border: "none",
             borderRadius: 5,
-            backgroundColor: "#374151",
+            backgroundColor: "#282828",
             transition: "background-color 0.3s ease, border-color 0.3s ease",
             "&:hover .MuiOutlinedInput-notchedOutline": {
               borderColor: "#475569",

@@ -24,6 +24,7 @@ export const LoginSectionData = {
     </>
   ),
   EmailVerificationTitle: "Check your email",
+  PasswordResetTitle: "Password Reset",
   EmailVerificationDescription: (
     <>
       We sent a reset link to small...@gmail.com <br />

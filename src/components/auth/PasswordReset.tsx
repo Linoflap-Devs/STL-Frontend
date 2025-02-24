@@ -147,7 +147,7 @@ const PasswordReset = () => {
                 borderRadius: "8px",
                 textTransform: "none",
                 backgroundColor: "#2563EB !important",
-                color: "#F1F5F9 !important",
+                color: "#181A1B !important",
                 fontWeight: "bold",
                 cursor: "pointer",
               }}

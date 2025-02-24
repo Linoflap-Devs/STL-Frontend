@@ -12,11 +12,8 @@ interface LoginResponse {
   refreshToken: string;
 }
 
-
 export const loginUser = async (payload: LoginPayload, router: any): Promise<LoginResponse> => {
   try {
-    console.log("Executing loginUser function...");
-
     const response = await axiosInstance.post('/auth/login', payload, {
       withCredentials: true,
     });

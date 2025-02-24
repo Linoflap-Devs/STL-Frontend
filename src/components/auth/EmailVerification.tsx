@@ -123,7 +123,7 @@ const EmailVerification = () => {
             display: "flex",
             flexDirection: "column",
             alignItems: "center",
-            backgroundColor: "#242424",
+            backgroundColor: "#181A1B",
             borderRadius: "8px",
             position: "relative",
           }}
@@ -167,7 +167,7 @@ const EmailVerification = () => {
             />
 
             <Typography variant="h4" fontWeight="bold">
-              {LoginSectionData.EmailVerificationTitle}
+              {LoginSectionData.PasswordResetTitle}
             </Typography>
             {!isOtpVerified && (
               <Typography mt={1} color="#9CA3AF" fontSize={"12.5px"}>
@@ -175,11 +175,6 @@ const EmailVerification = () => {
               </Typography>
             )}
 
-            {!isOtpValid && (
-              <Typography color="red" mt={1.5} fontSize="13px">
-                Invalid OTP. Please check your email and enter the correct OTP.
-              </Typography>
-            )}
             {isLoading && !isOtpVerified && <CircularProgress color="primary" />}
 
             {isOtpVerified && (
@@ -194,7 +189,6 @@ const EmailVerification = () => {
                     mt: 0.5,
                     py: 1,
                     borderRadius: "8px",
-                    fontWeight: "bold",
                     textTransform: "none",
                     width: "85%",
                     marginTop: "2rem",
@@ -202,8 +196,8 @@ const EmailVerification = () => {
                       ? "#D1D5D8"
                       : "#CCA1D",
                     color: isButtonDisabled
-                      ? "#F1F5F"
-                      : "#ffffff",
+                      ? "#181A1B"
+                      : "#181A1B",
                     cursor: isButtonDisabled ? "not-allowed" : "pointer",
                   }}
                   disabled={isButtonDisabled}
@@ -240,7 +234,8 @@ const EmailVerification = () => {
                           maxLength: 1,
                           style: {
                             textAlign: "center",
-                            fontSize: "16px",
+                            fontSize: "25px",
+                            fontWeight: 1200,
                             width: "10px !important",
                             maxWidth: "20px",
                             height: "35px",
@@ -269,25 +264,30 @@ const EmailVerification = () => {
                 </Grid>
               </Box>
             )}
+
+            {!isOtpValid && (
+              <Typography sx={{ paddingLeft: 4.5, paddingRight: 4, display: 'flex', textAlign: 'left' }} color="#F05252" mt={0.5} fontSize="13.7px">
+                Invalid OTP. Please check your email and enter the correct OTP.
+              </Typography>
+            )}
+
             {!isOtpVerified && (
               <Button
                 //to be revised
                 onClick={handleNavigation}
                 variant="contained"
                 sx={{
-                  mt: 0.5,
                   py: 1,
                   borderRadius: "8px",
-                  fontWeight: "bold",
                   textTransform: "none",
                   width: "85%",
-                  marginTop: "2rem",
+                  marginTop: "0.9rem",
                   backgroundColor: isButtonDisabled
                     ? "#D1D5D8"
                     : "#CCA1D",
                   color: isButtonDisabled
-                    ? "#F1F5F"
-                    : "#ffffff",
+                    ? "#181A1B"
+                    : "#181A1B",
                   cursor: isButtonDisabled ? "not-allowed" : "pointer",
                 }}
                 disabled={isButtonDisabled}

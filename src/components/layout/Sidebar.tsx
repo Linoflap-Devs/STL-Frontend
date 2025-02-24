@@ -77,8 +77,8 @@ const Sidebar = () => {
   const drawerContent = (
     <>
       <Box sx={{ paddingX: "1rem" }}>
-        <Box sx={{ marginTop: "1.6rem", justifyContent: "left" }} />
-        <Box sx={{ display: "flex", alignItems: "center", }}>
+        <Box sx={{ marginTop: "1.6rem", justifyContent: "center" }} />
+        <Box sx={{ display: "flex", alignItems: "center" }}>
           <Box sx={{ textAlign: "center", marginY: 2, justifyContent: "center" }}>
             <img
               src={UserSectionData.image}
@@ -90,7 +90,7 @@ const Sidebar = () => {
             <Typography
               sx={{
                 marginBottom: 0,
-                color: "white",
+                color: "#C493FD",
                 fontWeight: "700",
                 lineHeight: "24.2px",
                 fontSize: 16,
@@ -116,13 +116,13 @@ const Sidebar = () => {
 
         <Box
           sx={{
-            backgroundColor: "rgba(255, 255, 255, 0.1)",
+            backgroundColor: "#252526",
             borderRadius: "8px",
             paddingX: "1rem",
             paddingY: "0.6rem",
             display: "flex",
             flexDirection: "column",
-            marginBottom: 4,
+            marginBottom: 3.2,
           }}
         >
           <Typography
@@ -178,7 +178,6 @@ const Sidebar = () => {
                 display: "flex",
                 textTransform: "capitalize",
                 color: currentPath === formattedPage ? "#BB86FC" : "inherit",
-                backgroundColor: currentPath === formattedPage ? "#252526" : "transparent",
                 paddingLeft: 1,
                 paddingRight: 2,
                 paddingY: 1,
@@ -191,7 +190,7 @@ const Sidebar = () => {
             >
               {icon}
 
-              <Typography sx={{ fontSize: 14 }}>{page}</Typography>
+              <Typography sx={{ fontSize: 14, fontWeight: currentPath === formattedPage ? "700" : "300", }}>{page}</Typography>
             </Box>
           );
         })}

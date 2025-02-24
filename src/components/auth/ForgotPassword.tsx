@@ -118,7 +118,7 @@ const ForgotPassword = () => {
               display: "flex",
               flexDirection: "column",
               alignItems: "center",
-              backgroundColor: "#242424",
+              backgroundColor: "#181A1B",
               borderRadius: "8px",
               position: "relative",
             }}

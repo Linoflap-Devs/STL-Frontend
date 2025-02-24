@@ -145,7 +145,7 @@ const LoginPage = () => {
               display: "flex",
               flexDirection: "column",
               alignItems: "center",
-              backgroundColor: "#242424",
+              backgroundColor: "#181A1B",
               borderRadius: "8px",
               position: "relative",
             }}
@@ -204,7 +204,7 @@ const LoginPage = () => {
                     margin: "0 auto",
                     display: "block",
                     marginBottom: "0.6rem",
-                    marginTop: "-1rem",
+                    marginTop: "-1.5rem",
                   }}
                   loading="lazy"
                 />
@@ -250,7 +250,7 @@ const LoginPage = () => {
                             newpassword: e.target.value,
                           })
                         }
-                        sx={{
+                        sx={{ 
                           ...inputStyles,
                           "& .MuiOutlinedInput-root": {
                             "& fieldset": {
@@ -275,7 +275,6 @@ const LoginPage = () => {
                         }}
                       />
                       
-
                     {/* {errors.newpassword && (
                       <span style={inputErrorStyles}>{errors.newpassword}</span>
                     )} */}
@@ -357,9 +356,8 @@ const LoginPage = () => {
                     padding: "8px 20px",
                     borderRadius: "8px",
                     textTransform: "none",
-                    fontWeight: "bold",
                     backgroundColor: isButtonDisabled ? "#D1D5D8" : "#CCA1FD",
-                    color: isButtonDisabled ? "#F1F5F9" : "#ffffff",
+                    color: isButtonDisabled ? "#181A1B" : "#181A1B",
                     cursor: isButtonDisabled ? "not-allowed" : "pointer",
                     "&:hover": {
                       backgroundColor: isButtonDisabled ? "#D1D5D8" : "#A070D3", // Change hover color
