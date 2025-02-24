@@ -110,7 +110,6 @@ const BetsPlacedvsTotalWinningsPage = () => {
         fetchData();
     }, [selectedFilter]);
     
-
     return (
         <>
             <Box sx={{ mt: 4, paddingTop: 7, paddingBottom: 4, paddingLeft: 2, backgroundColor: "#282828" }}>

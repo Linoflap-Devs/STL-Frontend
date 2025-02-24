@@ -250,7 +250,6 @@ const BettorsvsBetsPlacedPage = () => {
                             },
 
                         }}
-
                         sx={{
                             "& .MuiChartsGrid-root line": {
                                 stroke: "white",

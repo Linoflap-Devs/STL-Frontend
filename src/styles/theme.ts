@@ -12,7 +12,6 @@ const darkTheme = createTheme({
     mode: "dark",
     background: {
       default: "#181A1B",
-      paper: "#1F2937",
     },
     text: {
       primary: "#FFFFFF",
@@ -261,7 +260,7 @@ const darkTheme = createTheme({
     MuiSelect: {
       styleOverrides: {
         root: {
-          backgroundColor: "#374151",
+          backgroundColor: "#282828",
           borderColor: "#D1D5DB !important",
           width: "100%",
         },
@@ -350,6 +349,29 @@ export const filterStyles = {
   "& .MuiInputBase-input": {
     padding: 0,
   },
+};
+
+export const buttonDrawStyles = {
+  width: 'auto',
+  height: 'auto',
+  border: '1px solid',
+  borderColor: '#575757',
+  borderRadius: '8px',
+  py: 1.5,
+  paddingLeft: '0.8rem',
+  paddingRight: '3.7rem',
+};
+
+export const buttonNumberStyles = {
+  width: 'auto',
+  height: 'auto',
+  border: '1px solid',
+  borderColor: '#575757',
+  borderRadius: '8px',
+  backgroundColor: '#575757',
+  py: '4.3%',
+  px: '14%',
+  mt: '0.5rem',
 };
 
 export default darkTheme;

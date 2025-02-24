@@ -26,9 +26,7 @@ const App = ({ Component, pageProps }: AppProps) => {
       setLoading(false);
       return;
     }
-
     console.log("Checking authentication status...");
-
     axiosInstance
       .get("/users/getCurrentUser", { withCredentials: true })
       .then((response) => {

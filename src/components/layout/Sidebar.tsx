@@ -211,7 +211,6 @@ const Sidebar = () => {
           borderRadius: "6px",
           width: "auto",
           fontSize: 13,
-          fontWeight: 300,
           textDecoration: "none",
           marginTop: "auto",
           position: "absolute",
@@ -219,7 +218,7 @@ const Sidebar = () => {
         }}
       >
         <LogoutIcon />
-        <Typography sx={{ ml: 1, fontSize: 14 }}>Logout</Typography>
+        <Typography sx={{ ml: 1, fontSize: 14, fontWeight: 700, }}>Logout</Typography>
       </Box>
 
       </Box>

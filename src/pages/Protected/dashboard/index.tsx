@@ -1,10 +1,12 @@
 import React from "react";
-import DrawResults from "~/components/dashboard/DrawResults";
+import DrawResultsPage from "~/components/dashboard/DrawResults";
+import BetSummaryTodayPage from "~/components/dashboard/BetSummaryToday";
 
 const DashboardPage = () => {
   return (
-    <div style={{ display: "flex" }}>
-      <DrawResults />
+    <div>
+      <DrawResultsPage />
+      <BetSummaryTodayPage/>
     </div>
   );
 };
