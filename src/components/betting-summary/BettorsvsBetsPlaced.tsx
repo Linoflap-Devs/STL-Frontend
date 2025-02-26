@@ -1,9 +1,8 @@
 import { useEffect, useState } from "react";
-import fetchHistoricalSummary from "~/utils/api/transactions";
 import * as React from "react";
 import { BarChart } from "@mui/x-charts/BarChart";
-import { Typography, Box, Stack, Divider, Button, Menu, MenuItem, TextField, } from "@mui/material";
-import FilterListIcon from '@mui/icons-material/FilterList';
+import { Typography, Box, Stack, Divider, Button, Menu, MenuItem, TextField } from "@mui/material";
+import FilterListIcon from "@mui/icons-material/FilterList";
 
 // Custom Legend
 const CustomLegend = () => (
@@ -19,18 +18,20 @@ const CustomLegend = () => (
     </Stack>
 );
 
-const BettorsvsBetsPlacedPage = () => {
-    const [data, setData] = useState<any>(null);
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState<string | null>(null);
+interface BettorsvsBetsPlacedPageProps {
+    selectedDate: string;
+    data: any[];
+    accumulatedBettors: number;
+    accumulatedBets: number;
+}
+  
+
+const BettorsvsBetsPlacedPage: React.FC<BettorsvsBetsPlacedPageProps> = ({ selectedDate, data }) => {
     const [selectedFilter, setSelectedFilter] = useState("All");
     const [regions, setRegions] = useState<string[]>([]);
-    const [selectedDate, setSelectedDate] = useState<string>("");
-
     const [bettorsData, setBettorsData] = useState<number[]>([]);
     const [betsPlacedData, setBetsPlacedData] = useState<number[]>([]);
 
-    // Dropdown Menu State
     const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
     const open = Boolean(anchorEl);
 
@@ -50,68 +51,37 @@ const BettorsvsBetsPlacedPage = () => {
     ];
 
     useEffect(() => {
-        const fetchData = async () => {
-            try {
-                setLoading(true);
-                setError(null);
+        const processData = () => {
+            const regionMap: Record<string, { bettors: number; bets: number }> = {};
+            allRegions.forEach(region => {
+                regionMap[region] = { bettors: 0, bets: 0 };
+            });
 
-                const queryParams = { filter: selectedFilter };
-                const response = await fetchHistoricalSummary(queryParams);
+            data.forEach((entry) => {
+                let region = entry.Region || "Unknown";
+                region = region.replace(/^Region\s/, ""); // Remove "Region" prefix
 
-                console.log("API Response:", response);
-
-                if (response.success) {
-                    const apiData = response.data;
-                    console.log("Fetched Data:", apiData);
-
-                    // Initialize with all regions, defaulting to 0 bettors & bets
-                    const regionMap: Record<string, { bettors: number; bets: number }> = {};
-                    allRegions.forEach(region => {
-                        regionMap[region] = { bettors: 0, bets: 0 };
-                    });
-
-                    apiData.forEach((entry: any) => {
-                        let region = entry.Region || "Unknown";
-
-                        region = region.replace(/^Region\s/, "");
-
-                        if (regionMap[region]) {
-                            regionMap[region].bettors += entry.TotalBettors;
-                            regionMap[region].bets += entry.TotalBetAmount;
-                        }
-                    });
-
-                    // Generate data arrays based on all 17 regions
-                    const updatedBettorsData = allRegions.map(region => regionMap[region]?.bettors || 0);
-                    const updatedBetsPlacedData = allRegions.map(region => regionMap[region]?.bets || 0);
-
-                    console.log("Updated Bettors Data:", updatedBettorsData);
-                    console.log("Updated Bets Placed Data:", updatedBetsPlacedData);
-
-                    // Ensure all 17 regions are displayed without "Region"
-                    setRegions(allRegions);
-                    setBettorsData(updatedBettorsData);
-                    setBetsPlacedData(updatedBetsPlacedData);
-                    setData(apiData);
-                } else {
-                    setError(response.message || "Failed to fetch data.");
+                if (regionMap[region]) {
+                    regionMap[region].bettors += entry.TotalBettors;
+                    regionMap[region].bets += entry.TotalBetAmount;
                 }
-            } catch (err) {
-                console.error("Fetch error:", err);
-                setError("An unexpected error occurred.");
-            } finally {
-                setLoading(false);
-            }
+            });
+
+            setRegions(allRegions);
+            setBettorsData(allRegions.map(region => regionMap[region]?.bettors || 0));
+            setBetsPlacedData(allRegions.map(region => regionMap[region]?.bets || 0));
         };
 
-        fetchData();
-    }, [selectedFilter]);
+        if (data) {
+            processData();
+        }
+    }, [data]);
 
     return (
         <>
-            <Box sx={{ mt: 4, mb: 1.5, display: 'flex', alignItems: 'center', gap: 2, justifyContent: 'space-between' }}>
+            {/* <Box sx={{ mt: 4, mb: 1.5, display: 'flex', alignItems: 'center', gap: 2, justifyContent: 'space-between' }}> */}
                 {/* Filter Button */}
-                <Button
+                {/* <Button
                     sx={{
                         borderRadius: '8px',
                         width: "150px",
@@ -130,10 +100,10 @@ const BettorsvsBetsPlacedPage = () => {
                     <Typography sx={{ fontWeight: 300, fontSize: '13px', textAlign: 'left', width: '100%' }}>
                         Filter By
                     </Typography>
-                </Button>
+                </Button> */}
 
                 {/* Filter Options Menu */}
-                <Menu sx={{ mt: 1 }} anchorEl={anchorEl} open={open} onClose={() => handleClose(selectedFilter)}>
+                {/* <Menu sx={{ mt: 1 }} anchorEl={anchorEl} open={open} onClose={() => handleClose(selectedFilter)}>
                     {["Specific Day", "Date Duration"].map((filter) => (
                         <MenuItem
                             key={filter}
@@ -151,15 +121,14 @@ const BettorsvsBetsPlacedPage = () => {
                             {filter}
                         </MenuItem>
                     ))}
-                </Menu>
+                </Menu> */}
 
                 {/* Conditionally Show Date Inputs */}
-                {selectedFilter === "Specific Day" && (
+                {/* {selectedFilter === "Specific Day" && (
                     <TextField
                         label="Select Date"
                         type="date"
                         value={selectedDate}
-                        onChange={(e) => setSelectedDate(e.target.value)}
                         InputLabelProps={{ shrink: true }}
                         sx={{
                             backgroundColor: "white",
@@ -167,42 +136,12 @@ const BettorsvsBetsPlacedPage = () => {
                             width: "200px",
                         }}
                     />
-                )}
-
-                {selectedFilter === "Date Duration" && (
-                    <Box sx={{ display: 'flex', gap: 1 }}>
-                        <TextField
-                            label="Start Date"
-                            type="date"
-                            value={selectedDate}
-                            onChange={(e) => setSelectedDate(e.target.value)}
-                            InputLabelProps={{ shrink: true }}
-                            sx={{
-                                backgroundColor: "white",
-                                borderRadius: "4px",
-                                width: "180px",
-                            }}
-                        />
-                        <TextField
-                            label="End Date"
-                            type="date"
-                            value={selectedDate}
-                            onChange={(e) => setSelectedDate(e.target.value)}
-                            InputLabelProps={{ shrink: true }}
-                            sx={{
-                                backgroundColor: "white",
-                                borderRadius: "4px",
-                                width: "180px",
-                            }}
-                        />
-                    </Box>
-                )}
-            </Box>
-
+                )}  
+            </Box> */}
 
             <Box sx={{ paddingTop: 7, paddingBottom: 4, paddingLeft: 2, backgroundColor: "#282828" }}>
-                <Box sx={{ paddingX: 3, }}>
-                    <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", mb: 2, }}>
+                <Box sx={{ paddingX: 3 }}>
+                    <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", mb: 2 }}>
                         <Box>
                             <Typography color="#B3B3B3" sx={{ fontSize: "17px", lineHeight: 1 }}>
                                 Side by Side Comparison of
@@ -220,10 +159,12 @@ const BettorsvsBetsPlacedPage = () => {
                     <BarChart
                         borderRadius={20}
                         grid={{ horizontal: true }}
-                        xAxis={[{ scaleType: "band", data: regions, label: "PHILIPPINE REGIONS", categoryGapRatio: 0.8 } as any]}
+                        xAxis={[{ scaleType: "band", data: regions, label: "PHILIPPINE REGIONS" }]}
+    // barCategoryGapRatio={0.8}
+
                         yAxis={[{ label: "AMOUNT" }]}
                         series={[
-                            { data: bettorsData, label: "Bettors", color: "#BB86FC", },
+                            { data: bettorsData, label: "Bettors", color: "#BB86FC" },
                             { data: betsPlacedData, label: "Bets Placed", color: "#5050A5" },
                         ]}
                         slotProps={{
@@ -234,7 +175,6 @@ const BettorsvsBetsPlacedPage = () => {
                                     borderTopRightRadius: 5,
                                 },
                             },
-
                             axisLabel: {
                                 style: {
                                     fontSize: 12,
@@ -248,7 +188,6 @@ const BettorsvsBetsPlacedPage = () => {
                                     fill: "#B3B3B3",
                                 },
                             },
-
                         }}
                         sx={{
                             "& .MuiChartsGrid-root line": {
@@ -258,24 +197,8 @@ const BettorsvsBetsPlacedPage = () => {
                             "& .MuiChartsAxis-line": {
                                 stroke: "none !important",
                             },
-                            "& .MuiChartsYAxis-root": {
-                                marginTop: 3,
-                            },
                         }}
                     />
-                </Box>
-                <Box sx={{ display: 'flex', justifyContent: 'right', marginRight: 4, borderRadius: '8px' }}>
-                    <Button
-                        sx={{
-                            fontSize: '12px', textAlign: "left", color: '#3F3F3F', textTransform: 'none', backgroundColor: "#CCA1FD", mb: 0.7, paddingX: 4, paddingY: 0.9, width: 'auto', "&:hover": {
-                                backgroundColor: '#B389E0',
-                            },
-                        }}
-                        variant="contained"
-                        onClick={handleClick}
-                    >
-                        Export as CSV
-                    </Button>
                 </Box>
             </Box>
         </>
