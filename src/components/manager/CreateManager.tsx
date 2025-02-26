@@ -269,7 +269,8 @@ const CreateManager: React.FC<CreateManagerProps> = ({
                         sx={{
                           width: "100%",
                           textTransform: "none",
-                          backgroundColor: "#2563EB",
+                          backgroundColor: "#CCA1FD",
+                          color: '#181A1B',
                           borderRadius: "8px"
                         }}
                       >
@@ -339,12 +340,13 @@ const CreateManager: React.FC<CreateManagerProps> = ({
           sx={{
             mt: 4,
             width: "100%",
-            backgroundColor: "#2563EB",
+            backgroundColor: "#CCA1FD",
             textTransform: "none",
             fontSize: "12px",
             padding: "0.8rem",
             borderRadius: "8px",
-            fontWeight: 700,
+            fontWeight: 300,
+            color: '#181A1B',
           }}
           variant="contained"
         >

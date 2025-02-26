@@ -6,6 +6,11 @@ import ManagerTable, { User } from "~/components/manager/ManagerTable";
 import TextField from "@mui/material/TextField";
 import { filterStyles } from "../styles/theme";
 import { Tooltip } from "@mui/material";
+import { DatePicker } from "@mui/x-date-pickers/DatePicker";
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
+
+import dayjs, { Dayjs } from "dayjs";
 
 // SortConfig interface
 interface SortConfig {
@@ -16,20 +21,20 @@ interface SortConfig {
 interface SortableTableCellProps {
   label: string;
   sortKey: keyof User;
-  sortConfig: SortConfig;
+  sortConfig: { key: keyof User; direction: "asc" | "desc" };
   onSort: (sortKey: keyof User) => void;
-  isFilterVisible: boolean;
-  filterValue: string;
-  onFilterChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
-  colSpan?: number;
+  isFilterVisible?: boolean;
+  filterValue?: string;
+  onFilterChange?: (value: string | Dayjs | null) => void; // Updated type
 }
 
+// Component
 export const SortableTableCell: React.FC<SortableTableCellProps> = ({
   label,
   sortKey,
   sortConfig,
   onSort,
-  isFilterVisible,
+  isFilterVisible = false,
   filterValue,
   onFilterChange,
 }) => {
@@ -37,38 +42,70 @@ export const SortableTableCell: React.FC<SortableTableCellProps> = ({
     onSort(sortKey);
   };
 
-  return (
-    <TableCell sx={{ cursor: "pointer" }} onClick={handleSort}>
-      {sortConfig.key === sortKey && (
-        <Tooltip
-          title={`Sort ${label} by ${sortConfig.direction === "asc" ? "Ascending" : "Descending"}`}
-        >
-          <span>
-            {sortConfig.direction === "asc" ? (
-              <KeyboardArrowUpIcon sx={{ fontSize: 16, marginRight: 1 }} />
-            ) : (
-              <KeyboardArrowDownIcon sx={{ fontSize: 16, marginRight: 1 }} />
-            )}
-          </span>
-        </Tooltip>
-      )}
-      {label}
-      {isFilterVisible && (
-        <div>
-          <TextField
-            id="filter-input"
-            placeholder={`Filter by ${label}`}
-            variant="filled"
-            value={filterValue}
-            onChange={onFilterChange}
-            fullWidth
-            sx={filterStyles}
-            onClick={(e) => e.stopPropagation()}
-          />
-        </div>
-      )}
-    </TableCell>
+  // Text input handler
+  const handleTextChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    if (onFilterChange) {
+      onFilterChange(event.target.value);
+    }
+  };
 
+  // DatePicker handler (Format: "YYYY/MM/DD")
+  const handleDateChange = (date: Dayjs | null) => {
+    if (onFilterChange) {
+      onFilterChange(date ? date.format("YYYY/MM/DD") : ""); // Changed format to YYYY/MM/DD
+    }
+  };
+
+  return (
+    <LocalizationProvider dateAdapter={AdapterDayjs}>
+      <TableCell sx={{ cursor: "pointer" }} onClick={handleSort}>
+        {sortConfig.key === sortKey && (
+          <Tooltip title={`Sort ${label} ${sortConfig.direction === "asc" ? "Ascending" : "Descending"}`}>
+            <span>
+              {sortConfig.direction === "asc" ? (
+                <KeyboardArrowUpIcon sx={{ fontSize: 16, marginRight: 1 }} />
+              ) : (
+                <KeyboardArrowDownIcon sx={{ fontSize: 16, marginRight: 1 }} />
+              )}
+            </span>
+          </Tooltip>
+        )}
+        {label}
+
+        {/* Filter Input Section */}
+        {isFilterVisible && onFilterChange && (
+          <div>
+            {sortKey === "DateOfRegistration" ? (
+              <DatePicker
+                value={filterValue ? dayjs(filterValue, "YYYY/MM/DD") : null}
+                onChange={handleDateChange}
+                format="YYYY/MM/DD" // Set display format
+                slotProps={{
+                  textField: {
+                    variant: "filled",
+                    fullWidth: true,
+                    sx: filterStyles,
+                    placeholder: "YYYY/MM/DD",
+                    onClick: (e) => e.stopPropagation(),
+                  },
+                }}
+              />
+            ) : (
+              <TextField
+                id="filter-input"
+                placeholder={`Filter by ${label}`}
+                variant="filled"
+                value={filterValue || ""}
+                onChange={handleTextChange}
+                fullWidth
+                sx={filterStyles}
+                onClick={(e) => e.stopPropagation()}
+              />
+            )}
+          </div>
+        )}
+      </TableCell>
+    </LocalizationProvider>
   );
 };
 
@@ -81,25 +118,24 @@ export function sortData(
     const valueA = a[sortConfig.key];
     const valueB = b[sortConfig.key];
 
+    // Ensure DateOfRegistration is parsed correctly
+    if (sortConfig.key === "DateOfRegistration") {
+      const dateA = dayjs(valueA).valueOf(); // Convert to timestamp
+      const dateB = dayjs(valueB).valueOf(); // Convert to timestamp
+
+      return sortConfig.direction === "asc" ? dateA - dateB : dateB - dateA;
+    }
+
+    // If both are strings, compare lexicographically
     if (typeof valueA === "string" && typeof valueB === "string") {
       return sortConfig.direction === "asc"
         ? valueA.localeCompare(valueB)
         : valueB.localeCompare(valueA);
     }
 
+    // If both are numbers, compare numerically
     if (typeof valueA === "number" && typeof valueB === "number") {
       return sortConfig.direction === "asc" ? valueA - valueB : valueB - valueA;
-    }
-
-    if (typeof valueA === "string" && typeof valueB === "string") {
-      const dateA = new Date(valueA);
-      const dateB = new Date(valueB);
-
-      if (!isNaN(dateA.getTime()) && !isNaN(dateB.getTime())) {
-        return sortConfig.direction === "asc"
-          ? dateA.getTime() - dateB.getTime()
-          : dateB.getTime() - dateA.getTime();
-      }
     }
 
     return 0;
@@ -151,18 +187,41 @@ export const filterData = (
     return filterKeys.every((key) => {
       const filterValue = filters[key] || "";
       const searchValue = filters.searchQuery || "";
-      return (
-        (filterValue
-          ? item[key]?.toLowerCase().includes(filterValue.toLowerCase())
-          : true) &&
-        (searchValue
-          ? Object.values(item).some(
-            (val) =>
-              typeof val === "string" &&
-              val.toLowerCase().includes(searchValue.toLowerCase())
-          )
-          : true)
-      );
+
+      let itemValue = item[key];
+
+      // Handle DateOfRegistration filtering
+      if (key === "DateOfRegistration" && itemValue) {
+        const itemDate = dayjs(itemValue);
+        const filterDate = dayjs(filterValue);
+
+        // If the filter value is a valid date, compare timestamps
+        if (filterDate.isValid()) {
+          return itemDate.isSame(filterDate, "day"); // Compare by day
+        } else {
+          return true;
+        }
+      }
+
+      // Handle other fields (non-date)
+      if (typeof itemValue === "string") {
+        return (
+          (filterValue
+            ? itemValue.toLowerCase().includes(filterValue.toLowerCase())
+            : true) &&
+          (searchValue
+            ? Object.values(item).some(
+                (val) =>
+                  typeof val === "string" &&
+                  val.toLowerCase().includes(searchValue.toLowerCase())
+              )
+            : true)
+        );
+      }
+
+      // Default case (non-string fields)
+      return true;
     });
   });
 };
+

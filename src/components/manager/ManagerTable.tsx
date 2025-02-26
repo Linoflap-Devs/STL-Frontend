@@ -36,21 +36,22 @@ import FilterListOffIcon from "@mui/icons-material/FilterListOff";
 import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
 import Tooltip from "@mui/material/Tooltip";
 import Swal from "sweetalert2";
+import dayjs, { Dayjs } from "dayjs";
+
 
 // define user interface
 export interface User {
   id?: number;
-  firstname: string;
-  lastname: string;
-  region: string;
-  province: string;
-  city?: string;
-  barangay?: string;
+  FirstName: string;
+  LastName: string;
+  Region: string;
+  Province: string;
+  Barangay?: string;
+  City?: string;
   streetaddress: string;
-  phonenumber: string;
-  username: string;
+  UserName: string;
   password?: string;
-  regisdate?: string;
+  DateOfRegistration?: string;
   [key: string]: any;
 }
 
@@ -66,7 +67,7 @@ const ManagerTable: React.FC<ManagerTableProps> = ({ managers, onCreate, onEdit,
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [isFilterVisible, setIsFilterVisible] = useState(false);
   const [isFilterActive, setIsFilterActive] = useState(false);
-  const [selectedUserIds, setSelectedUserIds] = useState<Set<number>>( new Set() );
+  const [selectedUserIds, setSelectedUserIds] = useState<Set<number>>(new Set());
   const [selectedCount, setSelectedCount] = useState<number>(0);
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
@@ -81,24 +82,28 @@ const ManagerTable: React.FC<ManagerTableProps> = ({ managers, onCreate, onEdit,
   }>({ key: "id", direction: "asc" });
 
   const [filters, setFilters] = useState<{ [key: string]: string }>({
-    firstname: "",
-    lastname: "",
-    username: "",
-    phonenumber: "",
-    region: "",
-    province: "",
-    regisdate: "",
+    FirstName: "",
+    LastName: "",
+    UserName: "",
+    Region: "",
+    Province: "",
+    CreatedBy: "",
+    Status: "",
+    DateOfRegistration: "",
   });
 
-  const filteredUsers = filterData(managers, { ...filters, searchQuery }, [
-    "firstname",
-    "lastname",
-    "username",
-    "phonenumber",
-    "region",
-    "province",
-  ]);
-
+  const filteredUsers = filterData(
+    managers.map((user) => ({
+      ...user,
+      fullName: `${user.FirstName} ${user.LastName}`.toLowerCase(),
+      formattedDate: user.DateOfRegistration
+        ? dayjs(user.DateOfRegistration).format("YYYY-MM-DD")
+        : "Invalid Date",
+    })),
+    { ...filters, searchQuery },
+    ["fullName", "UserName", "Region", "Province", "CreatedBy", "Status", "DateOfRegistration"]
+  );
+  
   const sortedFilteredUsers: User[] = sortData(filteredUsers, {
     key: sortConfig.key,
     direction: sortConfig.direction,
@@ -123,7 +128,7 @@ const ManagerTable: React.FC<ManagerTableProps> = ({ managers, onCreate, onEdit,
   const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setSearchQuery(event.target.value);
   };
-
+  
   // Filter icon handling
   const handleFilterToggle = () => {
     setIsFilterActive((prevState) => !prevState);
@@ -131,14 +136,22 @@ const ManagerTable: React.FC<ManagerTableProps> = ({ managers, onCreate, onEdit,
   };
 
   // Filter change handler
-  const handleFilterChange =
-    (key: string) => (e: React.ChangeEvent<HTMLInputElement>) => {
-      const newFilterValue = e.target.value;
-      setFilters((prevFilters) => ({
-        ...prevFilters,
-        [key]: newFilterValue,
-      }));
-    };
+  const handleFilterChange = (key: string) => (value: string | Dayjs | null) => {
+    let filterValue: string;
+  
+    if (dayjs.isDayjs(value)) {
+      // Handle DatePicker change
+      filterValue = value.isValid() ? value.format("YYYY-MM-DD") : "";
+    } else {
+      // Handle TextField change
+      filterValue = value || "";
+    }
+  
+    setFilters((prevFilters) => ({
+      ...prevFilters,
+      [key]: filterValue,
+    }));
+  };
 
   // Menu handling
   const handleToggleMenu = (
@@ -179,19 +192,19 @@ const ManagerTable: React.FC<ManagerTableProps> = ({ managers, onCreate, onEdit,
   };
 
   return (
-    <div className="mt-4 w-full max-w-screen-sm sm:max-w-screen-md md:max-w-screen-lg lg:max-w-screen-xl xl:max-w-screen-xl px-4 sm:px-6 md:px-8 lg:px-6 mx-auto">
+    <Box>
       <Box
         sx={{
           display: "flex",
           flexDirection: "row",
           justifyContent: "space-between",
           alignItems: "center",
-          marginBottom: 2.5,
+          marginBottom: 1.5,
         }}
       >
         <Typography
-          variant="h5"
-          sx={{ fontWeight: "bold", marginBottom: 0 }}
+          variant="h6"
+          sx={{ fontWeight: "bold", marginBottom: 0, color: '#E3C9FF',  }}
           gutterBottom
         >
           {UserSectionData.titleManager}
@@ -199,7 +212,7 @@ const ManagerTable: React.FC<ManagerTableProps> = ({ managers, onCreate, onEdit,
       </Box>
 
       <TableContainer>
-        <Box sx={{ backgroundColor: "#282828" }}>
+        <Box sx={{ backgroundColor: "#282828", }}>
           <Box
             sx={{
               paddingTop: 2.5,
@@ -210,22 +223,16 @@ const ManagerTable: React.FC<ManagerTableProps> = ({ managers, onCreate, onEdit,
               alignItems: "center",
             }}
           >
-            <Box
-              sx={{
-                display: "flex",
-                justifyContent: "flex-start",
-                alignItems: "center",
-              }}
-            >
+            {/* Left Section: Search and Filter */}
+            <Box sx={{ display: "flex", alignItems: "center" }}>
               <TextField
-                fullWidth
                 variant="outlined"
                 placeholder="Search"
                 value={searchQuery}
                 sx={{
-                  maxWidth: "300px",
+                  width: "350px",
                   "& .MuiOutlinedInput-root": {
-                    padding: "8px 12px",
+                    padding: "9px 14px",
                   },
                   "& .MuiOutlinedInput-input": {
                     padding: "0.5px 0",
@@ -240,49 +247,36 @@ const ManagerTable: React.FC<ManagerTableProps> = ({ managers, onCreate, onEdit,
                   ),
                 }}
               />
-
-              <FilterListIcon
-                onClick={handleFilterToggle}
-                sx={{ marginLeft: 5, color: "#9CA3AF", cursor: "pointer" }}
-                style={{ display: isFilterActive ? "none" : "block" }}
-              />
-
-              <FilterListOffIcon
-                onClick={handleFilterToggle}
-                sx={{ marginLeft: 5, color: "#9CA3AF", cursor: "pointer" }}
-                style={{ display: isFilterActive ? "block" : "none" }}
-              />
+              {/* Filter Icons */}
+              {isFilterActive ? (
+                <FilterListOffIcon
+                  onClick={handleFilterToggle}
+                  sx={{ marginLeft: 2, color: "#9CA3AF", cursor: "pointer" }}
+                />
+              ) : (
+                <FilterListIcon
+                  onClick={handleFilterToggle}
+                  sx={{ marginLeft: 2, color: "#9CA3AF", cursor: "pointer" }}
+                />
+              )}
             </Box>
 
-            <Box
-              sx={{
-                display: "flex",
-                justifyContent: "flex-end",
-                alignItems: "center",
-              }}
-            >
-              <Box sx={{ display: "flex", alignItems: "center" }}>
-                {selectedUserIds.size > 0 && (
-                  <Button
-                    variant="contained"
-                    onClick={handleDeleteSelectedManagers}
-                    sx={deleteStyles}
-                  >
-                    Delete {selectedUserIds.size}{" "}
-                    {selectedUserIds.size === 1
-                      ? "Selected User"
-                      : "Selected Users"}
-                  </Button>
-                )}
-
+            {/* Right Section: Delete and Add Manager Buttons */}
+            <Box sx={{ display: "flex", alignItems: "center" }}>
+              {selectedUserIds.size > 0 && (
                 <Button
                   variant="contained"
-                  onClick={onCreate}
-                  sx={buttonStyles}
+                  onClick={handleDeleteSelectedManagers}
+                  sx={deleteStyles}
                 >
-                  {UserSectionData.addManagerButton}
+                  Delete {selectedUserIds.size}{" "}
+                  {selectedUserIds.size === 1 ? "Selected User" : "Selected Users"}
                 </Button>
-              </Box>
+              )}
+
+              <Button variant="contained" onClick={onCreate} sx={buttonStyles}>
+                {UserSectionData.addManagerButton}
+              </Button>
             </Box>
           </Box>
         </Box>
@@ -299,165 +293,142 @@ const ManagerTable: React.FC<ManagerTableProps> = ({ managers, onCreate, onEdit,
                 </Tooltip>
               </TableCell>
               <>
+              {/* Both First name and Last name */}
                 <SortableTableCell
-                  label="First Name"
-                  sortKey="firstname"
+                  label="Full Name"
+                  sortKey="fullName"
                   sortConfig={sortConfig}
                   onSort={onSortWrapper}
-                  isFilterVisible={isFilterVisible}
-                  filterValue={filters.firstname}
-                  onFilterChange={handleFilterChange("firstname")}
+                  onFilterChange={handleFilterChange("fullName")}
                 />
 
                 <SortableTableCell
-                  label="Last Name"
-                  sortKey="lastname"
-                  sortConfig={sortConfig}
-                  onSort={onSortWrapper}
-                  isFilterVisible={isFilterVisible}
-                  filterValue={filters.lastname}
-                  onFilterChange={handleFilterChange("lastname")}
-                />
-
-                <SortableTableCell
-                  label="Username"
+                  label="Email Address"
                   sortKey="username"
                   sortConfig={sortConfig}
                   onSort={onSortWrapper}
-                  isFilterVisible={isFilterVisible}
-                  filterValue={filters.username}
                   onFilterChange={handleFilterChange("username")}
                 />
 
                 <SortableTableCell
-                  label="Phone Number"
-                  sortKey="phonenumber"
+                  label="Assigned Region"
+                  sortKey="Region"
                   sortConfig={sortConfig}
                   onSort={onSortWrapper}
                   isFilterVisible={isFilterVisible}
-                  filterValue={filters.phonenumber}
-                  onFilterChange={handleFilterChange("phonenumber")}
+                  filterValue={filters.Region}
+                  onFilterChange={handleFilterChange("Region")}
                 />
 
                 <SortableTableCell
-                  label="Region"
-                  sortKey="region"
+                  label="Creation Date"
+                  sortKey="DateOfRegistration"
                   sortConfig={sortConfig}
                   onSort={onSortWrapper}
                   isFilterVisible={isFilterVisible}
-                  filterValue={filters.region}
-                  onFilterChange={handleFilterChange("region")}
+                  filterValue={filters.DateOfRegistration}
+                  onFilterChange={handleFilterChange("DateOfRegistration")}
                 />
 
                 <SortableTableCell
-                  label="Province"
-                  sortKey="province"
+                  label="Created By"
+                  sortKey="CreatedBy"
                   sortConfig={sortConfig}
                   onSort={onSortWrapper}
                   isFilterVisible={isFilterVisible}
-                  filterValue={filters.province}
-                  onFilterChange={handleFilterChange("province")}
+                  filterValue={filters.CreatedBy}
+                  onFilterChange={handleFilterChange("CreatedBy")}
                 />
-
+                
                 <SortableTableCell
-                  label="Registration Date"
-                  sortKey="regisdate"
+                  label="Status"
+                  sortKey="Status"
                   sortConfig={sortConfig}
                   onSort={onSortWrapper}
                   isFilterVisible={isFilterVisible}
-                  filterValue={filters.regisdate}
-                  onFilterChange={handleFilterChange("regisdate")}
+                  filterValue={filters.Status}
+                  onFilterChange={handleFilterChange("Status")}
                 />
               </>
               <TableCell>Actions</TableCell>
             </TableRow>
           </TableHead>
 
-          <TableBody>
-            {managers.length === 0 ? (
-              <TableRow>
-                <TableCell colSpan={9} align="center">
-                  <Box
-                    sx={{
-                      display: "flex",
-                      flexDirection: "column",
-                      alignItems: "center",
-                      py: 5,
-                    }}
+        <TableBody>
+          {managers.length === 0 ? (
+            <TableRow>
+              <TableCell colSpan={9} align="center">
+                <Box
+                  sx={{
+                    display: "flex",
+                    flexDirection: "column",
+                    alignItems: "center",
+                    py: 5,
+                  }}
+                >
+                  <PersonOffIcon sx={{ fontSize: 50, color: "gray" }} />
+                  <Typography
+                    variant="h6"
+                    color="textSecondary"
+                    sx={{ mt: 2, fontWeight: 500 }}
                   >
-                    <PersonOffIcon sx={{ fontSize: 50, color: "gray" }} />
-                    <Typography
-                      variant="h6"
-                      color="textSecondary"
-                      sx={{ mt: 2, fontWeight: 500 }}
-                    >
-                      No managers available
-                    </Typography>
-                    <Typography variant="body2" color="textSecondary">
-                      Add a new manager to get started.
-                    </Typography>
-                  </Box>
-                </TableCell>
-              </TableRow>
-            ) : sortedFilteredUsers.length === 0 ? (
-              <TableRow>
-                <TableCell colSpan={9} align="center">
-                  <Box
-                    sx={{
-                      display: "flex",
-                      flexDirection: "column",
-                      alignItems: "center",
-                      py: 5,
-                    }}
+                    No managers available
+                  </Typography>
+                  <Typography variant="body2" color="textSecondary">
+                    Add a new manager to get started.
+                  </Typography>
+                </Box>
+              </TableCell>
+            </TableRow>
+          ) : sortedFilteredUsers.length === 0 ? (
+            <TableRow>
+              <TableCell colSpan={9} align="center">
+                <Box
+                  sx={{
+                    display: "flex",
+                    flexDirection: "column",
+                    alignItems: "center",
+                    py: 5,
+                  }}
+                >
+                  <SearchOffIcon sx={{ fontSize: 50, color: "gray" }} />
+                  <Typography
+                    variant="h6"
+                    color="textSecondary"
+                    sx={{ mt: 2, fontWeight: 500 }}
                   >
-                    <SearchOffIcon sx={{ fontSize: 50, color: "gray" }} />
-                    <Typography
-                      variant="h6"
-                      color="textSecondary"
-                      sx={{ mt: 2, fontWeight: 500 }}
-                    >
-                      No results found
-                    </Typography>
-                    <Typography variant="body2" color="textSecondary">
-                      Try adjusting your search criteria.
-                    </Typography>
-                  </Box>
-                </TableCell>
-              </TableRow>
-            ) : (
-              sortedFilteredUsers
-                .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                .map((user) => (
-                  <TableRow
-                    key={user.id}
-                    selected={selectedUserIds.has(user.id!)}
-                  >
-                    <TableCell>
-                      <Checkbox
-                        checked={selectedUserIds.has(user.id!)}
-                        onChange={(event) =>
-                          handleSelectManager(event, user.id!)
-                        }
-                      />
-                    </TableCell>
-                    <TableCell>{user.firstname}</TableCell>
-                    <TableCell>{user.lastname}</TableCell>
-                    <TableCell>{user.username}</TableCell>
-                    <TableCell>{user.phonenumber}</TableCell>
-                    <TableCell>{user.region}</TableCell>
-                    <TableCell>{user.province}</TableCell>
-                    <TableCell>{user.regisdate}</TableCell>
-                    <TableCell>
-                      <IconButton
-                        onClick={(event) => handleToggleMenu(event, user)}
-                      >
-                        <MoreHorizIcon />
-                      </IconButton>
-                    </TableCell>
-                  </TableRow>
-                ))
-            )}
-          </TableBody>
+                    No results found
+                  </Typography>
+                  <Typography variant="body2" color="textSecondary">
+                    Try adjusting your search criteria.
+                  </Typography>
+                </Box>
+              </TableCell>
+            </TableRow>
+          ) : (
+            sortedFilteredUsers
+              .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+              .map((user) => (
+                <TableRow key={user.id}>
+                  <TableCell>
+                    <Checkbox
+                    />
+                  </TableCell>
+                  <TableCell>{`${user.FirstName} ${user.LastName}`}</TableCell>
+                  <TableCell>{user.UserName}</TableCell>
+                  <TableCell>{user.Province}</TableCell>
+                  <TableCell>{dayjs(user.DateOfRegistration).format("YYYY/MM/DD HH:mm:ss")}</TableCell>
+                  <TableCell>{user.CreatedBy}</TableCell>
+                  <TableCell>{user.CreatedBy}</TableCell>
+                  <TableCell>
+                    <IconButton onClick={(event) => handleToggleMenu(event, user)}>
+                      <MoreHorizIcon />
+                    </IconButton>
+                  </TableCell>
+                </TableRow>
+              ))
+          )}
+        </TableBody>
         </Table>
 
         <Menu
@@ -506,7 +477,7 @@ const ManagerTable: React.FC<ManagerTableProps> = ({ managers, onCreate, onEdit,
           </Button>
         </Box>
       </TableContainer>
-    </div>
+    </Box>
   );
 };
 

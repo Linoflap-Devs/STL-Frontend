@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import ManagerTable, { User } from '~/components/manager/ManagerTable';
 import CreateManager from '~/components/manager/CreateManager';
 import UpdateManager from '~/components/manager/UpdateManager';
+import fetchUsers from '~/utils/api/users'; // Import fetchUsers function
 
 const UsersPage = () => {
   const [managers, setManagers] = useState<User[]>([]);
@@ -10,6 +11,22 @@ const UsersPage = () => {
   const [isUpdateModalOpen, setUpdateModalOpen] = useState(false);
   const [selectedManager, setSelectedManager] = useState<User | null>(null);
 
+  // Fetch users when the component mounts
+  useEffect(() => {
+    const loadUsers = async () => {
+      const response = await fetchUsers({});
+      if (response.success) {
+        // Filter users with UserTypeId === 2 before setting state. 2 muna but manager is 3.
+        const filteredUsers = response.data.filter((user: { UserTypeId: number; }) => user.UserTypeId === 2);
+        setManagers(filteredUsers);
+      } else {
+        console.error("Failed to fetch users:", response.message);
+      }
+    };
+  
+    loadUsers();
+  }, []);
+  
   const handleUserCreate = () => {
     setSelectedUser(null);
     setUpdateModalOpen(false);
@@ -20,25 +37,20 @@ const UsersPage = () => {
     setSelectedManager(user);
     setUpdateModalOpen(true);
   };
-  
+
   const closeUpdateModal = () => {
     setUpdateModalOpen(false);
     setSelectedManager(null);
   };
-  
+
   const handleSubmitUser = (userData: User | null) => {
     if (userData) {
-      //console.log('Submitted user data: ', userData);
       setManagers((prevManagers) => [...prevManagers, userData]);
-    } else {
-      //console.log('No user data submitted');
-      //console.log(managers);
     }
     setModalOpen(false);
   };
 
   const handleSaveUpdatedUser = (updatedUser: User) => {
-    console.log('Updated user data: ', updatedUser);
     setManagers((prevManagers) =>
       prevManagers.map((manager) =>
         manager.id === updatedUser.id ? updatedUser : manager
@@ -71,7 +83,7 @@ const UsersPage = () => {
       {isUpdateModalOpen && (
         <UpdateManager
           open={isUpdateModalOpen}
-          onClose={() => setUpdateModalOpen(false)}
+          onClose={closeUpdateModal}
           onSubmit={handleSaveUpdatedUser}
           manager={selectedManager}
         />

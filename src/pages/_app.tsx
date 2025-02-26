@@ -49,7 +49,7 @@ const App = ({ Component, pageProps }: AppProps) => {
       </ThemeProvider>
     );
   }
-
+  
   return (
     <ThemeProvider theme={darkTheme}>
       <CssBaseline />

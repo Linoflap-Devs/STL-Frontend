@@ -3,7 +3,7 @@ export const UserSectionData = {
     userRole: "Admin",
     image: "/images/stl-logo.png",
     pages: ['Dashboard', 'Managers', 'Executive', 'Betting Summary', 'Winning Summary', 'Draw Summary'],
-    titleManager: "Small Town Lottery Manager",
+    titleManager: "Small Town Lottery Managers",
     titleExecutive: "Small Town Lottery Executive",
     addManagerButton: "Add Manager",
     addExecutiveButton: "Add Executive",

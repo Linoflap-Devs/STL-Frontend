@@ -47,14 +47,14 @@ const darkTheme = createTheme({
             backgroundColor: "#282828",
             transition: "background-color 0.3s ease, border-color 0.3s ease",
             "&:hover .MuiOutlinedInput-notchedOutline": {
-              borderColor: "#475569",
+              borderColor: "#FFFFFF",
             },
             "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
-              borderColor: "#475569",
+              borderColor: "#FFFFFF",
             },
           },
           "& .MuiOutlinedInput-notchedOutline": {
-            borderColor: "#374151",
+            borderColor: "#3F3F3F",
             transition: "border-color 0.3s ease",
           },
           "& .MuiOutlinedInput-input": {
@@ -115,7 +115,7 @@ const darkTheme = createTheme({
             backgroundColor: "#3F3F3F",
           },
           "&.Mui-selected": {
-            backgroundColor: "#28313F",
+            backgroundColor: "#616161",
           },
         },
       },
@@ -128,14 +128,14 @@ const darkTheme = createTheme({
             color: "#e5e7eb",
           },
           "&:hover": {
-            backgroundColor: "#374151",
+            backgroundColor: "#3F3F3F",
           },
           "& .MuiSvgIcon-root": {
             fill: "#6C7480",
             padding: 0,
             margin: 0,
             fontSize: "21px",
-            backgroundColor: "#374151 !important",
+            backgroundColor: "#3F3F3F !important",
             borderRadius: "5px",
             height: "20px",
             width: "20px",
@@ -188,6 +188,7 @@ const darkTheme = createTheme({
           backgroundImage: "none",
           borderRadius: "6px",
           padding: "25px 8px 27px 8px",
+          backgroundColor: '#181A1B',
         },
       },
     },
@@ -222,7 +223,7 @@ const darkTheme = createTheme({
           color: "#ffffff",
           fontSize: "0.85rem",
           "&:hover fieldset": {
-            borderColor: "#D1D5DB",
+            borderColor: "#FFFFFF",
           },
           "&.Mui-error fieldset": {
             borderColor: "#F05252",
@@ -236,7 +237,6 @@ const darkTheme = createTheme({
         },
       },
     },
-
     MuiInputBase: {
       styleOverrides: {
         root: {
@@ -291,8 +291,9 @@ export const buttonStyles = {
   textTransform: "none",
   fontSize: 12,
   borderRadius: "8px",
-  backgroundColor: "#2563EB",
+  backgroundColor: "#CCA1FD",
   width: "auto",
+  color: '#181A1B',
 };
 
 export const deleteStyles = {
