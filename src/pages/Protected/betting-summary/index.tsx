@@ -6,6 +6,7 @@ import FilterListIcon from '@mui/icons-material/FilterList';
 
 import fetchHistoricalSummary from "~/utils/api/transactions";
 import useBettingStore from "../../../../store/useBettingStore"; 
+import BettorsvsBetsPlacedPage from "~/components/betting-summary/BettorsvsBetsPlaced";
 
 const BettingSummaryPage = () => {
   const { selectedFilter, setSelectedFilter } = useBettingStore();
@@ -197,6 +198,8 @@ const BettingSummaryPage = () => {
           Data loaded successfully. Check console for debugging.
         </Typography>
       )}
+
+      <BettorsvsBetsPlacedPage data={data}/>
     </Box>
   );
 };
