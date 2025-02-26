@@ -463,7 +463,7 @@ const ExecutiveTable: React.FC<ExecutiveTableProps> = ({ executives, onCreate, o
           sx={{
             padding: "12px",
             boxShadow: "0 2px 8px rgba(0, 0, 0, 0.4)",
-            backgroundColor: "#1F2937",
+            backgroundColor: "#282828",
           }}
         >
           <TablePagination

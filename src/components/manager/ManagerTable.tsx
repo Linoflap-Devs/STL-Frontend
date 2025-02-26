@@ -199,7 +199,7 @@ const ManagerTable: React.FC<ManagerTableProps> = ({ managers, onCreate, onEdit,
       </Box>
 
       <TableContainer>
-        <Box sx={{ backgroundColor: "#1F2937" }}>
+        <Box sx={{ backgroundColor: "#282828" }}>
           <Box
             sx={{
               paddingTop: 2.5,
@@ -476,7 +476,7 @@ const ManagerTable: React.FC<ManagerTableProps> = ({ managers, onCreate, onEdit,
           sx={{
             padding: "12px",
             boxShadow: "0 2px 8px rgba(0, 0, 0, 0.4)",
-            backgroundColor: "#1F2937",
+            backgroundColor: "#282828",
           }}
         >
           <TablePagination

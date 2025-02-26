@@ -30,179 +30,118 @@ const DrawResultsPage: React.FC<DrawResultsProps> = ({
   };
 
   return (
-    <Box sx={{}}>
-      <Typography sx={{ color: "#E3C9FF", fontWeight: 700 }} variant="h6">
-        Official Draw Result
-      </Typography>
-      <Box sx={{ display: 'flex', flexDirection: 'row', gap: 2, }}>
-        {/* Region Select */}
-        <Box sx={{ display: 'flex', flexDirection: 'column', }}>
-          <Typography variant="subtitle1">Region</Typography>
-          <Select
-            name="Region"
-            fullWidth
-            displayEmpty
-            sx={{ width: '312px !important' }}
-            renderValue={(selected) =>
-              selected ? (selected as string) : 'Select Region'
-            }
-            MenuProps={{
-              PaperProps: {
-                sx: { mt: 1 },
-              },
-            }}
-            value="" // add value prop for controlled component
+    <Box sx={{ mt: 2, textAlign: "left" }}>
+      <Box
+        sx={{
+          display: "flex",
+          gap: 2,
+          justifyContent: "flex-start",
+          alignItems: "flex-start",
+        }}
+      >
+        <Box sx={{ ...buttonDrawStyles }}>
+          <Typography
+            sx={{ fontSize: "14px", fontWeight: 700, lineHeight: 1.2 }}
           >
-            <MenuItem value="" disabled>
-              Select Region
-            </MenuItem>
-            <MenuItem value="option1">Option 1</MenuItem>
-            <MenuItem value="option2">Option 2</MenuItem>
-            <MenuItem value="option3">Option 3</MenuItem>
-          </Select>
-        </Box>
-
-        {/* Province Select */}
-        <Box sx={{ display: 'flex', flexDirection: 'column', flex: 1 }}>
-          <Typography variant="subtitle1">Province</Typography>
-          <Select
-            name="Province"
-            fullWidth
-            displayEmpty
-            sx={{ width: '312px !important' }}
-            renderValue={(selected) =>
-              selected ? (selected as string) : 'Select Province'
-            }
-            MenuProps={{
-              PaperProps: {
-                sx: { mt: 1.5 },
-              },
-            }}
-            value="" // add value prop for controlled component
+            First Draw
+          </Typography>
+          <Typography
+            sx={{ fontSize: "30px", fontWeight: 700, lineHeight: 1.1 }}
           >
-            <MenuItem value="" disabled>
-              Select Province
-            </MenuItem>
-            <MenuItem value="province1">Province 1</MenuItem>
-            <MenuItem value="province2">Province 2</MenuItem>
-            <MenuItem value="province3">Province 3</MenuItem>
-          </Select>
-        </Box>
-      </Box>
-
-      <Box sx={{ mt: 2, textAlign: "left" }}>
-        <Box
-          sx={{
-            display: "flex",
-            gap: 2,
-            justifyContent: "flex-start",
-            alignItems: "flex-start",
-          }}
-        >
-          <Box sx={{ ...buttonDrawStyles }}>
-            <Typography
-              sx={{ fontSize: "14px", fontWeight: 700, lineHeight: 1.2 }}
-            >
-              First Draw
-            </Typography>
-            <Typography
-              sx={{ fontSize: "30px", fontWeight: 700, lineHeight: 1.1 }}
-            >
-              10:30 AM
-            </Typography>
-            <Box
-              sx={{
-                display: "flex",
-                gap: 1,
-                justifyContent: "flex-start",
-                alignItems: "center",
-              }}
-            >
-              <Box sx={{ ...buttonNumberStyles }}>
-                <Typography
-                  sx={{ color: "#fff", fontWeight: 700, fontSize: "36px" }}
-                >
-                  {displayValue(value1)}
-                </Typography>
-              </Box>
-              <Box sx={{ ...buttonNumberStyles }}>
-                <Typography
-                  sx={{ color: "#fff", fontWeight: 700, fontSize: "36px" }}
-                >
-                  {displayValue(value2)}
-                </Typography>
-              </Box>
+            10:30 AM
+          </Typography>
+          <Box
+            sx={{
+              display: "flex",
+              gap: 1,
+              justifyContent: "flex-start",
+              alignItems: "center",
+            }}
+          >
+            <Box sx={{ ...buttonNumberStyles }}>
+              <Typography
+                sx={{ color: "#fff", fontWeight: 700, fontSize: "36px" }}
+              >
+                {displayValue(value1)}
+              </Typography>
+            </Box>
+            <Box sx={{ ...buttonNumberStyles }}>
+              <Typography
+                sx={{ color: "#fff", fontWeight: 700, fontSize: "36px" }}
+              >
+                {displayValue(value2)}
+              </Typography>
             </Box>
           </Box>
+        </Box>
 
-          <Box sx={{ ...buttonDrawStyles }}>
-            <Typography
-              sx={{ fontSize: "14px", fontWeight: 700, lineHeight: 1.2 }}
-            >
-              Second Draw
-            </Typography>
-            <Typography
-              sx={{ fontSize: "30px", fontWeight: 700, lineHeight: 1.1 }}
-            >
-              3:00 AM
-            </Typography>
-            <Box
-              sx={{
-                display: "flex",
-                gap: 1,
-                justifyContent: "flex-start",
-                alignItems: "center",
-              }}
-            >
-              <Box sx={{ ...buttonNumberStyles }}>
-                <Typography
-                  sx={{ color: "#fff", fontWeight: 700, fontSize: "36px" }}
-                >
-                  {displayValue(value1)}
-                </Typography>
-              </Box>
-              <Box sx={{ ...buttonNumberStyles }}>
-                <Typography
-                  sx={{ color: "#fff", fontWeight: 700, fontSize: "36px" }}
-                >
-                  {displayValue(value2)}
-                </Typography>
-              </Box>
+        <Box sx={{ ...buttonDrawStyles }}>
+          <Typography
+            sx={{ fontSize: "14px", fontWeight: 700, lineHeight: 1.2 }}
+          >
+            Second Draw
+          </Typography>
+          <Typography
+            sx={{ fontSize: "30px", fontWeight: 700, lineHeight: 1.1 }}
+          >
+            3:00 AM
+          </Typography>
+          <Box
+            sx={{
+              display: "flex",
+              gap: 1,
+              justifyContent: "flex-start",
+              alignItems: "center",
+            }}
+          >
+            <Box sx={{ ...buttonNumberStyles }}>
+              <Typography
+                sx={{ color: "#fff", fontWeight: 700, fontSize: "36px" }}
+              >
+                {displayValue(value1)}
+              </Typography>
+            </Box>
+            <Box sx={{ ...buttonNumberStyles }}>
+              <Typography
+                sx={{ color: "#fff", fontWeight: 700, fontSize: "36px" }}
+              >
+                {displayValue(value2)}
+              </Typography>
             </Box>
           </Box>
-          <Box sx={{ ...buttonDrawStyles }}>
-            <Typography
-              sx={{ fontSize: "14px", fontWeight: 700, lineHeight: 1.2 }}
-            >
-              Third Draw
-            </Typography>
-            <Typography
-              sx={{ fontSize: "30px", fontWeight: 700, lineHeight: 1.1 }}
-            >
-              7:00 PM
-            </Typography>
-            <Box
-              sx={{
-                display: "flex",
-                gap: 1,
-                justifyContent: "flex-start",
-                alignItems: "center",
-              }}
-            >
-              <Box sx={{ ...buttonNumberStyles, display: "flex", gap: 1 }}>
-                <Typography
-                  sx={{ color: "#fff", fontWeight: 700, fontSize: "36px" }}
-                >
-                  {displayValue(value1)}
-                </Typography>
-              </Box>
-              <Box sx={{ ...buttonNumberStyles, display: "flex", gap: 1 }}>
-                <Typography
-                  sx={{ color: "#fff", fontWeight: 700, fontSize: "36px" }}
-                >
-                  {displayValue(value2)}
-                </Typography>
-              </Box>
+        </Box>
+        <Box sx={{ ...buttonDrawStyles }}>
+          <Typography
+            sx={{ fontSize: "14px", fontWeight: 700, lineHeight: 1.2 }}
+          >
+            Third Draw
+          </Typography>
+          <Typography
+            sx={{ fontSize: "30px", fontWeight: 700, lineHeight: 1.1 }}
+          >
+            7:00 PM
+          </Typography>
+          <Box
+            sx={{
+              display: "flex",
+              gap: 1,
+              justifyContent: "flex-start",
+              alignItems: "center",
+            }}
+          >
+            <Box sx={{ ...buttonNumberStyles, display: "flex", gap: 1 }}>
+              <Typography
+                sx={{ color: "#fff", fontWeight: 700, fontSize: "36px" }}
+              >
+                {displayValue(value1)}
+              </Typography>
+            </Box>
+            <Box sx={{ ...buttonNumberStyles, display: "flex", gap: 1 }}>
+              <Typography
+                sx={{ color: "#fff", fontWeight: 700, fontSize: "36px" }}
+              >
+                {displayValue(value2)}
+              </Typography>
             </Box>
           </Box>
         </Box>

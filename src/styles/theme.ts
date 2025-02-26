@@ -76,7 +76,7 @@ const darkTheme = createTheme({
     MuiTable: {
       styleOverrides: {
         root: {
-          backgroundColor: "#1F2937",
+          backgroundColor: "#282828",
           borderRadius: 5,
           borderCollapse: "collapse",
           padding: 1,
@@ -89,10 +89,10 @@ const darkTheme = createTheme({
           color: "#D1D5D8",
           fontSize: "13px",
           padding: "auto",
-          borderBottom: "1px solid #374151",
+          borderBottom: "1px solid #3F3F3F",
         },
         head: {
-          color: "#9CA3AF",
+          color: "#FFFFFF",
           fontWeight: "bold",
         },
       },
@@ -100,7 +100,7 @@ const darkTheme = createTheme({
     MuiTableHead: {
       styleOverrides: {
         root: {
-          backgroundColor: "#374151",
+          backgroundColor: "#3F3F3F",
           lineHeight: "1.5rem",
           textTransform: "uppercase",
           fontWeight: "bold",
@@ -110,9 +110,9 @@ const darkTheme = createTheme({
     MuiTableRow: {
       styleOverrides: {
         root: {
-          borderBottom: "0.5px solid #374151",
+          borderBottom: "0.5px solid #282828",
           "&:hover": {
-            backgroundColor: "#374151",
+            backgroundColor: "#3F3F3F",
           },
           "&.Mui-selected": {
             backgroundColor: "#28313F",
