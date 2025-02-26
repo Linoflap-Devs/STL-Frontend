@@ -184,15 +184,27 @@ const ExecutiveTable: React.FC<ExecutiveTableProps> = ({ executives, onCreate, o
   };
 
   return (
-    <div className="mt-4 w-full max-w-screen-sm sm:max-w-screen-md md:max-w-screen-lg lg:max-w-screen-xl xl:max-w-screen-xl px-4 sm:px-6 md:px-8 lg:px-12 mx-auto">
-      <Box sx={{ display: "flex", flexDirection: "row", justifyContent: "space-between", alignItems: "center", marginBottom: 2.5 }}>
-        <Typography variant="h5" sx={{ fontWeight: "bold", marginBottom: 0 }} gutterBottom>
+    <Box>
+      <Box
+        sx={{
+          display: "flex",
+          flexDirection: "row",
+          justifyContent: "space-between",
+          alignItems: "center",
+          marginBottom: 1.5,
+        }}
+      >
+        <Typography
+          variant="h6"
+          sx={{ fontWeight: "bold", marginBottom: 0, color: '#E3C9FF',  }}
+          gutterBottom
+        >
           {UserSectionData.titleExecutive}
         </Typography>
       </Box>
 
       <TableContainer>
-        <Box sx={{ backgroundColor: "#1F2937" }}>
+        <Box sx={{ backgroundColor: "#282828" }}>
           <Box
             sx={{
               paddingTop: 2.5,
@@ -489,7 +501,7 @@ const ExecutiveTable: React.FC<ExecutiveTableProps> = ({ executives, onCreate, o
           </Button>
         </Box>
       </TableContainer>
-    </div>
+    </Box>
   );
 };
 
