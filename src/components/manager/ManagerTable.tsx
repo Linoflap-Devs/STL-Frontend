@@ -103,7 +103,7 @@ const ManagerTable: React.FC<ManagerTableProps> = ({ managers, onCreate, onEdit,
     { ...filters, searchQuery },
     ["fullName", "UserName", "Region", "Province", "CreatedBy", "Status", "DateOfRegistration"]
   );
-  
+
   const sortedFilteredUsers: User[] = sortData(filteredUsers, {
     key: sortConfig.key,
     direction: sortConfig.direction,
@@ -128,7 +128,7 @@ const ManagerTable: React.FC<ManagerTableProps> = ({ managers, onCreate, onEdit,
   const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setSearchQuery(event.target.value);
   };
-  
+
   // Filter icon handling
   const handleFilterToggle = () => {
     setIsFilterActive((prevState) => !prevState);
@@ -138,7 +138,7 @@ const ManagerTable: React.FC<ManagerTableProps> = ({ managers, onCreate, onEdit,
   // Filter change handler
   const handleFilterChange = (key: string) => (value: string | Dayjs | null) => {
     let filterValue: string;
-  
+
     if (dayjs.isDayjs(value)) {
       // Handle DatePicker change
       filterValue = value.isValid() ? value.format("YYYY-MM-DD") : "";
@@ -146,7 +146,7 @@ const ManagerTable: React.FC<ManagerTableProps> = ({ managers, onCreate, onEdit,
       // Handle TextField change
       filterValue = value || "";
     }
-  
+
     setFilters((prevFilters) => ({
       ...prevFilters,
       [key]: filterValue,
@@ -204,7 +204,7 @@ const ManagerTable: React.FC<ManagerTableProps> = ({ managers, onCreate, onEdit,
       >
         <Typography
           variant="h6"
-          sx={{ fontWeight: "bold", marginBottom: 0, color: '#E3C9FF',  }}
+          sx={{ fontWeight: "bold", marginBottom: 0, color: '#E3C9FF', }}
           gutterBottom
         >
           {UserSectionData.titleManager}
@@ -293,7 +293,7 @@ const ManagerTable: React.FC<ManagerTableProps> = ({ managers, onCreate, onEdit,
                 </Tooltip>
               </TableCell>
               <>
-              {/* Both First name and Last name */}
+                {/* Both First name and Last name */}
                 <SortableTableCell
                   label="Full Name"
                   sortKey="fullName"
@@ -339,7 +339,7 @@ const ManagerTable: React.FC<ManagerTableProps> = ({ managers, onCreate, onEdit,
                   filterValue={filters.CreatedBy}
                   onFilterChange={handleFilterChange("CreatedBy")}
                 />
-                
+
                 <SortableTableCell
                   label="Status"
                   sortKey="Status"
@@ -354,81 +354,98 @@ const ManagerTable: React.FC<ManagerTableProps> = ({ managers, onCreate, onEdit,
             </TableRow>
           </TableHead>
 
-        <TableBody>
-          {managers.length === 0 ? (
-            <TableRow>
-              <TableCell colSpan={9} align="center">
-                <Box
-                  sx={{
-                    display: "flex",
-                    flexDirection: "column",
-                    alignItems: "center",
-                    py: 5,
-                  }}
-                >
-                  <PersonOffIcon sx={{ fontSize: 50, color: "gray" }} />
-                  <Typography
-                    variant="h6"
-                    color="textSecondary"
-                    sx={{ mt: 2, fontWeight: 500 }}
+          <TableBody>
+            {managers.length === 0 ? (
+              <TableRow>
+                <TableCell colSpan={9} align="center">
+                  <Box
+                    sx={{
+                      display: "flex",
+                      flexDirection: "column",
+                      alignItems: "center",
+                      py: 5,
+                    }}
                   >
-                    No managers available
-                  </Typography>
-                  <Typography variant="body2" color="textSecondary">
-                    Add a new manager to get started.
-                  </Typography>
-                </Box>
-              </TableCell>
-            </TableRow>
-          ) : sortedFilteredUsers.length === 0 ? (
-            <TableRow>
-              <TableCell colSpan={9} align="center">
-                <Box
-                  sx={{
-                    display: "flex",
-                    flexDirection: "column",
-                    alignItems: "center",
-                    py: 5,
-                  }}
-                >
-                  <SearchOffIcon sx={{ fontSize: 50, color: "gray" }} />
-                  <Typography
-                    variant="h6"
-                    color="textSecondary"
-                    sx={{ mt: 2, fontWeight: 500 }}
+                    <PersonOffIcon sx={{ fontSize: 50, color: "gray" }} />
+                    <Typography
+                      variant="h6"
+                      color="textSecondary"
+                      sx={{ mt: 2, fontWeight: 500 }}
+                    >
+                      No managers available
+                    </Typography>
+                    <Typography variant="body2" color="textSecondary">
+                      Add a new manager to get started.
+                    </Typography>
+                  </Box>
+                </TableCell>
+              </TableRow>
+            ) : sortedFilteredUsers.length === 0 ? (
+              <TableRow>
+                <TableCell colSpan={9} align="center">
+                  <Box
+                    sx={{
+                      display: "flex",
+                      flexDirection: "column",
+                      alignItems: "center",
+                      py: 5,
+                    }}
                   >
-                    No results found
-                  </Typography>
-                  <Typography variant="body2" color="textSecondary">
-                    Try adjusting your search criteria.
-                  </Typography>
-                </Box>
-              </TableCell>
-            </TableRow>
-          ) : (
-            sortedFilteredUsers
-              .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-              .map((user) => (
-                <TableRow key={user.id}>
-                  <TableCell>
-                    <Checkbox
-                    />
-                  </TableCell>
-                  <TableCell>{`${user.FirstName} ${user.LastName}`}</TableCell>
-                  <TableCell>{user.UserName}</TableCell>
-                  <TableCell>{user.Region}</TableCell>
-                  <TableCell>{dayjs(user.DateOfRegistration).format("YYYY/MM/DD HH:mm:ss")}</TableCell>
-                  <TableCell>{user.CreatedBy}</TableCell>
-                  <TableCell>{user.CreatedBy}</TableCell>
-                  <TableCell>
-                    <IconButton onClick={(event) => handleToggleMenu(event, user)}>
-                      <MoreHorizIcon />
-                    </IconButton>
-                  </TableCell>
-                </TableRow>
-              ))
-          )}
-        </TableBody>
+                    <SearchOffIcon sx={{ fontSize: 50, color: "gray" }} />
+                    <Typography
+                      variant="h6"
+                      color="textSecondary"
+                      sx={{ mt: 2, fontWeight: 500 }}
+                    >
+                      No results found
+                    </Typography>
+                    <Typography variant="body2" color="textSecondary">
+                      Try adjusting your search criteria.
+                    </Typography>
+                  </Box>
+                </TableCell>
+              </TableRow>
+            ) : (
+              sortedFilteredUsers
+                .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                .map((user) => (
+                  <TableRow key={user.id}>
+                    <TableCell>
+                      <Checkbox />
+                    </TableCell>
+                    <TableCell>{`${user.FirstName} ${user.LastName}`}</TableCell>
+                    <TableCell>{user.UserName}</TableCell>
+                    <TableCell>{user.Region}</TableCell>
+                    <TableCell>{dayjs(user.DateOfRegistration).format("YYYY/MM/DD HH:mm:ss")}</TableCell>
+                    <TableCell>{user.CreatedBy}</TableCell>
+                    <TableCell>
+                      <Button
+                        variant="contained"
+                        sx={{
+                          cursor: 'auto',
+                          textTransform: 'none',
+                          borderRadius: '12px',
+                          padding: '1.2px 13.5px',
+                          fontSize: '14px',
+                          backgroundColor: user.IsDeleted === 0 ? "#4CAF50" : "#F05252",
+                          color: "white",
+                          "&:hover": {
+                            backgroundColor: user.IsDeleted === 0 ? "#388E3C" : "#D43F3F",
+                          },
+                        }}
+                      >
+                        {user.IsDeleted === 0 ? "Active" : "Inactive"}
+                      </Button>
+                    </TableCell>
+                    <TableCell>
+                      <IconButton onClick={(event) => handleToggleMenu(event, user)}>
+                        <MoreHorizIcon />
+                      </IconButton>
+                    </TableCell>
+                  </TableRow>
+                ))
+            )}
+          </TableBody>
         </Table>
 
         <Menu

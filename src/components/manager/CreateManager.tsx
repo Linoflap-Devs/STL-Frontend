@@ -178,20 +178,6 @@ const CreateManager: React.FC<CreateManagerProps> = ({
     >
       <DialogTitle sx={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
         Add Manager
-        <Button
-          variant="contained"
-          sx={{
-            paddingX: 3,
-            paddingY: 0.5,
-            textTransform: "none",
-            fontSize: 12,
-            borderRadius: "8px",
-            backgroundColor: "#2563EB",
-            width: "auto",
-          }}
-        >
-          Dummy Data
-        </Button>
         <IconButton
           aria-label="close"
           onClick={onClose}
