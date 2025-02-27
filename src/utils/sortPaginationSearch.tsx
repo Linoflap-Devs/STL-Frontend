@@ -9,7 +9,6 @@ import { Tooltip } from "@mui/material";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
-
 import dayjs, { Dayjs } from "dayjs";
 
 // SortConfig interface
@@ -25,7 +24,7 @@ interface SortableTableCellProps {
   onSort: (sortKey: keyof User) => void;
   isFilterVisible?: boolean;
   filterValue?: string;
-  onFilterChange?: (value: string | Dayjs | null) => void; // Updated type
+  onFilterChange?: (value: string | Dayjs | null) => void;
 }
 
 // Component
@@ -184,42 +183,56 @@ export const filterData = (
   filterKeys: string[]
 ) => {
   return data.filter((item) => {
+    const searchValue = filters.searchQuery?.toLowerCase() || "";
+    if (searchValue) {
+      const fullName = `${item.FirstName || ""} ${item.LastName || ""}`.toLowerCase();
+      const createdByFullName = `${item.CreatedByFirstName || ""} ${item.CreatedByLastName || ""}`.toLowerCase();
+      const matches = Object.values(item).some(
+        (val) => typeof val === "string" && val.toLowerCase().includes(searchValue)
+      ) || fullName.includes(searchValue) || createdByFullName.includes(searchValue);
+
+      if (!matches) {
+        return false;
+      }
+    }
+
+    // Handle individual filters
     return filterKeys.every((key) => {
       const filterValue = filters[key] || "";
-      const searchValue = filters.searchQuery || "";
-
-      let itemValue = item[key];
 
       // Handle DateOfRegistration filtering
-      if (key === "DateOfRegistration" && itemValue) {
-        const itemDate = dayjs(itemValue);
-        const filterDate = dayjs(filterValue);
+      if (key === "DateOfRegistration" && item[key]) {
+        const itemDate = dayjs(item[key]).format("YYYY-MM-DD");
+        const filterDate = filterValue.toLowerCase();
 
-        // If the filter value is a valid date, compare timestamps
-        if (filterDate.isValid()) {
-          return itemDate.isSame(filterDate, "day"); // Compare by day
-        } else {
-          return true;
+        if (filterDate) {
+          return itemDate.includes(filterDate);
         }
       }
 
-      // Handle other fields (non-date)
-      if (typeof itemValue === "string") {
-        return (
-          (filterValue
-            ? itemValue.toLowerCase().includes(filterValue.toLowerCase())
-            : true) &&
-          (searchValue
-            ? Object.values(item).some(
-                (val) =>
-                  typeof val === "string" &&
-                  val.toLowerCase().includes(searchValue.toLowerCase())
-              )
-            : true)
-        );
+      // Handle Status filtering (Active/Inactive)
+      if (key === "Status") {
+        if (filterValue === "Active") {
+          return item.IsDeleted === 0;
+        } else if (filterValue === "Inactive") {
+          return item.IsDeleted !== 0;
+        }
       }
 
-      // Default case (non-string fields)
+      // Handle CreatedBy filtering
+      if (key === "CreatedBy") {
+        const createdByFullName = `${item.CreatedByFirstName || ""} ${item.CreatedByLastName || ""}`.toLowerCase();
+        return createdByFullName.includes(filterValue.toLowerCase());
+      }
+
+      // Default filtering for other fields
+      const itemValue = item[key];
+      if (filterValue) {
+        if (!itemValue || !String(itemValue).toLowerCase().includes(filterValue.toLowerCase())) {
+          return false;
+        }
+      }
+
       return true;
     });
   });

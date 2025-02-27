@@ -38,18 +38,16 @@ import Tooltip from "@mui/material/Tooltip";
 import Swal from "sweetalert2";
 import dayjs, { Dayjs } from "dayjs";
 
-
 // define user interface
 export interface User {
-  id?: number;
   FirstName: string;
   LastName: string;
-  Region: string;
-  Province: string;
-  Barangay?: string;
-  City?: string;
-  streetaddress: string;
-  UserName: string;
+  region: string;
+  province: string;
+  barangay: string;
+  city: string;
+  streetaddress?: string;
+  Email: string;
   password?: string;
   DateOfRegistration?: string;
   [key: string]: any;
@@ -84,7 +82,7 @@ const ManagerTable: React.FC<ManagerTableProps> = ({ managers, onCreate, onEdit,
   const [filters, setFilters] = useState<{ [key: string]: string }>({
     FirstName: "",
     LastName: "",
-    UserName: "",
+    Email: "",
     Region: "",
     Province: "",
     CreatedBy: "",
@@ -99,6 +97,8 @@ const ManagerTable: React.FC<ManagerTableProps> = ({ managers, onCreate, onEdit,
       formattedDate: user.DateOfRegistration
         ? dayjs(user.DateOfRegistration).format("YYYY-MM-DD")
         : "Invalid Date",
+      Status: user.IsDeleted === 0 ? "Active" : "Inactive",
+      CreatedBy: `${user.CreatedByFirstName} ${user.CreatedByLastName}`.toLowerCase(),
     })),
     { ...filters, searchQuery },
     ["fullName", "UserName", "Region", "Province", "CreatedBy", "Status", "DateOfRegistration"]
@@ -140,10 +140,8 @@ const ManagerTable: React.FC<ManagerTableProps> = ({ managers, onCreate, onEdit,
     let filterValue: string;
 
     if (dayjs.isDayjs(value)) {
-      // Handle DatePicker change
       filterValue = value.isValid() ? value.format("YYYY-MM-DD") : "";
     } else {
-      // Handle TextField change
       filterValue = value || "";
     }
 
@@ -166,29 +164,6 @@ const ManagerTable: React.FC<ManagerTableProps> = ({ managers, onCreate, onEdit,
     const typedUser = user as User;
     onEdit(typedUser);
     handleToggleMenu();
-  };
-
-  const handleDeleteUser = () => {
-    if (selectedUser) {
-      Swal.fire({
-        title: "Are you sure?",
-        text: "You won't be able to revert this",
-        icon: "warning",
-        showCancelButton: true,
-        cancelButtonText: "Cancel",
-        confirmButtonText: "Yes, delete it!",
-      }).then((result) => {
-        if (result.isConfirmed) {
-          onDelete([selectedUser.id!]);
-          Swal.fire({
-            title: "Deleted!",
-            text: "The manager has been successfully deleted.",
-            icon: "success",
-            confirmButtonText: "OK",
-          });
-        }
-      });
-    }
   };
 
   return (
@@ -261,7 +236,6 @@ const ManagerTable: React.FC<ManagerTableProps> = ({ managers, onCreate, onEdit,
               )}
             </Box>
 
-            {/* Right Section: Delete and Add Manager Buttons */}
             <Box sx={{ display: "flex", alignItems: "center" }}>
               {selectedUserIds.size > 0 && (
                 <Button
@@ -293,7 +267,6 @@ const ManagerTable: React.FC<ManagerTableProps> = ({ managers, onCreate, onEdit,
                 </Tooltip>
               </TableCell>
               <>
-                {/* Both First name and Last name */}
                 <SortableTableCell
                   label="Full Name"
                   sortKey="fullName"
@@ -301,15 +274,13 @@ const ManagerTable: React.FC<ManagerTableProps> = ({ managers, onCreate, onEdit,
                   onSort={onSortWrapper}
                   onFilterChange={handleFilterChange("fullName")}
                 />
-
                 <SortableTableCell
                   label="Email Address"
-                  sortKey="username"
+                  sortKey="Email"
                   sortConfig={sortConfig}
                   onSort={onSortWrapper}
-                  onFilterChange={handleFilterChange("username")}
+                  onFilterChange={handleFilterChange("Email")}
                 />
-
                 <SortableTableCell
                   label="Assigned Region"
                   sortKey="Region"
@@ -319,7 +290,6 @@ const ManagerTable: React.FC<ManagerTableProps> = ({ managers, onCreate, onEdit,
                   filterValue={filters.Region}
                   onFilterChange={handleFilterChange("Region")}
                 />
-
                 <SortableTableCell
                   label="Creation Date"
                   sortKey="DateOfRegistration"
@@ -329,7 +299,6 @@ const ManagerTable: React.FC<ManagerTableProps> = ({ managers, onCreate, onEdit,
                   filterValue={filters.DateOfRegistration}
                   onFilterChange={handleFilterChange("DateOfRegistration")}
                 />
-
                 <SortableTableCell
                   label="Created By"
                   sortKey="CreatedBy"
@@ -339,7 +308,6 @@ const ManagerTable: React.FC<ManagerTableProps> = ({ managers, onCreate, onEdit,
                   filterValue={filters.CreatedBy}
                   onFilterChange={handleFilterChange("CreatedBy")}
                 />
-
                 <SortableTableCell
                   label="Status"
                   sortKey="Status"
@@ -409,15 +377,15 @@ const ManagerTable: React.FC<ManagerTableProps> = ({ managers, onCreate, onEdit,
               sortedFilteredUsers
                 .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                 .map((user) => (
-                  <TableRow key={user.id}>
+                  <TableRow>
                     <TableCell>
                       <Checkbox />
                     </TableCell>
                     <TableCell>{`${user.FirstName} ${user.LastName}`}</TableCell>
-                    <TableCell>{user.UserName}</TableCell>
+                    <TableCell>{user.Email}</TableCell>
                     <TableCell>{user.Region}</TableCell>
                     <TableCell>{dayjs(user.DateOfRegistration).format("YYYY/MM/DD HH:mm:ss")}</TableCell>
-                    <TableCell>{user.CreatedBy}</TableCell>
+                    <TableCell>{user.CreatedByFirstName} {user.CreatedByLastName}</TableCell>
                     <TableCell>
                       <Button
                         variant="contained"
@@ -457,9 +425,8 @@ const ManagerTable: React.FC<ManagerTableProps> = ({ managers, onCreate, onEdit,
           <MenuItem onClick={() => handleEditClick(selectedUser!)}>
             Update
           </MenuItem>
-          <MenuItem onClick={handleDeleteUser}>Delete</MenuItem>
+          <MenuItem >Delete</MenuItem>
         </Menu>
-
         <Box
           sx={{
             padding: "12px",
@@ -481,7 +448,6 @@ const ManagerTable: React.FC<ManagerTableProps> = ({ managers, onCreate, onEdit,
             }
           />
         </Box>
-
         <Box
           sx={{
             display: "flex",

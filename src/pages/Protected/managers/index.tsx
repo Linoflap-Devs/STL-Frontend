@@ -8,16 +8,9 @@ import { Region, Province, City } from '~/utils/api/locationTypes';
 // Import location data
 const philippines = require('philippines');
 
-console.log(philippines);
-
 const regions = require('philippines/regions');
 const provinces = require('philippines/provinces');
 const cities = require('philippines/cities');
-
-// Example: Log all regions
-console.log("Regions:", regions);
-console.log("Provinces:", provinces);
-console.log("Cities:", cities);
 
 const UsersPage = () => {
   const [managers, setManagers] = useState<User[]>([]);
@@ -25,39 +18,52 @@ const UsersPage = () => {
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
   const [isUpdateModalOpen, setUpdateModalOpen] = useState(false);
   const [selectedManager, setSelectedManager] = useState<User | null>(null);
-
-  // State for storing location data
   const [regionList, setRegionList] = useState<Region[]>([]);
   const [provinceList, setProvinceList] = useState<Province[]>([]);
   const [cityList, setCityList] = useState<City[]>([]);
 
-  // Fetch users when the component mounts
+  // fetching of data
   useEffect(() => {
     const loadUsers = async () => {
-      const response = await fetchUsers({});
-      if (response.success) {
-        const filteredUsers = response.data
-          .filter((user: { UserTypeId: number }) => user.UserTypeId === 2)
-          .map((user: { Location: { Region: string; Province: string; City: string } }) => ({
-            ...user,
-            Region: user.Location?.Region || "Unknown",
-            Province: user.Location?.Province || "Unknown", 
-            City: user.Location?.City || "Unknown",
-          }));
-
-        setManagers(filteredUsers);
-      } else {
-        console.error("Failed to fetch users:", response.message);
+      try {
+        const response = await fetchUsers({});
+        if (response.success) {
+          const filteredUsers = response.data
+            .filter((user: { UserTypeId: number }) => user.UserTypeId === 3)
+            .map((user: { 
+              FirstName: string; 
+              LastName: string;
+              Email: string;
+              DateOfRegistration: string;
+              Location?: { Region?: string; Province?: string; City?: string }; 
+              CreatedBy?: { FirstName?: string; LastName?: string } 
+            }) => ({
+              FirstName: user.FirstName, 
+              LastName: user.LastName,
+              Email: user.Email,
+              DateOfRegistration: user.DateOfRegistration,
+              Region: user.Location?.Region || "Unknown",
+              Province: user.Location?.Province || "Unknown",
+              City: user.Location?.City || "Unknown",
+              CreatedByFirstName: user.CreatedBy?.FirstName || "Unknown",
+              CreatedByLastName: user.CreatedBy?.LastName || "Unknown",
+            }));
+    
+          setManagers(filteredUsers);
+        } else {
+          console.error("Failed to fetch users:", response.message);
+        }
+      } catch (error) {
+        console.error("Error fetching users:", error);
       }
     };
-
+    
     loadUsers();
-
-    // Load Philippine location data
+    
     setRegionList(regions);
     setProvinceList(provinces);
     setCityList(cities);
-  }, []);
+  }, [regions, provinces, cities]);
 
   const handleUserCreate = () => {
     setSelectedUser(null);
