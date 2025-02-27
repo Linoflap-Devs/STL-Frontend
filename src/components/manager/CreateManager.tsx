@@ -12,16 +12,13 @@ import {
   IconButton,
   FormControl,
   FormHelperText,
-  Box,
 } from "@mui/material";
-import { validateUser } from "../../utils/validation";
-import { formatKey } from "../../utils/format";
 import { User } from "./ManagerTable";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
 import { SelectChangeEvent } from "@mui/material";
-import CloseIcon from '@mui/icons-material/Close';
-import Swal from "sweetalert2";
-import { inputStyles, inputErrorStyles, selectStyles } from "../../styles/theme";
+import CloseIcon from "@mui/icons-material/Close";
+import { inputStyles } from "../../styles/theme";
+import { City, Province, Region } from "~/utils/api/locationTypes";
 
 export interface CreateManagerProps {
   open: boolean;
@@ -29,7 +26,44 @@ export interface CreateManagerProps {
   onSubmit: (userData: User | null) => void;
   userData: User | null;
   managers: User[];
+  regions: Region[];
+  provinces: Province[];
+  cities: City[];
 }
+
+interface LocationItem {
+  id: string;
+  name: string;
+}
+
+// populating locations on api philippines
+export const useRenderOptions = () => {
+  const renderOptions = (key: string, data: LocationItem[]) => {
+    switch (key) {
+      case "Region":
+      case "Province":
+      case "City":
+        return data.map((item) => (
+          <MenuItem key={item.id} value={item.name}>
+            {item.name}
+          </MenuItem>
+        ));
+      case "Barangay":
+        return <MenuItem value="Sample Barangay">Sample Barangay</MenuItem>;
+      default:
+        return null;
+    }
+  };
+
+  return { renderOptions };
+};
+
+const mapToLocationItem = (data: Region[] | Province[] | City[]): LocationItem[] => {
+  return data.map((item) => ({ // 
+    id: item.key,
+    name: item.name,
+  }));
+};
 
 const CreateManager: React.FC<CreateManagerProps> = ({
   open,
@@ -37,125 +71,92 @@ const CreateManager: React.FC<CreateManagerProps> = ({
   onSubmit,
   userData,
   managers,
+  regions,
+  provinces,
+  cities,
 }) => {
+  const { renderOptions } = useRenderOptions();
   const SPACE: string = "";
   const [user, setUser] = useState({
     id: userData?.id ?? SPACE,
-    firstname: userData?.firstname ?? SPACE,
-    lastname: userData?.lastname ?? SPACE,
-    region: userData?.region ?? SPACE,
-    province: userData?.province ?? SPACE,
-    city: userData?.city ?? SPACE,
-    barangay: userData?.barangay ?? SPACE,
-    streetaddress: userData?.streetaddress ?? SPACE,
-    phonenumber: userData?.phonenumber ?? SPACE,
-    username: userData?.username ?? SPACE,
+    FirstName: userData?.firstname ?? SPACE,
+    LastName: userData?.lastname ?? SPACE,
+    PhoneNumber: userData?.phonenumber ?? SPACE,
+    UserName: userData?.username ?? SPACE,
     password: SPACE,
-    regisdate: userData?.regisdate ?? SPACE,
+    Region: userData?.region ?? SPACE,
+    Province: userData?.province ?? SPACE,
+    City: userData?.city ?? SPACE,
+    Barangay: userData?.barangay ?? SPACE,
+    StreetAddress: userData?.streetaddress ?? SPACE,
   });
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
   const [showPassword, setShowPassword] = useState(false);
+
+  const [filteredProvinces, setFilteredProvinces] = useState<Province[]>([]);
+  const [filteredCities, setFilteredCities] = useState<City[]>([]);
+
   const [selectState, setSelectState] = useState({
-    region: userData?.region ?? SPACE,
-    province: userData?.province ?? SPACE,
-    city: userData?.city ?? SPACE,
-    barangay: userData?.barangay ?? SPACE,
+    Region: userData?.region ?? SPACE,
+    Province: userData?.province ?? SPACE,
+    City: userData?.city ?? SPACE,
+    Barangay: userData?.barangay ?? SPACE,
   });
 
-  // form handlings
   const handleManagerChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement> | SelectChangeEvent<string>
   ) => {
     const { name, value } = e.target;
     setUser((prevUser) => ({ ...prevUser, [name as string]: value as string }));
   };
 
   const handleSelectChange = (e: SelectChangeEvent<string>, name: string) => {
-    setSelectState((prevState) => ({ ...prevState, [name]: e.target.value }));
+    const value = e.target.value;
+
+    setSelectState((prevState) => ({ ...prevState, [name]: value }));
+
+    if (name === "Region") {
+      const selectedRegion = regions.find((r) => r.name === value);
+      if (selectedRegion) {
+        // Filter provinces where province.region === selectedRegion.key
+        const newProvinces = provinces.filter((p) => p.region === selectedRegion.key);
+        setFilteredProvinces(newProvinces);
+      }
+      setFilteredCities([]);
+      setSelectState((prevState) => ({ ...prevState, Province: "", City: "" }));
+    }
+
+    if (name === "Province") {
+      const selectedProvince = provinces.find((p) => p.name === value);
+      if (selectedProvince) {
+        // Filter cities where city.province === selectedProvince.key
+        const newCities = cities.filter((c) => c.province === selectedProvince.key);
+        setFilteredCities(newCities);
+      }
+      setSelectState((prevState) => ({ ...prevState, City: "" }));
+    }
   };
 
-  // generate password
+  const formatKey = (key: string) => {
+    const mapping: { [key: string]: string } = {
+      FirstName: "First Name",
+      LastName: "Last Name",
+      PhoneNumber: "Phone Number",
+      UserName: "Username",
+      Password: "Password",
+      Region: "Assigned Region",
+      Province: "Assigned Province",
+      City: "Assigned City",
+      Barangay: "Assigned Barangay",
+      StreetAddress: "Assigned Street Address",
+    };
+    return mapping[key] || key;
+  };
+
   const handleGeneratePassword = () => {
     const generatedPassword = "0912Gg33*12"; // hardcoded
     setUser((prevUser) => ({ ...prevUser, password: generatedPassword }));
   };
-
-  // handle create submit
-  const handleManagerCreateSubmit = () => {
-    const generatedId = managers.length + 1;
-    const combinedUserData = {
-      ...user,
-      ...selectState,
-      id: generatedId,
-    };
-    const validationErrors = validateUser(combinedUserData);
-    console.log("Submitted data:", combinedUserData);
-
-    setErrors(validationErrors);
-
-    if (Object.keys(validationErrors).length === 0) {
-      console.log("Valid user data, submitting...");
-
-      Swal.fire({
-        title: "Did you input the correct credentials?",
-        icon: "question",
-        showCancelButton: true,
-        cancelButtonText: "No, let me check",
-        confirmButtonText: "Yes, I did",
-      }).then((result) => {
-        if (result.isConfirmed) {
-          onSubmit(combinedUserData);
-          onClose();
-
-          // Show success message
-          Swal.fire({
-            title: "Success!",
-            text: "Manager added successfully.",
-            icon: "success",
-            confirmButtonText: "OK",
-          });
-
-          setUser({
-            ...user,
-            firstname: "",
-            lastname: "",
-            username: "",
-            password: "",
-            regisdate: "",
-          });
-          setSelectState({ region: "", province: "", city: "", barangay: "" });
-        }
-      });
-    } else {
-      console.log("Validation errors:", validationErrors);
-    }
-  };
-
-  // handle dummy data
-  const handleDummyData = () => {
-    setUser({
-      id: managers.length + 1,
-      firstname: "John",
-      lastname: "Doe",
-      region: "Region IV-A",
-      province: "Cavite",
-      city: "Dasmariñas",
-      barangay: "Salawag",
-      streetaddress: "123 Main St",
-      phonenumber: "0912 345 6789",
-      username: "johndoe@username.com",
-      password: "DummyPass123!",
-
-      regisdate: new Date().toISOString(),
-    })
-
-    setSelectState({
-      region: "100",
-      province: "100",
-      city: "100",
-      barangay: "100",
-    });
-  }
 
   return (
     <Dialog
@@ -175,13 +176,11 @@ const CreateManager: React.FC<CreateManagerProps> = ({
         },
       }}
     >
-      <DialogTitle sx={{ display: 'flex', justifyContent: 'justify', }} >
+      <DialogTitle sx={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
         Add Manager
         <Button
           variant="contained"
-          onClick={handleDummyData}
           sx={{
-            marginLeft: 2,
             paddingX: 3,
             paddingY: 0.5,
             textTransform: "none",
@@ -190,50 +189,63 @@ const CreateManager: React.FC<CreateManagerProps> = ({
             backgroundColor: "#2563EB",
             width: "auto",
           }}
-        > Dummy Data
+        >
+          Dummy Data
         </Button>
-
         <IconButton
           aria-label="close"
           onClick={onClose}
           sx={{
-            position: 'absolute',
-            right: 30,
-            top: 30,
-            color: '#D1D5D8'[300],
-            backgroundColor: '#374151',
+            color: "#282828",
           }}
         >
-          <CloseIcon sx={{ fontSize: 20, fontWeight: 'bold' }} />
+          <CloseIcon sx={{ fontSize: 18, fontWeight: "700" }} />
         </IconButton>
-        
       </DialogTitle>
+
       <DialogContent>
-        <Grid
-          container
-          rowSpacing={2.5}
-          columnSpacing={{ xs: 1, sm: 3, md: 2.5 }}
-        >
-          {Object.keys(user).map((key) =>
-            !["id", "regisdate"].includes(key) ? (
-              <Grid
-                item
-                xs={12}
-                sm={6}
-                sx={{ padding: { xs: 0, sm: 0 } }}
-                key={key}
-              >
-                <Typography
-                  sx={{
-                    textAlign: "left",
-                    marginBottom: "0.3rem",
-                    fontSize: "0.90rem",
-                  }}
-                >
+        <Grid container rowSpacing={2.5} columnSpacing={{ xs: 1, sm: 3, md: 2.5 }}>
+          {/* Column 1 - Personal Information */}
+          <Grid item xs={6} sm={6}>
+            <Typography variant="h6" sx={{ marginBottom: "0.5rem" }}>
+              Personal Information
+            </Typography>
+            {["FirstName", "LastName", "PhoneNumber", "UserName", "Password"].map((key) => (
+              <Grid item xs={12} key={key} sx={{ marginBottom: "1rem" }}>
+                <Typography sx={{ fontSize: "0.90rem", marginBottom: "0.3rem" }}>
                   {formatKey(key)}
                 </Typography>
 
-                {key === "password" ? (
+                {key === "LastName" ? (
+                  // Last Name with Suffix Input. This is optional
+                  <Grid container spacing={1} alignItems="center">
+                    <Grid item xs={8}>
+                      <TextField
+                        fullWidth
+                        variant="outlined"
+                        placeholder="Enter Last Name"
+                        name="LastName"
+                        value={user.LastName}
+                        onChange={handleManagerChange}
+                        error={!!errors.LastName}
+                        helperText={errors.LastName || SPACE}
+                        sx={inputStyles}
+                      />
+                    </Grid>
+                    <Grid item xs={4}>
+                      <TextField
+                        fullWidth
+                        variant="outlined"
+                        placeholder="Enter Suffix"
+                        name="Suffix"
+                        error={!!errors.Suffix}
+                        helperText={errors.Suffix || SPACE}
+                        sx={inputStyles}
+                      />
+                    </Grid>
+                  </Grid>
+                ) : key === "Password" ? (
+                  // Password Input with Visibility Toggle
                   <Grid container spacing={1.5} alignItems="center">
                     <Grid item xs={7}>
                       <TextField
@@ -241,17 +253,16 @@ const CreateManager: React.FC<CreateManagerProps> = ({
                         variant="outlined"
                         placeholder={`Enter ${key}`}
                         type={showPassword ? "text" : "password"}
-                        value={user[key as keyof typeof user]}
-                        onChange={handleManagerChange}
                         name={key}
+                        value={user.password}
+                        onChange={handleManagerChange}
                         error={!!errors[key]}
-                        helperText={''}
+                        helperText={""}
                         sx={inputStyles}
                         InputProps={{
                           endAdornment: (
-                            <IconButton sx={{
-                              color: "#9ca3af"
-                            }}
+                            <IconButton
+                              sx={{ color: "#9ca3af" }}
                               onClick={() => setShowPassword((prev) => !prev)}
                               edge="end"
                             >
@@ -265,93 +276,95 @@ const CreateManager: React.FC<CreateManagerProps> = ({
                       <Button
                         variant="contained"
                         color="secondary"
-                        onClick={handleGeneratePassword}
                         sx={{
                           width: "100%",
                           textTransform: "none",
                           backgroundColor: "#CCA1FD",
-                          color: '#181A1B',
-                          borderRadius: "8px"
+                          borderRadius: "8px",
+                          color: "#282828",
                         }}
+                        onClick={handleGeneratePassword}
                       >
                         Generate
                       </Button>
                     </Grid>
-                    {errors[key] && (
-                      <Box sx={{
-                        color: 'error.main',
-                        mt: "3px",
-                        marginLeft: '12px',
-                        fontSize: '0.85rem'
-                      }}>
-                        {errors[key]}
-                      </Box>
-                    )}
                   </Grid>
-
-                ) : key === "region" ||
-                  key === "province" ||
-                  key === "city" ||
-                  key === "barangay" ? (
-                  <FormControl sx={selectStyles} fullWidth error={!!errors[key]}>
-                    <Select
-                      displayEmpty
-                      sx={{ color: selectState[key as keyof typeof selectState] ? '#9CA3AF' : 'white' }}
-
-                      value={selectState[key as keyof typeof selectState] || SPACE}
-                      onChange={(e) => handleSelectChange(e, key)}
-                      name={key}
-                      inputProps={{
-                        "aria-label": formatKey(key),
-                      }}
-                    >
-                      <MenuItem value="" disabled>
-                        Select a {formatKey(key)}
-                      </MenuItem>
-                      <MenuItem value="10">10</MenuItem>
-                      <MenuItem value="25">25</MenuItem>
-                      <MenuItem value="50">50</MenuItem>
-                      <MenuItem value="100">100</MenuItem>
-                    </Select>
-                    {errors[key] && (
-                      <FormHelperText>{errors[key]}</FormHelperText>
-                    )}
-                  </FormControl>
                 ) : (
+                  // Default TextField for Other Inputs
                   <TextField
                     fullWidth
                     variant="outlined"
                     placeholder={`Enter ${formatKey(key)}`}
-                    value={user[key as keyof typeof user] || SPACE}
-                    onChange={handleManagerChange}
                     name={key}
+                    value={user[key as keyof typeof user]}
+                    onChange={handleManagerChange}
                     error={!!errors[key]}
                     helperText={errors[key] || SPACE}
                     sx={inputStyles}
                   />
                 )}
               </Grid>
-            ) : null
-          )}
-        </Grid>
+            ))}
+          </Grid>
 
-        <Button
-          onClick={handleManagerCreateSubmit}
-          sx={{
-            mt: 4,
-            width: "100%",
-            backgroundColor: "#CCA1FD",
-            textTransform: "none",
-            fontSize: "12px",
-            padding: "0.8rem",
-            borderRadius: "8px",
-            fontWeight: 300,
-            color: '#181A1B',
-          }}
-          variant="contained"
-        >
-          Add Manager
-        </Button>
+          {/* Column 2 - Assigned Location */}
+          <Grid item xs={6}>
+            <Typography variant="h6" sx={{ marginBottom: "0.5rem" }}>
+              Assigned Location
+            </Typography>
+            {["Region", "Province", "City", "Barangay", "StreetAddress"].map((key) => (
+              <Grid item xs={12} key={key} sx={{ marginBottom: "1rem" }}>
+                <Typography sx={{ fontSize: "0.90rem", marginBottom: "0.3rem" }}>
+                  {formatKey(key)}
+                </Typography>
+                {["Region", "Province", "City", "Barangay"].includes(key) ? (
+                  <FormControl fullWidth error={!!errors[key]}>
+                    <Select
+                      displayEmpty
+                      value={selectState[key as keyof typeof selectState] || ""}
+                      onChange={(e) => handleSelectChange(e, key)}
+                      name={key}
+                      inputProps={{ "aria-label": formatKey(key) }}
+                      disabled={
+                        (key === "Province" && !selectState.Region) ||
+                        (key === "City" && !selectState.Province) ||
+                        (key === "Barangay" && !selectState.City)
+                      }
+                    >
+                      <MenuItem value="" disabled>
+                        Select a {formatKey(key)}
+                      </MenuItem>
+                      {renderOptions(
+                        key,
+                        key === "Region"
+                          ? mapToLocationItem(regions)
+                          : key === "Province"
+                            ? mapToLocationItem(filteredProvinces)
+                            : key === "City"
+                              ? mapToLocationItem(filteredCities)
+                              : []
+                      )}
+                    </Select>
+                    {errors[key] && <FormHelperText>{errors[key]}</FormHelperText>}
+                  </FormControl>
+                ) : (
+                  <TextField
+                    fullWidth
+                    variant="outlined"
+                    placeholder={`Enter ${formatKey(key)}`}
+                    name={key}
+                    value={user[key as keyof typeof user]}
+                    onChange={handleManagerChange}
+                    error={!!errors[key]}
+                    helperText={errors[key] || ""}
+                    sx={inputStyles}
+                  />
+                )}
+              </Grid>
+            ))}
+          </Grid>
+
+        </Grid>
       </DialogContent>
     </Dialog>
   );

@@ -416,7 +416,7 @@ const ManagerTable: React.FC<ManagerTableProps> = ({ managers, onCreate, onEdit,
                   </TableCell>
                   <TableCell>{`${user.FirstName} ${user.LastName}`}</TableCell>
                   <TableCell>{user.UserName}</TableCell>
-                  <TableCell>{user.Province}</TableCell>
+                  <TableCell>{user.Region}</TableCell>
                   <TableCell>{dayjs(user.DateOfRegistration).format("YYYY/MM/DD HH:mm:ss")}</TableCell>
                   <TableCell>{user.CreatedBy}</TableCell>
                   <TableCell>{user.CreatedBy}</TableCell>
