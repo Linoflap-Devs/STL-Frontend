@@ -14,7 +14,7 @@ const axiosInstance = axios.create({
 axiosInstance.interceptors.response.use(
   (response) => response,
   async (error) => {
-    if (error.response?.status === 403 && error.response?.status === 400 && error.response?.data?.message === "Token expired.") {
+    if (error.response?.status === 403 && error.response?.data?.message === "Token expired.") {
       try {
         // Send refresh token request
         await axiosInstance.post("/auth/tokenRefresh", {}, { withCredentials: true });

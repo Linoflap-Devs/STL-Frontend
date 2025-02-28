@@ -198,7 +198,6 @@ const ManagerTable: React.FC<ManagerTableProps> = ({ managers, onCreate, onEdit,
               alignItems: "center",
             }}
           >
-            {/* Left Section: Search and Filter */}
             <Box sx={{ display: "flex", alignItems: "center" }}>
               <TextField
                 variant="outlined"
@@ -395,10 +394,10 @@ const ManagerTable: React.FC<ManagerTableProps> = ({ managers, onCreate, onEdit,
                           borderRadius: '12px',
                           padding: '1.2px 13.5px',
                           fontSize: '14px',
-                          backgroundColor: user.IsDeleted === 0 ? "#4CAF50" : "#F05252",
+                          backgroundColor: user.IsDeleted === 0 ? "#388E3C" : "#D43F3F",
                           color: "white",
                           "&:hover": {
-                            backgroundColor: user.IsDeleted === 0 ? "#388E3C" : "#D43F3F",
+                            backgroundColor: user.IsDeleted === 0 ? "#4CAF50" : "#F05252",
                           },
                         }}
                       >

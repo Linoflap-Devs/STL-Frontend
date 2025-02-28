@@ -51,9 +51,9 @@ export const SortableTableCell: React.FC<SortableTableCellProps> = ({
   // DatePicker handler (Format: "YYYY/MM/DD")
   const handleDateChange = (date: Dayjs | null) => {
     if (onFilterChange) {
-      onFilterChange(date ? date.format("YYYY/MM/DD") : ""); // Changed format to YYYY/MM/DD
+      onFilterChange(date ? date.format("YYYY-MM-DD") : ""); // Match filtering format
     }
-  };
+  };  
 
   return (
     <LocalizationProvider dateAdapter={AdapterDayjs}>
@@ -200,21 +200,21 @@ export const filterData = (
     return filterKeys.every((key) => {
       const filterValue = filters[key] || "";
 
-      // Handle DateOfRegistration filtering
       if (key === "DateOfRegistration" && item[key]) {
         const itemDate = dayjs(item[key]).format("YYYY-MM-DD");
-        const filterDate = filterValue.toLowerCase();
-
-        if (filterDate) {
-          return itemDate.includes(filterDate);
+        const filterDate = dayjs(filters[key]).format("YYYY-MM-DD");
+      
+        if (filters[key]) {
+          return itemDate === filterDate; // Ensure exact match
         }
       }
-
+    
       // Handle Status filtering (Active/Inactive)
-      if (key === "Status") {
-        if (filterValue === "Active") {
+      if (key === "Status" && filterValue) {
+        const normalizedFilter = filterValue.toLowerCase();
+        if (normalizedFilter === "active") {
           return item.IsDeleted === 0;
-        } else if (filterValue === "Inactive") {
+        } else if (normalizedFilter === "inactive") {
           return item.IsDeleted !== 0;
         }
       }

@@ -1,4 +1,5 @@
 //   src\utils\locationTypes.ts
+// for fetching of locations 
   
   export interface Region {
     key: string;
