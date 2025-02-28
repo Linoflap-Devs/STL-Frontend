@@ -29,15 +29,8 @@ const UsersPage = () => {
         const response = await fetchUsers({});
         if (response.success) {
           const filteredUsers = response.data
-            .filter((user: { UserTypeId: number }) => user.UserTypeId === 3)
-            .map((user: { 
-              FirstName: string; 
-              LastName: string;
-              Email: string;
-              DateOfRegistration: string;
-              Location?: { Region?: string; Province?: string; City?: string }; 
-              CreatedBy?: { FirstName?: string; LastName?: string } 
-            }) => ({
+            .filter((user: { UserTypeId: number; }) => user.UserTypeId === 2)
+            .map((user: { FirstName: any; LastName: any; Email: any; DateOfRegistration: any; Location: { Region: any; Province: any; City: any; }; CreatedBy: { FirstName: any; LastName: any; }; }) => ({
               FirstName: user.FirstName, 
               LastName: user.LastName,
               Email: user.Email,
@@ -57,13 +50,13 @@ const UsersPage = () => {
         console.error("Error fetching users:", error);
       }
     };
-    
+  
     loadUsers();
-    
+  
     setRegionList(regions);
     setProvinceList(provinces);
     setCityList(cities);
-  }, [regions, provinces, cities]);
+  }, []);
 
   const handleUserCreate = () => {
     setSelectedUser(null);
@@ -82,10 +75,15 @@ const UsersPage = () => {
   };
 
   const handleSubmitUser = (userData: User | null) => {
-    if (userData) {
-      setManagers((prevManagers) => [...prevManagers, userData]);
-    }
-    setModalOpen(false);
+      if (userData) {
+          setManagers((prevManagers) => {
+              if (prevManagers.some(manager => manager.id === userData.id)) {
+                  return prevManagers;
+              }
+              return [...prevManagers, userData];
+          });
+      }
+      setModalOpen(false);
   };
 
   const handleSaveUpdatedUser = (updatedUser: User) => {

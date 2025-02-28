@@ -205,7 +205,7 @@ export const filterData = (
         const filterDate = dayjs(filters[key]).format("YYYY-MM-DD");
       
         if (filters[key]) {
-          return itemDate === filterDate; // Ensure exact match
+          return itemDate === filterDate;
         }
       }
     

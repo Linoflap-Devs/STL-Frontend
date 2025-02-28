@@ -42,16 +42,16 @@ interface LocationItem {
 export const useRenderOptions = () => {
   const renderOptions = (key: string, data: LocationItem[]) => {
     switch (key) {
-      case "Region":
-      case "Province":
-      case "City":
+      case "region":
+      case "province":
+      case "city":
         return data.map((item) => (
           <MenuItem key={item.id} value={item.name}>
             {item.name}
           </MenuItem>
         ));
-      case "Barangay":
-        return <MenuItem value="Sample Barangay">Sample Barangay</MenuItem>;
+      case "barangay":
+        return <MenuItem value="Sample">Barangay2</MenuItem>;
       default:
         return null;
     }
@@ -61,8 +61,8 @@ export const useRenderOptions = () => {
 };
 
 const mapToLocationItem = (data: Region[] | Province[] | City[]): LocationItem[] => {
-  return data.map((item) => ({ // 
-    id: item.key,
+  return data.map((item) => ({
+    id: (item as any).key || (item as any).code || "",
     name: item.name,
   }));
 };
@@ -80,29 +80,30 @@ const CreateManager: React.FC<CreateManagerProps> = ({
   const { renderOptions } = useRenderOptions();
   const SPACE: string = "";
   const [user, setUser] = useState({
-    FirstName: userData?.firstname ?? SPACE,
-    LastName: userData?.lastname ?? SPACE,
-    PhoneNumber: userData?.phonenumber ?? SPACE,
-    Email: userData?.email ?? SPACE,
+    firstName: userData?.firstName ?? SPACE,
+    lastName: userData?.lastName ?? SPACE,
+    suffix: userData?.suffix ?? SPACE,
+    phoneNumber: userData?.phoneNumber ?? SPACE,
+    email: userData?.email ?? SPACE,
     password: SPACE,
-    StreetAddress: userData?.streetaddress ?? SPACE,
+    streetaddress: userData?.streetaddress ?? SPACE,
   });
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
   const [showPassword, setShowPassword] = useState(false);
   const [filteredProvinces, setFilteredProvinces] = useState<Province[]>([]);
   const [filteredCities, setFilteredCities] = useState<City[]>([]);
   const [selectState, setSelectState] = useState({
-    Region: userData?.region ?? SPACE,
-    Province: userData?.province ?? SPACE,
-    City: userData?.city ?? SPACE,
-    Barangay: userData?.barangay ?? SPACE,
+    region: userData?.region ?? SPACE,
+    province: userData?.province ?? SPACE,
+    city: userData?.city ?? SPACE,
+    barangay: userData?.barangay ?? SPACE,
   });
 
   const handleManagerChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement> | SelectChangeEvent<string>
   ) => {
     const { name, value } = e.target;
-    setUser((prevUser) => ({ ...prevUser, [name as string]: value as string }));
+    setUser((prevUser) => ({ ...prevUser, [name]: value }));
   };
 
   const handleSelectChange = (e: SelectChangeEvent<string>, name: string) => {
@@ -110,13 +111,13 @@ const CreateManager: React.FC<CreateManagerProps> = ({
   
     console.log(`Selected ${name}:`, value); // Log selected value
   
-    setSelectState((prevState) => ({ ...prevState, [name]: value }));
+    setSelectState((prevState) => ({ ...prevState, [name.toLowerCase()]: value }));
   
-    if (name === "Region") {
+    if (name === "region") {
       const selectedRegion = regions.find((r) => r.name === value);
       console.log("Selected Region Object:", selectedRegion);
   
-      if (selectedRegion) {
+      if (selectedRegion?.key) {
         const newProvinces = provinces.filter((p) => p.region === selectedRegion.key);
         console.log("Filtered Provinces:", newProvinces);
         setFilteredProvinces(newProvinces);
@@ -126,12 +127,12 @@ const CreateManager: React.FC<CreateManagerProps> = ({
   
       setSelectState((prevState) => ({
         ...prevState,
-        Province: "",
-        City: "",
+        province: "", // Reset province
+        city: "", // Reset city
       }));
     }
   
-    if (name === "Province") {
+    if (name === "province") {
       const selectedProvince = provinces.find((p) => p.name === value);
       console.log("Selected Province Object:", selectedProvince);
   
@@ -143,23 +144,23 @@ const CreateManager: React.FC<CreateManagerProps> = ({
   
       setSelectState((prevState) => ({
         ...prevState,
-        City: "",
+        city: "",
       }));
     }
   };
 
   const formatKey = (key: string) => {
     const mapping: { [key: string]: string } = {
-      FirstName: "First Name",
-      LastName: "Last Name",
-      PhoneNumber: "Phone Number",
-      Email: "Email",
-      Password: "Password",
-      Region: "Assigned Region",
-      Province: "Assigned Province",
-      City: "Assigned City",
-      Barangay: "Assigned Barangay",
-      StreetAddress: "Assigned Street Address",
+      firstName: "First Name",
+      lastName: "Last Name",
+      phoneNumber: "Phone Number",
+      email: "Email",
+      password: "Password",
+      region: "Assigned Region",
+      province: "Assigned Province",
+      city: "Assigned City",
+      barangay: "Assigned Barangay",
+      streetAddress: "Assigned Street Address",
     };
     return mapping[key] || key;
   };
@@ -173,58 +174,56 @@ const CreateManager: React.FC<CreateManagerProps> = ({
     const newErrors: { [key: string]: string } = {};
   
     // Basic validation
-    if (!user.FirstName.trim()) newErrors.FirstName = "First name is required";
-    if (!user.LastName.trim()) newErrors.LastName = "Last name is required";
-    if (!user.PhoneNumber.trim()) newErrors.PhoneNumber = "Phone number is required";
+    if (!user.firstName.trim()) newErrors.firstName = "First name is required";
+    if (!user.lastName.trim()) newErrors.lastName = "Last name is required";
+    if (!user.phoneNumber.trim()) newErrors.phoneNumber = "Phone number is required";
     if (!user.password.trim()) newErrors.password = "Password is required";
   
     // Location validation (optional, if required)
-    if (!selectState.Region.trim()) newErrors.Region = "Region is required";
-    if (!selectState.Province.trim()) newErrors.Province = "Province is required";
-    if (!selectState.City.trim()) newErrors.City = "City is required";
-    if (!selectState.Barangay.trim()) newErrors.Barangay = "Barangay is required";
+    if (!selectState.region.trim()) newErrors.Region = "Region is required";
+    if (!selectState.province.trim()) newErrors.Province = "Province is required";
+    if (!selectState.city.trim()) newErrors.City = "City is required";
+    if (!selectState.barangay.trim()) newErrors.Barangay = "Barangay is required";
   
     if (Object.keys(newErrors).length > 0) {
       setErrors(newErrors);
       return;
     }
-  
-    // Include location data in the payload
+
     const newUser = {
-      ...user, // Spread personal information fields
-      userTypeId: 2, // for managers pero 2 muna.
-      region: selectState.Region,
-      province: selectState.Province,
-      city: selectState.City,
-      barangay: selectState.Barangay,
-    };
-  
+      firstName: user.firstName,
+      lastName: user.lastName,
+      phoneNumber: user.phoneNumber,
+      email: user.email,
+      password: user.password,
+      userTypeId: 3,
+      region: selectState.region,
+      province: selectState.province,
+      city: selectState.city,
+      barangay: selectState.barangay,
+    };  
     console.log("Payload:", newUser);
   
     try {
       const response = await addUser(newUser);
       if (response.success) {
         console.log("User added successfully:", response.data);
-        onSubmit(newUser); // Update state/UI
-        onClose(); // Close modal or form
+        onSubmit(newUser);
+        onClose();
       } else {
         console.error("Error adding user:", response.message);
   
-        // Handle specific errors from the server
         if (response.errors) {
-          // If the server returns specific field errors, update the errors state
           setErrors(response.errors);
         } else {
-          // If no specific errors, display a generic error message
           setErrors({ form: response.message });
         }
       }
     } catch (error) {
       console.error("Unexpected error:", error);
   
-      // Handle unexpected errors (e.g., network issues, server down)
       if (error instanceof Error) {
-        setErrors({ form: error.message }); // Display the error message
+        setErrors({ form: error.message });
       } else {
         setErrors({ form: "An unexpected error occurred. Please try again." });
       }
@@ -269,13 +268,13 @@ const CreateManager: React.FC<CreateManagerProps> = ({
             <Typography variant="h6" sx={{ marginBottom: "0.5rem" }}>
               Personal Information
             </Typography>
-            {["FirstName", "LastName", "PhoneNumber", "Email", "password"].map((key) => (
+            {["firstName", "lastName", "phoneNumber", "email", "password"].map((key) => (
               <Grid item xs={12} key={key} sx={{ marginBottom: "1rem" }}>
                 <Typography sx={{ fontSize: "0.90rem", marginBottom: "0.3rem" }}>
                   {formatKey(key)}
                 </Typography>
 
-                {key === "LastName" ? (
+                {key === "lastName" ? (
                   // Last Name with Suffix Input. This is optional
                   <Grid container spacing={1} alignItems="center">
                     <Grid item xs={8}>
@@ -283,8 +282,8 @@ const CreateManager: React.FC<CreateManagerProps> = ({
                         fullWidth
                         variant="outlined"
                         placeholder="Enter Last Name"
-                        name="LastName"
-                        value={user.LastName}
+                        name="lastName"
+                        value={user.lastName}
                         onChange={handleManagerChange}
                         error={!!errors.LastName}
                         helperText={errors.LastName || SPACE}
@@ -296,9 +295,9 @@ const CreateManager: React.FC<CreateManagerProps> = ({
                         fullWidth
                         variant="outlined"
                         placeholder="Enter Suffix"
-                        name="Suffix"
-                        error={!!errors.Suffix}
-                        helperText={errors.Suffix || SPACE}
+                        name="suffix"
+                        error={!!errors.suffix}
+                        helperText={errors.suffix || SPACE}
                         sx={inputStyles}
                       />
                     </Grid>
@@ -371,12 +370,12 @@ const CreateManager: React.FC<CreateManagerProps> = ({
             <Typography variant="h6" sx={{ marginBottom: "0.5rem" }}>
               Assigned Location
             </Typography>
-            {["Region", "Province", "City", "Barangay", "StreetAddress"].map((key) => (
+            {["region", "province", "city", "barangay", "streetaddress"].map((key) => (
               <Grid item xs={12} key={key} sx={{ marginBottom: "1rem" }}>
                 <Typography sx={{ fontSize: "0.90rem", marginBottom: "0.3rem" }}>
                   {formatKey(key)}
                 </Typography>
-                {["Region", "Province", "City", "Barangay"].includes(key) ? (
+                {["region", "province", "city", "barangay"].includes(key) ? (
                   <FormControl fullWidth error={!!errors[key]}>
                     <Select
                       displayEmpty
@@ -385,9 +384,9 @@ const CreateManager: React.FC<CreateManagerProps> = ({
                       name={key}
                       inputProps={{ "aria-label": formatKey(key) }}
                       disabled={
-                        (key === "Province" && !selectState.Region) ||
-                        (key === "City" && !selectState.Province) ||
-                        (key === "Barangay" && !selectState.City)
+                        (key === "province" && !selectState.region) ||
+                        (key === "city" && !selectState.province) ||
+                        (key === "barangay" && !selectState.city)
                       }
                     >
                       <MenuItem value="" disabled>
@@ -395,11 +394,11 @@ const CreateManager: React.FC<CreateManagerProps> = ({
                       </MenuItem>
                       {renderOptions(
                         key,
-                        key === "Region"
+                        key === "region"
                           ? mapToLocationItem(regions)
-                          : key === "Province"
+                          : key === "province"
                             ? mapToLocationItem(filteredProvinces)
-                            : key === "City"
+                            : key === "city"
                               ? mapToLocationItem(filteredCities)
                               : []
                       )}

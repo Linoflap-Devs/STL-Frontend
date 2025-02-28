@@ -38,16 +38,15 @@ import Tooltip from "@mui/material/Tooltip";
 import Swal from "sweetalert2";
 import dayjs, { Dayjs } from "dayjs";
 
-// define user interface
 export interface User {
-  FirstName: string;
-  LastName: string;
+  firstName: string;  // Changed to lowercase
+  lastName: string;
   region: string;
   province: string;
   barangay: string;
   city: string;
   streetaddress?: string;
-  Email: string;
+  email: string;  // Changed to lowercase
   password?: string;
   DateOfRegistration?: string;
   [key: string]: any;
@@ -273,6 +272,7 @@ const ManagerTable: React.FC<ManagerTableProps> = ({ managers, onCreate, onEdit,
                   onSort={onSortWrapper}
                   onFilterChange={handleFilterChange("fullName")}
                 />
+
                 <SortableTableCell
                   label="Email Address"
                   sortKey="Email"
@@ -280,6 +280,7 @@ const ManagerTable: React.FC<ManagerTableProps> = ({ managers, onCreate, onEdit,
                   onSort={onSortWrapper}
                   onFilterChange={handleFilterChange("Email")}
                 />
+
                 <SortableTableCell
                   label="Assigned Region"
                   sortKey="Region"
@@ -289,6 +290,7 @@ const ManagerTable: React.FC<ManagerTableProps> = ({ managers, onCreate, onEdit,
                   filterValue={filters.Region}
                   onFilterChange={handleFilterChange("Region")}
                 />
+
                 <SortableTableCell
                   label="Creation Date"
                   sortKey="DateOfRegistration"
@@ -298,6 +300,7 @@ const ManagerTable: React.FC<ManagerTableProps> = ({ managers, onCreate, onEdit,
                   filterValue={filters.DateOfRegistration}
                   onFilterChange={handleFilterChange("DateOfRegistration")}
                 />
+
                 <SortableTableCell
                   label="Created By"
                   sortKey="CreatedBy"
@@ -307,6 +310,7 @@ const ManagerTable: React.FC<ManagerTableProps> = ({ managers, onCreate, onEdit,
                   filterValue={filters.CreatedBy}
                   onFilterChange={handleFilterChange("CreatedBy")}
                 />
+                
                 <SortableTableCell
                   label="Status"
                   sortKey="Status"
