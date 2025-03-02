@@ -189,7 +189,7 @@ const CreateManager: React.FC<CreateManagerProps> = ({
       setErrors(newErrors);
       return;
     }
-
+  
     const newUser = {
       firstName: user.firstName,
       lastName: user.lastName,
@@ -201,7 +201,8 @@ const CreateManager: React.FC<CreateManagerProps> = ({
       province: selectState.province,
       city: selectState.city,
       barangay: selectState.barangay,
-    };  
+    };
+  
     console.log("Payload:", newUser);
   
     try {
@@ -219,10 +220,13 @@ const CreateManager: React.FC<CreateManagerProps> = ({
           setErrors({ form: response.message });
         }
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error("Unexpected error:", error);
   
-      if (error instanceof Error) {
+      if (error.code === "P2002") {
+        console.error(`⚠️ Unique constraint failed on: ${error.meta?.target}`);
+        setErrors({ form: `This ${error.meta?.target} already exists.` });
+      } else if (error instanceof Error) {
         setErrors({ form: error.message });
       } else {
         setErrors({ form: "An unexpected error occurred. Please try again." });
