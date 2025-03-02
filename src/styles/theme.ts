@@ -11,7 +11,7 @@ const darkTheme = createTheme({
   palette: {
     mode: "dark",
     background: {
-      default: "#181A1B",
+      default: "#212121",
     },
     text: {
       primary: "#FFFFFF",
@@ -32,37 +32,6 @@ const darkTheme = createTheme({
             backgroundColor: "#A070D3",
           // backgroundColor: "#65308B",
    },
-        },
-      },
-    },
-    MuiTextField: {
-      defaultProps: {
-        variant: "outlined",
-      },
-      styleOverrides: {
-        root: {
-          "& .MuiOutlinedInput-root": {
-            border: "none",
-            borderRadius: 5,
-            backgroundColor: "#282828",
-            transition: "background-color 0.3s ease, border-color 0.3s ease",
-            "&:hover .MuiOutlinedInput-notchedOutline": {
-              borderColor: "#FFFFFF",
-            },
-            "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
-              borderColor: "#FFFFFF",
-            },
-          },
-          "& .MuiOutlinedInput-notchedOutline": {
-            borderColor: "#3F3F3F",
-            transition: "border-color 0.3s ease",
-          },
-          "& .MuiOutlinedInput-input": {
-            fontSize: 14,
-          },
-          "&.Mui-error .MuiOutlinedInput-notchedOutline": {
-            borderColor: "#d32f2f", // Default MUI error color (red)
-          },
         },
       },
     },
@@ -143,33 +112,7 @@ const darkTheme = createTheme({
         },
       },
     },
-    MuiList: {
-      styleOverrides: {
-        root: {
-          padding: "0px",
-          borderRadius: "0px",
-          boxShadow: "none",
-        },
-      },
-    },
-    MuiMenu: {
-      styleOverrides: {
-        paper: {
-          boxShadow: "0px 5px 5px -2px rgba(0,0,0,0.2)",
-        },
-      },
-    },
-    MuiMenuItem: {
-      styleOverrides: {
-        root: {
-          backgroundColor: "transparent",
-          color: "#ffffff",
-          padding: "17px 55px 17px 12px",
-          borderRadius: "0px",
-          fontSize: 14,
-        },
-      },
-    },
+
     MuiTablePagination: {
       styleOverrides: {
         root: {
@@ -208,80 +151,7 @@ const darkTheme = createTheme({
         },
       },
     },
-    MuiInput: {
-      styleOverrides: {
-        root: {
-          fontSize: "0.85rem",
-        },
-      },
-    },
-    // sa loob ng text
-    MuiOutlinedInput: {
-      styleOverrides: {
-        root: {
-          backgroundColor: "#374151",
-          color: "#ffffff",
-          fontSize: "0.85rem",
-          "&:hover fieldset": {
-            borderColor: "#FFFFFF",
-          },
-          "&.Mui-error fieldset": {
-            borderColor: "#F05252",
-          },
-          width: "100% !important",
-        },
-        input: {
-          color: "#ffffff",
-          padding: "9px 16px",
-          width: "100% !important",
-        },
-      },
-    },
-    MuiInputBase: {
-      styleOverrides: {
-        root: {
-          fontSize: "0.80rem",
-        },
-        input: {
-          "::placeholder": {
-            color: "#9CA3AF",
-          },
-        },
-      },
-    },
-    MuiFormHelperText: {
-      styleOverrides: {
-        root: {
-          fontSize: "0.80rem",
-          marginLeft: "0px",
-        },
-      },
-    },
-    MuiSelect: {
-      styleOverrides: {
-        root: {
-          backgroundColor: "#282828",
-          borderColor: "#D1D5DB !important",
-          width: "100%",
-        },
-        icon: {
-          color: "#ffffff",
-        },
-        select: {
-          padding: "9px 16px",
-          "& .MuiInputBase-input": {
-            color: "#D1D5DB",
-            padding: "9px 16px",
-            "&::placeholder": {
-              color: "#D1D5DB",
-            },
-            "&:focus": {
-              color: "#ffffff",
-            },
-          },
-        },
-      },
-    },
+
   },
 });
 
@@ -352,6 +222,17 @@ export const filterStyles = {
   },
 };
 
+export const cardDashboardStyles = {
+  height: "auto",
+  border: "1px solid",
+  borderColor: "#171717",
+  backgroundColor: "#171717",
+  borderRadius: "8px",
+  paddingY: "1.9rem",
+  paddingX: "1rem",
+  margin: "0 auto",
+};
+
 export const buttonDrawStyles = {
   width: 'auto',
   height: 'auto',
@@ -364,15 +245,16 @@ export const buttonDrawStyles = {
 };
 
 export const buttonNumberStyles = {
-  width: 'auto',
-  height: 'auto',
-  border: '1px solid',
-  borderColor: '#575757',
-  borderRadius: '8px',
-  backgroundColor: '#575757',
-  py: '4.3%',
-  px: '14%',
-  mt: '0.5rem',
+  width: "100%", // Takes the full width of the parent container
+  height: "auto",
+  border: "1px solid",
+  borderColor: "#303030",
+  borderRadius: "8px",
+  mt: "0.5rem",
+  display: "flex",
+  justifyContent: "center",
+  alignItems: "center",
+  minWidth: 0, // Prevents overflow issues
 };
 
 export default darkTheme;

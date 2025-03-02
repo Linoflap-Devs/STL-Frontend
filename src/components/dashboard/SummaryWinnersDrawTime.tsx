@@ -12,7 +12,7 @@ const SummaryWinnersDrawTimePage = () => {
   return (
     <Box
         sx={{
-        backgroundColor: "#383838",
+        backgroundColor: "#171717",
         padding: "1rem",
         paddingBottom: "0px",
         borderRadius: "8px",

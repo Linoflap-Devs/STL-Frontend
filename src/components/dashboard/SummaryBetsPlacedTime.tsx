@@ -12,7 +12,7 @@ const SummaryBetsPlacedTimePage = () => {
   return (
     <Box
       sx={{
-        backgroundColor: "#383838",
+        backgroundColor: "#171717",
         padding: "1rem",
         borderRadius: "8px",
         paddingBottom: "0rem",
