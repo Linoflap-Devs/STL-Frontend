@@ -32,7 +32,7 @@ const Header: React.FC<HeaderProps> = ({ handleDrawerToggle, collapsed }) => {
         backgroundColor: "#2D2D2D",
       }}
     >
-      <Toolbar sx={{ minHeight: "75px !important" }}>
+      <Toolbar sx={{ minHeight: "73px !important" }}>
         <IconButton
           color="inherit"
           aria-label="open drawer"

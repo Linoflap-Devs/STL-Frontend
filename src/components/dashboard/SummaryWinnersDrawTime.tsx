@@ -84,7 +84,7 @@ const SummaryWinnersDrawTimePage = () => {
           
           xAxis={[
             {
-              label: "Total",
+              label: "Total Winners",
               scaleType: "linear",
               min: 1,
               max: 10000,
