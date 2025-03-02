@@ -37,9 +37,14 @@ const SummaryWinnersDrawTimePage = () => {
             alignItems: "center",
           }}
         >
-          <Typography color="#FFFFFF" sx={{ fontSize: "20px" }}>
-            Summary of Winners
-          </Typography>
+          <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", width: "100%" }}>
+            <Typography color="#FFFFFF" sx={{ fontSize: "20px" }}>
+              Summary of Winners
+            </Typography>
+            <Typography color="#67ABEB" sx={{ fontSize: "12px", cursor: "pointer", textAlign: "right" }}>
+              View Winners Summary
+            </Typography>
+          </Box>
         </Box>
         <CustomLegend />
       </Box>

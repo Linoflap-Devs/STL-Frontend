@@ -44,6 +44,7 @@ const TopBettingRegionPage = () => {
           { rank: 7, region: "CALABARZON", bets: "489,765", trend: "up" },
           { rank: 8, region: "Central Luzon", bets: "502,134", trend: "down" },
           { rank: 7, region: "CALABARZON", bets: "489,765", trend: "up" },
+          
         ].map((item, index) => (
           <Box
             key={index}
