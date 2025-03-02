@@ -6,7 +6,7 @@ import DrawResultsPage from "~/components/dashboard/DrawResults";
 import TopBettingRegionPage from "~/components/dashboard/TopBettingRegion";
 import TopWinningRegionPage from "~/components/dashboard/TopWinningRegion";
 
-import SummaryBetsPlacedTimePage from "~/components/dashboard/SummaryBetsPlacedTime";
+import SummaryBettorsBetsPlacedPage from "~/components/dashboard/SummaryBettorsBetsPlaced";
 import SummaryWinnersDrawTimePage from "~/components/dashboard/SummaryWinnersDrawTime";
 
 const DashboardPage = () => {
@@ -31,7 +31,7 @@ const DashboardPage = () => {
       {/* Column 2 (2 Cards) */}
       <Grid item xs={12} md={6}>
         <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
-          <Box sx={{mt: 1, }}><SummaryBetsPlacedTimePage /></Box>
+          <Box sx={{mt: 1, }}><SummaryBettorsBetsPlacedPage /></Box>
           <Box sx={{mt: 2, }}><SummaryWinnersDrawTimePage /></Box>
         </Box>
       </Grid>

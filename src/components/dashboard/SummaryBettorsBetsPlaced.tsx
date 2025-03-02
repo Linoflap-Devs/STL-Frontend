@@ -7,37 +7,47 @@ const CustomLegend = () => (
   <Stack direction="row" spacing={2} justifyContent="left" sx={{ mt: 0.5, mr: 4 }}>
     <Box sx={{ display: "flex", alignItems: "center" }}>
       <Box sx={{ width: 14, height: 14, borderRadius: "50%", backgroundColor: "#BB86FC", mr: 1.5 }} />
-      <Typography color="white">Winners</Typography>
+      <Typography color="white">Bettors</Typography>
+    </Box>
+    <Box sx={{ display: "flex", alignItems: "center" }}>
+      <Box sx={{ width: 14, height: 14, borderRadius: "50%", backgroundColor: "#5050A5", mr: 1.5 }} />
+      <Typography color="white">Bets</Typography>
     </Box>
   </Stack>
 );
 
-// Data for Winners
+// Data for Bettors and Bets
 const data = [
-  { draw: "First Draw", winners: 100 },
-  { draw: "Second Draw", winners: 2500 },
-  { draw: "Third Draw", winners: 50 },
+  { draw: "First Draw", bettors: 10, bets: 1000000 },
+  { draw: "Second Draw", bettors: 30, bets: 3000000 },
+  { draw: "Third Draw", bettors: 70, bets: 7000000 },
 ];
 
-const SummaryWinnersDrawTimePage = () => {
+const SummaryBettorsBetsPlacedPage = () => {
   return (
     <Box sx={{ backgroundColor: "#171717", padding: "1rem", borderRadius: "8px", paddingBottom: "2rem" }}>
       <Box>
         <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
           <Typography color="#FFFFFF" sx={{ fontSize: "20px" }}>
-            Summary of Winners
+            Summary of Bettors and Bets Placed Today
           </Typography>
         </Box>
         <CustomLegend />
       </Box>
 
       <BarChart
-        sx={{ display: "flex", justifyContent: "center", marginLeft: "1rem", marginTop: "-10px" }}
+        sx={{
+          display: "flex",
+          justifyContent: "center",
+          marginLeft: "1rem",
+          marginTop: "-10px"
+        }}
         grid={{ vertical: true }}
         layout="horizontal"
         height={262}
         series={[
-          { data: data.map((item) => item.winners), color: "#BB86FC" },
+          { data: data.map((item) => item.bettors), color: "#BB86FC", },
+          { data: data.map((item) => item.bets / 100000), color: "#5050A5", },
         ]}
         yAxis={[
           {
@@ -46,17 +56,16 @@ const SummaryWinnersDrawTimePage = () => {
             tickLabelProps: { style: { fontSize: "12px" } },
           } as any,
         ]}
-        
         xAxis={[
           {
-            label: "Total",
+            label: "Amount (in 100,000 units)",
             scaleType: "linear",
             min: 1,
-            max: 10000,
-            ticks: [1, 10, 25, 50, 100, 250, 500, 1000, 1500, 2000, 2500, 5000, 7500, 9000, 10000],
+            max: 70,
+            ticks: [10, 20, 30, 40, 50, 60, 70],
             valueFormatter: (value: number) => `${value}`,
-            tickSize: 8,
-            barCategoryGap: 0.70,
+            tickSize: 2,
+            barCategoryGap: 0.3,
           } as any,
         ]}
       />
@@ -64,4 +73,4 @@ const SummaryWinnersDrawTimePage = () => {
   );
 };
 
-export default SummaryWinnersDrawTimePage;
+export default SummaryBettorsBetsPlacedPage;
