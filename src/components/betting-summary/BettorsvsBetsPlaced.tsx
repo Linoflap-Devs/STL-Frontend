@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { BarChart } from "@mui/x-charts/BarChart";
-import { Typography, Box, Stack, Divider } from "@mui/material";
+import { Typography, Box, Stack, Divider, Button } from "@mui/material";
 
 // Custom Legend
 const CustomLegend = () => (
@@ -104,9 +104,12 @@ const BettorsvsBetsPlacedPage: React.FC<BettorsvsBetsPlacedPageProps> = ({ data 
                     slotProps={{
                         legend: { hidden: true },
                         bar: {
+                            className: "bar-hover-effect", // Add custom class here
                             style: {
                                 borderTopLeftRadius: 5,
                                 borderTopRightRadius: 5,
+                                transition: "fill 0.3s ease-in-out",
+                                cursor: "pointer",
                             },
                         },
                         axisLabel: {
@@ -133,6 +136,30 @@ const BettorsvsBetsPlacedPage: React.FC<BettorsvsBetsPlacedPageProps> = ({ data 
                         },
                     }}
                 />
+            </Box>
+
+
+            <Box sx={{ display: "flex", justifyContent: "flex-end", pr: 3, mt: 2 }}>
+                <Button
+                    sx={{
+                        borderRadius: '8px',
+                        paddingY: 1,
+                        paddingX: 2,
+                        textTransform: 'none',
+                        fontWeight: 400,
+                        lineHeight: '14.63px',
+                        "&:hover": {
+                            backgroundColor: '#B183E8',
+                        },
+                        width: '145px',
+                        height: '34px',
+                        color: '#1b1b1b'
+                    }}
+                    variant="contained"
+                    onClick={() => console.log("Exporting All as CSV")}
+                >
+                    Export as CSV
+                </Button>
             </Box>
         </Box>
     );
