@@ -178,7 +178,7 @@ const ManagerTable: React.FC<ManagerTableProps> = ({ managers, onCreate, onEdit,
       >
         <Typography
           variant="h6"
-          sx={{ fontWeight: "bold", marginBottom: 0, color: '#E3C9FF', }}
+          sx={{ fontWeight: "bold", marginBottom: 0, }}
           gutterBottom
         >
           {UserSectionData.titleManager}

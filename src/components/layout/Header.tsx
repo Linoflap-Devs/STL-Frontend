@@ -26,6 +26,7 @@ const Header: React.FC<HeaderProps> = ({ handleDrawerToggle, collapsed }) => {
     <AppBar
       position="fixed"
       sx={{
+        zIndex: 100,
         width: collapsed ? "100%" : `calc(100% - 240px)`,
         ml: collapsed ? 0 : "240px",
         transition: "width 0.3s ease",

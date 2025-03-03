@@ -51,3 +51,8 @@ input:-webkit-autofill {
 .MuiChartsAxis-tick text:empty {
   display: none !important;
 }
+
+.no-hover:hover {
+  background-color: #f0f0f0 !important; /* Keep it unchanged */
+  color: #212121 !important;
+}

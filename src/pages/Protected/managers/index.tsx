@@ -29,7 +29,7 @@ const UsersPage = () => {
         const response = await fetchUsers({});
         if (response.success) {
           const filteredUsers = response.data
-            .filter((user: { UserTypeId: number; }) => user.UserTypeId === 2)
+            .filter((user: { UserTypeId: number; }) => user.UserTypeId === 3)
             .map((user: { FirstName: any; LastName: any; Email: any; DateOfRegistration: any; Location: { Region: any; Province: any; City: any; }; CreatedBy: { FirstName: any; LastName: any; }; }) => ({
               FirstName: user.FirstName, 
               LastName: user.LastName,

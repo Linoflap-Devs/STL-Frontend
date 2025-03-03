@@ -21,6 +21,8 @@ import { inputStyles } from "../../styles/theme";
 import { City, Province, Region } from "~/utils/api/locationTypes";
 import { UserSectionData } from "~/data/AdminSectionData";
 import { addUser } from "~/utils/api/users"
+import Swal from "sweetalert2";
+import { formatKey } from "~/utils/format"
 
 export interface CreateManagerProps {
   open: boolean;
@@ -85,6 +87,7 @@ const CreateManager: React.FC<CreateManagerProps> = ({
     suffix: userData?.suffix ?? SPACE,
     phoneNumber: userData?.phoneNumber ?? SPACE,
     email: userData?.email ?? SPACE,
+    userName: userData?.userName ?? SPACE,
     password: SPACE,
     streetaddress: userData?.streetaddress ?? SPACE,
   });
@@ -108,40 +111,40 @@ const CreateManager: React.FC<CreateManagerProps> = ({
 
   const handleSelectChange = (e: SelectChangeEvent<string>, name: string) => {
     const value = e.target.value;
-  
+
     console.log(`Selected ${name}:`, value); // Log selected value
-  
+
     setSelectState((prevState) => ({ ...prevState, [name.toLowerCase()]: value }));
-  
+
     if (name === "region") {
       const selectedRegion = regions.find((r) => r.name === value);
       console.log("Selected Region Object:", selectedRegion);
-  
+
       if (selectedRegion?.key) {
         const newProvinces = provinces.filter((p) => p.region === selectedRegion.key);
         console.log("Filtered Provinces:", newProvinces);
         setFilteredProvinces(newProvinces);
       }
-  
+
       setFilteredCities([]);
-  
+
       setSelectState((prevState) => ({
         ...prevState,
-        province: "", // Reset province
-        city: "", // Reset city
+        province: "",
+        city: "",
       }));
     }
-  
+
     if (name === "province") {
       const selectedProvince = provinces.find((p) => p.name === value);
       console.log("Selected Province Object:", selectedProvince);
-  
+
       if (selectedProvince) {
         const newCities = cities.filter((c) => c.province === selectedProvince.key);
         console.log("Filtered Cities:", newCities);
         setFilteredCities(newCities);
       }
-  
+
       setSelectState((prevState) => ({
         ...prevState,
         city: "",
@@ -149,52 +152,38 @@ const CreateManager: React.FC<CreateManagerProps> = ({
     }
   };
 
-  const formatKey = (key: string) => {
-    const mapping: { [key: string]: string } = {
-      firstName: "First Name",
-      lastName: "Last Name",
-      phoneNumber: "Phone Number",
-      email: "Email",
-      password: "Password",
-      region: "Assigned Region",
-      province: "Assigned Province",
-      city: "Assigned City",
-      barangay: "Assigned Barangay",
-      streetAddress: "Assigned Street Address",
-    };
-    return mapping[key] || key;
-  };
-
-  const handleGeneratePassword = () => {
-    const generatedPassword = "0912Gg33*12"; // hardcoded
-    setUser((prevUser) => ({ ...prevUser, password: generatedPassword }));
-  };
-
   const handleCreateManagerSubmit = async () => {
+    const confirmation = await Swal.fire({
+      title: "Add Confirmation",
+      text: "Did you enter the correct details?",
+      icon: "question",
+      showCancelButton: true,
+      confirmButtonText: '<span style="color: #212121;">Yes, I did.</span>',
+      cancelButtonText: '<span style="color: #212121;">No, let me check</span>',
+      confirmButtonColor: "#67ABEB",
+      cancelButtonColor: "#f0f0f0",
+      customClass: {
+        cancelButton: "no-hover",
+      },
+    });
+  
+    if (!confirmation.isConfirmed) {
+      return;
+    }
+  
     const newErrors: { [key: string]: string } = {};
-  
-    // Basic validation
-    if (!user.firstName.trim()) newErrors.firstName = "First name is required";
-    if (!user.lastName.trim()) newErrors.lastName = "Last name is required";
-    if (!user.phoneNumber.trim()) newErrors.phoneNumber = "Phone number is required";
-    if (!user.password.trim()) newErrors.password = "Password is required";
-  
-    // Location validation (optional, if required)
-    if (!selectState.region.trim()) newErrors.Region = "Region is required";
-    if (!selectState.province.trim()) newErrors.Province = "Province is required";
-    if (!selectState.city.trim()) newErrors.City = "City is required";
-    if (!selectState.barangay.trim()) newErrors.Barangay = "Barangay is required";
   
     if (Object.keys(newErrors).length > 0) {
       setErrors(newErrors);
       return;
     }
-  
+
     const newUser = {
       firstName: user.firstName,
       lastName: user.lastName,
       phoneNumber: user.phoneNumber,
       email: user.email,
+      userName: "",
       password: user.password,
       userTypeId: 3,
       region: selectState.region,
@@ -209,29 +198,46 @@ const CreateManager: React.FC<CreateManagerProps> = ({
       const response = await addUser(newUser);
       if (response.success) {
         console.log("User added successfully:", response.data);
+        
+        // Show success alert
+        Swal.fire({
+          icon: "success",
+          title: "Manager Created!",
+          text: `The manager has been added successfully.`,
+          confirmButtonColor: "#67ABEB",
+        });
+  
         onSubmit(newUser);
         onClose();
       } else {
         console.error("Error adding user:", response.message);
+        setErrors(response.errors || { form: response.message });
   
-        if (response.errors) {
-          setErrors(response.errors);
-        } else {
-          setErrors({ form: response.message });
-        }
+        // Show error alert
+        Swal.fire({
+          icon: "error",
+          title: "Error!",
+          text: response.message || "Something went wrong. Please try again.",
+          confirmButtonColor: "#D32F2F",
+        });
       }
-    } catch (error: any) {
+    } catch (error) {
       console.error("Unexpected error:", error);
+      setErrors({ form: error instanceof Error ? error.message : "An unexpected error occurred. Please try again." });
   
-      if (error.code === "P2002") {
-        console.error(`⚠️ Unique constraint failed on: ${error.meta?.target}`);
-        setErrors({ form: `This ${error.meta?.target} already exists.` });
-      } else if (error instanceof Error) {
-        setErrors({ form: error.message });
-      } else {
-        setErrors({ form: "An unexpected error occurred. Please try again." });
-      }
+      // Show error alert
+      Swal.fire({
+        icon: "error",
+        title: "Unexpected Error!",
+        text: error instanceof Error ? error.message : "An unexpected error occurred. Please try again.",
+        confirmButtonColor: "#D32F2F",
+      });
     }
+  };
+  
+  const handleGeneratePassword = () => {
+    const generatedPassword = "0912Gg33*12";
+    setUser((prevUser) => ({ ...prevUser, password: generatedPassword }));
   };
 
   return (
@@ -277,9 +283,7 @@ const CreateManager: React.FC<CreateManagerProps> = ({
                 <Typography sx={{ fontSize: "0.90rem", marginBottom: "0.3rem" }}>
                   {formatKey(key)}
                 </Typography>
-
                 {key === "lastName" ? (
-                  // Last Name with Suffix Input. This is optional
                   <Grid container spacing={1} alignItems="center">
                     <Grid item xs={8}>
                       <TextField
@@ -307,7 +311,6 @@ const CreateManager: React.FC<CreateManagerProps> = ({
                     </Grid>
                   </Grid>
                 ) : key === "password" ? (
-                  // Password Input with Visibility Toggle
                   <Grid container spacing={1.5} alignItems="center">
                     <Grid item xs={7}>
                       <TextField
@@ -341,7 +344,7 @@ const CreateManager: React.FC<CreateManagerProps> = ({
                         sx={{
                           width: "100%",
                           textTransform: "none",
-                          backgroundColor: "#CCA1FD",
+                          backgroundColor: "#67ABEB",
                           borderRadius: "8px",
                           color: "#282828",
                         }}
@@ -352,7 +355,6 @@ const CreateManager: React.FC<CreateManagerProps> = ({
                     </Grid>
                   </Grid>
                 ) : (
-                  // Default TextField for Other Inputs
                   <TextField
                     fullWidth
                     variant="outlined"
@@ -430,11 +432,11 @@ const CreateManager: React.FC<CreateManagerProps> = ({
       </DialogContent>
 
       <Button
-      onClick={handleCreateManagerSubmit}
+        onClick={handleCreateManagerSubmit}
         sx={{
-          mt: 1,
+          mt: 0.5,
           width: "100%",
-          backgroundColor: "#CCA1FD",
+          backgroundColor: "#67ABEB",
           textTransform: "none",
           fontSize: "12px",
           padding: "0.8rem",
