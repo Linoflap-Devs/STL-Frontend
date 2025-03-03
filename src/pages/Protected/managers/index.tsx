@@ -1,5 +1,12 @@
 import React, { useState, useEffect } from 'react';
+import {
+  Typography,
+  Box,
+
+} from "@mui/material";
+import { UserSectionData } from "~/data/AdminSectionData";
 import ManagerTable, { User } from '~/components/manager/ManagerTable';
+import ManagerDashboardPage from '~/components/manager/ManagerDashboard';
 import CreateManager from '~/components/manager/CreateManager';
 import UpdateManager from '~/components/manager/UpdateManager';
 import { fetchUsers } from '~/utils/api/users';
@@ -31,7 +38,7 @@ const UsersPage = () => {
           const filteredUsers = response.data
             .filter((user: { UserTypeId: number; }) => user.UserTypeId === 3)
             .map((user: { FirstName: any; LastName: any; Email: any; DateOfRegistration: any; Location: { Region: any; Province: any; City: any; }; CreatedBy: { FirstName: any; LastName: any; }; }) => ({
-              FirstName: user.FirstName, 
+              FirstName: user.FirstName,
               LastName: user.LastName,
               Email: user.Email,
               DateOfRegistration: user.DateOfRegistration,
@@ -41,7 +48,7 @@ const UsersPage = () => {
               CreatedByFirstName: user.CreatedBy?.FirstName || "Unknown",
               CreatedByLastName: user.CreatedBy?.LastName || "Unknown",
             }));
-    
+
           setManagers(filteredUsers);
         } else {
           console.error("Failed to fetch users:", response.message);
@@ -50,9 +57,9 @@ const UsersPage = () => {
         console.error("Error fetching users:", error);
       }
     };
-  
+
     loadUsers();
-  
+
     setRegionList(regions);
     setProvinceList(provinces);
     setCityList(cities);
@@ -75,15 +82,15 @@ const UsersPage = () => {
   };
 
   const handleSubmitUser = (userData: User | null) => {
-      if (userData) {
-          setManagers((prevManagers) => {
-              if (prevManagers.some(manager => manager.id === userData.id)) {
-                  return prevManagers;
-              }
-              return [...prevManagers, userData];
-          });
-      }
-      setModalOpen(false);
+    if (userData) {
+      setManagers((prevManagers) => {
+        if (prevManagers.some(manager => manager.id === userData.id)) {
+          return prevManagers;
+        }
+        return [...prevManagers, userData];
+      });
+    }
+    setModalOpen(false);
   };
 
   const handleSaveUpdatedUser = (updatedUser: User) => {
@@ -102,13 +109,34 @@ const UsersPage = () => {
   };
 
   return (
-    <>
-      <ManagerTable
-        onCreate={handleUserCreate}
-        onEdit={handleUserEdit}
-        managers={managers}
-        onDelete={handleDeleteManager}
-      />
+    <Box>
+      <Box
+        sx={{
+          display: "flex",
+          flexDirection: "row",
+          justifyContent: "space-between",
+          alignItems: "center",
+        }}
+      >
+        <Typography
+          variant="h4"
+          sx={{ fontWeight: "bold", marginBottom: 0, }}
+          gutterBottom
+        >
+          {UserSectionData.titleManager}
+        </Typography>
+      </Box>
+      <Box sx={{marginTop: 2, marginBottom: 3, }}>
+        <ManagerDashboardPage/>
+      </Box>
+      <Box>
+        <ManagerTable
+          onCreate={handleUserCreate}
+          onEdit={handleUserEdit}
+          managers={managers}
+          onDelete={handleDeleteManager}
+        />
+      </Box>
       <CreateManager
         open={isModalOpen}
         onClose={() => setModalOpen(false)}
@@ -130,7 +158,7 @@ const UsersPage = () => {
           cities={cityList}
         />
       )}
-    </>
+    </Box>
   );
 };
 

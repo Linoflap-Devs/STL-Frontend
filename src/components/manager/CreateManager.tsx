@@ -12,6 +12,9 @@ import {
   IconButton,
   FormControl,
   FormHelperText,
+  InputLabel,
+  OutlinedInput,
+  InputAdornment,
 } from "@mui/material";
 import { User } from "./ManagerTable";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
@@ -25,6 +28,11 @@ import Swal from "sweetalert2";
 import { formatKey } from "~/utils/format"
 import { validateUser } from "~/utils/validation"
 
+interface LocationItem {
+  id: string;
+  name: string;
+}
+
 export interface CreateManagerProps {
   open: boolean;
   onClose: () => void;
@@ -34,11 +42,6 @@ export interface CreateManagerProps {
   regions: Region[];
   provinces: Province[];
   cities: City[];
-}
-
-interface LocationItem {
-  id: string;
-  name: string;
 }
 
 // populating locations on api philippines
@@ -61,13 +64,6 @@ export const useRenderOptions = () => {
   };
 
   return { renderOptions };
-};
-
-const mapToLocationItem = (data: Region[] | Province[] | City[]): LocationItem[] => {
-  return data.map((item) => ({
-    id: (item as any).key || (item as any).code || "",
-    name: item.name,
-  }));
 };
 
 const CreateManager: React.FC<CreateManagerProps> = ({
@@ -101,6 +97,13 @@ const CreateManager: React.FC<CreateManagerProps> = ({
     city: userData?.city ?? "",
     barangay: userData?.barangay ?? "",
   });
+
+  const mapToLocationItem = (data: Region[] | Province[] | City[]): LocationItem[] => {
+    return data.map((item) => ({
+      id: (item as any).key || (item as any).code || "",
+      name: item.name,
+    }));
+  };
 
   const handleManagerChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement> | SelectChangeEvent<string>
@@ -263,73 +266,73 @@ const CreateManager: React.FC<CreateManagerProps> = ({
           <CloseIcon sx={{ fontSize: 20, fontWeight: "700" }} />
         </IconButton>
       </DialogTitle>
-
       <DialogContent>
         <Grid container rowSpacing={2.5} columnSpacing={{ xs: 1, sm: 3, md: 2.5 }}>
           {/* Column 1 - Personal Information */}
           <Grid item xs={6} sm={6} sx={{ marginBottom: "0px !important" }}>
-            <Typography variant="h6" sx={{ marginBottom: "0.5rem" }}>
+            <Typography variant="h6" sx={{ marginBottom: "0.7rem" }}>
               Personal Information
             </Typography>
             {["firstName", "lastName", "phoneNumber", "email", "password"].map((key) => (
               <Grid item xs={12} key={key} sx={{ marginBottom: "1rem" }}>
-                <Typography sx={{ fontSize: "0.90rem", marginBottom: "0.3rem" }}>
-                  {formatKey(key)}
-                </Typography>
                 {key === "lastName" ? (
-                  <Grid container spacing={1} alignItems="flex-start" wrap="nowrap">
+                  <Grid container spacing={1.5} alignItems="flex-start" wrap="nowrap">
                     <Grid item xs={8}>
-                      <TextField
-                        fullWidth
-                        variant="outlined"
-                        placeholder="Enter Last Name"
-                        name="lastName"
-                        value={user.lastName}
-                        onChange={handleManagerChange}
-                        error={!!errors.lastName}
-                        helperText={errors.lastName || ""}
-                        sx={inputStyles}
-                      />
+                      <FormControl fullWidth error={!!errors.lastName} sx={inputStyles}>
+                        <InputLabel htmlFor="lastName">Last Name</InputLabel>
+                        <OutlinedInput
+                          id="lastName"
+                          name="lastName"
+                          placeholder="Enter Last Name"
+                          value={user.lastName}
+                          onChange={handleManagerChange}
+                          label="Last Name"
+                        />
+                        {errors.lastName && <FormHelperText>{errors.lastName}</FormHelperText>}
+                      </FormControl>
                     </Grid>
+
                     <Grid item xs={4}>
-                      <TextField
-                        fullWidth
-                        variant="outlined"
-                        placeholder="Enter Suffix"
-                        name="suffix"
-                        error={!!errors.suffix}
-                        helperText={errors.suffix || ""}
-                        sx={inputStyles}
-                      />
+                      <FormControl fullWidth error={!!errors.suffix} sx={inputStyles}>
+                        <InputLabel htmlFor="suffix">Suffix</InputLabel>
+                        <OutlinedInput
+                          id="suffix"
+                          name="suffix"
+                          placeholder="Enter Suffix"
+                          onChange={handleManagerChange}
+                          label="Suffix"
+                        />
+                        {errors.suffix && <FormHelperText>{errors.suffix}</FormHelperText>}
+                      </FormControl>
                     </Grid>
+
                   </Grid>
                 ) : key === "password" ? (
                   <Grid container spacing={1} alignItems="center">
-                    <Grid item xs={7}>
-                      <TextField
-                        fullWidth
-                        variant="outlined"
-                        placeholder="Enter password"
-                        type={showPassword ? "text" : "password"}
-                        name="password"
-                        value={user.password}
-                        onChange={handleManagerChange}
-                        error={!!errors.password}
-                        sx={inputStyles}
-                        InputProps={{
-                          endAdornment: (
-                            <IconButton
-                              sx={{ color: "#9ca3af" }}
-                              onClick={() => setShowPassword((prev) => !prev)}
-                              edge="end"
-                            >
-                              {showPassword ? <VisibilityOff /> : <Visibility />}
-                            </IconButton>
-                          ),
-                        }}
-                      />
+                    <Grid item xs={7} sx={{marginBottom: 1,}}>
+                      <FormControl fullWidth error={!!errors.password} sx={inputStyles} variant="outlined">
+                        <InputLabel htmlFor="password">Password</InputLabel>
+                        <OutlinedInput
+                          id="password"
+                          type={showPassword ? "text" : "password"}
+                          name="password"
+                          value={user.password}
+                          onChange={handleManagerChange}
+                          label="Password"
+                          endAdornment={
+                            <InputAdornment position="end">
+                              <IconButton
+                                sx={{ color: "#9ca3af" }}
+                                onClick={() => setShowPassword((prev) => !prev)}
+                                edge="end"
+                              >
+                                {showPassword ? <VisibilityOff /> : <Visibility />}
+                              </IconButton>
+                            </InputAdornment>
+                          }
+                        />
+                      </FormControl>
                     </Grid>
-
                     <Grid item xs={5}>
                       <Button
                         variant="contained"
@@ -356,17 +359,18 @@ const CreateManager: React.FC<CreateManagerProps> = ({
                     )}
                   </Grid>
                 ) : (
-                  <TextField
-                    fullWidth
-                    variant="outlined"
-                    placeholder={`Enter ${formatKey(key)}`}
-                    name={key}
-                    value={user[key as keyof typeof user]}
-                    onChange={handleManagerChange}
-                    error={!!errors[key]}
-                    helperText={errors[key] || ""}
-                    sx={inputStyles}
-                  />
+                  <FormControl fullWidth error={!!errors[key]} sx={inputStyles} variant="outlined">
+                    <InputLabel htmlFor={key}>{formatKey(key)}</InputLabel>
+                    <OutlinedInput
+                      id={key}
+                      name={key}
+                      placeholder={`Enter ${formatKey(key)}`}
+                      value={user[key as keyof typeof user]}
+                      onChange={handleManagerChange}
+                      label={formatKey(key)}
+                    />
+                    {errors[key] && <FormHelperText>{errors[key]}</FormHelperText>}
+                  </FormControl>
                 )}
               </Grid>
             ))}
@@ -374,17 +378,16 @@ const CreateManager: React.FC<CreateManagerProps> = ({
 
           {/* Column 2 - Assigned Location */}
           <Grid item xs={6}>
-            <Typography variant="h6" sx={{ marginBottom: "0.5rem" }}>
+            <Typography variant="h6" sx={{ marginBottom: "0.7rem" }}>
               Assigned Location
             </Typography>
             {["region", "province", "city", "barangay", "streetaddress"].map((key) => (
               <Grid item xs={12} key={key} sx={{ marginBottom: "1rem" }}>
-                <Typography sx={{ fontSize: "0.90rem", marginBottom: "0.3rem" }}>
-                  {formatKey(key)}
-                </Typography>
                 {["region", "province", "city", "barangay"].includes(key) ? (
-                  <FormControl fullWidth error={!!errors[key]}>
+                  <FormControl fullWidth error={!!errors[key]} sx={inputStyles}>
+                    <InputLabel id={`${key}-label`}>{formatKey(key)}</InputLabel>
                     <Select
+                      labelId={`${key}-label`}
                       displayEmpty
                       value={selectState[key as keyof typeof selectState] || ""}
                       onChange={(e) => handleSelectChange(e, key)}
@@ -396,9 +399,6 @@ const CreateManager: React.FC<CreateManagerProps> = ({
                         (key === "barangay" && !selectState.city)
                       }
                     >
-                      <MenuItem value="" disabled>
-                        Select a {formatKey(key)}
-                      </MenuItem>
                       {renderOptions(
                         key,
                         key === "region"
@@ -412,30 +412,29 @@ const CreateManager: React.FC<CreateManagerProps> = ({
                     </Select>
                     {errors[key] && <FormHelperText>{errors[key]}</FormHelperText>}
                   </FormControl>
+
                 ) : (
-                  <TextField
-                    fullWidth
-                    variant="outlined"
-                    placeholder={`Enter ${formatKey(key)}`}
-                    name={key}
-                    value={user[key as keyof typeof user]}
-                    onChange={handleManagerChange}
-                    error={!!errors[key]}
-                    helperText={errors[key] || ""}
-                    sx={inputStyles}
-                  />
+                  <FormControl fullWidth error={!!errors[key]} sx={inputStyles} variant="outlined">
+                    <InputLabel htmlFor={key}>{formatKey(key)}</InputLabel>
+                    <OutlinedInput
+                      id={key}
+                      name={key}
+                      placeholder={`Enter ${formatKey(key)}`}
+                      value={user[key as keyof typeof user]}
+                      onChange={handleManagerChange}
+                      label={formatKey(key)}
+                    />
+                    {errors[key] && <FormHelperText>{errors[key]}</FormHelperText>}
+                  </FormControl>
                 )}
               </Grid>
             ))}
           </Grid>
-
         </Grid>
-      </DialogContent>
-
-      <Button
+        <Button
         onClick={handleCreateManagerSubmit}
         sx={{
-          mt: 0.5,
+          mt: 1,
           width: "100%",
           backgroundColor: "#67ABEB",
           textTransform: "none",
@@ -448,6 +447,7 @@ const CreateManager: React.FC<CreateManagerProps> = ({
       >
         {UserSectionData.addManagerButton}
       </Button>
+      </DialogContent>
     </Dialog>
   );
 };

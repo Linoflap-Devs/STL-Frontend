@@ -75,7 +75,7 @@ const darkTheme = createTheme({
     MuiTable: {
       styleOverrides: {
         root: {
-          backgroundColor: "#282828",
+          backgroundColor: "#171717",
           borderRadius: 5,
           borderCollapse: "collapse",
           padding: 1,
@@ -99,7 +99,7 @@ const darkTheme = createTheme({
     MuiTableHead: {
       styleOverrides: {
         root: {
-          backgroundColor: "#3F3F3F",
+          backgroundColor: "#2F2F2F",
           lineHeight: "1.5rem",
           textTransform: "uppercase",
           fontWeight: "bold",
@@ -109,12 +109,12 @@ const darkTheme = createTheme({
     MuiTableRow: {
       styleOverrides: {
         root: {
-          borderBottom: "0.5px solid #282828",
+          borderBottom: "0.5px solid #2F2F2F",
           "&:hover": {
-            backgroundColor: "#3F3F3F",
+            backgroundColor: "#2F2F2F",
           },
           "&.Mui-selected": {
-            backgroundColor: "#616161",
+            backgroundColor: "#2F2F2F",
           },
         },
       },
@@ -153,6 +153,9 @@ const darkTheme = createTheme({
     },
     MuiMenu: {
       styleOverrides: {
+        root: {
+          borderRadius: "0px",
+        },
         paper: {
           boxShadow: "0px 5px 5px -2px rgba(0,0,0,0.2)",
         },
@@ -214,28 +217,6 @@ const darkTheme = createTheme({
         },
       },
     },
-    // sa loob ng text
-    MuiOutlinedInput: {
-      styleOverrides: {
-        root: {
-          backgroundColor: "#374151",
-          color: "#ffffff",
-          fontSize: "0.85rem",
-          "&:hover fieldset": {
-            borderColor: "#FFFFFF",
-          },
-          "&.Mui-error fieldset": {
-            borderColor: "#F05252",
-          },
-          width: "100% !important",
-        },
-        input: {
-          color: "#ffffff",
-          padding: "9px 16px",
-          width: "100% !important",
-        },
-      },
-    },
     MuiInputBase: {
       styleOverrides: {
         root: {
@@ -257,31 +238,16 @@ const darkTheme = createTheme({
         },
       },
     },
-    MuiSelect: {
+    MuiOutlinedInput: {
       styleOverrides: {
-        root: {
-          backgroundColor: "#282828",
-          borderColor: "#D1D5DB !important",
-          width: "100%",
-        },
-        icon: {
+        input: {
           color: "#ffffff",
-        },
-        select: {
-          padding: "9px 16px",
-          "& .MuiInputBase-input": {
-            color: "#D1D5DB",
-            padding: "9px 16px",
-            "&::placeholder": {
-              color: "#D1D5DB",
-            },
-            "&:focus": {
-              color: "#ffffff",
-            },
-          },
+          padding: "16px 16px",
+          width: "100% !important",
         },
       },
     },
+
   },
 });
 
@@ -351,6 +317,17 @@ export const filterStyles = {
   },
 };
 
+export const cardDashboardStyles = {
+  height: "auto",
+  border: "1px solid",
+  borderColor: "#171717",
+  backgroundColor: "#171717",
+  borderRadius: "8px",
+  paddingY: "1.9rem",
+  paddingX: "1rem",
+  margin: "0 auto",
+};
+
 export const buttonDrawStyles = {
   width: 'auto',
   height: 'auto',
@@ -363,26 +340,16 @@ export const buttonDrawStyles = {
 };
 
 export const buttonNumberStyles = {
-  width: 'auto',
-  height: 'auto',
-  border: '1px solid',
-  borderColor: '#575757',
-  borderRadius: '8px',
-  backgroundColor: '#575757',
-  py: '4.3%',
-  px: '14%',
-  mt: '0.5rem',
-};
-
-export const cardDashboardStyles = {
+  width: "100%",
   height: "auto",
   border: "1px solid",
-  borderColor: "#171717",
-  backgroundColor: "#171717",
+  borderColor: "#303030",
   borderRadius: "8px",
-  paddingY: "1.9rem",
-  paddingX: "1rem",
-  margin: "0 auto",
+  mt: "0.5rem",
+  display: "flex",
+  justifyContent: "center",
+  alignItems: "center",
+  minWidth: 0,
 };
 
 export default darkTheme;

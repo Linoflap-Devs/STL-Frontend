@@ -16,6 +16,7 @@ const LoginPage = () => {
     password: "",
   });
   const [showPassword, setShowPassword] = useState(false);
+  const [isLoggingIn, setIsLoggingIn] = useState(false)
   const [errors, setErrors] = useState<{
     username?: string;
     password?: string;
@@ -25,6 +26,9 @@ const LoginPage = () => {
   // submit login
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (isLoggingIn) return; // Prevent multiple submissions
+  
+    setIsLoggingIn(true);
     setErrors({});
   
     try {
@@ -37,6 +41,7 @@ const LoginPage = () => {
         ...prev,
         general: "Login failed. Please try again.",
       }));
+      setIsLoggingIn(false);
     }
   };
   
@@ -130,7 +135,6 @@ const LoginPage = () => {
                 {LoginSectionData.cardDescription}
               </Typography>
             </Box>
-
             <form onSubmit={handleLogin} style={{ width: "85%" }}>
               <Box
                 sx={{
@@ -253,13 +257,11 @@ const LoginPage = () => {
                   padding: "8px 20px",
                   borderRadius: "8px",
                   textTransform: "none",
-                  backgroundColor: "#CCA1FD",
                   color: '#181A1B',
                 }}
               >
                 {LoginSectionData.buttonText}
               </Button>
-
               {/* Forgot Password */}
               <Typography
                 sx={{
@@ -274,7 +276,6 @@ const LoginPage = () => {
                   href="/auth/forgot-password"
                   style={{
                     textDecoration: "none",
-                    color: "#D4AEFE",
                   }}
                 >
                   {LoginSectionData.forgotPassword}
@@ -287,7 +288,7 @@ const LoginPage = () => {
                 position: "absolute",
                 bottom: 25,
                 textAlign: "center",
-                color: "#FFFFFF",
+                color: "#67ABEB",
               }}
             >
               <Typography sx={{ fontSize: "13px" }}>
