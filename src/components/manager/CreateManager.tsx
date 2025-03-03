@@ -269,8 +269,8 @@ const CreateManager: React.FC<CreateManagerProps> = ({
       <DialogContent>
         <Grid container rowSpacing={2.5} columnSpacing={{ xs: 1, sm: 3, md: 2.5 }}>
           {/* Column 1 - Personal Information */}
-          <Grid item xs={6} sm={6} sx={{ marginBottom: "0px !important" }}>
-            <Typography variant="h6" sx={{ marginBottom: "0.7rem" }}>
+          <Grid item xs={6} sm={6}>
+            <Typography variant="h6" sx={{ marginBottom: "0.9rem" }}>
               Personal Information
             </Typography>
             {["firstName", "lastName", "phoneNumber", "email", "password"].map((key) => (
@@ -309,7 +309,7 @@ const CreateManager: React.FC<CreateManagerProps> = ({
                   </Grid>
                 ) : key === "password" ? (
                   <Grid container spacing={1} alignItems="center">
-                    <Grid item xs={7} sx={{marginBottom: 1,}}>
+                    <Grid item xs={7} sx={{ marginBottom: 1, }}>
                       <FormControl fullWidth error={!!errors.password} sx={inputStyles} variant="outlined">
                         <InputLabel htmlFor="password">Password</InputLabel>
                         <OutlinedInput
@@ -378,7 +378,7 @@ const CreateManager: React.FC<CreateManagerProps> = ({
 
           {/* Column 2 - Assigned Location */}
           <Grid item xs={6}>
-            <Typography variant="h6" sx={{ marginBottom: "0.7rem" }}>
+            <Typography variant="h6" sx={{ marginBottom: "0.9rem" }}>
               Assigned Location
             </Typography>
             {["region", "province", "city", "barangay", "streetaddress"].map((key) => (
@@ -432,21 +432,21 @@ const CreateManager: React.FC<CreateManagerProps> = ({
           </Grid>
         </Grid>
         <Button
-        onClick={handleCreateManagerSubmit}
-        sx={{
-          mt: 1,
-          width: "100%",
-          backgroundColor: "#67ABEB",
-          textTransform: "none",
-          fontSize: "12px",
-          padding: "0.8rem",
-          borderRadius: "8px",
-          color: '#181A1B',
-        }}
-        variant="contained"
-      >
-        {UserSectionData.addManagerButton}
-      </Button>
+          onClick={handleCreateManagerSubmit}
+          sx={{
+            mt: 1,
+            width: "100%",
+            backgroundColor: "#67ABEB",
+            textTransform: "none",
+            fontSize: "12px",
+            padding: "0.8rem",
+            borderRadius: "8px",
+            color: '#181A1B',
+          }}
+          variant="contained"
+        >
+          {UserSectionData.addManagerButton}
+        </Button>
       </DialogContent>
     </Dialog>
   );
