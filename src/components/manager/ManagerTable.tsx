@@ -39,16 +39,19 @@ import Swal from "sweetalert2";
 import dayjs, { Dayjs } from "dayjs";
 
 export interface User {
-  firstName: string;  // Changed to lowercase
+  firstName: string;
   lastName: string;
-  region: string;
-  province: string;
-  barangay: string;
-  city: string;
-  streetaddress?: string;
-  email: string;  // Changed to lowercase
-  password?: string;
-  DateOfRegistration?: string;
+  suffix?: string;
+  phoneNumber: string;
+  email: string;
+  userName: string;
+  password: string;
+  streetaddress: string;
+
+  region?: string;
+  province?: string;
+  barangay?: string;
+  city?: string;
   [key: string]: any;
 }
 

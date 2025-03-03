@@ -17,12 +17,13 @@ import { User } from "./ManagerTable";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
 import { SelectChangeEvent } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
-import { inputStyles } from "../../styles/theme";
+import { inputStyles, inputErrorStyles } from "../../styles/theme";
 import { City, Province, Region } from "~/utils/api/locationTypes";
 import { UserSectionData } from "~/data/AdminSectionData";
 import { addUser } from "~/utils/api/users"
 import Swal from "sweetalert2";
 import { formatKey } from "~/utils/format"
+import { validateUser } from "~/utils/validation"
 
 export interface CreateManagerProps {
   open: boolean;
@@ -80,26 +81,25 @@ const CreateManager: React.FC<CreateManagerProps> = ({
   cities,
 }) => {
   const { renderOptions } = useRenderOptions();
-  const SPACE: string = "";
   const [user, setUser] = useState({
-    firstName: userData?.firstName ?? SPACE,
-    lastName: userData?.lastName ?? SPACE,
-    suffix: userData?.suffix ?? SPACE,
-    phoneNumber: userData?.phoneNumber ?? SPACE,
-    email: userData?.email ?? SPACE,
-    userName: userData?.userName ?? SPACE,
-    password: SPACE,
-    streetaddress: userData?.streetaddress ?? SPACE,
+    firstName: userData?.firstName ?? "",
+    lastName: userData?.lastName ?? "",
+    suffix: userData?.suffix ?? "",
+    phoneNumber: userData?.phoneNumber ?? "",
+    email: userData?.email ?? "",
+    userName: userData?.userName ?? "",
+    password: "",
+    streetaddress: userData?.streetaddress ?? "",
   });
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
   const [showPassword, setShowPassword] = useState(false);
   const [filteredProvinces, setFilteredProvinces] = useState<Province[]>([]);
   const [filteredCities, setFilteredCities] = useState<City[]>([]);
   const [selectState, setSelectState] = useState({
-    region: userData?.region ?? SPACE,
-    province: userData?.province ?? SPACE,
-    city: userData?.city ?? SPACE,
-    barangay: userData?.barangay ?? SPACE,
+    region: userData?.region ?? "",
+    province: userData?.province ?? "",
+    city: userData?.city ?? "",
+    barangay: userData?.barangay ?? "",
   });
 
   const handleManagerChange = (
@@ -153,6 +153,14 @@ const CreateManager: React.FC<CreateManagerProps> = ({
   };
 
   const handleCreateManagerSubmit = async () => {
+    const validationErrors = validateUser(user, selectState);
+    console.log("Validation Errors:", validationErrors);
+
+    if (Object.keys(validationErrors).length > 0) {
+      setErrors(validationErrors);
+      return;
+    }
+
     const confirmation = await Swal.fire({
       title: "Add Confirmation",
       text: "Did you enter the correct details?",
@@ -166,54 +174,41 @@ const CreateManager: React.FC<CreateManagerProps> = ({
         cancelButton: "no-hover",
       },
     });
-  
+
     if (!confirmation.isConfirmed) {
-      return;
-    }
-  
-    const newErrors: { [key: string]: string } = {};
-  
-    if (Object.keys(newErrors).length > 0) {
-      setErrors(newErrors);
       return;
     }
 
     const newUser = {
       firstName: user.firstName,
       lastName: user.lastName,
-      phoneNumber: user.phoneNumber,
-      email: user.email,
-      userName: "",
-      password: user.password,
-      userTypeId: 3,
       region: selectState.region,
       province: selectState.province,
       city: selectState.city,
       barangay: selectState.barangay,
+      streetaddress: user.streetaddress,
+      email: user.email,
+      password: user.password,
+      userName: "",
+      suffix: user.suffix,
+      phoneNumber: user.phoneNumber,
+      userTypeId: 3,
     };
-  
-    console.log("Payload:", newUser);
-  
+
     try {
       const response = await addUser(newUser);
       if (response.success) {
-        console.log("User added successfully:", response.data);
-        
-        // Show success alert
         Swal.fire({
           icon: "success",
           title: "Manager Created!",
           text: `The manager has been added successfully.`,
           confirmButtonColor: "#67ABEB",
         });
-  
+
         onSubmit(newUser);
         onClose();
       } else {
-        console.error("Error adding user:", response.message);
         setErrors(response.errors || { form: response.message });
-  
-        // Show error alert
         Swal.fire({
           icon: "error",
           title: "Error!",
@@ -222,10 +217,7 @@ const CreateManager: React.FC<CreateManagerProps> = ({
         });
       }
     } catch (error) {
-      console.error("Unexpected error:", error);
       setErrors({ form: error instanceof Error ? error.message : "An unexpected error occurred. Please try again." });
-  
-      // Show error alert
       Swal.fire({
         icon: "error",
         title: "Unexpected Error!",
@@ -234,7 +226,7 @@ const CreateManager: React.FC<CreateManagerProps> = ({
       });
     }
   };
-  
+
   const handleGeneratePassword = () => {
     const generatedPassword = "0912Gg33*12";
     setUser((prevUser) => ({ ...prevUser, password: generatedPassword }));
@@ -264,17 +256,18 @@ const CreateManager: React.FC<CreateManagerProps> = ({
           aria-label="close"
           onClick={onClose}
           sx={{
-            color: "#282828",
+            color: "#fffff",
+            backgroundColor: '#282828',
           }}
         >
-          <CloseIcon sx={{ fontSize: 18, fontWeight: "700" }} />
+          <CloseIcon sx={{ fontSize: 20, fontWeight: "700" }} />
         </IconButton>
       </DialogTitle>
 
       <DialogContent>
         <Grid container rowSpacing={2.5} columnSpacing={{ xs: 1, sm: 3, md: 2.5 }}>
           {/* Column 1 - Personal Information */}
-          <Grid item xs={6} sm={6}>
+          <Grid item xs={6} sm={6} sx={{ marginBottom: "0px !important" }}>
             <Typography variant="h6" sx={{ marginBottom: "0.5rem" }}>
               Personal Information
             </Typography>
@@ -284,7 +277,7 @@ const CreateManager: React.FC<CreateManagerProps> = ({
                   {formatKey(key)}
                 </Typography>
                 {key === "lastName" ? (
-                  <Grid container spacing={1} alignItems="center">
+                  <Grid container spacing={1} alignItems="flex-start" wrap="nowrap">
                     <Grid item xs={8}>
                       <TextField
                         fullWidth
@@ -293,8 +286,8 @@ const CreateManager: React.FC<CreateManagerProps> = ({
                         name="lastName"
                         value={user.lastName}
                         onChange={handleManagerChange}
-                        error={!!errors.LastName}
-                        helperText={errors.LastName || SPACE}
+                        error={!!errors.lastName}
+                        helperText={errors.lastName || ""}
                         sx={inputStyles}
                       />
                     </Grid>
@@ -305,24 +298,23 @@ const CreateManager: React.FC<CreateManagerProps> = ({
                         placeholder="Enter Suffix"
                         name="suffix"
                         error={!!errors.suffix}
-                        helperText={errors.suffix || SPACE}
+                        helperText={errors.suffix || ""}
                         sx={inputStyles}
                       />
                     </Grid>
                   </Grid>
                 ) : key === "password" ? (
-                  <Grid container spacing={1.5} alignItems="center">
+                  <Grid container spacing={1} alignItems="center">
                     <Grid item xs={7}>
                       <TextField
                         fullWidth
                         variant="outlined"
-                        placeholder={`Enter ${key}`}
+                        placeholder="Enter password"
                         type={showPassword ? "text" : "password"}
-                        name={key}
+                        name="password"
                         value={user.password}
                         onChange={handleManagerChange}
-                        error={!!errors[key]}
-                        helperText={""}
+                        error={!!errors.password}
                         sx={inputStyles}
                         InputProps={{
                           endAdornment: (
@@ -337,6 +329,7 @@ const CreateManager: React.FC<CreateManagerProps> = ({
                         }}
                       />
                     </Grid>
+
                     <Grid item xs={5}>
                       <Button
                         variant="contained"
@@ -353,6 +346,14 @@ const CreateManager: React.FC<CreateManagerProps> = ({
                         Generate
                       </Button>
                     </Grid>
+
+                    {errors.password && (
+                      <Grid item xs={12}>
+                        <Typography sx={inputErrorStyles}>
+                          {errors.password}
+                        </Typography>
+                      </Grid>
+                    )}
                   </Grid>
                 ) : (
                   <TextField
@@ -363,7 +364,7 @@ const CreateManager: React.FC<CreateManagerProps> = ({
                     value={user[key as keyof typeof user]}
                     onChange={handleManagerChange}
                     error={!!errors[key]}
-                    helperText={errors[key] || SPACE}
+                    helperText={errors[key] || ""}
                     sx={inputStyles}
                   />
                 )}

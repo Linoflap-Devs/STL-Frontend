@@ -252,6 +252,7 @@ const darkTheme = createTheme({
       styleOverrides: {
         root: {
           fontSize: "0.80rem",
+          marginBottom: "0px !important",
           marginLeft: "0px",
         },
       },
@@ -331,9 +332,7 @@ export const selectStyles = {
 export const inputErrorStyles = {
   display: "flex",
   alignItems: "center",
-  gap: "4px",
   color: "#F05252",
-  marginTop: "4px",
   fontSize: "12px",
 };
 

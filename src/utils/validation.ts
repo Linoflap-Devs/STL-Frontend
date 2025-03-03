@@ -1,52 +1,59 @@
-// src\utils\validation.ts
-
 import ManagerTable, { User } from "~/components/manager/ManagerTable";
 import { formatKey } from "../utils/format";
 
 // forms validation
-export const validateUser = (user: User) => {
+export const validateUser = (user: User, selectState: Record<string, any>) => {
   const newErrors: { [key: string]: string } = {};
   const nameRegex = /^[A-Za-z\s]+$/;
   const phoneRegex = /^09\d{2} \d{3} \d{4}$/;
   const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
-  const restrictedCharsRegex = /[@!#s$%^&*()_+=<>]/;
-  const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*])[A-Za-z\d!@#$%^&*]{8,}$/;
+  const mergedUser = { ...user, ...selectState };
 
-  Object.entries(user).forEach(([key, value]) => {
-    if (!value && key !== "regisdate") {
-      newErrors[key] = `${formatKey(key)} is required`;
+  Object.entries(mergedUser).forEach(([key, value]) => {
+    if (value === null || value === undefined || value === "") {
+      if (key !== "suffix" && key !== "userName") {
+        newErrors[key] = `${formatKey(key)} is required`;
+      }
       return;
     }
 
     switch (key) {
-      case "firstname":
-      case "lastname":
-        if (!nameRegex.test(value)) {
-          newErrors[key] = `${formatKey(key)} can only contain letters.`;
+      case "firstName":
+      case "lastName":
+        if (!nameRegex.test(value.trim())) {
+          newErrors[key] = `${formatKey(key)} can only contain letters and spaces.`;
         }
         break;
-      case "phonenumber":
-        if (!phoneRegex.test(value)) {
-          newErrors[key] =
-            "Please enter a valid phone number. e.g. 09xx xxx xxxx";
+      case "phoneNumber":
+        if (!phoneRegex.test(value.trim())) {
+          newErrors[key] = "Please enter a valid phone number. e.g. 09xx xxx xxxx";
         }
         break;
-      case "username":
-        if (!emailRegex.test(value)) {
-          newErrors[key] = "Please enter a valid email address."
-          break;
+      case "email":
+        if (!emailRegex.test(value.trim())) {
+          newErrors[key] = "Please enter a valid email address.";
         }
         break;
       case "password":
-        if (!passwordRegex.test(value)) {
-          newErrors[key] =
-            "Password must be at least 8 characters long and include at least one uppercase letter, one lowercase letter, one number, and one special character.";
+        if (value.length < 8) {
+          newErrors[key] = "Password must be at least 8 characters long.";
         }
-        break;
-      default:
+        if (!/[A-Z]/.test(value)) {
+          newErrors[key] = "Password must include at least one uppercase letter.";
+        }
+        if (!/[a-z]/.test(value)) {
+          newErrors[key] = "Password must include at least one lowercase letter.";
+        }
+        if (!/\d/.test(value)) {
+          newErrors[key] = "Password must include at least one number.";
+        }
+        if (!/[!@#$%^&*]/.test(value)) {
+          newErrors[key] = "Password must include at least one special character (!@#$%^&*).";
+        }
         break;
     }
   });
 
   return newErrors;
 };
+
