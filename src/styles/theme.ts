@@ -217,6 +217,13 @@ const darkTheme = createTheme({
         },
       },
     },
+    MuiInputLabel: {
+      styleOverrides: {
+        root: {
+          fontSize: '15px',
+        },
+      },
+    },
     MuiInputBase: {
       styleOverrides: {
         root: {
@@ -235,6 +242,7 @@ const darkTheme = createTheme({
           fontSize: "0.80rem",
           marginBottom: "0px !important",
           marginLeft: "0px",
+          color: '#FF7A7A !important', // Custom color for error text
         },
       },
     },
@@ -242,12 +250,11 @@ const darkTheme = createTheme({
       styleOverrides: {
         input: {
           color: "#ffffff",
-          padding: "16px 16px",
+          //padding: "15px 16px",
           width: "100% !important",
         },
       },
-    },
-
+    },    
   },
 });
 
@@ -279,9 +286,9 @@ export const inputStyles = {
   "& .MuiOutlinedInput-root": {
     "& fieldset": {
       borderColor: "#D1D5DB",
-      padding: "14px 40px 10px 14px"
+      padding: "14px 40px 10px 14px",
     },
-    "&.Mui-error fieldset": { borderColor: "#F05252" },
+    "&.Mui-error fieldset": { borderColor: "#FF7A7A" },
   },
 };
 
@@ -297,9 +304,8 @@ export const selectStyles = {
 
 export const inputErrorStyles = {
   display: "flex",
-  alignItems: "center",
-  color: "#F05252",
-  fontSize: "12px",
+  color: "#FF7A7A",
+  fontSize: "13px",
 };
 
 export const filterStyles = {

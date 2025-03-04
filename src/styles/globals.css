@@ -56,3 +56,7 @@ input:-webkit-autofill {
   background-color: #f0f0f0 !important;
   color: #212121 !important;
 }
+
+.MuiFormLabel-root.MuiInputLabel-root.Mui-error {
+  color: #FF7A7A !important;
+}

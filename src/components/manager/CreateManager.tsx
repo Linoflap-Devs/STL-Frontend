@@ -279,7 +279,7 @@ const CreateManager: React.FC<CreateManagerProps> = ({
                   <Grid container spacing={1.5} alignItems="flex-start" wrap="nowrap">
                     <Grid item xs={8}>
                       <FormControl fullWidth error={!!errors.lastName} sx={inputStyles}>
-                        <InputLabel htmlFor="lastName">Last Name</InputLabel>
+                        <InputLabel sx={{fontSize: '14px'}} htmlFor="lastName">Last Name</InputLabel>
                         <OutlinedInput
                           id="lastName"
                           name="lastName"
@@ -351,7 +351,7 @@ const CreateManager: React.FC<CreateManagerProps> = ({
                     </Grid>
 
                     {errors.password && (
-                      <Grid item xs={12}>
+                      <Grid item xs={12} sx={{paddingTop: '0px !important'}}>
                         <Typography sx={inputErrorStyles}>
                           {errors.password}
                         </Typography>
@@ -369,7 +369,9 @@ const CreateManager: React.FC<CreateManagerProps> = ({
                       onChange={handleManagerChange}
                       label={formatKey(key)}
                     />
-                    {errors[key] && <FormHelperText>{errors[key]}</FormHelperText>}
+                    {errors[key] && (
+                      <FormHelperText error={true}>{errors[key]}</FormHelperText>
+                    )}
                   </FormControl>
                 )}
               </Grid>
