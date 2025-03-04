@@ -276,7 +276,7 @@ const CreateManager: React.FC<CreateManagerProps> = ({
                 {key === "lastName" ? (
                   <Grid container spacing={1.5} alignItems="flex-start" wrap="nowrap">
                     <Grid item xs={8}>
-                      <FormControl fullWidth error={!!errors.lastName} sx={inputStyles}>
+                      <FormControl fullWidth error={!!errors.lastName} >
                         <InputLabel sx={{fontSize: '14px'}} htmlFor="lastName">Last Name</InputLabel>
                         <OutlinedInput
                           id="lastName"
@@ -291,7 +291,7 @@ const CreateManager: React.FC<CreateManagerProps> = ({
                     </Grid>
 
                     <Grid item xs={4}>
-                      <FormControl fullWidth error={!!errors.suffix} sx={inputStyles}>
+                      <FormControl fullWidth error={!!errors.suffix} >
                         <InputLabel htmlFor="suffix">Suffix</InputLabel>
                         <OutlinedInput
                           id="suffix"
@@ -308,7 +308,7 @@ const CreateManager: React.FC<CreateManagerProps> = ({
                 ) : key === "password" ? (
                   <Grid container spacing={1} alignItems="center">
                     <Grid item xs={7} sx={{ marginBottom: 1, }}>
-                      <FormControl fullWidth error={!!errors.password} sx={inputStyles} variant="outlined">
+                      <FormControl fullWidth error={!!errors.password} variant="outlined">
                         <InputLabel htmlFor="password">Password</InputLabel>
                         <OutlinedInput
                           id="password"
@@ -357,8 +357,8 @@ const CreateManager: React.FC<CreateManagerProps> = ({
                     )}
                   </Grid>
                 ) : (
-                  <FormControl fullWidth error={!!errors[key]} sx={inputStyles} variant="outlined">
-                    <InputLabel htmlFor={key}>{formatKey(key)}</InputLabel>
+                  <FormControl fullWidth error={!!errors[key]}>
+                    <InputLabel id={key}>{formatKey(key)}</InputLabel>
                     <OutlinedInput
                       id={key}
                       name={key}
@@ -384,20 +384,20 @@ const CreateManager: React.FC<CreateManagerProps> = ({
             {["region", "province", "city", "barangay", "streetaddress"].map((key) => (
               <Grid item xs={12} key={key} sx={{ marginBottom: "1rem" }}>
                 {["region", "province", "city", "barangay"].includes(key) ? (
-                  <FormControl fullWidth error={!!errors[key]} sx={inputStyles}>
+                  <FormControl fullWidth error={!!errors[key]}>
                     <InputLabel id={`${key}-label`}>{formatKey(key)}</InputLabel>
                     <Select
                       labelId={`${key}-label`}
-                      displayEmpty
                       value={selectState[key as keyof typeof selectState] || ""}
-                      onChange={(e) => handleSelectChange(e, key)}
-                      name={key}
-                      inputProps={{ "aria-label": formatKey(key) }}
+                      label={`${key}`}
                       disabled={
                         (key === "province" && !selectState.region) ||
                         (key === "city" && !selectState.province) ||
                         (key === "barangay" && !selectState.city)
                       }
+                      onChange={(e) => handleSelectChange(e, key)}
+                      name={key}
+                      inputProps={{ "aria-label": formatKey(key) }}
                     >
                       {renderOptions(
                         key,
@@ -414,7 +414,7 @@ const CreateManager: React.FC<CreateManagerProps> = ({
                   </FormControl>
 
                 ) : (
-                  <FormControl fullWidth error={!!errors[key]} sx={inputStyles} variant="outlined">
+                  <FormControl fullWidth error={!!errors[key]}>
                     <InputLabel htmlFor={key}>{formatKey(key)}</InputLabel>
                     <OutlinedInput
                       id={key}

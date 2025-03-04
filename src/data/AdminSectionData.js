@@ -6,6 +6,7 @@ export const UserSectionData = {
     titleManager: "Small Town Lottery Managers",
     titleExecutive: "Small Town Lottery Executive",
     addManagerButton: "Add Manager",
+    updateManagerButton: "Update Manager",
     addExecutiveButton: "Add Executive",
     exportAsCSVButton: "Export As CSV",
 };
