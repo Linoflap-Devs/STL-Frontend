@@ -19,7 +19,7 @@ const regions = require('philippines/regions');
 const provinces = require('philippines/provinces');
 const cities = require('philippines/cities');
 
-const UsersPage = () => {
+const ManagersPage = (p0?: { id: any; }) => {
   const [managers, setManagers] = useState<User[]>([]);
   const [isModalOpen, setModalOpen] = useState(false);
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
@@ -37,18 +37,23 @@ const UsersPage = () => {
         if (response.success) {
           const filteredUsers = response.data
             .filter((user: { UserTypeId: number; }) => user.UserTypeId === 3)
-            .map((user: { FirstName: any; LastName: any; Email: any; DateOfRegistration: any; Location: { Region: any; Province: any; City: any; }; CreatedBy: { FirstName: any; LastName: any; }; }) => ({
-              FirstName: user.FirstName,
-              LastName: user.LastName,
-              Email: user.Email,
-              DateOfRegistration: user.DateOfRegistration,
-              Region: user.Location?.Region || "Unknown",
-              Province: user.Location?.Province || "Unknown",
-              City: user.Location?.City || "Unknown",
-              CreatedByFirstName: user.CreatedBy?.FirstName || "Unknown",
-              CreatedByLastName: user.CreatedBy?.LastName || "Unknown",
+            .map((user: {
+              UserId: number; FirstName: string; LastName: string; Email: string; DateOfRegistration: string; 
+              Location?: { Region?: string; Province?: string; City?: string }; 
+              CreatedBy?: { FirstName?: string; LastName?: string };
+            }) => ({
+              userId: user.UserId, // FIXED: Changed from user.userId to user.UserId
+              FirstName: user.FirstName ?? "Unknown",
+              LastName: user.LastName ?? "Unknown",
+              Email: user.Email ?? "Unknown",
+              DateOfRegistration: user.DateOfRegistration ?? "Unknown",
+              Region: user.Location?.Region ?? "Unknown",
+              Province: user.Location?.Province ?? "Unknown",
+              City: user.Location?.City ?? "Unknown",
+              CreatedByFirstName: user.CreatedBy?.FirstName ?? "Unknown",
+              CreatedByLastName: user.CreatedBy?.LastName ?? "Unknown",
             }));
-
+            
           setManagers(filteredUsers);
         } else {
           console.error("Failed to fetch users:", response.message);
@@ -75,7 +80,7 @@ const UsersPage = () => {
     setSelectedManager(user);
     setUpdateModalOpen(true);
   };
-
+  
   const closeUpdateModal = () => {
     setUpdateModalOpen(false);
     setSelectedManager(null);
@@ -181,4 +186,4 @@ const UsersPage = () => {
   );
 };
 
-export default UsersPage;
+export default ManagersPage;

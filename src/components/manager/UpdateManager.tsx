@@ -27,6 +27,7 @@ import CloseIcon from '@mui/icons-material/Close';
 import Swal from "sweetalert2";
 import { inputStyles, inputErrorStyles } from "../../styles/theme";
 import { City, Province, Region } from "~/utils/api/locationTypes";
+import { fetchUserById } from "~/utils/api/users";
 
 interface UpdateManagerProps {
   open: boolean;
@@ -78,7 +79,19 @@ export const useRenderOptions = () => {
 };
 
 const UpdateManager: React.FC<UpdateManagerProps> = React.memo(({ open, onClose, onSubmit, manager, regions, provinces, cities, }) => {
-  const [user, setUser] = useState<User | null>(manager);
+  const [user, setUser] = useState({
+    firstName: "",
+    lastName: "",
+    phoneNumber: "",
+    email: "",
+    password: "",
+    suffix: "",
+    region: "",
+    province: "",
+    city: "",
+    barangay: "",
+  });
+
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
   const [showPassword, setShowPassword] = useState(false);
   const SPACE: string = "";
@@ -92,31 +105,37 @@ const UpdateManager: React.FC<UpdateManagerProps> = React.memo(({ open, onClose,
   const [filteredProvinces, setFilteredProvinces] = useState<Province[]>([]);
   const [filteredCities, setFilteredCities] = useState<City[]>([]);
 
-  // Custom order for fields
-  const customFieldOrder = [
-    "firstname",
-    "lastname",
-    "region",
-    "province",
-    "city",
-    "barangay",
-    "streetaddress",
-    "phonenumber",
-    "username",
-    "password",
-  ];
-
   useEffect(() => {
-    if (manager) {
-      setUser(manager);
-      setSelectState({
-        region: manager.region || SPACE,
-        province: manager.province || SPACE,
-        city: manager.city || SPACE,
-        barangay: manager.barangay || SPACE,
-      });
+    if (open && manager?.userId) {
+      const fetchManagerDetails = async () => {
+        try {
+          console.log("Fetching manager with ID:", manager.userId);
+          const response = await fetchUserById(manager.userId);
+
+          if (response.success) {
+            setUser({
+              firstName: response.data.FirstName || "",
+              lastName: response.data.LastName || "",
+              phoneNumber: response.data.PhoneNumber || "",
+              email: response.data.Email || "",
+              password: "", // Leave empty for security reasons
+              suffix: response.data.Suffix || "",
+              region: response.data.Location?.Region || "",
+              province: response.data.Location?.Province || "",
+              city: response.data.Location?.City || "",
+              barangay: response.data.Location?.Barangay || "",
+            });
+          } else {
+            console.error("Failed to fetch manager details:", response.message);
+          }
+        } catch (error) {
+          console.error("Error fetching manager:", error);
+        }
+      };
+
+      fetchManagerDetails();
     }
-  }, [manager]);
+  }, [open, manager?.userId]);
 
   const mapToLocationItem = (data: Region[] | Province[] | City[]): LocationItem[] => {
     return data.map((item) => ({
@@ -125,6 +144,14 @@ const UpdateManager: React.FC<UpdateManagerProps> = React.memo(({ open, onClose,
     }));
   };
 
+  const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = event.target;
+    setUser((prevUser) => ({
+      ...prevUser,
+      [name]: value,
+    }));
+  };
+  
   const handleManagerChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
@@ -322,7 +349,7 @@ const UpdateManager: React.FC<UpdateManagerProps> = React.memo(({ open, onClose,
                           id="lastName"
                           name="lastName"
                           placeholder="Enter Last Name"
-                          value={user.lastName}
+                          value={user?.lastName || ""}
                           onChange={handleManagerChange}
                           label="Last Name"
                         />
@@ -337,7 +364,8 @@ const UpdateManager: React.FC<UpdateManagerProps> = React.memo(({ open, onClose,
                           id="suffix"
                           name="suffix"
                           placeholder="Enter Suffix"
-                          onChange={handleManagerChange}
+                          value={user.suffix} // Ensure it displays the current value
+                          onChange={handleInputChange} // Use the unified handler
                           label="Suffix"
                         />
                         {errors.suffix && <FormHelperText>{errors.suffix}</FormHelperText>}
@@ -348,28 +376,29 @@ const UpdateManager: React.FC<UpdateManagerProps> = React.memo(({ open, onClose,
                 ) : key === "password" ? (
                   <Grid container spacing={1} alignItems="center">
                     <Grid item xs={7} sx={{ marginBottom: 1, }}>
-                      <FormControl fullWidth error={!!errors.password} sx={inputStyles} variant="outlined">
-                        <InputLabel htmlFor="password">Password</InputLabel>
-                        <OutlinedInput
-                          id="password"
-                          type={showPassword ? "text" : "password"}
-                          name="password"
-                          value={user.password}
-                          onChange={handleManagerChange}
-                          label="Password"
-                          endAdornment={
-                            <InputAdornment position="end">
-                              <IconButton
-                                sx={{ color: "#9ca3af" }}
-                                onClick={() => setShowPassword((prev) => !prev)}
-                                edge="end"
-                              >
-                                {showPassword ? <VisibilityOff /> : <Visibility />}
-                              </IconButton>
-                            </InputAdornment>
-                          }
-                        />
-                      </FormControl>
+<FormControl fullWidth error={!!errors.password} sx={inputStyles} variant="outlined">
+  <InputLabel htmlFor="password">Password</InputLabel>
+  <OutlinedInput
+    id="password"
+    type={showPassword ? "text" : "password"}
+    name="password"
+    value={user.password || ""}  // Ensure it displays the current value
+    onChange={handleInputChange} // Use the unified handler
+    label="Password"
+    endAdornment={
+      <InputAdornment position="end">
+        <IconButton
+          sx={{ color: "#9ca3af" }}
+          onClick={() => setShowPassword((prev) => !prev)}
+          edge="end"
+        >
+          {showPassword ? <VisibilityOff /> : <Visibility />}
+        </IconButton>
+      </InputAdornment>
+    }
+  />
+  {errors.password && <FormHelperText>{errors.password}</FormHelperText>}
+</FormControl>
                     </Grid>
                     <Grid item xs={5}>
                       <Button
@@ -397,20 +426,18 @@ const UpdateManager: React.FC<UpdateManagerProps> = React.memo(({ open, onClose,
                     )}
                   </Grid>
                 ) : (
-                  <FormControl fullWidth error={!!errors[key]} sx={inputStyles} variant="outlined">
-                    <InputLabel htmlFor={key}>{formatKey(key)}</InputLabel>
-                    <OutlinedInput
-                      id={key}
-                      name={key}
-                      placeholder={`Enter ${formatKey(key)}`}
-                      value={user[key as keyof typeof user]}
-                      onChange={handleManagerChange}
-                      label={formatKey(key)}
-                    />
-                    {errors[key] && (
-                      <FormHelperText error={true}>{errors[key]}</FormHelperText>
-                    )}
-                  </FormControl>
+<FormControl fullWidth error={!!errors[key]} sx={inputStyles} variant="outlined">
+  <InputLabel htmlFor={key}>{formatKey(key)}</InputLabel>
+  <OutlinedInput
+    id={key}
+    name={key}
+    placeholder={`Enter ${formatKey(key)}`}
+    value={user[key as keyof typeof user] || ""} // Type assertion
+    onChange={handleInputChange}
+    label={formatKey(key)}
+  />
+  {errors[key] && <FormHelperText error>{errors[key]}</FormHelperText>}
+</FormControl>
                 )}
               </Grid>
             ))}
@@ -460,7 +487,7 @@ const UpdateManager: React.FC<UpdateManagerProps> = React.memo(({ open, onClose,
                       id={key}
                       name={key}
                       placeholder={`Enter ${formatKey(key)}`}
-                      value={user[key as keyof typeof user]}
+                      value={selectState[key as keyof typeof selectState] || ""} // Set existing value
                       onChange={handleManagerChange}
                       label={formatKey(key)}
                     />

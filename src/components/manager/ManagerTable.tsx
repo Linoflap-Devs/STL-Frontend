@@ -70,7 +70,6 @@ const ManagerTable: React.FC<ManagerTableProps> = ({ managers, onCreate, onEdit,
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
   const [searchQuery, setSearchQuery] = useState<string>("");
-
   const onSortWrapper = (sortKey: keyof User) => {
     handleSort(sortKey, sortConfig, setSortConfig);
   };
@@ -157,6 +156,7 @@ const ManagerTable: React.FC<ManagerTableProps> = ({ managers, onCreate, onEdit,
     event?: React.MouseEvent<HTMLButtonElement>,
     user?: User
   ) => {
+    console.log("Opening menu for User:", user);
     setAnchorEl(event?.currentTarget || null);
     setSelectedUser(user || null);
   };
@@ -235,7 +235,6 @@ const ManagerTable: React.FC<ManagerTableProps> = ({ managers, onCreate, onEdit,
           </Box>
         </Box>
       </Box>
-
       <Table size="small">
         <TableHead>
           <TableRow>
@@ -400,14 +399,12 @@ const ManagerTable: React.FC<ManagerTableProps> = ({ managers, onCreate, onEdit,
           )}
         </TableBody>
       </Table>
-
       <Menu
         anchorEl={anchorEl}
         open={Boolean(anchorEl)}
         onClose={() => handleToggleMenu()}
-        MenuListProps={{ "aria-labelledby": "basic-button" }}
-      >
-        <MenuItem onClick={() => handleEditClick(selectedUser!)}>View</MenuItem>
+        MenuListProps={{ "aria-labelledby": "basic-button" }}>
+        <MenuItem onClick={() => selectedUser ? onEdit(selectedUser) : null}>View</MenuItem>
         <MenuItem >Suspend</MenuItem>
       </Menu>
       <Box
