@@ -77,7 +77,6 @@ const PasswordReset = () => {
                 />
               </IconButton>
             </Tooltip>
-
             <Box
               sx={{
                 display: "flex",

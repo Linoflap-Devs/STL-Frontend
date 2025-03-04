@@ -83,7 +83,6 @@ const CreateManager: React.FC<CreateManagerProps> = ({
     suffix: userData?.suffix ?? "",
     phoneNumber: userData?.phoneNumber ?? "",
     email: userData?.email ?? "",
-    userName: userData?.userName ?? "",
     password: "",
     streetaddress: userData?.streetaddress ?? "",
   });
@@ -192,7 +191,6 @@ const CreateManager: React.FC<CreateManagerProps> = ({
       streetaddress: user.streetaddress,
       email: user.email,
       password: user.password,
-      userName: "",
       suffix: user.suffix,
       phoneNumber: user.phoneNumber,
       userTypeId: 3,

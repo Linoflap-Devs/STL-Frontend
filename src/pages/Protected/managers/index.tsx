@@ -81,15 +81,34 @@ const UsersPage = () => {
     setSelectedManager(null);
   };
 
-  const handleSubmitUser = (userData: User | null) => {
+  const handleSubmitUser = async (userData: User | null) => {
     if (userData) {
-      setManagers((prevManagers) => {
-        if (prevManagers.some(manager => manager.id === userData.id)) {
-          return prevManagers;
+      try {
+        const response = await fetchUsers({}); // Fetch the latest data
+        if (response.success) {
+          const filteredUsers = response.data
+            .filter((user: { UserTypeId: number; }) => user.UserTypeId === 3)
+            .map((user: { FirstName: any; LastName: any; Email: any; DateOfRegistration: any; Location: { Region: any; Province: any; City: any; }; CreatedBy: { FirstName: any; LastName: any; }; }) => ({
+              FirstName: user.FirstName,
+              LastName: user.LastName,
+              Email: user.Email,
+              DateOfRegistration: user.DateOfRegistration,
+              Region: user.Location?.Region || "Unknown",
+              Province: user.Location?.Province || "Unknown",
+              City: user.Location?.City || "Unknown",
+              CreatedByFirstName: user.CreatedBy?.FirstName || "Unknown",
+              CreatedByLastName: user.CreatedBy?.LastName || "Unknown",
+            }));
+  
+          setManagers(filteredUsers); // Update state with fresh data
+        } else {
+          console.error("Failed to fetch updated users:", response.message);
         }
-        return [...prevManagers, userData];
-      });
+      } catch (error) {
+        console.error("Error fetching updated users:", error);
+      }
     }
+  
     setModalOpen(false);
   };
 

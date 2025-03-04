@@ -43,7 +43,6 @@ export interface User {
   suffix?: string;
   phoneNumber: string;
   email: string;
-  userName: string;
   password: string;
   streetaddress: string;
 
@@ -408,9 +407,7 @@ const ManagerTable: React.FC<ManagerTableProps> = ({ managers, onCreate, onEdit,
         onClose={() => handleToggleMenu()}
         MenuListProps={{ "aria-labelledby": "basic-button" }}
       >
-        <MenuItem onClick={() => handleEditClick(selectedUser!)}>
-          View
-        </MenuItem>
+        <MenuItem onClick={() => handleEditClick(selectedUser!)}>View</MenuItem>
         <MenuItem >Suspend</MenuItem>
       </Menu>
       <Box
