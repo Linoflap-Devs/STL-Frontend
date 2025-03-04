@@ -7,7 +7,7 @@ import { Box } from '@mui/material';
 
 const DrawCardComponent = () => {
   return (
-    <Card sx={{ maxWidth: 345 }}>
+    <Card sx={{ maxWidth: 345}}>
       <CardActionArea>
         {/* Placeholder Box instead of Image */}
         <Box
@@ -17,6 +17,9 @@ const DrawCardComponent = () => {
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
+            '&:hover': {
+              backgroundColor: '#000000E0',
+            },
           }}
         >
           <Typography variant="body2" sx={{ color: 'text.secondary' }}>
@@ -25,11 +28,7 @@ const DrawCardComponent = () => {
         </Box>
 
         {/* Card Content Section */}
-        <CardContent
-        sx={{
-          backgroundColor: '#282828'
-        }}
-          >
+        <CardContent sx={{ backgroundColor: '#282828' }}>
           {/* Container for Draw Details */}
           <Box
             sx={{
@@ -56,17 +55,11 @@ const DrawCardComponent = () => {
 
             {/* Row of Draw Times and Numbers */}
             <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
-              {/* Draw Entry (Repeats 3 times) */}
               {[1, 2, 3].map((_, index) => (
                 <Box key={index} sx={{ padding: '5px' }}>
-                  {/* Draw Time */}
-                  <Typography
-                    sx={{ fontSize: '14px', fontWeight: 500, color: '#FFFFFF' }}
-                  >
+                  <Typography sx={{ fontSize: '14px', fontWeight: 500, color: '#FFFFFF' }}>
                     10:30 AM
                   </Typography>
-
-                  {/* Number Boxes */}
                   <Box sx={{ display: 'flex', gap: '5px', marginTop: '5px' }}>
                     {[39, 22].map((num, i) => (
                       <Box

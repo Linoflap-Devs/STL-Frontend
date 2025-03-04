@@ -1,10 +1,33 @@
-import React from 'react';
+import React, { useEffect } from 'react';
+import { useState } from 'react';
 import Typography from '@mui/material/Typography';
 import { Box, TextField, InputAdornment } from '@mui/material';
 import RegionSection from '~/components/draw-summary/RegionSection';
 import SearchIcon from '@mui/icons-material/Search';
 
+// transfer to api/drawSummary
+import axios from 'axios';
+
+
 const DrawSummaryPage = () => {
+
+  // transfer to api/drawSummary
+  // const [regionData, setRegionData] = useState([]);
+  // useEffect (() =>  {
+  //   async function fetchData() {
+  //     try {
+  //       const res = await axios.get('https://api.example.com/draws');
+  //         setRegionData(res.data);
+  //         console.log('Response Data: ', res.data);
+  //       } catch (error) {
+  //         console.error('Error fetching data: ', error)
+  //       }
+  //   }
+
+  //   fetchData();
+  // }, [])
+
+
   return (
     <>
       <Box sx={{ mb: 2 }}>
@@ -25,8 +48,13 @@ const DrawSummaryPage = () => {
                 <SearchIcon sx={{ color: 'gray' }} />
               </InputAdornment>
             ),
-          }}
+          }}  
         />
+
+        {/* Render Region Sections with API Data
+        {regionData.map((region: any, index: number) => (
+          <RegionSection key={index} regionName={region.region} cards={region.cards} />
+        ))} */}
 
         {/* Region I */}
         <RegionSection regionName="Region I - Ilocos Region" />

@@ -12,7 +12,7 @@ const RegionSection: React.FC<RegionSectionProps> = ({ regionName }) => {
 
   const handleScroll = (direction: 'left' | 'right') => {
     if (scrollContainerRef.current) {
-      const scrollAmount = 300;
+      const scrollAmount = 345 + 16; // Card width + gap (16px)
       scrollContainerRef.current.scrollBy({
         left: direction === 'left' ? -scrollAmount : scrollAmount,
         behavior: 'smooth',
@@ -21,13 +21,11 @@ const RegionSection: React.FC<RegionSectionProps> = ({ regionName }) => {
   };
 
   return (
-    <Box sx={{ mb: 4, position: 'relative' }}>
-      {/* Region Title */}
-      <Typography sx={{ fontWeight: 700, fontSize: 20, mb: 2 }}>
-        {regionName}
-      </Typography>
+    <Box sx={{ mb: 4, position: 'relative', maxWidth: '1400px', margin: '0 auto' }}>
+      <Typography sx={{ fontWeight: 700, fontSize: 20, mb: 2, mt: 3}}>{regionName}</Typography>
 
       <Box sx={{ display: 'flex', alignItems: 'center', position: 'relative' }}>
+
         {/* Left Scroll Button */}
         <Box
           onClick={() => handleScroll('left')}
@@ -48,24 +46,24 @@ const RegionSection: React.FC<RegionSectionProps> = ({ regionName }) => {
             },
           }}
         />
-
-        {/* DrawCardComponent with Horizontal Scrolling */}
+        
+        {/* Card Carousel */}
         <Box
           ref={scrollContainerRef}
           sx={{
             display: 'flex',
-            overflowX: 'hidden',
-            whiteSpace: 'nowrap',
+            overflow: 'hidden',
             gap: 2,
-            pb: 2,
             scrollBehavior: 'smooth',
+            width: 'calc((345px + 16px) * 4)', // Show exactly 4 cards
+            maxWidth: '100%',
           }}
         >
-          {Array.from({ length: 7 }).map((_, index) => (
+          {Array.from({ length: 12 }).slice(0, 4).map((_, index) => (
             <DrawCardComponent key={index} />
           ))}
         </Box>
-
+        
         {/* Right Scroll Button */}
         <Box
           onClick={() => handleScroll('right')}
