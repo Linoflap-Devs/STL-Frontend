@@ -314,9 +314,10 @@ export const filterStyles = {
   marginTop: 0,
   marginBottom: 0,
   padding: "4px",
+  fontSize: "12px",
   backgroundColor: "none",
   "& .MuiFilledInput-root": {
-    paddingTop: "8px",
+    paddingTop: "1px",
     paddingBottom: "8px",
     backgroundColor: "transparent  !important",
   },
