@@ -108,7 +108,7 @@ const LoginPage = () => {
               <Box sx={{ mb: "1rem" }}>
                 <Typography
                   sx={{ textAlign: "left", marginBottom: "0.5rem" }}
-                  color={errors.email || errors.general ? "error" : "text.primary"}
+                  color={errors.email || errors.general ? "#FF7A7A" : "text.primary"}
                 >
                   {LoginSectionData.EmailAddressTitle}
                 </Typography>
@@ -118,7 +118,7 @@ const LoginPage = () => {
                   placeholder="Enter Username"
                   value={credentials.email}
                   onChange={(e) => setCredentials({ ...credentials, email: e.target.value })}
-                  error={!!errors.email}
+                  error={!!errors.email || !!errors.general}
                   sx={inputStyles}
                 />
                 {errors.email && <span style={inputErrorStyles}>{errors.email}</span>}
@@ -129,7 +129,7 @@ const LoginPage = () => {
               <Box>
                 <Typography
                   sx={{ textAlign: "left", marginBottom: "0.5rem" }}
-                  color={errors.password || errors.general ? "error" : "text.primary"}
+                  color={errors.password || errors.general ? "#FF7A7A" : "text.primary"}
                 >
                   {LoginSectionData.PasswordTitle}
                 </Typography>
@@ -185,7 +185,7 @@ const LoginPage = () => {
           </form>
 
           {/* Footer */}
-          <Box sx={{ position: "absolute", bottom: 25, textAlign: "center", color: "#67ABEB" }}>
+          <Box sx={{ position: "absolute", bottom: 25, textAlign: "center", }}>
             <Typography sx={{ fontSize: "13px" }}>{LoginSectionData.copyright}</Typography>
           </Box>
         </Box>

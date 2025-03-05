@@ -81,7 +81,6 @@ const EmailVerification = () => {
     setIsOtpValid(true);
   }, [otp]);
 
-
   return (
     <Box
       sx={{
@@ -237,13 +236,13 @@ const EmailVerification = () => {
                             fontSize: "25px",
                             fontWeight: 1200,
                             width: "10px !important",
-                            maxWidth: "20px",
+                            maxWidth: "30px",
                             height: "35px",
                             outline: "none",
                             borderRadius: "6px",
                             border: otp.every((d) => d !== "")
                               ? isOtpValid
-                                ? "2px solid #CCA1FD"  // If all fields are filled and OTP is valid, set border to purple
+                                ? "2px solid #67ABEB"  // If all fields are filled and OTP is valid, set border to purple
                                 : "2px solid #F05252"  // If all fields are filled but OTP is invalid, set border to red
                               : "1px solid #D1D5DB"   // If not all fields are filled, set border to gray
 
@@ -306,7 +305,7 @@ const EmailVerification = () => {
         <Box
           sx={{
             position: "absolute",
-            bottom: 60,
+            bottom: 20,
             textAlign: "center",
             color: "#FFFFFF",
           }}

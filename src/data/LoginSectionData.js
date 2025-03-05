@@ -20,7 +20,7 @@ export const LoginSectionData = {
   buttonText: "Login",
   copyright: (
     <>
-      <span style={{ fontWeight: "bold" }}> Linoflap Technology Philippines Inc.</span>
+      Powered by <span style={{ fontWeight: "bold", color: "#67ABEB" }}>Linoflap Technology Philippines Inc.</span>
     </>
   ),
   EmailVerificationTitle: "Check your email",

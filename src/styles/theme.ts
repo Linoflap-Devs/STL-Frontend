@@ -1,5 +1,5 @@
 import { createTheme } from "@mui/material/styles";
-import { Montserrat } from "@next/font/google"
+import { Montserrat } from "next/font/google"
 
 // Load Montserrat font properly
 const montserrat = Montserrat({
@@ -307,6 +307,7 @@ export const inputErrorStyles = {
   display: "flex",
   color: "#FF7A7A",
   fontSize: "13px",
+  paddingTop: "0.3rem",
 };
 
 export const filterStyles = {

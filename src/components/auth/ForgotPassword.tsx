@@ -246,13 +246,8 @@ const ForgotPassword = () => {
                   padding: "8px 20px",
                   borderRadius: "8px",
                   textTransform: "none",
-                  backgroundColor: isButtonDisabled ? "#2563EB" : "#CCA1FD",
-                  color: isButtonDisabled ? "#F1F5F9" : "#ffffff",
+                  //backgroundColor: isButtonDisabled ? "#2563EB" : "#CCA1FD",
                   cursor: isButtonDisabled ? "not-allowed" : "pointer",
-                  fontWeight: "bold",
-                  "&:hover": {
-                    backgroundColor: isButtonDisabled ? "#CCA1FD" : "#A070D3",
-                  },
                 }}
 
                 disabled={false}
@@ -264,7 +259,7 @@ const ForgotPassword = () => {
           <Box
             sx={{
               position: "absolute",
-              bottom: 60,
+              bottom: 40,
               textAlign: "center",
               color: "#FFFFFF",
             }}

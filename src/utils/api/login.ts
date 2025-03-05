@@ -23,9 +23,6 @@ export const loginUser = async (payload: { email: string; password: string }, ro
     if (!token) {
       throw new Error("Access token is missing from response!");
     }
-
-
-
     router.push("/dashboard");
 
     return {
