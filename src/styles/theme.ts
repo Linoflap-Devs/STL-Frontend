@@ -3,10 +3,11 @@ import { Montserrat } from "@next/font/google"
 
 // Load Montserrat font properly
 const montserrat = Montserrat({
-  subsets: ["latin"],
-  weight: ["400", "700"], // Load Regular (400) and Bold (700)
-  display: "swap",
+  subsets: ['latin'],
+  weight: ['400', '700'],
+  display: 'swap',
 });
+
 const darkTheme = createTheme({
   palette: {
     mode: "dark",
