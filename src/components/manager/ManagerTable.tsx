@@ -91,15 +91,17 @@ const ManagerTable: React.FC<ManagerTableProps> = ({ managers, onCreate, onEdit,
   });
 
   const filteredUsers = filterData(
-    managers.map((user) => ({
-      ...user,
-      fullName: `${user.FirstName} ${user.LastName}`.toLowerCase(),
-      formattedDate: user.DateOfRegistration
-        ? dayjs(user.DateOfRegistration).format("YYYY-MM-DD")
-        : "Invalid Date",
-      Status: user.IsDeleted === 0 ? "Active" : "Inactive",
-      CreatedBy: `${user.CreatedByFirstName} ${user.CreatedByLastName}`.toLowerCase(),
-    })),
+    managers.map((user) => {
+  
+      return {
+        ...user,
+        fullName: `${user.FirstName || ""} ${user.LastName || ""}`.trim().toLowerCase(),
+        formattedDate: user.DateOfRegistration
+          ? dayjs(user.DateOfRegistration).format("YYYY-MM-DD")
+          : "Invalid Date",
+        Status: user.IsDeleted === 0 ? "Active" : "Inactive",
+      };
+    }),
     { ...filters, searchQuery },
     ["fullName", "UserName", "Region", "Province", "CreatedBy", "Status", "DateOfRegistration"]
   );
@@ -365,11 +367,11 @@ const ManagerTable: React.FC<ManagerTableProps> = ({ managers, onCreate, onEdit,
                   <TableCell>
                     <Checkbox />
                   </TableCell>
-                  <TableCell>{`${user.FirstName} ${user.LastName}`}</TableCell>
+                  <TableCell>{user.userId} {`${user.FirstName} ${user.LastName}`}</TableCell>
                   <TableCell>{user.Email}</TableCell>
                   <TableCell>{user.Region}</TableCell>
                   <TableCell>{dayjs(user.DateOfRegistration).format("YYYY/MM/DD HH:mm:ss")}</TableCell>
-                  <TableCell>{user.CreatedByFirstName} {user.CreatedByLastName}</TableCell>
+                  <TableCell>{user?.CreatedBy}</TableCell>
                   <TableCell>
                     <Button
                       variant="contained"

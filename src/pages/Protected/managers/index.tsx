@@ -10,64 +10,66 @@ import ManagerDashboardPage from '~/components/manager/ManagerDashboard';
 import CreateManager from '~/components/manager/CreateManager';
 import UpdateManager from '~/components/manager/UpdateManager';
 import { fetchUsers } from '~/utils/api/users';
-import { Region, Province, City } from '~/utils/api/locationTypes';
+import { fetchRegions, fetchProvinces } from '~/utils/api/location';
 
 // Import location data
-const philippines = require('philippines');
-
-const regions = require('philippines/regions');
-const provinces = require('philippines/provinces');
 const cities = require('philippines/cities');
 
-const ManagersPage = (p0?: { id: any; }) => {
+const ManagersPage = () => {
   const [managers, setManagers] = useState<User[]>([]);
+  const [regions, setRegions] = useState([]); // Store regions
+  const [provinces, setProvinces] = useState([]); // Store provinces
+  const [cityList, setCityList] = useState([]); // Store cities
   const [isModalOpen, setModalOpen] = useState(false);
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
   const [isUpdateModalOpen, setUpdateModalOpen] = useState(false);
   const [selectedManager, setSelectedManager] = useState<User | null>(null);
-  const [regionList, setRegionList] = useState<Region[]>([]);
-  const [provinceList, setProvinceList] = useState<Province[]>([]);
-  const [cityList, setCityList] = useState<City[]>([]);
 
-  // fetching of data
+  // Fetching data on component mount
   useEffect(() => {
-    const loadUsers = async () => {
+    const loadData = async () => {
       try {
-        const response = await fetchUsers({});
-        if (response.success) {
-          const filteredUsers = response.data
-            .filter((user: { UserTypeId: number; }) => user.UserTypeId === 3)
-            .map((user: {
-              UserId: number; FirstName: string; LastName: string; Email: string; DateOfRegistration: string; 
-              Location?: { Region?: string; Province?: string; City?: string }; 
-              CreatedBy?: { FirstName?: string; LastName?: string };
-            }) => ({
-              userId: user.UserId, // FIXED: Changed from user.userId to user.UserId
-              FirstName: user.FirstName ?? "Unknown",
-              LastName: user.LastName ?? "Unknown",
-              Email: user.Email ?? "Unknown",
-              DateOfRegistration: user.DateOfRegistration ?? "Unknown",
-              Region: user.Location?.Region ?? "Unknown",
-              Province: user.Location?.Province ?? "Unknown",
-              City: user.Location?.City ?? "Unknown",
-              CreatedByFirstName: user.CreatedBy?.FirstName ?? "Unknown",
-              CreatedByLastName: user.CreatedBy?.LastName ?? "Unknown",
+        const [userResponse, regionResponse, provinceResponse] = await Promise.all([
+          fetchUsers({}),
+          fetchRegions({}),
+          fetchProvinces({})
+        ]);
+
+        if (userResponse.success && regionResponse.success && provinceResponse.success) {
+          setRegions(regionResponse.data);
+          setProvinces(provinceResponse.data);
+          
+          const cityData = cities.map((city: any) => ({
+            name: city.name,
+            province: city.province
+          }));
+          setCityList(cityData);
+
+          // Filter only managers (UserTypeId === 3)
+          const filteredUsers = userResponse.data
+            .filter((user: { UserTypeId: number }) => user.UserTypeId === 3)
+            .map((user: any) => ({
+              userId: user.UserId,
+              FirstName: user.FirstName ?? "N/A",
+              LastName: user.LastName ?? "N/A",
+              Email: user.Email ?? "N/A",
+              DateOfRegistration: user.DateOfRegistration ?? "N/A",
+              CreatedBy: user.CreatedBy ?? "N/A",
+              Region: user.Region ?? "N/A",
+              Province: user.Province ?? "N/A",
+              City: user.City ?? "N/A",
             }));
-            
+
           setManagers(filteredUsers);
         } else {
-          console.error("Failed to fetch users:", response.message);
+          console.error("Failed to fetch some data.");
         }
       } catch (error) {
-        console.error("Error fetching users:", error);
+        console.error("Error fetching data:", error);
       }
     };
 
-    loadUsers();
-
-    setRegionList(regions);
-    setProvinceList(provinces);
-    setCityList(cities);
+    loadData();
   }, []);
 
   const handleUserCreate = () => {
@@ -80,7 +82,7 @@ const ManagersPage = (p0?: { id: any; }) => {
     setSelectedManager(user);
     setUpdateModalOpen(true);
   };
-  
+
   const closeUpdateModal = () => {
     setUpdateModalOpen(false);
     setSelectedManager(null);
@@ -104,7 +106,7 @@ const ManagersPage = (p0?: { id: any; }) => {
               CreatedByFirstName: user.CreatedBy?.FirstName || "Unknown",
               CreatedByLastName: user.CreatedBy?.LastName || "Unknown",
             }));
-  
+
           setManagers(filteredUsers); // Update state with fresh data
         } else {
           console.error("Failed to fetch updated users:", response.message);
@@ -113,7 +115,7 @@ const ManagersPage = (p0?: { id: any; }) => {
         console.error("Error fetching updated users:", error);
       }
     }
-  
+
     setModalOpen(false);
   };
 
@@ -150,8 +152,8 @@ const ManagersPage = (p0?: { id: any; }) => {
           {UserSectionData.titleManager}
         </Typography>
       </Box>
-      <Box sx={{marginTop: 2, marginBottom: 3, }}>
-        <ManagerDashboardPage/>
+      <Box sx={{ marginTop: 2, marginBottom: 3, }}>
+        <ManagerDashboardPage />
       </Box>
       <Box>
         <ManagerTable
@@ -167,9 +169,9 @@ const ManagersPage = (p0?: { id: any; }) => {
         onSubmit={handleSubmitUser}
         userData={selectedUser}
         managers={managers} // for log checking only
-        regions={regionList}
-        provinces={provinceList}
-        cities={cityList}
+        regions={regions} 
+        provinces={provinces} 
+        cities={cityList} 
       />
       {isUpdateModalOpen && (
         <UpdateManager
@@ -177,9 +179,7 @@ const ManagersPage = (p0?: { id: any; }) => {
           onClose={closeUpdateModal}
           onSubmit={handleSaveUpdatedUser}
           manager={selectedManager}
-          regions={regionList}
-          provinces={provinceList}
-          cities={cityList}
+          cities={cityList} regions={regions} provinces={provinces}
         />
       )}
     </Box>

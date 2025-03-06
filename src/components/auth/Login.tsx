@@ -29,8 +29,6 @@ const LoginPage = () => {
   
     try {
       const response = await loginUser(credentials, router);
-      console.log("User logged in:", response);
-
     } catch (error) {
       setErrors({ general: error instanceof Error ? error.message : "Login failed." });
       setIsLoggingIn(false);

@@ -28,7 +28,6 @@ export const loginUser = async (payload: { email: string; password: string }, ro
     return {
       token,
       refreshToken: apiData.refresh,
-
     };
   } catch (error: unknown) {
     if (axios.isAxiosError(error) && error.response) {

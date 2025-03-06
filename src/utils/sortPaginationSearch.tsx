@@ -221,8 +221,7 @@ export const filterData = (
 
       // Handle CreatedBy filtering
       if (key === "CreatedBy") {
-        const createdByFullName = `${item.CreatedByFirstName || ""} ${item.CreatedByLastName || ""}`.toLowerCase();
-        return createdByFullName.includes(filterValue.toLowerCase());
+        return item.CreatedBy?.toLowerCase().includes(filterValue.toLowerCase());
       }
 
       // Default filtering for other fields

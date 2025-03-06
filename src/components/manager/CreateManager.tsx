@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Dialog,
   DialogContent,
@@ -21,50 +21,23 @@ import { Visibility, VisibilityOff } from "@mui/icons-material";
 import { SelectChangeEvent } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 import { inputStyles, inputErrorStyles } from "../../styles/theme";
-import { City, Province, Region } from "~/utils/api/locationTypes";
 import { UserSectionData } from "~/data/AdminSectionData";
 import { addUser } from "~/utils/api/users"
 import Swal from "sweetalert2";
 import { formatKey } from "~/utils/format"
 import { validateUser } from "~/utils/validation"
+import { fetchRegions, fetchProvinces } from "~/utils/api/location";
 
-interface LocationItem {
-  id: string;
-  name: string;
-}
-
-export interface CreateManagerProps {
+interface CreateManagerProps {
   open: boolean;
   onClose: () => void;
-  onSubmit: (userData: User | null) => void;
+  onSubmit: (userData: User | null) => Promise<void>;
   userData: User | null;
   managers: User[];
-  regions: Region[];
-  provinces: Province[];
-  cities: City[];
+  regions: any[];
+  provinces: any[];
+  cities: any[];
 }
-
-// populating locations on api philippines
-export const useRenderOptions = () => {
-  const renderOptions = (key: string, data: LocationItem[]) => {
-    switch (key) {
-      case "region":
-      case "province":
-      case "city":
-        return data.map((item) => (
-          <MenuItem key={item.id} value={item.name}>
-            {item.name}
-          </MenuItem>
-        ));
-      case "barangay":
-        return <MenuItem value="Sample">Barangay2</MenuItem>;
-      default:
-        return null;
-    }
-  };
-
-  return { renderOptions };
-};
 
 const CreateManager: React.FC<CreateManagerProps> = ({
   open,
@@ -76,7 +49,6 @@ const CreateManager: React.FC<CreateManagerProps> = ({
   provinces,
   cities,
 }) => {
-  const { renderOptions } = useRenderOptions();
   const [user, setUser] = useState({
     firstName: userData?.firstName ?? "",
     lastName: userData?.lastName ?? "",
@@ -84,74 +56,85 @@ const CreateManager: React.FC<CreateManagerProps> = ({
     phoneNumber: userData?.phoneNumber ?? "",
     email: userData?.email ?? "",
     password: "",
+    barangay: userData?.barangay ?? "",
     streetaddress: userData?.streetaddress ?? "",
   });
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
   const [showPassword, setShowPassword] = useState(false);
-  const [filteredProvinces, setFilteredProvinces] = useState<Province[]>([]);
-  const [filteredCities, setFilteredCities] = useState<City[]>([]);
   const [selectState, setSelectState] = useState({
     region: userData?.region ?? "",
     province: userData?.province ?? "",
     city: userData?.city ?? "",
-    barangay: userData?.barangay ?? "",
   });
+  const [filteredProvinces, setFilteredProvinces] = useState<any[]>([]);
+  const [filteredCities, setFilteredCities] = useState<any[]>([]);
 
-  const mapToLocationItem = (data: Region[] | Province[] | City[]): LocationItem[] => {
-    return data.map((item) => ({
-      id: (item as any).key || (item as any).code || "",
-      name: item.name,
-    }));
-  };
-
-  const handleManagerChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement> | SelectChangeEvent<string>
-  ) => {
-    const { name, value } = e.target;
-    setUser((prevUser) => ({ ...prevUser, [name]: value }));
-  };
+  useEffect(() => {
+    console.log("Regions:", regions);
+    console.log("Provinces:", provinces);
+    console.log("Cities:", cities);
+  }, [regions, provinces, cities]);   
 
   const handleSelectChange = (e: SelectChangeEvent<string>, name: string) => {
     const value = e.target.value;
-
-    console.log(`Selected ${name}:`, value); // Log selected value
-
-    setSelectState((prevState) => ({ ...prevState, [name.toLowerCase()]: value }));
-
+    console.log(`Selected ${name}:`, value);
+  
+    setSelectState((prevState) => ({
+      ...prevState,
+      [name]: value,
+    }));
+  
     if (name === "region") {
-      const selectedRegion = regions.find((r) => r.name === value);
+      console.log("Available Regions:", regions);
+  
+      const selectedRegion = regions.find((r) => r.RegionName === value);
       console.log("Selected Region Object:", selectedRegion);
-
-      if (selectedRegion?.key) {
-        const newProvinces = provinces.filter((p) => p.region === selectedRegion.key);
+  
+      if (selectedRegion) {
+        const newProvinces = provinces.filter((p) => p.RegionId === selectedRegion.RegionId);
         console.log("Filtered Provinces:", newProvinces);
         setFilteredProvinces(newProvinces);
+      } else {
+        console.log("No matching region found!");
+        setFilteredProvinces([]);
       }
-
+  
       setFilteredCities([]);
-
       setSelectState((prevState) => ({
         ...prevState,
         province: "",
         city: "",
       }));
     }
-
+  
     if (name === "province") {
-      const selectedProvince = provinces.find((p) => p.name === value);
+      console.log("Selected Province:", value);
+      console.log("Available Provinces:", provinces);
+  
+      const selectedProvince = provinces.find((p) => p.ProvinceName === value);
       console.log("Selected Province Object:", selectedProvince);
-
+  
       if (selectedProvince) {
-        const newCities = cities.filter((c) => c.province === selectedProvince.key);
+        const newCities = cities.filter((c) => c.province === selectedProvince.ProvinceKey);
         console.log("Filtered Cities:", newCities);
         setFilteredCities(newCities);
+      } else {
+        console.log("No matching province found!");
+        setFilteredCities([]);
       }
-
+  
       setSelectState((prevState) => ({
         ...prevState,
         city: "",
       }));
     }
+  };
+  
+  const handleManagerChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement> | SelectChangeEvent<string>
+  ) => {
+    const { name, value } = e.target;
+    setUser((prevUser) => ({ ...prevUser, [name]: value }));
   };
 
   const handleCreateManagerSubmit = async () => {
@@ -187,7 +170,7 @@ const CreateManager: React.FC<CreateManagerProps> = ({
       region: selectState.region,
       province: selectState.province,
       city: selectState.city,
-      barangay: selectState.barangay,
+      barangay: user.barangay,
       streetaddress: user.streetaddress,
       email: user.email,
       password: user.password,
@@ -381,38 +364,39 @@ const CreateManager: React.FC<CreateManagerProps> = ({
             <Typography variant="h6" sx={{ marginBottom: "0.9rem" }}>
               Assigned Location
             </Typography>
-            {["region", "province", "city", "barangay", "streetaddress"].map((key) => (
+            {['region', 'province', 'city', 'barangay', 'streetaddress'].map((key) => (
               <Grid item xs={12} key={key} sx={{ marginBottom: "1rem" }}>
-                {["region", "province", "city", "barangay"].includes(key) ? (
+                {['region', 'province', 'city'].includes(key) ? (
                   <FormControl fullWidth error={!!errors[key]}>
                     <InputLabel id={`${key}-label`}>{formatKey(key)}</InputLabel>
                     <Select
                       labelId={`${key}-label`}
                       value={selectState[key as keyof typeof selectState] || ""}
-                      label={`${key}`}
-                      disabled={
-                        (key === "province" && !selectState.region) ||
-                        (key === "city" && !selectState.province) ||
-                        (key === "barangay" && !selectState.city)
-                      }
-                      onChange={(e) => handleSelectChange(e, key)}
                       name={key}
-                      inputProps={{ "aria-label": formatKey(key) }}
+                      onChange={(e) => handleSelectChange(e, key)}
+                      disabled={
+                        (key === 'province' && !selectState.region) ||
+                        (key === 'city' && !selectState.province)
+                      }
+                      inputProps={{ 'aria-label': formatKey(key) }}
                     >
-                      {renderOptions(
-                        key,
-                        key === "region"
-                          ? mapToLocationItem(regions)
-                          : key === "province"
-                            ? mapToLocationItem(filteredProvinces)
-                            : key === "city"
-                              ? mapToLocationItem(filteredCities)
-                              : []
-                      )}
+                      <MenuItem value="" disabled>Select {formatKey(key)}</MenuItem>
+                      {(key === "region"
+                        ? regions
+                        : key === "province"
+                          ? filteredProvinces
+                          : filteredCities
+                      ).map((option) => (
+                        <MenuItem
+                          key={key === "region" ? option.ProvinceName : key === "province" ? option.ProvinceId : option.name}
+                          value={key === "region" ? option.RegionName : key === "province" ? option.ProvinceName : option.name}
+                        >
+                          {key === "region" ? option.RegionName : key === "province" ? option.ProvinceName : option.name}
+                        </MenuItem>
+                      ))}
                     </Select>
                     {errors[key] && <FormHelperText>{errors[key]}</FormHelperText>}
                   </FormControl>
-
                 ) : (
                   <FormControl fullWidth error={!!errors[key]}>
                     <InputLabel htmlFor={key}>{formatKey(key)}</InputLabel>
@@ -420,7 +404,7 @@ const CreateManager: React.FC<CreateManagerProps> = ({
                       id={key}
                       name={key}
                       placeholder={`Enter ${formatKey(key)}`}
-                      value={user[key as keyof typeof user]}
+                      value={user[key as keyof typeof user] || ""}
                       onChange={handleManagerChange}
                       label={formatKey(key)}
                     />
