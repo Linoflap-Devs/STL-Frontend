@@ -45,7 +45,6 @@ export interface User {
   email: string;
   password: string;
   streetaddress: string;
-
   region?: string;
   province?: string;
   barangay?: string;

@@ -26,7 +26,6 @@ import { addUser } from "~/utils/api/users"
 import Swal from "sweetalert2";
 import { formatKey } from "~/utils/format"
 import { validateUser } from "~/utils/validation"
-import { fetchRegions, fetchProvinces } from "~/utils/api/location";
 
 interface CreateManagerProps {
   open: boolean;
@@ -69,27 +68,16 @@ const CreateManager: React.FC<CreateManagerProps> = ({
   const [filteredProvinces, setFilteredProvinces] = useState<any[]>([]);
   const [filteredCities, setFilteredCities] = useState<any[]>([]);
 
-  useEffect(() => {
-    console.log("Regions:", regions);
-    console.log("Provinces:", provinces);
-    console.log("Cities:", cities);
-  }, [regions, provinces, cities]);   
-
   const handleSelectChange = (e: SelectChangeEvent<string>, name: string) => {
     const value = e.target.value;
-    console.log(`Selected ${name}:`, value);
-  
+
     setSelectState((prevState) => ({
       ...prevState,
       [name]: value,
     }));
-  
+
     if (name === "region") {
-      console.log("Available Regions:", regions);
-  
       const selectedRegion = regions.find((r) => r.RegionName === value);
-      console.log("Selected Region Object:", selectedRegion);
-  
       if (selectedRegion) {
         const newProvinces = provinces.filter((p) => p.RegionId === selectedRegion.RegionId);
         console.log("Filtered Provinces:", newProvinces);
@@ -98,7 +86,7 @@ const CreateManager: React.FC<CreateManagerProps> = ({
         console.log("No matching region found!");
         setFilteredProvinces([]);
       }
-  
+
       setFilteredCities([]);
       setSelectState((prevState) => ({
         ...prevState,
@@ -106,14 +94,9 @@ const CreateManager: React.FC<CreateManagerProps> = ({
         city: "",
       }));
     }
-  
+
     if (name === "province") {
-      console.log("Selected Province:", value);
-      console.log("Available Provinces:", provinces);
-  
       const selectedProvince = provinces.find((p) => p.ProvinceName === value);
-      console.log("Selected Province Object:", selectedProvince);
-  
       if (selectedProvince) {
         const newCities = cities.filter((c) => c.province === selectedProvince.ProvinceKey);
         console.log("Filtered Cities:", newCities);
@@ -122,14 +105,14 @@ const CreateManager: React.FC<CreateManagerProps> = ({
         console.log("No matching province found!");
         setFilteredCities([]);
       }
-  
+
       setSelectState((prevState) => ({
         ...prevState,
         city: "",
       }));
     }
   };
-  
+
   const handleManagerChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement> | SelectChangeEvent<string>
   ) => {
@@ -260,7 +243,7 @@ const CreateManager: React.FC<CreateManagerProps> = ({
                   <Grid container spacing={1.5} alignItems="flex-start" wrap="nowrap">
                     <Grid item xs={8}>
                       <FormControl fullWidth error={!!errors.lastName} >
-                        <InputLabel sx={{fontSize: '14px'}} htmlFor="lastName">Last Name</InputLabel>
+                        <InputLabel sx={{ fontSize: '14px' }} htmlFor="lastName">Last Name</InputLabel>
                         <OutlinedInput
                           id="lastName"
                           name="lastName"
@@ -332,7 +315,7 @@ const CreateManager: React.FC<CreateManagerProps> = ({
                     </Grid>
 
                     {errors.password && (
-                      <Grid item xs={12} sx={{paddingTop: '0px !important'}}>
+                      <Grid item xs={12} sx={{ paddingTop: '0px !important' }}>
                         <Typography sx={inputErrorStyles}>
                           {errors.password}
                         </Typography>

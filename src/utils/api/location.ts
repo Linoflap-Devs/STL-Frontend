@@ -33,14 +33,3 @@ const fetchProvinces = async (queryParams: Record<string, any>) => {
 };
 
 export { fetchRegions, fetchProvinces, };
-
-// Import location data
-const philippines = require('philippines');
-
-const cities = require('philippines/cities');
-
-export interface City {
-  key: string;
-  name: string;
-  province: string;
-}

@@ -168,7 +168,7 @@ const ManagersPage = () => {
         onClose={() => setModalOpen(false)}
         onSubmit={handleSubmitUser}
         userData={selectedUser}
-        managers={managers} // for log checking only
+        managers={managers}
         regions={regions} 
         provinces={provinces} 
         cities={cityList} 
@@ -179,7 +179,9 @@ const ManagersPage = () => {
           onClose={closeUpdateModal}
           onSubmit={handleSaveUpdatedUser}
           manager={selectedManager}
-          cities={cityList} regions={regions} provinces={provinces}
+          cities={cityList}
+          regions={regions}
+          provinces={provinces}
         />
       )}
     </Box>

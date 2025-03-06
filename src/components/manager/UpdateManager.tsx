@@ -17,16 +17,14 @@ import {
   InputAdornment,
   Box,
 } from "@mui/material";
-import { validateUser } from "../../utils/validation";
 import { formatKey } from "../../utils/format";
 import { User } from "./ManagerTable";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
 import { SelectChangeEvent } from "@mui/material";
 import CloseIcon from '@mui/icons-material/Close';
-import Swal from "sweetalert2";
 import { inputStyles, inputErrorStyles } from "../../styles/theme";
-import { City, Province, Region } from "~/utils/api/location";
 import { fetchUserById } from "~/utils/api/users";
+import Swal from "sweetalert2";
 
 interface UpdateManagerProps {
   open: boolean;
@@ -44,40 +42,21 @@ interface UpdateManagerProps {
     username: string;
     password: string;
   }) => void;
-  manager: User | null;
-  regions: Region[];
-  provinces: Province[];
-  cities: City[];
+  regions: any[];
+  provinces: any[];
+  cities: any[];
+  manager?: User | null;  // This is the missing manager prop that needs to be passed
 }
 
-interface LocationItem {
-  id: string;
-  name: string;
-}
-
-// populating locations on api philippines
-export const useRenderOptions = () => {
-  const renderOptions = (key: string, data: LocationItem[]) => {
-    switch (key) {
-      case "region":
-      case "province":
-      case "city":
-        return data.map((item) => (
-          <MenuItem key={item.id} value={item.name}>
-            {item.name}
-          </MenuItem>
-        ));
-      case "barangay":
-        return <MenuItem value="Sample">Barangay2</MenuItem>;
-      default:
-        return null;
-    }
-  };
-
-  return { renderOptions };
-};
-
-const UpdateManager: React.FC<UpdateManagerProps> = React.memo(({ open, onClose, onSubmit, manager, regions, provinces, cities, }) => {
+const UpdateManager: React.FC<UpdateManagerProps> = React.memo(({ 
+  open, 
+  onClose, 
+  onSubmit, 
+  manager, // Property 'manager' does not exist on type 'UpdateManagerProps'.ts(2339)
+  regions,
+  provinces,
+  cities, 
+}) => {
   const [user, setUser] = useState<{
     firstName: string;
     lastName: string;
@@ -113,10 +92,9 @@ const UpdateManager: React.FC<UpdateManagerProps> = React.memo(({ open, onClose,
     city: manager?.city ?? SPACE,
     barangay: manager?.barangay ?? SPACE,
   });
-  const { renderOptions } = useRenderOptions();
-  const [filteredProvinces, setFilteredProvinces] = useState<Province[]>([]);
-  const [filteredCities, setFilteredCities] = useState<City[]>([]);
-
+  const [filteredProvinces, setFilteredProvinces] = useState<any[]>([]);
+  const [filteredCities, setFilteredCities] = useState<any[]>([]);
+    
   useEffect(() => {
     if (!open || !manager?.userId) return;
   
@@ -166,11 +144,49 @@ const UpdateManager: React.FC<UpdateManagerProps> = React.memo(({ open, onClose,
     fetchManagerDetails();
   }, [open, manager?.userId, regions, provinces, cities]);
 
-  const mapToLocationItem = (data: Region[] | Province[] | City[]): LocationItem[] => {
-    return data.map((item) => ({
-      id: (item as any).key || (item as any).code || "",
-      name: item.name,
+  const handleSelectChange = (e: SelectChangeEvent<string>, name: string) => {
+    const value = e.target.value;
+
+    setSelectState((prevState) => ({
+      ...prevState,
+      [name]: value,
     }));
+
+    if (name === "region") {
+      const selectedRegion = regions.find((r) => r.RegionName === value);
+      if (selectedRegion) {
+        const newProvinces = provinces.filter((p) => p.RegionId === selectedRegion.RegionId);
+        console.log("Filtered Provinces:", newProvinces);
+        setFilteredProvinces(newProvinces);
+      } else {
+        console.log("No matching region found!");
+        setFilteredProvinces([]);
+      }
+
+      setFilteredCities([]);
+      setSelectState((prevState) => ({
+        ...prevState,
+        province: "",
+        city: "",
+      }));
+    }
+
+    if (name === "province") {
+      const selectedProvince = provinces.find((p) => p.ProvinceName === value);
+      if (selectedProvince) {
+        const newCities = cities.filter((c) => c.province === selectedProvince.ProvinceKey);
+        console.log("Filtered Cities:", newCities);
+        setFilteredCities(newCities);
+      } else {
+        console.log("No matching province found!");
+        setFilteredCities([]);
+      }
+
+      setSelectState((prevState) => ({
+        ...prevState,
+        city: "",
+      }));
+    }
   };
 
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -210,49 +226,6 @@ const UpdateManager: React.FC<UpdateManagerProps> = React.memo(({ open, onClose,
         [name]: value,
       };
     });
-  };
-
-  const handleSelectChange = (e: SelectChangeEvent<string>, name: string) => {
-    const value = e.target.value;
-
-    console.log(`Selected ${name}:`, value); // Log selected value
-
-    setSelectState((prevState) => ({ ...prevState, [name.toLowerCase()]: value }));
-
-    if (name === "region") {
-      const selectedRegion = regions.find((r) => r.name === value);
-      console.log("Selected Region Object:", selectedRegion);
-
-      if (selectedRegion?.key) {
-        const newProvinces = provinces.filter((p) => p.region === selectedRegion.key);
-        console.log("Filtered Provinces:", newProvinces);
-        setFilteredProvinces(newProvinces);
-      }
-
-      setFilteredCities([]);
-
-      setSelectState((prevState) => ({
-        ...prevState,
-        province: "",
-        city: "",
-      }));
-    }
-
-    if (name === "province") {
-      const selectedProvince = provinces.find((p) => p.name === value);
-      console.log("Selected Province Object:", selectedProvince);
-
-      if (selectedProvince) {
-        const newCities = cities.filter((c) => c.province === selectedProvince.key);
-        console.log("Filtered Cities:", newCities);
-        setFilteredCities(newCities);
-      }
-
-      setSelectState((prevState) => ({
-        ...prevState,
-        city: "",
-      }));
-    }
   };
 
   return (
@@ -479,26 +452,33 @@ const UpdateManager: React.FC<UpdateManagerProps> = React.memo(({ open, onClose,
             {["region", "province", "city", "barangay", "streetaddress"].map((key) => (
               <Grid item xs={12} key={key} sx={{ marginBottom: "1rem" }}>
                 {["region", "province", "city"].includes(key) ? (
-                  <FormControl fullWidth error={!!errors[key]} sx={inputStyles}>
+                  <FormControl fullWidth error={!!errors[key]}>
                     <InputLabel id={`${key}-label`}>{formatKey(key)}</InputLabel>
                     <Select
                       labelId={`${key}-label`}
-                      displayEmpty
-                      value={user[key as keyof typeof user] || ""}
-                      onChange={(e) => handleSelectChange(e, key)}
+                      value={selectState[key as keyof typeof selectState] || ""}
                       name={key}
-                      inputProps={{ "aria-label": formatKey(key) }}
+                      onChange={(e) => handleSelectChange(e, key)}
+                      disabled={
+                        (key === 'province' && !selectState.region) ||
+                        (key === 'city' && !selectState.province)
+                      }
+                      inputProps={{ 'aria-label': formatKey(key) }}
                     >
-                      {renderOptions(
-                        key,
-                        key === "region"
-                          ? mapToLocationItem(regions)
-                          : key === "province"
-                            ? mapToLocationItem(filteredProvinces)
-                            : key === "city"
-                              ? mapToLocationItem(filteredCities)
-                              : []
-                      )}
+                      <MenuItem value="" disabled>Select {formatKey(key)}</MenuItem>
+                      {(key === "region"
+                        ? regions
+                        : key === "province"
+                          ? filteredProvinces
+                          : filteredCities
+                      ).map((option) => (
+                        <MenuItem
+                          key={key === "region" ? option.ProvinceName : key === "province" ? option.ProvinceId : option.name}
+                          value={key === "region" ? option.RegionName : key === "province" ? option.ProvinceName : option.name}
+                        >
+                          {key === "region" ? option.RegionName : key === "province" ? option.ProvinceName : option.name}
+                        </MenuItem>
+                      ))}
                     </Select>
                     {errors[key] && <FormHelperText>{errors[key]}</FormHelperText>}
                   </FormControl>
