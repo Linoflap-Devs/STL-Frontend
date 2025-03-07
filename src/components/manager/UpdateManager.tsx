@@ -16,6 +16,7 @@ import {
   OutlinedInput,
   InputAdornment,
   Box,
+  Tooltip,
 } from "@mui/material";
 import { formatKey } from "../../utils/format";
 import { User } from "./ManagerTable";
@@ -94,18 +95,20 @@ const UpdateManager: React.FC<UpdateManagerProps> = React.memo(({
   });
   const [filteredProvinces, setFilteredProvinces] = useState<any[]>([]);
   const [filteredCities, setFilteredCities] = useState<any[]>([]);
-  
+  const [isDisabled, setIsDisabled] = useState(true);
+  const [isClicked, setIsClicked] = useState(false);
+
   useEffect(() => {
     if (!open || !manager?.userId) return;
-  
+
     const fetchManagerDetails = async () => {
       try {
         console.log("Fetching manager with ID:", manager.userId);
         const response = await fetchUserById(manager.userId);
-  
+
         if (response.success) {
           console.log("Fetched Manager Details:", response.data);
-  
+
           const updatedUser = {
             firstName: response.data.FirstName || "",
             lastName: response.data.LastName || "",
@@ -119,12 +122,12 @@ const UpdateManager: React.FC<UpdateManagerProps> = React.memo(({
             barangay: response.data.Barangay || "",
             street: response.data.Street || "",
           };
-  
+
           setUser(updatedUser);
           setSelectState(updatedUser);
-  
+
           console.log("Available Provinces:", provinces);
-  
+
           if (updatedUser.region) {
             const selectedRegion = regions.find((r) => r.RegionName === updatedUser.region);
             if (selectedRegion) {
@@ -133,19 +136,19 @@ const UpdateManager: React.FC<UpdateManagerProps> = React.memo(({
               setFilteredProvinces(filteredProvinces);
             }
           }
-  
+
           if (updatedUser.province) {
             const selectedProvince = provinces.find((p) => p.ProvinceName === updatedUser.province);
             console.log("Selected Province:", selectedProvince);
-  
+
             if (selectedProvince) {
               console.log("Available Cities:", cities);
-  
+
               const filteredCities = cities.filter((c) => c.province === selectedProvince.ProvinceKey);
               console.log("Filtered Cities:", filteredCities);
-  
+
               setFilteredCities(filteredCities);
-  
+
               const cityExists = filteredCities.some((c) => c.name === updatedUser.city);
               if (cityExists) {
                 setSelectState((prevState) => ({
@@ -172,10 +175,15 @@ const UpdateManager: React.FC<UpdateManagerProps> = React.memo(({
         console.error("Error fetching manager:", error);
       }
     };
-  
+
     fetchManagerDetails();
   }, [open, manager?.userId, regions, provinces, cities]);
-  
+
+  const handleUpdateClick = () => {
+    setIsClicked((prev) => !prev); // Toggle state on click
+    setIsDisabled((prev) => !prev); // Toggle form disable state
+  };
+
   const handleSelectChange = (e: SelectChangeEvent<string>, name: string) => {
     const value = e.target.value;
     setSelectState((prevState) => ({
@@ -304,21 +312,28 @@ const UpdateManager: React.FC<UpdateManagerProps> = React.memo(({
                 gap: 0,
               }}
             >
-              <Button
-                sx={{
-                  backgroundColor: "#67ABEB",
-                  textTransform: "none",
-                  fontSize: "14px",
-                  px: "2.5rem",
-                  py: "0.5rem",
-                  borderRadius: "8px",
-                  color: "#181A1B",
-                  alignSelf: "start",
-                }}
-                variant="contained"
-              >
-                Update
-              </Button>
+              <Tooltip title={isClicked ? "Disable form" : "Update form"} arrow>
+                <Button
+                  component="a"
+                  onClick={handleUpdateClick}
+                  sx={{
+                    backgroundColor: isClicked ? "#FFFFFF" : "#67ABEB",
+                    textTransform: "none",
+                    fontSize: "14px",
+                    px: "2.5rem",
+                    py: "0.5rem",
+                    borderRadius: "8px",
+                    color: "#181A1B",
+                    alignSelf: "start",
+                    cursor: "pointer",
+                    "&:hover": {
+                      backgroundColor: isClicked ? "#f0f0f0" : "#559ad6",
+                    },
+                  }}
+                >
+                  {isClicked ? "View" : "Update"}
+                </Button>
+              </Tooltip>
               <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", mt: 2 }}>
                 <Box>
                   <Typography variant="body1">Status</Typography>
@@ -372,6 +387,7 @@ const UpdateManager: React.FC<UpdateManagerProps> = React.memo(({
                           value={user?.lastName || ""}
                           onChange={handleManagerChange}
                           label="Last Name"
+                          disabled={isDisabled}
                         />
                         {errors.lastName && <FormHelperText>{errors.lastName}</FormHelperText>}
                       </FormControl>
@@ -387,6 +403,7 @@ const UpdateManager: React.FC<UpdateManagerProps> = React.memo(({
                           value={user.suffix}
                           onChange={handleInputChange}
                           label="Suffix"
+                          disabled={isDisabled}
                         />
                         {errors.suffix && <FormHelperText>{errors.suffix}</FormHelperText>}
                       </FormControl>
@@ -405,6 +422,7 @@ const UpdateManager: React.FC<UpdateManagerProps> = React.memo(({
                           value={user.password || ""}
                           onChange={handleInputChange}
                           label="Password"
+                          disabled={isDisabled}
                           endAdornment={
                             <InputAdornment position="end">
                               <IconButton
@@ -455,6 +473,7 @@ const UpdateManager: React.FC<UpdateManagerProps> = React.memo(({
                       value={user[key as keyof typeof user] || ""}
                       onChange={handleInputChange}
                       label={formatKey(key)}
+                      disabled={isDisabled}
                     />
                     {errors[key] && <FormHelperText error>{errors[key]}</FormHelperText>}
                   </FormControl>
@@ -477,6 +496,7 @@ const UpdateManager: React.FC<UpdateManagerProps> = React.memo(({
                       value={selectState[key as keyof typeof selectState] || ""}
                       name={key}
                       onChange={(e) => handleSelectChange(e, key)}
+                      disabled={isDisabled}
                     >
                       <MenuItem value="" disabled>
                         Select {key.charAt(0).toUpperCase() + key.slice(1)}
@@ -484,30 +504,30 @@ const UpdateManager: React.FC<UpdateManagerProps> = React.memo(({
                       {(key === "region"
                         ? regions
                         : key === "province"
-                        ? filteredProvinces
-                        : filteredCities
+                          ? filteredProvinces
+                          : filteredCities
                       ).map((option) => (
                         <MenuItem
                           key={
                             key === "region"
                               ? option.RegionId
                               : key === "province"
-                              ? option.ProvinceKey
-                              : option.CityId
+                                ? option.ProvinceKey
+                                : option.CityId
                           }
                           value={
                             key === "region"
                               ? option.RegionName
                               : key === "province"
-                              ? option.ProvinceName
-                              : option.name
+                                ? option.ProvinceName
+                                : option.name
                           }
                         >
                           {key === "region"
                             ? option.RegionName
                             : key === "province"
-                            ? option.ProvinceName
-                            : option.name}
+                              ? option.ProvinceName
+                              : option.name}
                         </MenuItem>
                       ))}
                     </Select>
@@ -519,12 +539,14 @@ const UpdateManager: React.FC<UpdateManagerProps> = React.memo(({
                     <OutlinedInput
                       id={key}
                       name={key}
+                      disabled={isDisabled}
                       placeholder={`Enter ${key.charAt(0).toUpperCase() + key.slice(1)}`}
                       value={user[key as keyof typeof user] || ""}
                       onChange={(e) =>
                         setUser((prevState) => ({ ...prevState, [key]: e.target.value }))
                       }
                       label={key.charAt(0).toUpperCase() + key.slice(1)}
+
                     />
                     {errors[key] && <FormHelperText>{errors[key]}</FormHelperText>}
                   </FormControl>

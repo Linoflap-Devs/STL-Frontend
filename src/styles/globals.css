@@ -44,9 +44,9 @@ input:-webkit-autofill {
   z-index: 9999 !important;
 }
 
-.MuiDialog-root {
+/* .MuiDialog-root {
   z-index: 999 !important;
-}
+} */
 
 .MuiChartsAxis-tick text:empty {
   display: none !important;
