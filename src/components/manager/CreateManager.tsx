@@ -56,7 +56,7 @@ const CreateManager: React.FC<CreateManagerProps> = ({
     email: userData?.email ?? "",
     password: "",
     barangay: userData?.barangay ?? "",
-    streetaddress: userData?.streetaddress ?? "",
+    street: userData?.Street ?? "",
   });
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
   const [showPassword, setShowPassword] = useState(false);
@@ -154,7 +154,7 @@ const CreateManager: React.FC<CreateManagerProps> = ({
       province: selectState.province,
       city: selectState.city,
       barangay: user.barangay,
-      streetaddress: user.streetaddress,
+      street: user.street,
       email: user.email,
       password: user.password,
       suffix: user.suffix,
@@ -347,7 +347,7 @@ const CreateManager: React.FC<CreateManagerProps> = ({
             <Typography variant="h6" sx={{ marginBottom: "0.9rem" }}>
               Assigned Location
             </Typography>
-            {['region', 'province', 'city', 'barangay', 'streetaddress'].map((key) => (
+            {['region', 'province', 'city', 'barangay', 'street'].map((key) => (
               <Grid item xs={12} key={key} sx={{ marginBottom: "1rem" }}>
                 {['region', 'province', 'city'].includes(key) ? (
                   <FormControl fullWidth error={!!errors[key]}>
@@ -371,10 +371,27 @@ const CreateManager: React.FC<CreateManagerProps> = ({
                           : filteredCities
                       ).map((option) => (
                         <MenuItem
-                          key={key === "region" ? option.ProvinceName : key === "province" ? option.ProvinceId : option.name}
-                          value={key === "region" ? option.RegionName : key === "province" ? option.ProvinceName : option.name}
+                          key={
+                            key === "region" 
+                              ? option.ProvinceName 
+                              : key === "province" 
+                              ? option.ProvinceId 
+                              : option.name
+                            }
+                          value={
+                            key === "region" 
+                              ? option.RegionName 
+                              : key === "province" 
+                              ? option.ProvinceName 
+                              : option.name
+                            }
                         >
-                          {key === "region" ? option.RegionName : key === "province" ? option.ProvinceName : option.name}
+                          {key === "region" 
+                              ? option.RegionName 
+                              : key === "province" 
+                              ? option.ProvinceName 
+                              : option.name
+                            }
                         </MenuItem>
                       ))}
                     </Select>

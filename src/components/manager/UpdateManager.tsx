@@ -37,7 +37,7 @@ interface UpdateManagerProps {
     province: string;
     city: string;
     barangay: string;
-    streetaddress: string;
+    Street: string;
     phonenumber: string;
     username: string;
     password: string;
@@ -45,17 +45,17 @@ interface UpdateManagerProps {
   regions: any[];
   provinces: any[];
   cities: any[];
-  manager?: User | null;  // This is the missing manager prop that needs to be passed
+  manager?: User | null;
 }
 
-const UpdateManager: React.FC<UpdateManagerProps> = React.memo(({ 
-  open, 
-  onClose, 
-  onSubmit, 
-  manager, // Property 'manager' does not exist on type 'UpdateManagerProps'.ts(2339)
+const UpdateManager: React.FC<UpdateManagerProps> = React.memo(({
+  open,
+  onClose,
+  onSubmit,
+  manager,
   regions,
   provinces,
-  cities, 
+  cities,
 }) => {
   const [user, setUser] = useState<{
     firstName: string;
@@ -68,7 +68,7 @@ const UpdateManager: React.FC<UpdateManagerProps> = React.memo(({
     province: string;
     city: string;
     barangay: string;
-    streetaddress: string;
+    street: string;
   }>({
     firstName: "",
     lastName: "",
@@ -80,7 +80,7 @@ const UpdateManager: React.FC<UpdateManagerProps> = React.memo(({
     province: "",
     city: "",
     barangay: "",
-    streetaddress: "",
+    street: "",
   });
 
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
@@ -94,7 +94,7 @@ const UpdateManager: React.FC<UpdateManagerProps> = React.memo(({
   });
   const [filteredProvinces, setFilteredProvinces] = useState<any[]>([]);
   const [filteredCities, setFilteredCities] = useState<any[]>([]);
-    
+  
   useEffect(() => {
     if (!open || !manager?.userId) return;
   
@@ -117,21 +117,53 @@ const UpdateManager: React.FC<UpdateManagerProps> = React.memo(({
             province: response.data.Province || "",
             city: response.data.City || "",
             barangay: response.data.Barangay || "",
-            streetaddress: response.data.Street || "",
+            street: response.data.Street || "",
           };
   
           setUser(updatedUser);
           setSelectState(updatedUser);
   
-          // Ensure filteredProvinces and filteredCities update based on existing data
-          const selectedRegion = regions.find((r) => r.name === updatedUser.region);
-          if (selectedRegion) {
-            setFilteredProvinces(provinces.filter((p) => p.region === selectedRegion.key));
+          console.log("Available Provinces:", provinces);
+  
+          if (updatedUser.region) {
+            const selectedRegion = regions.find((r) => r.RegionName === updatedUser.region);
+            if (selectedRegion) {
+              const filteredProvinces = provinces.filter((p) => p.RegionId === selectedRegion.RegionId);
+              console.log("Filtered Provinces:", filteredProvinces);
+              setFilteredProvinces(filteredProvinces);
+            }
           }
   
-          const selectedProvince = provinces.find((p) => p.name === updatedUser.province);
-          if (selectedProvince) {
-            setFilteredCities(cities.filter((c) => c.province === selectedProvince.key));
+          if (updatedUser.province) {
+            const selectedProvince = provinces.find((p) => p.ProvinceName === updatedUser.province);
+            console.log("Selected Province:", selectedProvince);
+  
+            if (selectedProvince) {
+              console.log("Available Cities:", cities);
+  
+              const filteredCities = cities.filter((c) => c.province === selectedProvince.ProvinceKey);
+              console.log("Filtered Cities:", filteredCities);
+  
+              setFilteredCities(filteredCities);
+  
+              const cityExists = filteredCities.some((c) => c.name === updatedUser.city);
+              if (cityExists) {
+                setSelectState((prevState) => ({
+                  ...prevState,
+                  city: updatedUser.city,
+                }));
+                console.log("Updated City Value:", updatedUser.city);
+              } else {
+                console.warn(`City "${updatedUser.city}" not found in filtered cities!`);
+                setSelectState((prevState) => ({
+                  ...prevState,
+                  city: "",
+                }));
+              }
+            } else {
+              console.log("No matching province found!");
+              setFilteredCities([]);
+            }
           }
         } else {
           console.error("Failed to fetch manager details:", response.message);
@@ -143,10 +175,9 @@ const UpdateManager: React.FC<UpdateManagerProps> = React.memo(({
   
     fetchManagerDetails();
   }, [open, manager?.userId, regions, provinces, cities]);
-
+  
   const handleSelectChange = (e: SelectChangeEvent<string>, name: string) => {
     const value = e.target.value;
-
     setSelectState((prevState) => ({
       ...prevState,
       [name]: value,
@@ -156,36 +187,23 @@ const UpdateManager: React.FC<UpdateManagerProps> = React.memo(({
       const selectedRegion = regions.find((r) => r.RegionName === value);
       if (selectedRegion) {
         const newProvinces = provinces.filter((p) => p.RegionId === selectedRegion.RegionId);
-        console.log("Filtered Provinces:", newProvinces);
         setFilteredProvinces(newProvinces);
       } else {
-        console.log("No matching region found!");
         setFilteredProvinces([]);
       }
-
       setFilteredCities([]);
-      setSelectState((prevState) => ({
-        ...prevState,
-        province: "",
-        city: "",
-      }));
+      setSelectState((prevState) => ({ ...prevState, province: "", city: "" }));
     }
 
     if (name === "province") {
       const selectedProvince = provinces.find((p) => p.ProvinceName === value);
       if (selectedProvince) {
-        const newCities = cities.filter((c) => c.province === selectedProvince.ProvinceKey);
-        console.log("Filtered Cities:", newCities);
+        const newCities = cities.filter((c) => c.ProvinceId === selectedProvince.ProvinceId);
         setFilteredCities(newCities);
       } else {
-        console.log("No matching province found!");
         setFilteredCities([]);
       }
-
-      setSelectState((prevState) => ({
-        ...prevState,
-        city: "",
-      }));
+      setSelectState((prevState) => ({ ...prevState, city: "" }));
     }
   };
 
@@ -449,49 +467,64 @@ const UpdateManager: React.FC<UpdateManagerProps> = React.memo(({
             <Typography variant="h6" sx={{ marginBottom: "0.9rem" }}>
               Assigned Location
             </Typography>
-            {["region", "province", "city", "barangay", "streetaddress"].map((key) => (
+            {["region", "province", "city", "barangay", "street"].map((key) => (
               <Grid item xs={12} key={key} sx={{ marginBottom: "1rem" }}>
                 {["region", "province", "city"].includes(key) ? (
                   <FormControl fullWidth error={!!errors[key]}>
-                    <InputLabel id={`${key}-label`}>{formatKey(key)}</InputLabel>
+                    <InputLabel id={`${key}-label`}>{key.charAt(0).toUpperCase() + key.slice(1)}</InputLabel>
                     <Select
                       labelId={`${key}-label`}
                       value={selectState[key as keyof typeof selectState] || ""}
                       name={key}
                       onChange={(e) => handleSelectChange(e, key)}
-                      disabled={
-                        (key === 'province' && !selectState.region) ||
-                        (key === 'city' && !selectState.province)
-                      }
-                      inputProps={{ 'aria-label': formatKey(key) }}
                     >
-                      <MenuItem value="" disabled>Select {formatKey(key)}</MenuItem>
+                      <MenuItem value="" disabled>
+                        Select {key.charAt(0).toUpperCase() + key.slice(1)}
+                      </MenuItem>
                       {(key === "region"
                         ? regions
                         : key === "province"
-                          ? filteredProvinces
-                          : filteredCities
+                        ? filteredProvinces
+                        : filteredCities
                       ).map((option) => (
                         <MenuItem
-                          key={key === "region" ? option.ProvinceName : key === "province" ? option.ProvinceId : option.name}
-                          value={key === "region" ? option.RegionName : key === "province" ? option.ProvinceName : option.name}
+                          key={
+                            key === "region"
+                              ? option.RegionId
+                              : key === "province"
+                              ? option.ProvinceKey
+                              : option.CityId
+                          }
+                          value={
+                            key === "region"
+                              ? option.RegionName
+                              : key === "province"
+                              ? option.ProvinceName
+                              : option.name
+                          }
                         >
-                          {key === "region" ? option.RegionName : key === "province" ? option.ProvinceName : option.name}
+                          {key === "region"
+                            ? option.RegionName
+                            : key === "province"
+                            ? option.ProvinceName
+                            : option.name}
                         </MenuItem>
                       ))}
                     </Select>
                     {errors[key] && <FormHelperText>{errors[key]}</FormHelperText>}
                   </FormControl>
                 ) : (
-                  <FormControl fullWidth error={!!errors[key]} sx={inputStyles} variant="outlined">
-                    <InputLabel htmlFor={key}>{formatKey(key)}</InputLabel>
+                  <FormControl fullWidth error={!!errors[key]} variant="outlined">
+                    <InputLabel htmlFor={key}>{key.charAt(0).toUpperCase() + key.slice(1)}</InputLabel>
                     <OutlinedInput
                       id={key}
                       name={key}
-                      placeholder={`Enter ${formatKey(key)}`}
+                      placeholder={`Enter ${key.charAt(0).toUpperCase() + key.slice(1)}`}
                       value={user[key as keyof typeof user] || ""}
-                      onChange={handleManagerChange}
-                      label={formatKey(key)}
+                      onChange={(e) =>
+                        setUser((prevState) => ({ ...prevState, [key]: e.target.value }))
+                      }
+                      label={key.charAt(0).toUpperCase() + key.slice(1)}
                     />
                     {errors[key] && <FormHelperText>{errors[key]}</FormHelperText>}
                   </FormControl>

@@ -58,6 +58,7 @@ const ManagersPage = () => {
               Region: user.Region ?? "N/A",
               Province: user.Province ?? "N/A",
               City: user.City ?? "N/A",
+              Steet: user.Street ?? "N/A",
             }));
 
           setManagers(filteredUsers);

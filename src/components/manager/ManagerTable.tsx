@@ -44,7 +44,7 @@ export interface User {
   phoneNumber: string;
   email: string;
   password: string;
-  streetaddress: string;
+  street: string;
   region?: string;
   province?: string;
   barangay?: string;
@@ -160,12 +160,6 @@ const ManagerTable: React.FC<ManagerTableProps> = ({ managers, onCreate, onEdit,
     console.log("Opening menu for User:", user);
     setAnchorEl(event?.currentTarget || null);
     setSelectedUser(user || null);
-  };
-
-  const handleEditClick = (user: { [key: string]: any }) => {
-    const typedUser = user as User;
-    onEdit(typedUser);
-    handleToggleMenu();
   };
 
   return (
