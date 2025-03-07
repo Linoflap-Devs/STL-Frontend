@@ -42,6 +42,20 @@ const fetchUserById = async (userId: string | number) => {
         // If API returns an array, filter it on the frontend
         if (Array.isArray(response.data.data)) {
             const user = response.data.data.find((u: any) => u.UserId == userId);
+
+            if (user) {
+                // Compute the status if missing
+                user.Status = user.IsActive ? "Active" : "Inactive";
+
+                // Compute formattedDate in "YYYY/MM/DD" format
+                if (user.DateOfRegistration) {
+                    const date = new Date(user.DateOfRegistration);
+                    user.formattedDate = `${date.getFullYear()}/${String(date.getMonth() + 1).padStart(2, "0")}/${String(date.getDate()).padStart(2, "0")}`;
+                } else {
+                    user.formattedDate = "N/A";
+                }
+            }
+
             return { success: !!user, message: user ? "User found" : "User not found", data: user || {} };
         }
 

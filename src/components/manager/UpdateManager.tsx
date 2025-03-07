@@ -23,8 +23,9 @@ import { User } from "./ManagerTable";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
 import { SelectChangeEvent } from "@mui/material";
 import CloseIcon from '@mui/icons-material/Close';
-import { inputStyles, inputErrorStyles } from "../../styles/theme";
+import { inputStyles, inputErrorStyles, selectStyles } from "../../styles/theme";
 import { fetchUserById } from "~/utils/api/users";
+import dayjs, { Dayjs } from "dayjs";
 import Swal from "sweetalert2";
 
 interface UpdateManagerProps {
@@ -70,6 +71,12 @@ const UpdateManager: React.FC<UpdateManagerProps> = React.memo(({
     city: string;
     barangay: string;
     street: string;
+    CreatedBy: string;
+    DateOfRegistration: string;
+    IsActive: number;
+    IsDeleted: number;
+    formattedDate: any;
+    Status: any;
   }>({
     firstName: "",
     lastName: "",
@@ -82,8 +89,13 @@ const UpdateManager: React.FC<UpdateManagerProps> = React.memo(({
     city: "",
     barangay: "",
     street: "",
+    CreatedBy: "",
+    DateOfRegistration: "",
+    IsActive: 1,
+    IsDeleted: 1,
+    formattedDate: "",
+    Status: "",
   });
-
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
   const [showPassword, setShowPassword] = useState(false);
   const SPACE: string = "";
@@ -97,91 +109,95 @@ const UpdateManager: React.FC<UpdateManagerProps> = React.memo(({
   const [filteredCities, setFilteredCities] = useState<any[]>([]);
   const [isDisabled, setIsDisabled] = useState(true);
   const [isClicked, setIsClicked] = useState(false);
+  const [status, setStatus] = useState("");
 
   useEffect(() => {
     if (!open || !manager?.userId) return;
-
+  
     const fetchManagerDetails = async () => {
+      const controller = new AbortController();
+      const signal = controller.signal;
+  
       try {
         console.log("Fetching manager with ID:", manager.userId);
         const response = await fetchUserById(manager.userId);
-
-        if (response.success) {
-          console.log("Fetched Manager Details:", response.data);
-
-          const updatedUser = {
-            firstName: response.data.FirstName || "",
-            lastName: response.data.LastName || "",
-            phoneNumber: response.data.PhoneNumber || "",
-            email: response.data.Email || "",
-            password: response.data.password || "",
-            suffix: response.data.Suffix || "",
-            region: response.data.Region || "",
-            province: response.data.Province || "",
-            city: response.data.City || "",
-            barangay: response.data.Barangay || "",
-            street: response.data.Street || "",
-          };
-
-          setUser(updatedUser);
-          setSelectState(updatedUser);
-
-          console.log("Available Provinces:", provinces);
-
-          if (updatedUser.region) {
-            const selectedRegion = regions.find((r) => r.RegionName === updatedUser.region);
-            if (selectedRegion) {
-              const filteredProvinces = provinces.filter((p) => p.RegionId === selectedRegion.RegionId);
-              console.log("Filtered Provinces:", filteredProvinces);
-              setFilteredProvinces(filteredProvinces);
-            }
-          }
-
-          if (updatedUser.province) {
-            const selectedProvince = provinces.find((p) => p.ProvinceName === updatedUser.province);
-            console.log("Selected Province:", selectedProvince);
-
-            if (selectedProvince) {
-              console.log("Available Cities:", cities);
-
-              const filteredCities = cities.filter((c) => c.province === selectedProvince.ProvinceKey);
-              console.log("Filtered Cities:", filteredCities);
-
-              setFilteredCities(filteredCities);
-
-              const cityExists = filteredCities.some((c) => c.name === updatedUser.city);
-              if (cityExists) {
-                setSelectState((prevState) => ({
-                  ...prevState,
-                  city: updatedUser.city,
-                }));
-                console.log("Updated City Value:", updatedUser.city);
-              } else {
-                console.warn(`City "${updatedUser.city}" not found in filtered cities!`);
-                setSelectState((prevState) => ({
-                  ...prevState,
-                  city: "",
-                }));
-              }
-            } else {
-              console.log("No matching province found!");
-              setFilteredCities([]);
-            }
-          }
-        } else {
+  
+        if (!response.success) {
           console.error("Failed to fetch manager details:", response.message);
+          return;
+        }
+  
+        console.log("Fetched Manager Details:", response.data);
+  
+        const updatedUser = {
+          firstName: response.data.FirstName || "",
+          lastName: response.data.LastName || "",
+          phoneNumber: response.data.PhoneNumber || "",
+          email: response.data.Email || "",
+          password: response.data.password || "",
+          suffix: response.data.Suffix || "",
+          region: response.data.Region || "",
+          province: response.data.Province || "",
+          city: response.data.City || "",
+          barangay: response.data.Barangay || "",
+          street: response.data.Street || "",
+          CreatedBy: response.data.CreatedBy || "",
+          DateOfRegistration: response.data.DateOfRegistration || "",
+          IsActive: response.data.IsActive ?? 1,  // Ensure boolean defaults are handled correctly
+          IsDeleted: response.data.IsDeleted ?? 1,
+          formattedDate: response.data.formattedDate || "",
+          Status: response.data.Status || "Inactive",
+        };
+  
+        setUser(updatedUser);
+        setSelectState(updatedUser);
+        setStatus(updatedUser.Status);
+  
+        // Handle region selection
+        if (updatedUser.region) {
+          const selectedRegion = regions.find((r) => r.RegionName === updatedUser.region);
+          if (selectedRegion) {
+            setFilteredProvinces(provinces.filter((p) => p.RegionId === selectedRegion.RegionId));
+          }
+        }
+  
+        // Handle province selection
+        if (updatedUser.province) {
+          const selectedProvince = provinces.find((p) => p.ProvinceName === updatedUser.province);
+          if (selectedProvince) {
+            const filteredCities = cities.filter((c) => c.province === selectedProvince.ProvinceKey);
+            setFilteredCities(filteredCities);
+  
+            if (filteredCities.some((c) => c.name === updatedUser.city)) {
+              setSelectState((prev) => ({ ...prev, city: updatedUser.city }));
+              console.log("Updated City Value:", updatedUser.city);
+            } else {
+              console.warn(`City "${updatedUser.city}" not found in filtered cities!`);
+              setSelectState((prev) => ({ ...prev, city: "" }));
+            }
+          } else {
+            console.log("No matching province found!");
+            setFilteredCities([]);
+          }
         }
       } catch (error) {
-        console.error("Error fetching manager:", error);
+        if (signal.aborted) {
+          console.log("Fetch aborted:", error);
+        } else {
+          console.error("Error fetching manager:", error);
+        }
       }
+  
+      return () => controller.abort();
     };
-
+  
     fetchManagerDetails();
   }, [open, manager?.userId, regions, provinces, cities]);
+  
 
   const handleUpdateClick = () => {
-    setIsClicked((prev) => !prev); // Toggle state on click
-    setIsDisabled((prev) => !prev); // Toggle form disable state
+    setIsClicked((prev) => !prev);
+    setIsDisabled((prev) => !prev);
   };
 
   const handleSelectChange = (e: SelectChangeEvent<string>, name: string) => {
@@ -288,8 +304,8 @@ const UpdateManager: React.FC<UpdateManagerProps> = React.memo(({
                   </Typography>
                 </Box>
                 <Box sx={{ textAlign: "right" }}>
-                  <Typography variant="body1">Renato Villareal</Typography>
-                  <Typography sx={{ fontSize: 12 }}>2025/01/22 13:05:32</Typography>
+                  <Typography variant="body1">{user?.CreatedBy || "N/A"}</Typography>
+                  <Typography sx={{ fontSize: 12 }}>{dayjs(user?.DateOfRegistration).format("YYYY/MM/DD HH:mm:ss")}</Typography>
                 </Box>
               </Box>
               <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", }}>
@@ -298,7 +314,7 @@ const UpdateManager: React.FC<UpdateManagerProps> = React.memo(({
                 </Box>
                 <Box sx={{ textAlign: "right" }}>
                   <Typography variant="body1">Juan Dela Cruz</Typography>
-                  <Typography sx={{ fontSize: 12 }}>2025/01/23 09:30:45</Typography>
+                  <Typography sx={{ fontSize: 12 }}>{user?.formattedDate || "N/A"}</Typography>
                 </Box>
               </Box>
             </Grid>
@@ -339,14 +355,20 @@ const UpdateManager: React.FC<UpdateManagerProps> = React.memo(({
                   <Typography variant="body1">Status</Typography>
                 </Box>
                 <Box sx={{ marginLeft: "1rem", minWidth: 150 }}>
-                  <FormControl fullWidth>
-                    <InputLabel id="status">Status</InputLabel>
-                    <Select labelId="status" id="status" value={status} label="Status">
-                      <MenuItem value={10}>Ten</MenuItem>
-                      <MenuItem value={20}>Twenty</MenuItem>
-                      <MenuItem value={30}>Thirty</MenuItem>
-                    </Select>
-                  </FormControl>
+                    <FormControl fullWidth sx={selectStyles}>
+                        <InputLabel id="status-label">Status</InputLabel>
+                        <Select
+                            labelId="status-label"
+                            id="status"
+                            value={status}
+                            onChange={(e) => setStatus(e.target.value)}
+                            label="Status"
+                            disabled={isDisabled}
+                        >
+                            <MenuItem value="Active">Active</MenuItem>
+                            <MenuItem value="Inactive">Inactive</MenuItem>
+                        </Select>
+                    </FormControl>
                 </Box>
               </Box>
             </Grid>
@@ -368,7 +390,6 @@ const UpdateManager: React.FC<UpdateManagerProps> = React.memo(({
       </DialogTitle>
       <DialogContent>
         <Grid container rowSpacing={2.5} columnSpacing={{ xs: 1, sm: 3, md: 2.5 }}>
-
           <Grid item xs={6} sm={6}>
             <Typography variant="h6" sx={{ marginBottom: "0.9rem" }}>
               Personal Information
@@ -387,7 +408,7 @@ const UpdateManager: React.FC<UpdateManagerProps> = React.memo(({
                           value={user?.lastName || ""}
                           onChange={handleManagerChange}
                           label="Last Name"
-                          disabled={isDisabled}
+                          disabled
                         />
                         {errors.lastName && <FormHelperText>{errors.lastName}</FormHelperText>}
                       </FormControl>
@@ -400,10 +421,10 @@ const UpdateManager: React.FC<UpdateManagerProps> = React.memo(({
                           id="suffix"
                           name="suffix"
                           placeholder="Enter Suffix"
-                          value={user.suffix}
+                          value={user.suffix || "N/A"}
                           onChange={handleInputChange}
                           label="Suffix"
-                          disabled={isDisabled}
+                          disabled
                         />
                         {errors.suffix && <FormHelperText>{errors.suffix}</FormHelperText>}
                       </FormControl>
@@ -419,10 +440,10 @@ const UpdateManager: React.FC<UpdateManagerProps> = React.memo(({
                           id="password"
                           type={showPassword ? "text" : "password"}
                           name="password"
-                          value={user.password || ""}
+                          value={"********"}
                           onChange={handleInputChange}
                           label="Password"
-                          disabled={isDisabled}
+                          disabled
                           endAdornment={
                             <InputAdornment position="end">
                               <IconButton
@@ -473,7 +494,7 @@ const UpdateManager: React.FC<UpdateManagerProps> = React.memo(({
                       value={user[key as keyof typeof user] || ""}
                       onChange={handleInputChange}
                       label={formatKey(key)}
-                      disabled={isDisabled}
+                      disabled={isDisabled || key === "firstName" || key === "email"}
                     />
                     {errors[key] && <FormHelperText error>{errors[key]}</FormHelperText>}
                   </FormControl>
@@ -489,7 +510,7 @@ const UpdateManager: React.FC<UpdateManagerProps> = React.memo(({
             {["region", "province", "city", "barangay", "street"].map((key) => (
               <Grid item xs={12} key={key} sx={{ marginBottom: "1rem" }}>
                 {["region", "province", "city"].includes(key) ? (
-                  <FormControl fullWidth error={!!errors[key]}>
+                  <FormControl fullWidth error={!!errors[key]}  sx={selectStyles}>
                     <InputLabel id={`${key}-label`}>{key.charAt(0).toUpperCase() + key.slice(1)}</InputLabel>
                     <Select
                       labelId={`${key}-label`}
@@ -534,7 +555,7 @@ const UpdateManager: React.FC<UpdateManagerProps> = React.memo(({
                     {errors[key] && <FormHelperText>{errors[key]}</FormHelperText>}
                   </FormControl>
                 ) : (
-                  <FormControl fullWidth error={!!errors[key]} variant="outlined">
+                  <FormControl fullWidth error={!!errors[key]} variant="outlined" sx={inputStyles} >
                     <InputLabel htmlFor={key}>{key.charAt(0).toUpperCase() + key.slice(1)}</InputLabel>
                     <OutlinedInput
                       id={key}
@@ -554,6 +575,23 @@ const UpdateManager: React.FC<UpdateManagerProps> = React.memo(({
               </Grid>
             ))}
           </Grid>
+          {isClicked && (
+            <Grid item xs={12} sx={{ marginBottom: "1rem", paddingTop: "0px !important" }}>
+              <FormControl fullWidth variant="outlined" sx={inputStyles}>
+                <InputLabel >{"Remarks"}</InputLabel>
+                <OutlinedInput
+                  //id={key}
+                  //name={key}
+                  //disabled={isDisabled}
+                  placeholder=""
+                  //value={user[key as keyof typeof user] || ""}
+                  //onChange={(e) => setUser((prevState) => ({ ...prevState, [key]: e.target.value })) }
+                  label="remarks"
+                />  
+                {/* {errors[key] && <FormHelperText>{errors[key]}</FormHelperText>} */}
+              </FormControl>
+            </Grid>
+          )}
         </Grid>
       </DialogContent>
     </Dialog>

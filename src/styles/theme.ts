@@ -251,7 +251,7 @@ const darkTheme = createTheme({
       styleOverrides: {
         input: {
           color: "#ffffff",
-          //padding: "15px 16px",
+          //padding: "10px 16px",
           width: "100% !important",
         },
       },
@@ -296,7 +296,7 @@ export const inputStyles = {
 export const selectStyles = {
   "& .MuiOutlinedInput-root": {
     "& fieldset": {
-      borderColor: "#D1D5DB !important",
+      borderColor: "#D1D5DB",
       padding: "14px 40px 10px 14px",
     },
 

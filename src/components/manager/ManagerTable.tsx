@@ -91,19 +91,18 @@ const ManagerTable: React.FC<ManagerTableProps> = ({ managers, onCreate, onEdit,
 
   const filteredUsers = filterData(
     managers.map((user) => {
-  
       return {
         ...user,
         fullName: `${user.FirstName || ""} ${user.LastName || ""}`.trim().toLowerCase(),
         formattedDate: user.DateOfRegistration
-          ? dayjs(user.DateOfRegistration).format("YYYY-MM-DD")
-          : "Invalid Date",
-        Status: user.IsDeleted === 0 ? "Active" : "Inactive",
+          ? dayjs(user.DateOfRegistration).format("YYYY/MM/DD") // ✅ Matches requested format
+          : "N/A",
+        Status: user.IsActive === 1 ? "Active" : "Inactive", // ✅ Use IsActive for status logic
       };
     }),
     { ...filters, searchQuery },
-    ["fullName", "UserName", "Region", "Province", "CreatedBy", "Status", "DateOfRegistration"]
-  );
+    ["fullName", "UserName", "Region", "Province", "CreatedBy", "Status", "formattedDate"] // ✅ Ensure "formattedDate" is used instead of raw "DateOfRegistration"
+  );  
 
   const sortedFilteredUsers: User[] = sortData(filteredUsers, {
     key: sortConfig.key,
@@ -369,19 +368,19 @@ const ManagerTable: React.FC<ManagerTableProps> = ({ managers, onCreate, onEdit,
                     <Button
                       variant="contained"
                       sx={{
-                        cursor: 'auto',
-                        textTransform: 'none',
-                        borderRadius: '12px',
-                        padding: '1.2px 13.5px',
-                        fontSize: '14px',
-                        backgroundColor: user.IsDeleted === 0 ? "#388E3C" : "#D43F3F",
+                        cursor: "auto",
+                        textTransform: "none",
+                        borderRadius: "12px",
+                        padding: "1.2px 13.5px",
+                        fontSize: "14px",
+                        backgroundColor: user.IsActive === 1 ? "#D43F3F" : "#388E3C",
                         color: "white",
                         "&:hover": {
-                          backgroundColor: user.IsDeleted === 0 ? "#4CAF50" : "#F05252",
+                          backgroundColor: user.IsActive === 1 ? "#F05252" : "#4CAF50",
                         },
                       }}
                     >
-                      {user.IsDeleted === 0 ? "Active" : "Inactive"}
+                      {user.IsActive === 1 ? "Inactive" : "Active"}
                     </Button>
                   </TableCell>
                   <TableCell>
