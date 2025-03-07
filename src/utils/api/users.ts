@@ -67,17 +67,24 @@ const fetchUserById = async (userId: string | number) => {
 };
 
 // Update user function
-const updateUser = async (userData: Record<string, any>) => {
+const updateUser = async (userId: number, userData: Record<string, any>) => {
     try {
-        const response = await axiosInstance.post("/users/edituser", userData, {
-            withCredentials: true,
-        });
-
-        return response.data;
+      const response = await axiosInstance.patch(
+        "/users/edituser",
+        { userId, ...userData }, // Ensure userId is included in the request payload
+        {
+          withCredentials: true,
+        }
+      );
+  
+      return response.data;
     } catch (error) {
-        console.error("Error updating user:", (error as Error).message);
-        return { success: false, message: (error as Error).message, data: {} };
+      console.error("Error updating user:", error);
+      return { success: false, message: (error as Error).message, data: {} };
     }
-};
+  };
+  
+  
+  
 
 export { fetchUsers, addUser, updateUser, fetchUserById };
