@@ -27,9 +27,18 @@ import { inputStyles, inputErrorStyles, selectStyles } from "../../styles/theme"
 import { fetchUserById, updateUser } from "~/utils/api/users";
 import dayjs, { Dayjs } from "dayjs";
 import Swal from "sweetalert2";
+import UpdateSummaryManagerPage from "./UpdateSummaryManager";
+
+type LogType = {
+  id: number;
+  title: string;
+  description: string;
+};
 
 interface UpdateManagerProps {
   open: boolean;
+  userId: number;
+  manager: User | null;
   onClose: () => void;
   onSubmit: (userData: {
     UserId: number;
@@ -47,7 +56,7 @@ interface UpdateManagerProps {
   regions: any[];
   provinces: any[];
   cities: any[];
-  manager?: User | null;
+  logData: LogType;
 }
 
 const UpdateManager: React.FC<UpdateManagerProps> = React.memo(({
@@ -114,25 +123,32 @@ const UpdateManager: React.FC<UpdateManagerProps> = React.memo(({
   const [isDisabled, setIsDisabled] = useState(true);
   const [isClicked, setIsClicked] = useState(false);
   const [status, setStatus] = useState("");
+  const [selectedUser, setSelectedUser] = useState<User | null>(null);
+
+  const [selectedUserId, setSelectedUserId] = useState<number | null>(null);
+
+  const [openEditLogModal, setOpenEditLogModal] = useState(false);
+  const [selectedLog, setSelectedLog] = useState<LogType | null>(null);
+  const [logs, setLogs] = useState<LogType[]>([]);
 
   useEffect(() => {
     if (!open || !manager?.userId) return;
-  
+
     const fetchManagerDetails = async () => {
       const controller = new AbortController();
       const signal = controller.signal;
-  
+
       try {
         console.log("Fetching manager with ID:", manager.userId);
         const response = await fetchUserById(manager.userId);
-  
+
         if (!response.success) {
           console.error("Failed to fetch manager details:", response.message);
           return;
         }
-  
+
         console.log("Fetched Manager Details:", response.data);
-  
+
         const updatedUser = {
           UserId: response.data.UserId ?? null,
           firstName: response.data.FirstName || "",
@@ -154,11 +170,11 @@ const UpdateManager: React.FC<UpdateManagerProps> = React.memo(({
           Status: response.data.Status || "Inactive",
           remarks: response.data.remarks || "",
         };
-        
+
         setUser(updatedUser);
         setSelectState(updatedUser);
         setStatus(updatedUser.Status);
-  
+
         // Handle region selection
         if (updatedUser.region) {
           const selectedRegion = regions.find((r) => r.RegionName === updatedUser.region);
@@ -166,14 +182,14 @@ const UpdateManager: React.FC<UpdateManagerProps> = React.memo(({
             setFilteredProvinces(provinces.filter((p) => p.RegionId === selectedRegion.RegionId));
           }
         }
-  
+
         // Handle province selection
         if (updatedUser.province) {
           const selectedProvince = provinces.find((p) => p.ProvinceName === updatedUser.province);
           if (selectedProvince) {
             const filteredCities = cities.filter((c) => c.province === selectedProvince.ProvinceKey);
             setFilteredCities(filteredCities);
-  
+
             if (filteredCities.some((c) => c.name === updatedUser.city)) {
               setSelectState((prev) => ({ ...prev, city: updatedUser.city }));
               console.log("Updated City Value:", updatedUser.city);
@@ -193,10 +209,10 @@ const UpdateManager: React.FC<UpdateManagerProps> = React.memo(({
           console.error("Error fetching manager:", error);
         }
       }
-  
+
       return () => controller.abort();
     };
-  
+
     fetchManagerDetails();
   }, [open, manager?.userId, regions, provinces, cities]);
 
@@ -207,21 +223,21 @@ const UpdateManager: React.FC<UpdateManagerProps> = React.memo(({
 
   const handleSelectChange = (e: SelectChangeEvent<string>, name: string) => {
     const value = e.target.value;
-  
+
     setSelectState((prevState) => ({
       ...prevState,
       [name]: value,
     }));
-  
+
     setUser((prevUser) => {
       if (!prevUser) return prevUser; // Avoid overwriting user state if it's null
-  
+
       return {
         ...prevUser,
         [name]: value, // Update the selected field in user
       };
     });
-  
+
     if (name === "region") {
       const selectedRegion = regions.find((r) => r.RegionName === value);
       if (selectedRegion) {
@@ -230,13 +246,13 @@ const UpdateManager: React.FC<UpdateManagerProps> = React.memo(({
       } else {
         setFilteredProvinces([]);
       }
-  
+
       // Reset province & city when region changes
       setSelectState((prev) => ({ ...prev, province: "", city: "" }));
       setUser((prev) => ({ ...prev, province: "", city: "" }));
       setFilteredCities([]);
     }
-  
+
     if (name === "province") {
       const selectedProvince = provinces.find((p) => p.ProvinceName === value);
       if (selectedProvince) {
@@ -245,7 +261,7 @@ const UpdateManager: React.FC<UpdateManagerProps> = React.memo(({
       } else {
         setFilteredCities([]);
       }
-  
+
       // Reset city when province changes
       setSelectState((prev) => ({ ...prev, city: "" }));
       setUser((prev) => ({ ...prev, city: "" }));
@@ -256,7 +272,7 @@ const UpdateManager: React.FC<UpdateManagerProps> = React.memo(({
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
     const { name, value } = e.target;
-  
+
     setUser((prevUser) => {
       if (!prevUser) {
         return {
@@ -282,37 +298,41 @@ const UpdateManager: React.FC<UpdateManagerProps> = React.memo(({
           [name]: value, // Ensure dynamic field update
         };
       }
-  
+
       return {
         ...prevUser,
         [name]: value, // Ensure correct key update
       };
     });
   };
-  
+
   const handleUpdateManagerSubmit = async () => {
-    if (!user || !user.email || !user.UserId) { 
+    if (!user || !user.email || !user.UserId) {
       console.error("User data is incomplete");
       return;
     }
-  
+
     try {
       console.log("Updating user:", user);
       const response = await updateUser(user.UserId, user);
-  
+
       if (response.success) {
         console.log("User updated successfully:", response.data);
-  
+
         // 🔹 Fetch updated user data again from the server
         const updatedResponse = await fetchUserById(user.UserId);
         if (updatedResponse.success) {
-          setUser(updatedResponse.data);
+          setUser((prevUser) => ({
+            ...prevUser,
+            ...updatedResponse.data,
+            remarks: updatedResponse.data.remarks || prevUser.remarks || "",
+          }));
           console.log("Updated user state:", updatedResponse.data);
         } else {
           console.warn("Failed to fetch updated user data:", updatedResponse.message);
         }
-  
-        onClose(); // Close modal after success
+
+        onClose();
       } else {
         console.error("Failed to update user:", response.message);
       }
@@ -326,7 +346,16 @@ const UpdateManager: React.FC<UpdateManagerProps> = React.memo(({
       });
     }
   };
-  
+
+  const handleOpenEditLogModal = (userId: number | null) => {
+    setSelectedUserId(userId);
+    setOpenEditLogModal(true);
+  };
+
+  const handleCloseEditLogModal = () => {
+    setOpenEditLogModal(false);
+    setSelectedLog(null);
+  };
   
   return (
     <Dialog
@@ -357,9 +386,20 @@ const UpdateManager: React.FC<UpdateManagerProps> = React.memo(({
               <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
                 <Box>
                   <Typography variant="body1">Last Updated by</Typography>
-                  <Typography sx={{ fontSize: 12, color: "#67ABEB", cursor: "pointer" }}>
+                  <Typography
+                    sx={{ fontSize: 12, color: "#67ABEB", cursor: "pointer" }}
+                    onClick={() => handleOpenEditLogModal(user.UserId)}
+                  >
                     View Summary
                   </Typography>
+
+                  {openEditLogModal && selectedUserId !== null && (
+                    <UpdateSummaryManagerPage
+                      open={openEditLogModal}
+                      onClose={handleCloseEditLogModal}
+                      userId={selectedUserId}
+                    />
+                  )}
                 </Box>
                 <Box sx={{ textAlign: "right" }}>
                   <Typography variant="body1">{user?.CreatedBy || "N/A"}</Typography>
@@ -413,20 +453,20 @@ const UpdateManager: React.FC<UpdateManagerProps> = React.memo(({
                   <Typography variant="body1">Status</Typography>
                 </Box>
                 <Box sx={{ marginLeft: "1rem", minWidth: 150 }}>
-                    <FormControl fullWidth sx={selectStyles}>
-                        <InputLabel id="status-label">Status</InputLabel>
-                        <Select
-                            labelId="status-label"
-                            id="status"
-                            value={status}
-                            onChange={(e) => setStatus(e.target.value)}
-                            label="Status"
-                            disabled={isDisabled}
-                        >
-                            <MenuItem value="Active">Active</MenuItem>
-                            <MenuItem value="Inactive">Inactive</MenuItem>
-                        </Select>
-                    </FormControl>
+                  <FormControl fullWidth sx={selectStyles}>
+                    <InputLabel id="status-label">Status</InputLabel>
+                    <Select
+                      labelId="status-label"
+                      id="status"
+                      value={status}
+                      onChange={(e) => setStatus(e.target.value)}
+                      label="Status"
+                      disabled={isDisabled}
+                    >
+                      <MenuItem value="Active">Active</MenuItem>
+                      <MenuItem value="Inactive">Inactive</MenuItem>
+                    </Select>
+                  </FormControl>
                 </Box>
               </Box>
             </Grid>
@@ -568,7 +608,7 @@ const UpdateManager: React.FC<UpdateManagerProps> = React.memo(({
             {["region", "province", "city", "barangay", "street"].map((key) => (
               <Grid item xs={12} key={key} sx={{ marginBottom: "1rem" }}>
                 {["region", "province", "city"].includes(key) ? (
-                  <FormControl fullWidth error={!!errors[key]}  sx={selectStyles}>
+                  <FormControl fullWidth error={!!errors[key]} sx={selectStyles}>
                     <InputLabel id={`${key}-label`}>{key.charAt(0).toUpperCase() + key.slice(1)}</InputLabel>
                     <Select
                       labelId={`${key}-label`}
@@ -632,38 +672,38 @@ const UpdateManager: React.FC<UpdateManagerProps> = React.memo(({
             ))}
           </Grid>
           {isClicked && (
-          <Grid item xs={12} sx={{ marginBottom: "1rem", paddingTop: "0px !important" }}>
-            <FormControl fullWidth variant="outlined" sx={inputStyles}>
-              <InputLabel htmlFor="remarks">Remarks</InputLabel>
-              <OutlinedInput
-                id="remarks"
-                name="remarks"
-                placeholder="Enter Remarks"
-                value={user.remarks}
-                onChange={handleManagerChange}
-                label="Remarks"
-              />
-            </FormControl>
-          </Grid>
+            <Grid item xs={12} sx={{ marginBottom: "1rem", paddingTop: "0px !important" }}>
+              <FormControl fullWidth variant="outlined" sx={inputStyles}>
+                <InputLabel htmlFor="remarks">Remarks</InputLabel>
+                <OutlinedInput
+                  id="remarks"
+                  name="remarks"
+                  placeholder="Enter Remarks"
+                  value={user.remarks}
+                  onChange={handleManagerChange}
+                  label="Remarks"
+                />
+              </FormControl>
+            </Grid>
           )}
         </Grid>
         {isClicked && (
-        <Button
-          onClick={handleUpdateManagerSubmit}
-          sx={{
-            mt: 1,
-            width: "100%",
-            backgroundColor: "#67ABEB",
-            textTransform: "none",
-            fontSize: "12px",
-            padding: "0.8rem",
-            borderRadius: "8px",
-            color: '#181A1B',
-          }}
-          variant="contained"
-        >
-          Update Manager
-        </Button>
+          <Button
+            onClick={handleUpdateManagerSubmit}
+            sx={{
+              mt: 1,
+              width: "100%",
+              backgroundColor: "#67ABEB",
+              textTransform: "none",
+              fontSize: "12px",
+              padding: "0.8rem",
+              borderRadius: "8px",
+              color: '#181A1B',
+            }}
+            variant="contained"
+          >
+            Update Manager
+          </Button>
         )}
       </DialogContent>
     </Dialog>

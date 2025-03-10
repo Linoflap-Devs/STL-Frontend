@@ -17,9 +17,9 @@ const cities = require('philippines/cities');
 
 const ManagersPage = () => {
   const [managers, setManagers] = useState<User[]>([]);
-  const [regions, setRegions] = useState([]); // Store regions
-  const [provinces, setProvinces] = useState([]); // Store provinces
-  const [cityList, setCityList] = useState([]); // Store cities
+  const [regions, setRegions] = useState([]);
+  const [provinces, setProvinces] = useState([]);
+  const [cityList, setCityList] = useState([]);
   const [isModalOpen, setModalOpen] = useState(false);
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
   const [isUpdateModalOpen, setUpdateModalOpen] = useState(false);

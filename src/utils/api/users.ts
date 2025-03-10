@@ -69,22 +69,33 @@ const fetchUserById = async (userId: string | number) => {
 // Update user function
 const updateUser = async (userId: number, userData: Record<string, any>) => {
     try {
-      const response = await axiosInstance.patch(
-        "/users/edituser",
-        { userId, ...userData }, // Ensure userId is included in the request payload
-        {
-          withCredentials: true,
-        }
-      );
-  
-      return response.data;
-    } catch (error) {
-      console.error("Error updating user:", error);
-      return { success: false, message: (error as Error).message, data: {} };
-    }
-  };
-  
-  
-  
+        const response = await axiosInstance.patch(
+            "/users/edituser",
+            { userId, ...userData }, // Ensure userId is included in the request payload
+            {
+                withCredentials: true,
+            }
+        );
 
-export { fetchUsers, addUser, updateUser, fetchUserById };
+        return response.data;
+    } catch (error) {
+        console.error("Error updating user:", error);
+        return { success: false, message: (error as Error).message, data: {} };
+    }
+};
+
+const editLogUser = async (userId: number, userData: Record<string, any>) => {
+    try {
+        const response = await axiosInstance.get("/users/getEditLog", {
+            params: { userId },
+            withCredentials: true,
+        }); 
+
+        return response.data;
+    } catch (error) {
+        console.error("Error updating user:", error);
+        return { success: false, message: (error as Error).message, data: {} };
+    }
+};
+
+export { fetchUsers, addUser, updateUser, fetchUserById, editLogUser };

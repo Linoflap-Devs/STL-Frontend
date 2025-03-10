@@ -95,13 +95,13 @@ const ManagerTable: React.FC<ManagerTableProps> = ({ managers, onCreate, onEdit,
         ...user,
         fullName: `${user.FirstName || ""} ${user.LastName || ""}`.trim().toLowerCase(),
         formattedDate: user.DateOfRegistration
-          ? dayjs(user.DateOfRegistration).format("YYYY/MM/DD") // ✅ Matches requested format
+          ? dayjs(user.DateOfRegistration).format("YYYY/MM/DD")
           : "N/A",
-        Status: user.IsActive === 1 ? "Active" : "Inactive", // ✅ Use IsActive for status logic
+        Status: user.IsActive === 1 ? "Active" : "Inactive",
       };
     }),
     { ...filters, searchQuery },
-    ["fullName", "UserName", "Region", "Province", "CreatedBy", "Status", "formattedDate"] // ✅ Ensure "formattedDate" is used instead of raw "DateOfRegistration"
+    ["fullName", "UserName", "Region", "Province", "CreatedBy", "Status", "formattedDate"]
   );  
 
   const sortedFilteredUsers: User[] = sortData(filteredUsers, {
