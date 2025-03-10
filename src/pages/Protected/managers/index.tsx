@@ -26,52 +26,51 @@ const ManagersPage = () => {
   const [selectedManager, setSelectedManager] = useState<User | null>(null);
 
   // Fetching data on component mount
-  useEffect(() => {
-    const loadData = async () => {
-      try {
-        const [userResponse, regionResponse, provinceResponse] = await Promise.all([
-          fetchUsers({}),
-          fetchRegions({}),
-          fetchProvinces({})
-        ]);
-
-        if (userResponse.success && regionResponse.success && provinceResponse.success) {
-          setRegions(regionResponse.data);
-          setProvinces(provinceResponse.data);
-          
-          const cityData = cities.map((city: any) => ({
-            name: city.name,
-            province: city.province
+  const loadData = async () => {
+    try {
+      const [userResponse, regionResponse, provinceResponse] = await Promise.all([
+        fetchUsers({}),
+        fetchRegions({}),
+        fetchProvinces({})
+      ]);
+  
+      if (userResponse.success && regionResponse.success && provinceResponse.success) {
+        setRegions(regionResponse.data);
+        setProvinces(provinceResponse.data);
+  
+        const cityData = cities.map((city: any) => ({
+          name: city.name,
+          province: city.province
+        }));
+        setCityList(cityData);
+  
+        const filteredUsers = userResponse.data
+          .filter((user: { UserTypeId: number }) => user.UserTypeId === 3)
+          .map((user: any) => ({
+            userId: user.UserId,
+            FirstName: user.FirstName ?? "N/A",
+            LastName: user.LastName ?? "N/A",
+            Email: user.Email ?? "N/A",
+            DateOfRegistration: user.DateOfRegistration ?? "N/A",
+            CreatedBy: user.CreatedBy ?? "N/A",
+            Region: user.Region ?? "N/A",
+            Province: user.Province ?? "N/A",
+            City: user.City ?? "N/A",
+            Street: user.Street ?? "N/A",
           }));
-          setCityList(cityData);
-
-          // Filter only managers (UserTypeId === 3)
-          const filteredUsers = userResponse.data
-            .filter((user: { UserTypeId: number }) => user.UserTypeId === 3)
-            .map((user: any) => ({
-              userId: user.UserId,
-              FirstName: user.FirstName ?? "N/A",
-              LastName: user.LastName ?? "N/A",
-              Email: user.Email ?? "N/A",
-              DateOfRegistration: user.DateOfRegistration ?? "N/A",
-              CreatedBy: user.CreatedBy ?? "N/A",
-              Region: user.Region ?? "N/A",
-              Province: user.Province ?? "N/A",
-              City: user.City ?? "N/A",
-              Steet: user.Street ?? "N/A",
-            }));
-
-          setManagers(filteredUsers);
-        } else {
-          console.error("Failed to fetch some data.");
-        }
-      } catch (error) {
-        console.error("Error fetching data:", error);
+  
+        setManagers(filteredUsers);
+      } else {
+        console.error("Failed to fetch some data.");
       }
-    };
-
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    }
+  };
+  
+  useEffect(() => {
     loadData();
-  }, []);
+  }, []);  
 
   const handleUserCreate = () => {
     setSelectedUser(null);
@@ -183,6 +182,7 @@ const ManagersPage = () => {
           cities={cityList}
           regions={regions}
           provinces={provinces}
+          loadData={loadData}
         />
       )}
     </Box>

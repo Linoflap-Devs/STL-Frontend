@@ -38,7 +38,7 @@ type LogType = {
 
 interface UpdateManagerProps {
   open: boolean;
-  userId: number;
+
   manager: User | null;
   onClose: () => void;
   onSubmit: (userData: {
@@ -58,7 +58,7 @@ interface UpdateManagerProps {
   regions: any[];
   provinces: any[];
   cities: any[];
-  logData: LogType;
+  loadData: () => Promise<void>;
 }
 
 const UpdateManager: React.FC<UpdateManagerProps> = React.memo(({
@@ -69,6 +69,7 @@ const UpdateManager: React.FC<UpdateManagerProps> = React.memo(({
   regions,
   provinces,
   cities,
+  loadData,
 }) => {
   const [user, setUser] = useState<{
     UserId: number | null;
@@ -128,8 +129,6 @@ const UpdateManager: React.FC<UpdateManagerProps> = React.memo(({
   const [selectedUserId, setSelectedUserId] = useState<number | null>(null);
   const [openEditLogModal, setOpenEditLogModal] = useState(false);
   const [selectedLog, setSelectedLog] = useState<LogType | null>(null);
-  const [logs, setLogs] = useState<LogType[]>([]);
-  
 
   useEffect(() => {
     if (!open || !manager?.userId) return;
@@ -146,7 +145,6 @@ const UpdateManager: React.FC<UpdateManagerProps> = React.memo(({
           console.error("Failed to fetch manager details:", response.message);
           return;
         }
-
         console.log("Fetched Manager Details:", response.data);
 
         const updatedUser = {
@@ -318,21 +316,21 @@ const UpdateManager: React.FC<UpdateManagerProps> = React.memo(({
     setSelectedLog(null);
   };
 
-  const handleUpdateManagerSubmit = async () => {  
+  const handleUpdateManagerSubmit = async () => {
     const validationErrors = validateUser(user, selectState);
-    
+
     // Separate validation for remarks
     if (!user.remarks || user.remarks.trim() === "") {
       validationErrors.remarks = "Remarks is required";
     }
-  
+
     console.log("Validation Errors:", validationErrors);
-    
+
     if (Object.keys(validationErrors).length > 0) {
       setErrors(validationErrors);
       return;
     }
-  
+
     const confirmation = await Swal.fire({
       title: "Update Confirmation",
       text: "Did you enter the correct details?",
@@ -346,31 +344,33 @@ const UpdateManager: React.FC<UpdateManagerProps> = React.memo(({
         cancelButton: "no-hover",
       },
     });
-  
+
     if (!confirmation.isConfirmed) {
       return;
     }
-  
+
     try {
       console.log("Updating user with data:", { ...user, remarks: user.remarks });
-  
+
       if (user.UserId === null) {
         console.error("UserId is null");
         return;
       }
-      
+
       const response = await updateUser(user.UserId!, {
         ...user,
         remarks: user.remarks,
       });
-      
+
       if (response.success) {
         console.log("User updated successfully:", response.data);
-  
+
+        await loadData(); 
+
         const updatedResponse = await updateUser(user.UserId!, { ...user });
         if (updatedResponse.success) {
           console.log("Fetched updated user data:", updatedResponse.data);
-  
+
           setUser((prevUser) => ({
             ...prevUser,
             ...updatedResponse.data,
@@ -379,14 +379,14 @@ const UpdateManager: React.FC<UpdateManagerProps> = React.memo(({
         } else {
           console.warn("Failed to fetch updated user data:", updatedResponse.message);
         }
-  
+
         Swal.fire({
           icon: "success",
           title: "Manager Updated!",
           text: "The manager details have been updated successfully.",
           confirmButtonColor: "#67ABEB",
         });
-  
+
         onSubmit(user);
         onClose();
       } else {
@@ -408,7 +408,7 @@ const UpdateManager: React.FC<UpdateManagerProps> = React.memo(({
       });
     }
   };
-  
+
   return (
     <Dialog
       open={open}
@@ -472,12 +472,12 @@ const UpdateManager: React.FC<UpdateManagerProps> = React.memo(({
               item
               xs={12}
               md={6}
-              sx={{
-                display: "flex",
-                flexDirection: "column",
-                gap: 0,
-              }}
-            >
+                sx={{
+                  display: "flex",
+                  flexDirection: "column",
+                  gap: 0,
+                }}
+              >
               <Tooltip title={isClicked ? "Disable form" : "Update form"} arrow>
                 <Button
                   component="a"

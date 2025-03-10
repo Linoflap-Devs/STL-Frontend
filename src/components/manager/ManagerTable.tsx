@@ -95,14 +95,14 @@ const ManagerTable: React.FC<ManagerTableProps> = ({ managers, onCreate, onEdit,
         ...user,
         fullName: `${user.FirstName || ""} ${user.LastName || ""}`.trim().toLowerCase(),
         formattedDate: user.DateOfRegistration
-          ? dayjs(user.DateOfRegistration).format("YYYY/MM/DD") 
+          ? dayjs(user.DateOfRegistration).format("YYYY/MM/DD")
           : "Invalid Date",
         Status: user.IsActive === 1 ? "Active" : "Inactive",
       };
     }),
     { ...filters, searchQuery },
     ["fullName", "UserName", "Region", "Province", "CreatedBy", "Status", "DateOfRegistration"]
-  );  
+  );
 
   const sortedFilteredUsers: User[] = sortData(filteredUsers, {
     key: sortConfig.key,
@@ -197,7 +197,6 @@ const ManagerTable: React.FC<ManagerTableProps> = ({ managers, onCreate, onEdit,
                 ),
               }}
             />
-            {/* Filter Icons */}
             {isFilterActive ? (
               <FilterListOffIcon
                 onClick={handleFilterToggle}
@@ -210,7 +209,6 @@ const ManagerTable: React.FC<ManagerTableProps> = ({ managers, onCreate, onEdit,
               />
             )}
           </Box>
-
           <Box sx={{ display: "flex", alignItems: "center" }}>
             {selectedUserIds.size > 0 && (
               <Button
@@ -222,7 +220,6 @@ const ManagerTable: React.FC<ManagerTableProps> = ({ managers, onCreate, onEdit,
                 {selectedUserIds.size === 1 ? "Selected User" : "Selected Users"}
               </Button>
             )}
-
             <Button variant="contained" onClick={onCreate} sx={buttonStyles}>
               {UserSectionData.addManagerButton}
             </Button>
