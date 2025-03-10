@@ -95,13 +95,13 @@ const ManagerTable: React.FC<ManagerTableProps> = ({ managers, onCreate, onEdit,
         ...user,
         fullName: `${user.FirstName || ""} ${user.LastName || ""}`.trim().toLowerCase(),
         formattedDate: user.DateOfRegistration
-          ? dayjs(user.DateOfRegistration).format("YYYY/MM/DD")
-          : "N/A",
+          ? dayjs(user.DateOfRegistration).format("YYYY/MM/DD") 
+          : "Invalid Date",
         Status: user.IsActive === 1 ? "Active" : "Inactive",
       };
     }),
     { ...filters, searchQuery },
-    ["fullName", "UserName", "Region", "Province", "CreatedBy", "Status", "formattedDate"]
+    ["fullName", "UserName", "Region", "Province", "CreatedBy", "Status", "DateOfRegistration"]
   );  
 
   const sortedFilteredUsers: User[] = sortData(filteredUsers, {
@@ -232,14 +232,6 @@ const ManagerTable: React.FC<ManagerTableProps> = ({ managers, onCreate, onEdit,
       <Table size="small">
         <TableHead>
           <TableRow>
-            <TableCell>
-              <Tooltip title="Select All">
-                <Checkbox
-                  checked={isAllSelected}
-                  onChange={handleSelectAll}
-                />
-              </Tooltip>
-            </TableCell>
             <>
               <SortableTableCell
                 label="Full Name"
@@ -356,9 +348,6 @@ const ManagerTable: React.FC<ManagerTableProps> = ({ managers, onCreate, onEdit,
               .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
               .map((user) => (
                 <TableRow>
-                  <TableCell>
-                    <Checkbox />
-                  </TableCell>
                   <TableCell>{user.userId} {`${user.FirstName} ${user.LastName}`}</TableCell>
                   <TableCell>{user.Email}</TableCell>
                   <TableCell>{user.Region}</TableCell>
@@ -398,7 +387,7 @@ const ManagerTable: React.FC<ManagerTableProps> = ({ managers, onCreate, onEdit,
         open={Boolean(anchorEl)}
         onClose={() => handleToggleMenu()}
         MenuListProps={{ "aria-labelledby": "basic-button" }}>
-        <MenuItem onClick={() => selectedUser ? onEdit(selectedUser) : null}>View</MenuItem>
+        <MenuItem onClick={() => selectedUser ? onEdit(selectedUser) : null}>Update</MenuItem>
         <MenuItem >Suspend</MenuItem>
       </Menu>
       <Box

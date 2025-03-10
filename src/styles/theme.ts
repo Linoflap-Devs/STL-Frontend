@@ -92,6 +92,7 @@ const darkTheme = createTheme({
           borderBottom: "1px solid #3F3F3F",
         },
         head: {
+          padding: "13px",
           color: "#FFFFFF",
           fontWeight: "bold",
         },
@@ -120,6 +121,7 @@ const darkTheme = createTheme({
         },
       },
     },
+    // checkbox
     MuiCheckbox: {
       styleOverrides: {
         root: {
