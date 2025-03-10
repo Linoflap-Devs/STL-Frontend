@@ -5,13 +5,14 @@ import { formatKey } from "../utils/format";
 export const validateUser = (user: User, selectState: Record<string, any>) => {
   const newErrors: { [key: string]: string } = {};
   const nameRegex = /^[A-Za-z\s]+$/;
-  const phoneRegex = /^09\d{2} \d{3} \d{4}$/;
+  //const phoneRegex = /^09\d{2} \d{3} \d{4}$/;
+  const phoneRegex = /^09\d{2}[\s-]?\d{3}[\s-]?\d{4}$/;
   const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
   const mergedUser = { ...user, ...selectState };
 
   Object.entries(mergedUser).forEach(([key, value]) => {
     if (value === null || value === undefined || value === "") {
-      if (key !== "suffix" && key !== "userName") {
+      if (key !== "suffix" && key !== "password" && key !== "street" && key !== "remarks" && key !== "CreatedBy") {
         newErrors[key] = `${formatKey(key)} is required`;
       }
       return;

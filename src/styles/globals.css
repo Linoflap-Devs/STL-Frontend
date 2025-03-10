@@ -40,13 +40,9 @@ input:-webkit-autofill {
   -webkit-text-fill-color: white !important;
 }
 
-.swal2-popup {
-  z-index: 9999 !important;
+.swal2-backdrop-show {
+  z-index: 999999 !important; /* Ensure it appears above other elements */
 }
-
-/* .MuiDialog-root {
-  z-index: 999 !important;
-} */
 
 .MuiChartsAxis-tick text:empty {
   display: none !important;

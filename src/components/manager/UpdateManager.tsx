@@ -28,6 +28,7 @@ import { fetchUserById, updateUser } from "~/utils/api/users";
 import dayjs, { Dayjs } from "dayjs";
 import Swal from "sweetalert2";
 import UpdateSummaryManagerPage from "./UpdateSummaryManager";
+import { validateUser } from "~/utils/validation"
 
 type LogType = {
   id: number;
@@ -41,17 +42,18 @@ interface UpdateManagerProps {
   manager: User | null;
   onClose: () => void;
   onSubmit: (userData: {
-    UserId: number;
-    firstname: string;
-    lastname: string;
+    UserId: number | null;
+    firstName: string;
+    lastName: string;
     region: string;
     province: string;
     city: string;
     barangay: string;
-    Street: string;
-    phonenumber: string;
-    username: string;
+    street: string;
+    phoneNumber: string;
     password: string;
+    email: string;
+    remarks: string;
   }) => void;
   regions: any[];
   provinces: any[];
@@ -62,7 +64,7 @@ interface UpdateManagerProps {
 const UpdateManager: React.FC<UpdateManagerProps> = React.memo(({
   open,
   onClose,
-  //onSubmit,
+  onSubmit,
   manager,
   regions,
   provinces,
@@ -127,6 +129,7 @@ const UpdateManager: React.FC<UpdateManagerProps> = React.memo(({
   const [openEditLogModal, setOpenEditLogModal] = useState(false);
   const [selectedLog, setSelectedLog] = useState<LogType | null>(null);
   const [logs, setLogs] = useState<LogType[]>([]);
+  
 
   useEffect(() => {
     if (!open || !manager?.userId) return;
@@ -213,6 +216,7 @@ const UpdateManager: React.FC<UpdateManagerProps> = React.memo(({
     fetchManagerDetails();
   }, [open, manager?.userId, regions, provinces, cities]);
 
+  // for disable form behaviors
   const handleUpdateClick = () => {
     setIsClicked((prev) => !prev);
     setIsDisabled((prev) => !prev);
@@ -303,61 +307,7 @@ const UpdateManager: React.FC<UpdateManagerProps> = React.memo(({
     });
   };
 
-  const handleUpdateManagerSubmit = async () => {
-    if (!user || !user.email || !user.UserId) {
-      console.error("User data is incomplete");
-      return;
-    }
-
-    try {
-      console.log("Updating user with data:", { ...user, remarks: user.remarks });
-
-      // Ensure the API call includes remarks
-      const response = await updateUser(user.UserId, {
-        ...user,
-        remarks: user.remarks,
-      });
-
-      if (response.success) {
-        console.log("User updated successfully:", response.data);
-
-        // Fetch the updated user details from the backend
-        const updatedResponse = await fetchUserById(user.UserId);
-        if (updatedResponse.success) {
-          console.log("Fetched updated user data:", updatedResponse.data);
-
-          setUser((prevUser) => ({
-            ...prevUser,
-            ...updatedResponse.data,
-            remarks: updatedResponse.data.remarks ?? prevUser.remarks ?? "",
-          }));
-
-          console.log("Updating user with data:", { ...user, remarks: user.remarks });
-
-        } else {
-          console.warn("Failed to fetch updated user data:", updatedResponse.message);
-        }
-
-        onClose();
-      } else {
-        console.error("Failed to update user:", response.message);
-      }
-    } catch (error) {
-      console.error("Error during update:", error);
-
-      setErrors({
-        form: error instanceof Error ? error.message : "An unexpected error occurred. Please try again.",
-      });
-
-      Swal.fire({
-        icon: "error",
-        title: "Unexpected Error!",
-        text: error instanceof Error ? error.message : "An unexpected error occurred. Please try again.",
-        confirmButtonColor: "#D32F2F",
-      });
-    }
-  };
-
+  // for edit log modal behaviors
   const handleOpenEditLogModal = (userId: number | null) => {
     setSelectedUserId(userId);
     setOpenEditLogModal(true);
@@ -366,6 +316,97 @@ const UpdateManager: React.FC<UpdateManagerProps> = React.memo(({
   const handleCloseEditLogModal = () => {
     setOpenEditLogModal(false);
     setSelectedLog(null);
+  };
+
+  const handleUpdateManagerSubmit = async () => {  
+    const validationErrors = validateUser(user, selectState);
+    
+    // Separate validation for remarks
+    if (!user.remarks || user.remarks.trim() === "") {
+      validationErrors.remarks = "Remarks is required";
+    }
+  
+    console.log("Validation Errors:", validationErrors);
+    
+    if (Object.keys(validationErrors).length > 0) {
+      setErrors(validationErrors);
+      return;
+    }
+  
+    const confirmation = await Swal.fire({
+      title: "Update Confirmation",
+      text: "Did you enter the correct details?",
+      icon: "question",
+      showCancelButton: true,
+      confirmButtonText: '<span style="color: #212121;">Yes, I did.</span>',
+      cancelButtonText: '<span style="color: #212121;">No, let me check</span>',
+      confirmButtonColor: "#67ABEB",
+      cancelButtonColor: "#f0f0f0",
+      customClass: {
+        cancelButton: "no-hover",
+      },
+    });
+  
+    if (!confirmation.isConfirmed) {
+      return;
+    }
+  
+    try {
+      console.log("Updating user with data:", { ...user, remarks: user.remarks });
+  
+      if (user.UserId === null) {
+        console.error("UserId is null");
+        return;
+      }
+      
+      const response = await updateUser(user.UserId!, {
+        ...user,
+        remarks: user.remarks,
+      });
+      
+      if (response.success) {
+        console.log("User updated successfully:", response.data);
+  
+        const updatedResponse = await updateUser(user.UserId!, { ...user });
+        if (updatedResponse.success) {
+          console.log("Fetched updated user data:", updatedResponse.data);
+  
+          setUser((prevUser) => ({
+            ...prevUser,
+            ...updatedResponse.data,
+            remarks: updatedResponse.data.remarks ?? prevUser.remarks ?? "",
+          }));
+        } else {
+          console.warn("Failed to fetch updated user data:", updatedResponse.message);
+        }
+  
+        Swal.fire({
+          icon: "success",
+          title: "Manager Updated!",
+          text: "The manager details have been updated successfully.",
+          confirmButtonColor: "#67ABEB",
+        });
+  
+        onSubmit(user);
+        onClose();
+      } else {
+        setErrors(response.errors || { form: response.message });
+        Swal.fire({
+          icon: "error",
+          title: "Error!",
+          text: response.message || "Something went wrong. Please try again.",
+          confirmButtonColor: "#D32F2F",
+        });
+      }
+    } catch (error) {
+      setErrors({ form: error instanceof Error ? error.message : "An unexpected error occurred. Please try again." });
+      Swal.fire({
+        icon: "error",
+        title: "Unexpected Error!",
+        text: error instanceof Error ? error.message : "An unexpected error occurred. Please try again.",
+        confirmButtonColor: "#D32F2F",
+      });
+    }
   };
   
   return (
@@ -584,7 +625,6 @@ const UpdateManager: React.FC<UpdateManagerProps> = React.memo(({
                         Generate
                       </Button>
                     </Grid>
-
                     {errors.password && (
                       <Grid item xs={12} sx={{ paddingTop: '0px !important' }}>
                         <Typography sx={inputErrorStyles}>
@@ -611,7 +651,6 @@ const UpdateManager: React.FC<UpdateManagerProps> = React.memo(({
               </Grid>
             ))}
           </Grid>
-
           <Grid item xs={6}>
             <Typography variant="h6" sx={{ marginBottom: "0.9rem" }}>
               Assigned Location
@@ -684,7 +723,7 @@ const UpdateManager: React.FC<UpdateManagerProps> = React.memo(({
           </Grid>
           {isClicked && (
             <Grid item xs={12} sx={{ marginBottom: "1rem", paddingTop: "0px !important" }}>
-              <FormControl fullWidth variant="outlined" sx={inputStyles}>
+              <FormControl fullWidth variant="outlined" sx={inputStyles} error={Boolean(errors.remarks)}>
                 <InputLabel htmlFor="remarks">Remarks</InputLabel>
                 <OutlinedInput
                   id="remarks"
@@ -694,6 +733,7 @@ const UpdateManager: React.FC<UpdateManagerProps> = React.memo(({
                   onChange={handleManagerChange}
                   label="Remarks"
                 />
+                {errors.remarks && <FormHelperText>{errors.remarks}</FormHelperText>}
               </FormControl>
             </Grid>
           )}
