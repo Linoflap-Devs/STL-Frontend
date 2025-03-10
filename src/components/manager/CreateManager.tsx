@@ -269,7 +269,6 @@ const CreateManager: React.FC<CreateManagerProps> = ({
                         {errors.suffix && <FormHelperText>{errors.suffix}</FormHelperText>}
                       </FormControl>
                     </Grid>
-
                   </Grid>
                 ) : key === "password" ? (
                   <Grid container spacing={1} alignItems="center">
@@ -341,7 +340,6 @@ const CreateManager: React.FC<CreateManagerProps> = ({
               </Grid>
             ))}
           </Grid>
-
           {/* Column 2 - Assigned Location */}
           <Grid item xs={6}>
             <Typography variant="h6" sx={{ marginBottom: "0.9rem" }}>

@@ -62,7 +62,7 @@ interface UpdateManagerProps {
 const UpdateManager: React.FC<UpdateManagerProps> = React.memo(({
   open,
   onClose,
-  onSubmit,
+  //onSubmit,
   manager,
   regions,
   provinces,
@@ -123,10 +123,7 @@ const UpdateManager: React.FC<UpdateManagerProps> = React.memo(({
   const [isDisabled, setIsDisabled] = useState(true);
   const [isClicked, setIsClicked] = useState(false);
   const [status, setStatus] = useState("");
-  const [selectedUser, setSelectedUser] = useState<User | null>(null);
-
   const [selectedUserId, setSelectedUserId] = useState<number | null>(null);
-
   const [openEditLogModal, setOpenEditLogModal] = useState(false);
   const [selectedLog, setSelectedLog] = useState<LogType | null>(null);
   const [logs, setLogs] = useState<LogType[]>([]);
@@ -313,21 +310,30 @@ const UpdateManager: React.FC<UpdateManagerProps> = React.memo(({
     }
 
     try {
-      console.log("Updating user:", user);
-      const response = await updateUser(user.UserId, user);
+      console.log("Updating user with data:", { ...user, remarks: user.remarks });
+
+      // Ensure the API call includes remarks
+      const response = await updateUser(user.UserId, {
+        ...user,
+        remarks: user.remarks,
+      });
 
       if (response.success) {
         console.log("User updated successfully:", response.data);
 
-        // 🔹 Fetch updated user data again from the server
+        // Fetch the updated user details from the backend
         const updatedResponse = await fetchUserById(user.UserId);
         if (updatedResponse.success) {
+          console.log("Fetched updated user data:", updatedResponse.data);
+
           setUser((prevUser) => ({
             ...prevUser,
             ...updatedResponse.data,
-            remarks: updatedResponse.data.remarks || prevUser.remarks || "",
+            remarks: updatedResponse.data.remarks ?? prevUser.remarks ?? "",
           }));
-          console.log("Updated user state:", updatedResponse.data);
+
+          console.log("Updating user with data:", { ...user, remarks: user.remarks });
+
         } else {
           console.warn("Failed to fetch updated user data:", updatedResponse.message);
         }
@@ -337,7 +343,12 @@ const UpdateManager: React.FC<UpdateManagerProps> = React.memo(({
         console.error("Failed to update user:", response.message);
       }
     } catch (error) {
-      setErrors({ form: error instanceof Error ? error.message : "An unexpected error occurred. Please try again." });
+      console.error("Error during update:", error);
+
+      setErrors({
+        form: error instanceof Error ? error.message : "An unexpected error occurred. Please try again.",
+      });
+
       Swal.fire({
         icon: "error",
         title: "Unexpected Error!",
