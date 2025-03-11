@@ -93,12 +93,12 @@ const ManagerTable: React.FC<ManagerTableProps> = ({ managers, onCreate, onEdit,
       let status = "Active"; // Default status
   
       if (user.IsActive === 0) {
-        status = "Suspended"; // 🔴 Prioritize Suspended and stop further checks
+        status = "Suspended"; // Prioritize Suspended and stop further checks
       } else if (
         (!lastLogin || lastLogin.isBefore(sevenDaysAgo)) && 
         (!lastTokenRefresh || lastTokenRefresh.isBefore(sevenDaysAgo))
       ) {
-        status = "Inactive"; // 🟠 Only mark inactive if NOT suspended
+        status = "Inactive"; // Only mark inactive if NOT suspended
       }
   
       return {
@@ -107,12 +107,13 @@ const ManagerTable: React.FC<ManagerTableProps> = ({ managers, onCreate, onEdit,
         formattedDate: user.DateOfRegistration
           ? dayjs(user.DateOfRegistration).format("YYYY/MM/DD")
           : "Invalid Date",
-        Status: status, // ✅ Now properly handling Suspended/Inactives
+        Status: status, // Now properly handling Suspended/Inactives
       };
     }),
     { ...filters, searchQuery },
     ["fullName", "UserName", "Region", "Province", "CreatedBy", "Status", "DateOfRegistration"]
   );
+  
   const sortedFilteredUsers: User[] = sortData(filteredUsers, {
     key: sortConfig.key,
     direction: sortConfig.direction,
