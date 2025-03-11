@@ -15,7 +15,6 @@
     "@mui/material": "^6.4.1",
     "@mui/x-charts": "^7.27.0",
     "@mui/x-date-pickers": "^7.27.1",
-    "@next/font": "^14.2.15",
     "axios": "^1.7.9",
     "dayjs": "^1.11.13",
     "jwt-decode": "^4.0.0",
