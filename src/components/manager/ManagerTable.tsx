@@ -26,7 +26,6 @@ import {
   handleChangeRowsPerPage,
   filterData,
 } from "../../utils/sortPaginationSearch";
-import { managerDeletion } from "../../utils/managerDeletion";
 import SearchIcon from "@mui/icons-material/Search";
 import SearchOffIcon from "@mui/icons-material/SearchOff";
 import PersonOffIcon from "@mui/icons-material/PersonOff";
@@ -35,6 +34,8 @@ import FilterListOffIcon from "@mui/icons-material/FilterListOff";
 import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
 import dayjs, { Dayjs } from "dayjs";
 import { EditLogFields } from "./EditLogModal";
+import { suspendUser } from "~/utils/api/users"
+import Swal from "sweetalert2";
 
 export interface User {
   firstName: string;
@@ -63,20 +64,16 @@ const ManagerTable: React.FC<ManagerTableProps> = ({ managers, onCreate, onEdit,
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [isFilterVisible, setIsFilterVisible] = useState(false);
   const [isFilterActive, setIsFilterActive] = useState(false);
-  const [selectedUserIds, setSelectedUserIds] = useState<Set<number>>(new Set());
-  const [selectedCount, setSelectedCount] = useState<number>(0);
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
   const [searchQuery, setSearchQuery] = useState<string>("");
   const onSortWrapper = (sortKey: keyof (User & EditLogFields)) => {
       handleSort(sortKey, sortConfig, setSortConfig);
   };
-  
   const [sortConfig, setSortConfig] = useState<{
     key: keyof User;
     direction: "asc" | "desc";
   }>({ key: "id", direction: "asc" });
-
   const [filters, setFilters] = useState<{ [key: string]: string }>({
     FirstName: "",
     LastName: "",
@@ -87,36 +84,24 @@ const ManagerTable: React.FC<ManagerTableProps> = ({ managers, onCreate, onEdit,
     Status: "",
     DateOfRegistration: "",
   });
-
   const filteredUsers = filterData(
-    managers.map((user) => ({
-      ...user,
-      fullName: `${user.FirstName || ""} ${user.LastName || ""}`.trim().toLowerCase(),
-      DateOfRegistration: user.DateOfRegistration
-        ? dayjs(user.DateOfRegistration).format("YYYY-MM-DD")
-        : "Invalid Date",
-      Status: user.IsActive === 1 ? "Active" : "Inactive",
-    })),
+    managers.map((user) => {
+      return {
+        ...user,
+        fullName: `${user.FirstName || ""} ${user.LastName || ""}`.trim().toLowerCase(),
+        formattedDate: user.DateOfRegistration
+          ? dayjs(user.DateOfRegistration).format("YYYY/MM/DD")
+          : "Invalid Date",
+        Status: user.IsActive === 1 ? "Active" : "Inactive",
+      };
+    }),
     { ...filters, searchQuery },
     ["fullName", "UserName", "Region", "Province", "CreatedBy", "Status", "DateOfRegistration"]
   );
-
   const sortedFilteredUsers: User[] = sortData(filteredUsers, {
     key: sortConfig.key,
     direction: sortConfig.direction,
   });
-
-  const {
-    handleDeleteSelectedManagers,
-  } = managerDeletion(
-    sortedFilteredUsers,
-    selectedUserIds,
-    setSelectedUserIds,
-    setSelectedCount,
-    onDelete,
-    page,
-    rowsPerPage
-  );
 
   // Search handling
   const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -153,6 +138,72 @@ const ManagerTable: React.FC<ManagerTableProps> = ({ managers, onCreate, onEdit,
     console.log("Opening menu for User:", user);
     setAnchorEl(event?.currentTarget || null);
     setSelectedUser(user || null);
+  };
+
+  const handleManagerSuspend = async (user: User) => {
+    if (!user) {
+      console.error("No selected user or invalid user data.");
+      return;
+    }
+  
+    // Construct the full name safely
+    const fullName = `${user.FirstName || ""} ${user.LastName || ""}`.trim();
+    if (!fullName) {
+      console.error("Invalid user name.");
+      return;
+    }
+
+    const userId = user.userId ?? user.UserId;
+    if (typeof userId !== "number" || isNaN(userId)) {
+      return;
+    }
+  
+    try {
+      const confirmation = await Swal.fire({
+        title: `Are you sure?`,
+        text: `Do you want to suspend ${fullName}?`,
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#d33",
+        cancelButtonColor: "#3085d6",
+        confirmButtonText: "Yes, suspend it!",
+        cancelButtonText: "Cancel",
+      });
+  
+      if (!confirmation.isConfirmed) {
+        return;
+      }
+  
+      const result = await suspendUser(userId, { isActive: false });
+  
+      if (result.success) {
+        await Swal.fire({
+          title: "Suspended!",
+          text: `${fullName} has been suspended.`,
+          icon: "success",
+          confirmButtonColor: "#3085d6",
+        });
+  
+        handleToggleMenu();
+      } else {
+        console.error("Suspension failed:", result.message);
+        await Swal.fire({
+          title: "Failed!",
+          text: `Failed to suspend ${fullName}: ${result.message}`,
+          icon: "error",
+          confirmButtonColor: "#3085d6",
+        });
+      }
+    } catch (error) {
+      console.error("Error suspending user:", error);
+  
+      await Swal.fire({
+        title: "Error!",
+        text: `An error occurred while suspending ${fullName}.`,
+        icon: "error",
+        confirmButtonColor: "#3085d6",
+      });
+    }
   };
 
   return (
@@ -205,16 +256,6 @@ const ManagerTable: React.FC<ManagerTableProps> = ({ managers, onCreate, onEdit,
             )}
           </Box>
           <Box sx={{ display: "flex", alignItems: "center" }}>
-            {selectedUserIds.size > 0 && (
-              <Button
-                variant="contained"
-                onClick={handleDeleteSelectedManagers}
-                sx={deleteStyles}
-              >
-                Delete {selectedUserIds.size}{" "}
-                {selectedUserIds.size === 1 ? "Selected User" : "Selected Users"}
-              </Button>
-            )}
             <Button variant="contained" onClick={onCreate} sx={buttonStyles}>
               {UserSectionData.addManagerButton}
             </Button>
@@ -385,7 +426,9 @@ const ManagerTable: React.FC<ManagerTableProps> = ({ managers, onCreate, onEdit,
         <MenuItem onClick={() => selectedUser ? onEdit(selectedUser, "update") : null}>
           Update
         </MenuItem>
-        <MenuItem >Suspend</MenuItem>
+        <MenuItem onClick={() => selectedUser ? handleManagerSuspend(selectedUser) : null}>
+            Suspend
+        </MenuItem>
       </Menu>
       <Box
         sx={{
