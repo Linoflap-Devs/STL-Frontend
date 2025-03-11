@@ -16,20 +16,17 @@
   }
 } */
 
-body {
-  margin: 0;
-  color: var(--foreground);
-  background: var(--background);
-  font-family: 'Inter', sans-serif;
-}
-
-/* Specific font weights */
-.font-regular {
+@font-face {
+  font-family: 'Montserrat';
+  src: url('/fonts/Montserrat-Regular.woff2') format('woff2');
   font-weight: 400;
+  font-style: normal;
 }
 
-.font-semibold {
-  font-weight: 600;
+.MuiTypography-root,
+.MuiTableCell-root,
+.MuiButtonBase-root.MuiMenuItem-root {
+  font-family: 'Montserrat', sans-serif !important;
 }
 
 /* for input types in login */

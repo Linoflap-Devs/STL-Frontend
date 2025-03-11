@@ -20,8 +20,8 @@ interface SortConfig {
 
 interface SortableTableCellProps {
   label: string;
-  sortKey: keyof (User & EditLogFields); 
-  sortConfig: { key: keyof (User & EditLogFields); direction: "asc" | "desc" }; 
+  sortKey: keyof (User & EditLogFields);
+  sortConfig: { key: keyof (User & EditLogFields); direction: "asc" | "desc" };
   onSort: (sortKey: keyof (User & EditLogFields)) => void;
   isFilterVisible?: boolean;
   filterValue?: string;
@@ -177,7 +177,7 @@ export const handleChangeRowsPerPage = (
 
 // Search and Filter Function
 export const filterData = (
-  data: User[],
+  data: User[], // Accept only User[]
   filters: { [key: string]: string },
   filterKeys: string[]
 ) => {
@@ -186,9 +186,13 @@ export const filterData = (
     if (searchValue) {
       const fullName = `${item.FirstName || ""} ${item.LastName || ""}`.toLowerCase();
       const createdByFullName = `${item.CreatedByFirstName || ""} ${item.CreatedByLastName || ""}`.toLowerCase();
-      const matches = Object.values(item).some(
-        (val) => typeof val === "string" && val.toLowerCase().includes(searchValue)
-      ) || fullName.includes(searchValue) || createdByFullName.includes(searchValue);
+
+      const matches =
+        Object.values(item).some(
+          (val) => typeof val === "string" && val.toLowerCase().includes(searchValue)
+        ) ||
+        fullName.includes(searchValue) ||
+        createdByFullName.includes(searchValue);
 
       if (!matches) {
         return false;
@@ -202,12 +206,12 @@ export const filterData = (
       if (key === "DateOfRegistration" && item[key]) {
         const itemDate = dayjs(item[key]).format("YYYY-MM-DD");
         const filterDate = dayjs(filters[key]).format("YYYY-MM-DD");
-      
+
         if (filters[key]) {
           return itemDate === filterDate;
         }
       }
-    
+
       // Handle Status filtering (Active/Inactive)
       if (key === "Status" && filterValue) {
         const normalizedFilter = filterValue.toLowerCase();
@@ -235,4 +239,3 @@ export const filterData = (
     });
   });
 };
-

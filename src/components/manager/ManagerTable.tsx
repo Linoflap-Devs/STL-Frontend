@@ -89,16 +89,14 @@ const ManagerTable: React.FC<ManagerTableProps> = ({ managers, onCreate, onEdit,
   });
 
   const filteredUsers = filterData(
-    managers.map((user) => {
-      return {
-        ...user,
-        fullName: `${user.FirstName || ""} ${user.LastName || ""}`.trim().toLowerCase(),
-        formattedDate: user.DateOfRegistration
-          ? dayjs(user.DateOfRegistration).format("YYYY/MM/DD")
-          : "Invalid Date",
-        Status: user.IsActive === 1 ? "Active" : "Inactive",
-      };
-    }),
+    managers.map((user) => ({
+      ...user,
+      fullName: `${user.FirstName || ""} ${user.LastName || ""}`.trim().toLowerCase(),
+      DateOfRegistration: user.DateOfRegistration
+        ? dayjs(user.DateOfRegistration).format("YYYY-MM-DD")
+        : "Invalid Date",
+      Status: user.IsActive === 1 ? "Active" : "Inactive",
+    })),
     { ...filters, searchQuery },
     ["fullName", "UserName", "Region", "Province", "CreatedBy", "Status", "DateOfRegistration"]
   );
@@ -110,7 +108,6 @@ const ManagerTable: React.FC<ManagerTableProps> = ({ managers, onCreate, onEdit,
 
   const {
     handleDeleteSelectedManagers,
-    handleSelectManager,
   } = managerDeletion(
     sortedFilteredUsers,
     selectedUserIds,
@@ -180,6 +177,7 @@ const ManagerTable: React.FC<ManagerTableProps> = ({ managers, onCreate, onEdit,
                 width: "350px",
                 "& .MuiOutlinedInput-root": {
                   padding: "9px 14px",
+                  backgroundColor: 'transparent',
                 },
                 "& .MuiOutlinedInput-input": {
                   padding: "0.5px 0",
