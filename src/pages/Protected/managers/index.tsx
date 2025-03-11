@@ -24,6 +24,8 @@ const ManagersPage = () => {
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
   const [isUpdateModalOpen, setUpdateModalOpen] = useState(false);
   const [selectedManager, setSelectedManager] = useState<User | null>(null);
+  const [isDisabled, setIsDisabled] = useState(true);
+  const [isClicked, setIsClicked] = useState(false);
 
   // Fetching data on component mount
   const loadData = async () => {
@@ -78,9 +80,17 @@ const ManagersPage = () => {
     setModalOpen(true);
   };
 
-  const handleUserEdit = (user: User) => {
+  const handleUserEdit = (user: User, mode: "view" | "update") => {
     setSelectedManager(user);
     setUpdateModalOpen(true);
+
+    if (mode === "update") {
+      setIsClicked(true);
+      setIsDisabled(false); // Enable form
+    } else {
+      setIsClicked(false);
+      setIsDisabled(true); // Disable form
+    }
   };
 
   const closeUpdateModal = () => {
@@ -158,7 +168,7 @@ const ManagersPage = () => {
       <Box>
         <ManagerTable
           onCreate={handleUserCreate}
-          onEdit={handleUserEdit}
+          onEdit={(user, mode = "view") => handleUserEdit(user, mode)}
           managers={managers}
           onDelete={handleDeleteManager}
         />
@@ -183,6 +193,8 @@ const ManagersPage = () => {
           regions={regions}
           provinces={provinces}
           loadData={loadData}
+          isDisabled={isDisabled}
+          isClicked={isClicked}
         />
       )}
     </Box>

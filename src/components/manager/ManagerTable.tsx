@@ -55,7 +55,7 @@ export interface User {
 interface ManagerTableProps {
   managers: User[];
   onCreate: () => void;
-  onEdit: (user: User) => void;
+  onEdit: (user: User, action?: "view" | "update") => void;
   onDelete: (ids: number[]) => void;
 }
 
@@ -384,7 +384,12 @@ const ManagerTable: React.FC<ManagerTableProps> = ({ managers, onCreate, onEdit,
         open={Boolean(anchorEl)}
         onClose={() => handleToggleMenu()}
         MenuListProps={{ "aria-labelledby": "basic-button" }}>
-        <MenuItem onClick={() => selectedUser ? onEdit(selectedUser) : null}>Update</MenuItem>
+        <MenuItem onClick={() => selectedUser ? onEdit(selectedUser, "view") : null}>
+          View
+        </MenuItem>
+        <MenuItem onClick={() => selectedUser ? onEdit(selectedUser, "update") : null}>
+          Update
+        </MenuItem>
         <MenuItem >Suspend</MenuItem>
       </Menu>
       <Box

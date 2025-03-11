@@ -59,6 +59,8 @@ interface UpdateManagerProps {
   provinces: any[];
   cities: any[];
   loadData: () => Promise<void>;
+  isDisabled: boolean;
+  isClicked: boolean;
 }
 
 const UpdateManager: React.FC<UpdateManagerProps> = React.memo(({
@@ -70,6 +72,8 @@ const UpdateManager: React.FC<UpdateManagerProps> = React.memo(({
   provinces,
   cities,
   loadData,
+  isDisabled,
+  isClicked,
 }) => {
   const [user, setUser] = useState<{
     UserId: number | null;
@@ -114,17 +118,14 @@ const UpdateManager: React.FC<UpdateManagerProps> = React.memo(({
   });
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
   const [showPassword, setShowPassword] = useState(false);
-  const SPACE: string = "";
   const [selectState, setSelectState] = useState({
-    region: manager?.region ?? SPACE,
-    province: manager?.province ?? SPACE,
-    city: manager?.city ?? SPACE,
-    barangay: manager?.barangay ?? SPACE,
+    region: manager?.region ?? "",
+    province: manager?.province ?? "",
+    city: manager?.city ?? "",
+    barangay: manager?.barangay ?? "",
   });
   const [filteredProvinces, setFilteredProvinces] = useState<any[]>([]);
   const [filteredCities, setFilteredCities] = useState<any[]>([]);
-  const [isDisabled, setIsDisabled] = useState(true);
-  const [isClicked, setIsClicked] = useState(false);
   const [status, setStatus] = useState("");
   const [selectedUserId, setSelectedUserId] = useState<number | null>(null);
   const [openEditLogModal, setOpenEditLogModal] = useState(false);
@@ -213,12 +214,6 @@ const UpdateManager: React.FC<UpdateManagerProps> = React.memo(({
 
     fetchManagerDetails();
   }, [open, manager?.userId, regions, provinces, cities]);
-
-  // for disable form behaviors
-  const handleUpdateClick = () => {
-    setIsClicked((prev) => !prev);
-    setIsDisabled((prev) => !prev);
-  };
 
   const handleSelectChange = (e: SelectChangeEvent<string>, name: string) => {
     const value = e.target.value;
@@ -427,14 +422,29 @@ const UpdateManager: React.FC<UpdateManagerProps> = React.memo(({
         },
       }}
     >
-      <DialogTitle sx={{ paddingY: '2rem', }} >
-        <Box>
+      <DialogTitle>
+      <Box sx={{paddingBottom: '1rem', }}>
+        <Box sx={{paddingBottom: '2.5rem', }}>
+        <IconButton
+          aria-label="close"
+          onClick={onClose}
+          sx={{
+            position: 'absolute',
+            right: 30,
+            top: 30,
+            color: '#D1D5D8'[300],
+            backgroundColor: '#282828',
+          }}
+        >
+          <CloseIcon sx={{ fontSize: 20, fontWeight: 'bold' }} />
+        </IconButton>
+        </Box>
           <Grid container spacing={3} alignItems="stretch">
             <Grid
               item
               xs={12}
               md={6}
-              sx={{ display: "flex", flexDirection: "column", justifyContent: "space-between" }}>
+              sx={{ display: "flex", flexDirection: "column", justifyContent: "space-between",}}>
               <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
                 <Box>
                   <Typography variant="body1">Last Updated by</Typography>
@@ -458,15 +468,6 @@ const UpdateManager: React.FC<UpdateManagerProps> = React.memo(({
                   <Typography sx={{ fontSize: 12 }}>{dayjs(user?.DateOfRegistration).format("YYYY/MM/DD HH:mm:ss")}</Typography>
                 </Box>
               </Box>
-              <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", }}>
-                <Box>
-                  <Typography variant="body1">Added By</Typography>
-                </Box>
-                <Box sx={{ textAlign: "right" }}>
-                  <Typography variant="body1">Juan Dela Cruz</Typography>
-                  <Typography sx={{ fontSize: 12 }}>{user?.formattedDate || "N/A"}</Typography>
-                </Box>
-              </Box>
             </Grid>
             <Grid
               item
@@ -478,65 +479,18 @@ const UpdateManager: React.FC<UpdateManagerProps> = React.memo(({
                   gap: 0,
                 }}
               >
-              <Tooltip title={isClicked ? "Disable form" : "Update form"} arrow>
-                <Button
-                  component="a"
-                  onClick={handleUpdateClick}
-                  sx={{
-                    backgroundColor: isClicked ? "#FFFFFF" : "#67ABEB",
-                    textTransform: "none",
-                    fontSize: "14px",
-                    px: "2.5rem",
-                    py: "0.5rem",
-                    borderRadius: "8px",
-                    color: "#181A1B",
-                    alignSelf: "start",
-                    cursor: "pointer",
-                    "&:hover": {
-                      backgroundColor: isClicked ? "#f0f0f0" : "#559ad6",
-                    },
-                  }}
-                >
-                  {isClicked ? "View" : "Update"}
-                </Button>
-              </Tooltip>
-              <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", mt: 2 }}>
+              <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", }}>
                 <Box>
-                  <Typography variant="body1">Status</Typography>
+                  <Typography variant="body1">Added By</Typography>
                 </Box>
-                <Box sx={{ marginLeft: "1rem", minWidth: 150 }}>
-                  <FormControl fullWidth sx={selectStyles}>
-                    <InputLabel id="status-label">Status</InputLabel>
-                    <Select
-                      labelId="status-label"
-                      id="status"
-                      value={status}
-                      onChange={(e) => setStatus(e.target.value)}
-                      label="Status"
-                      disabled={isDisabled}
-                    >
-                      <MenuItem value="Active">Active</MenuItem>
-                      <MenuItem value="Inactive">Inactive</MenuItem>
-                    </Select>
-                  </FormControl>
+                <Box sx={{ textAlign: "right" }}>
+                  <Typography variant="body1">Juan Dela Cruz</Typography>
+                  <Typography sx={{ fontSize: 12 }}>{user?.formattedDate || "N/A"}</Typography>
                 </Box>
               </Box>
             </Grid>
           </Grid>
         </Box>
-        <IconButton
-          aria-label="close"
-          onClick={onClose}
-          sx={{
-            position: 'absolute',
-            right: 30,
-            top: 30,
-            color: '#D1D5D8'[300],
-            backgroundColor: '#282828',
-          }}
-        >
-          <CloseIcon sx={{ fontSize: 20, fontWeight: 'bold' }} />
-        </IconButton>
       </DialogTitle>
       <DialogContent>
         <Grid container rowSpacing={2.5} columnSpacing={{ xs: 1, sm: 3, md: 2.5 }}>
@@ -544,7 +498,7 @@ const UpdateManager: React.FC<UpdateManagerProps> = React.memo(({
             <Typography variant="h6" sx={{ marginBottom: "0.9rem" }}>
               Personal Information
             </Typography>
-            {["firstName", "lastName", "phoneNumber", "email", "password"].map((key) => (
+            {["firstName", "lastName", "phoneNumber", "email", "status"].map((key) => (
               <Grid item xs={12} key={key} sx={{ marginBottom: "1rem" }}>
                 {key === "lastName" ? (
                   <Grid container spacing={1.5} alignItems="flex-start" wrap="nowrap">
@@ -563,7 +517,6 @@ const UpdateManager: React.FC<UpdateManagerProps> = React.memo(({
                         {errors.lastName && <FormHelperText>{errors.lastName}</FormHelperText>}
                       </FormControl>
                     </Grid>
-
                     <Grid item xs={4}>
                       <FormControl fullWidth error={!!errors.suffix} sx={inputStyles}>
                         <InputLabel htmlFor="suffix">Suffix</InputLabel>
@@ -581,57 +534,31 @@ const UpdateManager: React.FC<UpdateManagerProps> = React.memo(({
                     </Grid>
 
                   </Grid>
-                ) : key === "password" ? (
+                ) : key === "status" ? (
                   <Grid container spacing={1} alignItems="center">
-                    <Grid item xs={7} sx={{ marginBottom: 1, }}>
-                      <FormControl fullWidth error={!!errors.password} sx={inputStyles} variant="outlined">
-                        <InputLabel htmlFor="password">Password</InputLabel>
-                        <OutlinedInput
-                          id="password"
-                          type={showPassword ? "text" : "password"}
-                          name="password"
-                          value={"********"}
-                          onChange={handleManagerChange}
-                          label="Password"
-                          disabled
-                          endAdornment={
-                            <InputAdornment position="end">
-                              <IconButton
-                                sx={{ color: "#9ca3af" }}
-                                onClick={() => setShowPassword((prev) => !prev)}
-                                edge="end"
-                              >
-                                {showPassword ? <VisibilityOff /> : <Visibility />}
-                              </IconButton>
-                            </InputAdornment>
-                          }
-                        />
-                        {errors.password && <FormHelperText>{errors.password}</FormHelperText>}
-                      </FormControl>
+                    <Grid item xs={12} sx={{ marginBottom: 1, }}>
+                      <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                        <Box>
+                          <Typography variant="body1">Status</Typography>
+                        </Box>
+                        <Box sx={{ marginLeft: "1rem", minWidth: 150 }}>
+                          <FormControl fullWidth sx={selectStyles}>
+                            <InputLabel id="status-label">Status</InputLabel>
+                            <Select
+                              labelId="status-label"
+                              id="status"
+                              value={status}
+                              onChange={(e) => setStatus(e.target.value)}
+                              label="Status"
+                              disabled={isDisabled}
+                            >
+                              <MenuItem value="Active">Active</MenuItem>
+                              <MenuItem value="Inactive">Inactive</MenuItem>
+                            </Select>
+                          </FormControl>
+                        </Box>
+                      </Box>
                     </Grid>
-                    <Grid item xs={5}>
-                      <Button
-                        variant="contained"
-                        color="secondary"
-                        sx={{
-                          width: "100%",
-                          textTransform: "none",
-                          backgroundColor: "#67ABEB",
-                          borderRadius: "8px",
-                          color: "#282828",
-                        }}
-
-                      >
-                        Generate
-                      </Button>
-                    </Grid>
-                    {errors.password && (
-                      <Grid item xs={12} sx={{ paddingTop: '0px !important' }}>
-                        <Typography sx={inputErrorStyles}>
-                          {errors.password}
-                        </Typography>
-                      </Grid>
-                    )}
                   </Grid>
                 ) : (
                   <FormControl fullWidth error={!!errors[key]} sx={inputStyles} variant="outlined">
