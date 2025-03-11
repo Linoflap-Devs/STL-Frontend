@@ -65,7 +65,7 @@ const ManagerTable: React.FC<ManagerTableProps> = ({ managers, onCreate, onEdit,
   const [isFilterVisible, setIsFilterVisible] = useState(false);
   const [isFilterActive, setIsFilterActive] = useState(false);
   const [page, setPage] = useState(0);
-  const [rowsPerPage, setRowsPerPage] = useState(5);
+  const [rowsPerPage, setRowsPerPage] = useState(10);
   const [searchQuery, setSearchQuery] = useState<string>("");
   const onSortWrapper = (sortKey: keyof (User & EditLogFields)) => {
       handleSort(sortKey, sortConfig, setSortConfig);
@@ -402,35 +402,35 @@ const ManagerTable: React.FC<ManagerTableProps> = ({ managers, onCreate, onEdit,
                   <TableCell>{user.Region}</TableCell>
                   <TableCell>{dayjs(user.DateOfRegistration).format("YYYY/MM/DD HH:mm:ss")}</TableCell>
                   <TableCell>{user?.CreatedBy}</TableCell>
-<TableCell>
-  <Button
-    variant="contained"
-    sx={{
-      cursor: "auto",
-      textTransform: "none",
-      borderRadius: "12px",
-      padding: "1.2px 13.5px",
-      fontSize: "14px",
-      backgroundColor:
-        user.Status === "Suspended"
-          ? "#FF7A7A" // Red for Suspended
-          : user.Status === "Inactive"
-          ? "#FFA726" // Orange for Inactive
-          : "#4CAF50", // Green for Active
-      color: "#171717",
-      "&:hover": {
-        backgroundColor:
-          user.Status === "Suspended"
-            ? "#F05252" // Lighter Red
-            : user.Status === "Inactive"
-            ? "#FFA726" // Lighter Orange
-            : "#4CAF50", // Lighter Green
-      },
-    }}
-  >
-    {user.Status}
-  </Button>
-</TableCell>
+                  <TableCell>
+                    <Button
+                      variant="contained"
+                      sx={{
+                        cursor: "auto",
+                        textTransform: "none",
+                        borderRadius: "12px",
+                        padding: "1.2px 13.5px",
+                        fontSize: "14px",
+                        backgroundColor:
+                          user.Status === "Suspended"
+                            ? "#FF7A7A" // Red for Suspended
+                            : user.Status === "Inactive"
+                            ? "#FFA726" // Orange for Inactive
+                            : "#4CAF50", // Green for Active
+                        color: "#171717",
+                        "&:hover": {
+                          backgroundColor:
+                            user.Status === "Suspended"
+                              ? "#F05252" // Lighter Red
+                              : user.Status === "Inactive"
+                              ? "#FFA726" // Lighter Orange
+                              : "#4CAF50", // Lighter Green
+                        },
+                      }}
+                    >
+                      {user.Status}
+                    </Button>
+                  </TableCell>
                   <TableCell>
                     <IconButton onClick={(event) => handleToggleMenu(event, user)}>
                       <MoreHorizIcon />
@@ -464,7 +464,7 @@ const ManagerTable: React.FC<ManagerTableProps> = ({ managers, onCreate, onEdit,
         }}
       >
         <TablePagination
-          rowsPerPageOptions={[5, 10, 25, 100]}
+          rowsPerPageOptions={[10, 25, 50, 100]}
           component="div"
           count={sortedFilteredUsers.length}
           rowsPerPage={rowsPerPage}
