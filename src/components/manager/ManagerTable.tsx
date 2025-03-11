@@ -86,13 +86,28 @@ const ManagerTable: React.FC<ManagerTableProps> = ({ managers, onCreate, onEdit,
   });
   const filteredUsers = filterData(
     managers.map((user) => {
+      const lastLogin = user.LastLogin ? dayjs(user.LastLogin) : null;
+      const lastTokenRefresh = user.LastTokenRefresh ? dayjs(user.LastTokenRefresh) : null;
+      const sevenDaysAgo = dayjs().subtract(7, "days");
+  
+      let status = "Active"; // Default status
+  
+      if (user.IsActive === 0) {
+        status = "Suspended"; // 🔴 Prioritize Suspended and stop further checks
+      } else if (
+        (!lastLogin || lastLogin.isBefore(sevenDaysAgo)) && 
+        (!lastTokenRefresh || lastTokenRefresh.isBefore(sevenDaysAgo))
+      ) {
+        status = "Inactive"; // 🟠 Only mark inactive if NOT suspended
+      }
+  
       return {
         ...user,
         fullName: `${user.FirstName || ""} ${user.LastName || ""}`.trim().toLowerCase(),
         formattedDate: user.DateOfRegistration
           ? dayjs(user.DateOfRegistration).format("YYYY/MM/DD")
           : "Invalid Date",
-        Status: user.IsActive === 1 ? "Active" : "Inactive",
+        Status: status, // ✅ Now properly handling Suspended/Inactives
       };
     }),
     { ...filters, searchQuery },
@@ -386,25 +401,35 @@ const ManagerTable: React.FC<ManagerTableProps> = ({ managers, onCreate, onEdit,
                   <TableCell>{user.Region}</TableCell>
                   <TableCell>{dayjs(user.DateOfRegistration).format("YYYY/MM/DD HH:mm:ss")}</TableCell>
                   <TableCell>{user?.CreatedBy}</TableCell>
-                  <TableCell>
-                    <Button
-                      variant="contained"
-                      sx={{
-                        cursor: "auto",
-                        textTransform: "none",
-                        borderRadius: "12px",
-                        padding: "1.2px 13.5px",
-                        fontSize: "14px",
-                        backgroundColor: user.IsActive === 1 ? "#D43F3F" : "#388E3C",
-                        color: "white",
-                        "&:hover": {
-                          backgroundColor: user.IsActive === 1 ? "#F05252" : "#4CAF50",
-                        },
-                      }}
-                    >
-                      {user.IsActive === 1 ? "Inactive" : "Active"}
-                    </Button>
-                  </TableCell>
+<TableCell>
+  <Button
+    variant="contained"
+    sx={{
+      cursor: "auto",
+      textTransform: "none",
+      borderRadius: "12px",
+      padding: "1.2px 13.5px",
+      fontSize: "14px",
+      backgroundColor:
+        user.Status === "Suspended"
+          ? "#FF7A7A" // Red for Suspended
+          : user.Status === "Inactive"
+          ? "#FFA726" // Orange for Inactive
+          : "#4CAF50", // Green for Active
+      color: "#171717",
+      "&:hover": {
+        backgroundColor:
+          user.Status === "Suspended"
+            ? "#F05252" // Lighter Red
+            : user.Status === "Inactive"
+            ? "#FFA726" // Lighter Orange
+            : "#4CAF50", // Lighter Green
+      },
+    }}
+  >
+    {user.Status}
+  </Button>
+</TableCell>
                   <TableCell>
                     <IconButton onClick={(event) => handleToggleMenu(event, user)}>
                       <MoreHorizIcon />
