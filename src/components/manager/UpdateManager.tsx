@@ -27,7 +27,7 @@ import { inputStyles, inputErrorStyles, selectStyles } from "../../styles/theme"
 import { fetchUserById, updateUser } from "~/utils/api/users";
 import dayjs, { Dayjs } from "dayjs";
 import Swal from "sweetalert2";
-import UpdateSummaryManagerPage from "./UpdateSummaryManager";
+import EditLogModalPage from "./EditLogModal";
 import { validateUser } from "~/utils/validation"
 
 type LogType = {
@@ -456,7 +456,7 @@ const UpdateManager: React.FC<UpdateManagerProps> = React.memo(({
                   </Typography>
 
                   {openEditLogModal && selectedUserId !== null && (
-                    <UpdateSummaryManagerPage
+                    <EditLogModalPage
                       open={openEditLogModal}
                       onClose={handleCloseEditLogModal}
                       userId={selectedUserId}

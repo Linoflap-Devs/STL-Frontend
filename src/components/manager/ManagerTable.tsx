@@ -17,7 +17,6 @@ import {
   TablePagination,
   Menu,
   MenuItem,
-  Checkbox,
 } from "@mui/material";
 import {
   SortableTableCell,
@@ -34,8 +33,8 @@ import PersonOffIcon from "@mui/icons-material/PersonOff";
 import FilterListIcon from "@mui/icons-material/FilterList";
 import FilterListOffIcon from "@mui/icons-material/FilterListOff";
 import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
-import Tooltip from "@mui/material/Tooltip";
 import dayjs, { Dayjs } from "dayjs";
+import { EditLogFields } from "./EditLogModal";
 
 export interface User {
   firstName: string;
@@ -69,10 +68,10 @@ const ManagerTable: React.FC<ManagerTableProps> = ({ managers, onCreate, onEdit,
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
   const [searchQuery, setSearchQuery] = useState<string>("");
-  const onSortWrapper = (sortKey: keyof User) => {
-    handleSort(sortKey, sortConfig, setSortConfig);
+  const onSortWrapper = (sortKey: keyof (User & EditLogFields)) => {
+      handleSort(sortKey, sortConfig, setSortConfig);
   };
-
+  
   const [sortConfig, setSortConfig] = useState<{
     key: keyof User;
     direction: "asc" | "desc";
@@ -110,8 +109,6 @@ const ManagerTable: React.FC<ManagerTableProps> = ({ managers, onCreate, onEdit,
   });
 
   const {
-    handleSelectAll,
-    isAllSelected,
     handleDeleteSelectedManagers,
     handleSelectManager,
   } = managerDeletion(

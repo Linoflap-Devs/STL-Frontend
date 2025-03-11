@@ -3,6 +3,7 @@ import TableCell from "@mui/material/TableCell";
 import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import ManagerTable, { User } from "~/components/manager/ManagerTable";
+import EditLogModalPage, { EditLogFields } from "~/components/manager/EditLogModal";
 import TextField from "@mui/material/TextField";
 import { filterStyles } from "../styles/theme";
 import { Tooltip } from "@mui/material";
@@ -19,9 +20,9 @@ interface SortConfig {
 
 interface SortableTableCellProps {
   label: string;
-  sortKey: keyof User;
-  sortConfig: { key: keyof User; direction: "asc" | "desc" };
-  onSort: (sortKey: keyof User) => void;
+  sortKey: keyof (User & EditLogFields); 
+  sortConfig: { key: keyof (User & EditLogFields); direction: "asc" | "desc" }; 
+  onSort: (sortKey: keyof (User & EditLogFields)) => void;
   isFilterVisible?: boolean;
   filterValue?: string;
   onFilterChange?: (value: string | Dayjs | null) => void;
@@ -109,18 +110,18 @@ export const SortableTableCell: React.FC<SortableTableCellProps> = ({
 };
 
 // Sorting function
-export function sortData(
-  data: User[],
-  sortConfig: { key: keyof User; direction: "asc" | "desc" }
-): User[] {
+export function sortData<T extends User | EditLogFields>(
+  data: T[],
+  sortConfig: { key: keyof T; direction: "asc" | "desc" }
+): T[] {
   return [...data].sort((a, b) => {
     const valueA = a[sortConfig.key];
     const valueB = b[sortConfig.key];
 
-    // Ensure DateOfRegistration is parsed correctly
-    if (sortConfig.key === "DateOfRegistration") {
-      const dateA = dayjs(valueA).valueOf(); // Convert to timestamp
-      const dateB = dayjs(valueB).valueOf(); // Convert to timestamp
+    // Ensure DateOfRegistration or CreatedAt is parsed correctly
+    if (sortConfig.key === "DateOfRegistration" || sortConfig.key === "CreatedAt") {
+      const dateA = dayjs(valueA as string).valueOf(); // Convert to timestamp
+      const dateB = dayjs(valueB as string).valueOf(); // Convert to timestamp
 
       return sortConfig.direction === "asc" ? dateA - dateB : dateB - dateA;
     }
@@ -142,17 +143,15 @@ export function sortData(
 }
 
 // Handle sorting
-export const handleSort = (
-  sortKey: keyof User,
-  sortConfig: { key: keyof User; direction: "asc" | "desc" },
-  setSortConfig: React.Dispatch<
-    React.SetStateAction<{ key: keyof User; direction: "asc" | "desc" }>
-  >
+export const handleSort = <T extends keyof (User & EditLogFields)>(
+  sortKey: T,
+  sortConfig: { key: T; direction: "asc" | "desc" },
+  setSortConfig: React.Dispatch<React.SetStateAction<{ key: T; direction: "asc" | "desc" }>>
 ) => {
   let direction: "asc" | "desc" = "asc";
 
   if (sortConfig.key === sortKey && sortConfig.direction === "asc") {
-    direction = "desc";
+      direction = "desc";
   }
 
   setSortConfig({ key: sortKey, direction });
