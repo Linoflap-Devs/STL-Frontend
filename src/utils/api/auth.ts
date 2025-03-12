@@ -23,7 +23,21 @@ const getCurrentUser = async (queryParams: Record<string, any>) => {
     }
 };
 
-// Get user edit log function
+const logoutUser = async (queryParams: Record<string, any> = {}) => {
+    try {
+        const url = validateRelativeUrl("/auth/logout");
+        const response = await axiosInstance.delete(url, {
+            params: queryParams,
+            withCredentials: true,
+        });
+
+        return { success: true, message: "Logout successful", data: response.data };
+    } catch (error) {
+        console.error("Error logging out:", (error as Error).message);
+        return { success: false, message: (error as Error).message };
+    }
+};
+
 const verifyPass = async (password: string) => {
     try {
         const url = validateRelativeUrl("/auth/verifyPass");
@@ -36,4 +50,4 @@ const verifyPass = async (password: string) => {
     }
 };
 
-export { getCurrentUser, verifyPass, };
+export { getCurrentUser, verifyPass, logoutUser };

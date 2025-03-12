@@ -634,7 +634,7 @@ const UpdateManager: React.FC<UpdateManagerProps> = React.memo(({
             user={user}
             selectState={selectState}
             onSubmit={onSubmit}
-            setUser={setUser} // Pass it here
+            setUser={setUser}
           />
         )}
       </DialogContent>

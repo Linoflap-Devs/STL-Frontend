@@ -17,11 +17,11 @@ import PaymentsIcon from "@mui/icons-material/Payments";
 import { useTheme } from "@mui/material/styles";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import { useRouter } from "next/router";
-import axiosInstance from "../../utils/axiosInstance";
 import { UserSectionData } from "../../data/AdminSectionData";
 
 const drawerWidth = 240;
-const collapsedWidth = 0; // Fully collapsed sidebar will be 0px wide
+const collapsedWidth = 0;
+
 interface SidebarProps {
   collapsed: boolean;
 }
@@ -60,7 +60,6 @@ const Sidebar: React.FC<SidebarProps> = ({ collapsed }) => {
     setMobileOpen(!mobileOpen);
   };
 
-  // Render a single menu item based on mode (collapsed/full)
   const renderMenuItem = (page: string) => {
     const formattedPage =
       page === "Managers"

@@ -24,71 +24,49 @@ const ConfirmUpdateManagerPage: React.FC<ConfirmUpdateManagerPageProps> = ({ ope
     const handleTogglePasswordVisibility = () =>
         setShowPassword((prev) => !prev);
 
-    const handleVerify = async () => {
+    const handleVerifyUpdateManager = async () => {
         try {
-            if (!password) {
-                setError("Password is required.");
-                return;
-            }
+            if (!password) return setError("Password is required.");
     
             const verifyResponse = await verifyPass(password);
-    
-            if (!verifyResponse.success) {
-                setError("Invalid password. Please try again.");
-                return;
-            }
+            if (!verifyResponse.success) return setError("Invalid password. Please try again.");
     
             setError(""); // Clear previous errors
+            if (!user?.UserId) return console.error("UserId is null");
     
-            console.log("Updating user with data:", { ...user, remarks: user.remarks });
-    
-            if (!user.UserId) {
-                console.error("UserId is null");
-                return;
-            }
-    
-            const response = await updateUser(user.UserId, {
-                ...user,
-                remarks: user.remarks,
-            });
-    
-            if (response.success) {
-                console.log("User updated successfully:", response.data);
-    
-                const updatedResponse = await updateUser(user.UserId, { ...user });
-                if (updatedResponse.success) {
-                    console.log("Fetched updated user data:", updatedResponse.data);
-    
-                    if (setUser) { // Ensure setUser exists before calling it
-                        setUser((prevUser: { remarks: any; }) => ({
-                            ...prevUser,
-                            ...updatedResponse.data,
-                            remarks: updatedResponse.data.remarks ?? prevUser.remarks ?? "",
-                        }));
-                    }
-                } else {
-                    console.warn("Failed to fetch updated user data:", updatedResponse.message);
-                }
-    
-                Swal.fire({
-                    icon: "success",
-                    title: "Manager Updated!",
-                    text: "The manager details have been updated successfully.",
-                    confirmButtonColor: "#67ABEB",
-                });
-    
-                onSubmit(user);
-                onClose();
-            } else {
+            const response = await updateUser(user.UserId, { ...user, remarks: user.remarks });
+            if (!response.success) {
                 setError(response.errors || { form: response.message });
-                Swal.fire({
+                return Swal.fire({
                     icon: "error",
                     title: "Error!",
                     text: response.message || "Something went wrong. Please try again.",
                     confirmButtonColor: "#D32F2F",
                 });
             }
+    
+            const updatedResponse = await updateUser(user.UserId, { ...user });
+            if (updatedResponse.success && setUser) {
+                setUser((prevUser: { remarks: any; }) => ({
+                    ...prevUser,
+                    ...updatedResponse.data,
+                    remarks: updatedResponse.data.remarks ?? prevUser.remarks ?? "",
+                }));
+            } else {
+                console.warn("Failed to fetch updated user data:", updatedResponse.message);
+            }
+    
+            Swal.fire({
+                icon: "success",
+                title: "Manager Updated!",
+                text: "The manager details have been updated successfully.",
+                confirmButtonColor: "#67ABEB",
+            });
+    
+            onSubmit(user);
+            onClose();
         } catch (error) {
+            console.error("Unexpected error:", error);
             setError("An unexpected error occurred. Please try again.");
             Swal.fire({
                 icon: "error",
@@ -98,7 +76,6 @@ const ConfirmUpdateManagerPage: React.FC<ConfirmUpdateManagerPageProps> = ({ ope
             });
         }
     };
-    
 
     return (
         <Dialog open={open} onClose={onClose}>
@@ -208,7 +185,7 @@ const ConfirmUpdateManagerPage: React.FC<ConfirmUpdateManagerPageProps> = ({ ope
                                 />
                                 <Button
                                     type="submit"
-                                    onClick={handleVerify}
+                                    onClick={handleVerifyUpdateManager}
                                     variant="contained"
                                     fullWidth
                                     sx={{

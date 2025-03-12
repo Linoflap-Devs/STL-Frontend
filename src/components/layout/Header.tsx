@@ -1,22 +1,63 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { AppBar, Toolbar, IconButton, Typography, Box, Tooltip } from "@mui/material";
 import MenuIcon from "@mui/icons-material/Menu";
 import LogoutIcon from "@mui/icons-material/Logout";
+import { useRouter } from "next/router";
 import { useTheme } from "@mui/material/styles";
-import axiosInstance from "../../utils/axiosInstance";
+import { getCurrentUser, logoutUser } from "~/utils/api/auth";
 
 interface HeaderProps {
   handleDrawerToggle: () => void;
   collapsed: boolean;
 }
 
+const getUserRole = (userTypeId: number) => {
+  switch (userTypeId) {
+    case 1:
+      return "Super Admin";
+    case 2:
+      return "Manager";
+    case 3:
+      return "Manager";
+    case 4:
+      return "Super Admin";
+    case 5:
+      return "Admin";
+    default:
+      return "Unknown Role";
+  }
+};
+
 const Header: React.FC<HeaderProps> = ({ handleDrawerToggle, collapsed }) => {
   const theme = useTheme();
+  const router = useRouter();
+  const [user, setUser] = useState<{ firstName: string; lastName: string; userTypeId: number } | null>(null);
+
+  useEffect(() => {
+    const fetchUser = async () => {
+      try {
+        const response = await getCurrentUser({});
+        if (response.success && response.data) {
+          setUser({
+            firstName: response.data.FirstName,
+            lastName: response.data.LastName,
+            userTypeId: response.data.UserTypeId,
+          });
+        } else {
+          console.error("Failed to fetch user:", response.message);
+        }
+      } catch (error) {
+        console.error("Error fetching user:", error);
+      }
+    };
+
+    fetchUser();
+  }, []);
 
   const handleLogout = async () => {
     try {
-      await axiosInstance.delete("/auth/logout");
-      window.location.href = "/auth/login";
+      await logoutUser();
+      router.push("/auth/login");
     } catch (error) {
       console.error("Logout failed:", error);
     }
@@ -70,7 +111,7 @@ const Header: React.FC<HeaderProps> = ({ handleDrawerToggle, collapsed }) => {
                 lineHeight: "1.1",
               }}
             >
-              Wendell Ravago
+              {user ? `${user.firstName} ${user.lastName}` : "Loading..."}
             </Typography>
             <Typography
               noWrap
@@ -81,7 +122,7 @@ const Header: React.FC<HeaderProps> = ({ handleDrawerToggle, collapsed }) => {
                 textAlign: "right",
               }}
             >
-              Admin
+              {user ? getUserRole(user.userTypeId) : ""}
             </Typography>
           </Box>
           <Box
@@ -93,9 +134,9 @@ const Header: React.FC<HeaderProps> = ({ handleDrawerToggle, collapsed }) => {
             }}
           >
             <Tooltip title={"Logout User"}>
-            <IconButton color="inherit" sx={{ backgroundColor: "#D9D9D9" }}>
-              <LogoutIcon sx={{ fontSize: "14px", color: "#171717" }} />
-            </IconButton>
+              <IconButton color="inherit" sx={{ backgroundColor: "#D9D9D9" }}>
+                <LogoutIcon sx={{ fontSize: "14px", color: "#171717" }} />
+              </IconButton>
             </Tooltip>
           </Box>
         </Box>

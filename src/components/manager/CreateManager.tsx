@@ -65,7 +65,6 @@ const CreateManager: React.FC<CreateManagerProps> = ({
   });
   const [filteredProvinces, setFilteredProvinces] = useState<any[]>([]);
   const [filteredCities, setFilteredCities] = useState<any[]>([]);
-  // for confirm create modal
   const [isVerifyModalOpen, setIsVerifyModalOpen] = useState(false);
 
   const handleSelectChange = (e: SelectChangeEvent<string>, name: string) => {
@@ -325,26 +324,26 @@ const CreateManager: React.FC<CreateManagerProps> = ({
                       ).map((option) => (
                         <MenuItem
                           key={
-                            key === "region" 
-                              ? option.ProvinceName 
-                              : key === "province" 
-                              ? option.ProvinceId 
-                              : option.name
-                            }
+                            key === "region"
+                              ? option.ProvinceName
+                              : key === "province"
+                                ? option.ProvinceId
+                                : option.name
+                          }
                           value={
-                            key === "region" 
-                              ? option.RegionName 
-                              : key === "province" 
-                              ? option.ProvinceName 
-                              : option.name
-                            }
+                            key === "region"
+                              ? option.RegionName
+                              : key === "province"
+                                ? option.ProvinceName
+                                : option.name
+                          }
                         >
-                          {key === "region" 
-                              ? option.RegionName 
-                              : key === "province" 
-                              ? option.ProvinceName 
+                          {key === "region"
+                            ? option.RegionName
+                            : key === "province"
+                              ? option.ProvinceName
                               : option.name
-                            }
+                          }
                         </MenuItem>
                       ))}
                     </Select>
@@ -385,14 +384,14 @@ const CreateManager: React.FC<CreateManagerProps> = ({
           {UserSectionData.addManagerButton}
         </Button>
         {isVerifyModalOpen && (
-            <ConfirmCreateManagerPage
-                open={isVerifyModalOpen}
-                onClose={() => setIsVerifyModalOpen(false)}
-                onVerified={handleCreateManagerSubmit}
-                user={user}
-                selectState={selectState}
-                onSubmit={onSubmit}
-            />
+          <ConfirmCreateManagerPage
+            open={isVerifyModalOpen}
+            onClose={() => setIsVerifyModalOpen(false)}
+            onVerified={handleCreateManagerSubmit}
+            user={user}
+            selectState={selectState}
+            onSubmit={onSubmit}
+          />
         )}
       </DialogContent>
     </Dialog>

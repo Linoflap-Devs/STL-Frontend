@@ -23,68 +23,65 @@ const ConfirmCreateManagerPage: React.FC<ConfirmCreateManagerPageProps> = ({ ope
     const handleTogglePasswordVisibility = () =>
         setShowPassword((prev) => !prev);
 
-    const handleVerify = async () => {
-        try {
-            if (!password) {
-                setError("Password is required.");
-                return;
-            }
-
-            const verifyResponse = await verifyPass(password);
-
-            if (!verifyResponse.success) {
-                setError("Invalid password. Please try again.");
-                return;
-            }
-
-            setError("");
-
-            const newUser = {
-                firstName: user.firstName,
-                lastName: user.lastName,
-                region: selectState.region,
-                province: selectState.province,
-                city: selectState.city,
-                barangay: user.barangay,
-                street: user.street,
-                email: user.email,
-                password: user.password,
-                suffix: user.suffix,
-                phoneNumber: user.phoneNumber,
-                userTypeId: 3,
-            };
-
-            // Proceed to create the user after password verification
-            const response = await addUser(newUser);
-            if (response.success) {
-                Swal.fire({
-                    icon: "success",
-                    title: "Manager Created!",
-                    text: `The manager has been added successfully.`,
-                    confirmButtonColor: "#67ABEB",
-                });
-
-                onSubmit(newUser);
-                onClose();
-            } else {
-                setError(response.message || "Something went wrong. Please try again.");
-                Swal.fire({
-                    icon: "error",
-                    title: "Error!",
-                    text: response.message || "Something went wrong. Please try again.",
-                    confirmButtonColor: "#D32F2F",
-                });
-            }
-        } catch (error) {
-            setError("An unexpected error occurred. Please try again.");
-            Swal.fire({
-                icon: "error",
-                title: "Unexpected Error!",
-                text: "An unexpected error occurred. Please try again.",
-                confirmButtonColor: "#D32F2F",
-            });
+    const handleVerifyCreateManager = async () => {
+        if (!password) {
+          setError("Password is required.");
+          return;
         }
-    };
+      
+        try {
+          const { success: isVerified } = await verifyPass(password);
+          if (!isVerified) {
+            setError("Invalid password. Please try again.");
+            return;
+          }
+          setError(""); // Clear previous errors
+      
+          // Construct the new user object
+          const newUser = {
+            ...user,
+            region: selectState.region,
+            province: selectState.province,
+            city: selectState.city,
+            userTypeId: 3,
+          };
+      
+          // Create the user after verification
+          const response = await addUser(newUser);
+          if (!response.success) {
+            const errorMessage = response.message || "Something went wrong. Please try again.";
+            setError(errorMessage);
+            Swal.fire({
+              icon: "error",
+              title: "Error!",
+              text: errorMessage,
+              confirmButtonColor: "#D32F2F",
+            });
+            return;
+          }
+      
+          // Success notification
+          Swal.fire({
+            icon: "success",
+            title: "Manager Created!",
+            text: "The manager has been added successfully.",
+            confirmButtonColor: "#67ABEB",
+          });
+      
+          onSubmit(newUser);
+          onClose();
+        } catch (error) {
+          console.error("Error creating manager:", error);
+          setError("An unexpected error occurred. Please try again.");
+          Swal.fire({
+            icon: "error",
+            title: "Unexpected Error!",
+            text: "An unexpected error occurred. Please try again.",
+            confirmButtonColor: "#D32F2F",
+          });
+        }
+      };
+      
 
     return (
         <Dialog open={open} onClose={onClose}>
@@ -195,7 +192,7 @@ const ConfirmCreateManagerPage: React.FC<ConfirmCreateManagerPageProps> = ({ ope
                                 />
                                 <Button
                                     type="submit"
-                                    onClick={handleVerify}
+                                    onClick={handleVerifyCreateManager}
                                     variant="contained"
                                     fullWidth
                                     sx={{
