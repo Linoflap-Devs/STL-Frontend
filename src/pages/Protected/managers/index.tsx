@@ -26,8 +26,8 @@ const ManagersPage = () => {
   const [selectedManager, setSelectedManager] = useState<User | null>(null);
   const [isDisabled, setIsDisabled] = useState(true);
   const [isClicked, setIsClicked] = useState(false);
+  const [refresh, setRefresh] = useState(false);
 
-  // Fetching data on component mount
   const loadData = async () => {
     try {
       const [userResponse, regionResponse, provinceResponse] = await Promise.all([
@@ -35,17 +35,17 @@ const ManagersPage = () => {
         fetchRegions({}),
         fetchProvinces({})
       ]);
-  
+
       if (userResponse.success && regionResponse.success && provinceResponse.success) {
         setRegions(regionResponse.data);
         setProvinces(provinceResponse.data);
-  
+
         const cityData = cities.map((city: any) => ({
           name: city.name,
           province: city.province
         }));
         setCityList(cityData);
-  
+
         const filteredUsers = userResponse.data
           .filter((user: { UserTypeId: number }) => user.UserTypeId === 3)
           .map((user: any) => ({
@@ -60,7 +60,7 @@ const ManagersPage = () => {
             City: user.City ?? "N/A",
             Street: user.Street ?? "N/A",
           }));
-  
+
         setManagers(filteredUsers);
       } else {
         console.error("Failed to fetch some data.");
@@ -69,10 +69,11 @@ const ManagersPage = () => {
       console.error("Error fetching data:", error);
     }
   };
-  
+
+  // Re-fetch data when `refresh` changes
   useEffect(() => {
     loadData();
-  }, []);  
+  }, [refresh]);
 
   const handleUserCreate = () => {
     setSelectedUser(null);
@@ -86,10 +87,10 @@ const ManagersPage = () => {
 
     if (mode === "update") {
       setIsClicked(true);
-      setIsDisabled(false); // Enable form
+      setIsDisabled(false);
     } else {
       setIsClicked(false);
-      setIsDisabled(true); // Disable form
+      setIsDisabled(true);
     }
   };
 
@@ -101,47 +102,33 @@ const ManagersPage = () => {
   const handleSubmitUser = async (userData: User | null) => {
     if (userData) {
       try {
-        const response = await fetchUsers({}); // Fetch the latest data
-        if (response.success) {
-          const filteredUsers = response.data
-            .filter((user: { UserTypeId: number; }) => user.UserTypeId === 3)
-            .map((user: { FirstName: any; LastName: any; Email: any; DateOfRegistration: any; Location: { Region: any; Province: any; City: any; }; CreatedBy: { FirstName: any; LastName: any; }; }) => ({
-              FirstName: user.FirstName,
-              LastName: user.LastName,
-              Email: user.Email,
-              DateOfRegistration: user.DateOfRegistration,
-              Region: user.Location?.Region || "Unknown",
-              Province: user.Location?.Province || "Unknown",
-              City: user.Location?.City || "Unknown",
-              CreatedByFirstName: user.CreatedBy?.FirstName || "Unknown",
-              CreatedByLastName: user.CreatedBy?.LastName || "Unknown",
-            }));
-
-          setManagers(filteredUsers); // Update state with fresh data
-        } else {
-          console.error("Failed to fetch updated users:", response.message);
-        }
+        await fetchUsers({});
+        setRefresh(prev => !prev);
       } catch (error) {
         console.error("Error fetching updated users:", error);
       }
     }
-
+  
+    setSelectedUser(null);
+  
     setModalOpen(false);
   };
 
   const handleSaveUpdatedUser = (updatedUser: User) => {
-    setManagers((prevManagers) =>
-      prevManagers.map((manager) =>
+    setManagers(prevManagers =>
+      prevManagers.map(manager =>
         manager.id === updatedUser.id ? updatedUser : manager
       )
     );
     setSelectedManager(null);
     setUpdateModalOpen(false);
+    setRefresh(prev => !prev);
   };
 
   const handleDeleteManager = (ids: number[]) => {
     const updatedManagers = managers.filter(manager => !ids.includes(manager.id!));
     setManagers(updatedManagers);
+    setRefresh(prev => !prev);
   };
 
   return (
@@ -171,6 +158,7 @@ const ManagersPage = () => {
           onEdit={(user, mode = "view") => handleUserEdit(user, mode)}
           managers={managers}
           onDelete={handleDeleteManager}
+          loadData={loadData}
         />
       </Box>
       <CreateManager
@@ -179,9 +167,9 @@ const ManagersPage = () => {
         onSubmit={handleSubmitUser}
         userData={selectedUser}
         managers={managers}
-        regions={regions} 
-        provinces={provinces} 
-        cities={cityList} 
+        regions={regions}
+        provinces={provinces}
+        cities={cityList}
       />
       {isUpdateModalOpen && (
         <UpdateManager
@@ -192,7 +180,6 @@ const ManagersPage = () => {
           cities={cityList}
           regions={regions}
           provinces={provinces}
-          loadData={loadData}
           isDisabled={isDisabled}
           isClicked={isClicked}
         />

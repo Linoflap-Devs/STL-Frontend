@@ -25,63 +25,62 @@ const ConfirmCreateManagerPage: React.FC<ConfirmCreateManagerPageProps> = ({ ope
 
     const handleVerifyCreateManager = async () => {
         if (!password) {
-          setError("Password is required.");
-          return;
+            setError("Password is required.");
+            return;
         }
-      
+
         try {
-          const { success: isVerified } = await verifyPass(password);
-          if (!isVerified) {
-            setError("Invalid password. Please try again.");
-            return;
-          }
-          setError(""); // Clear previous errors
-      
-          // Construct the new user object
-          const newUser = {
-            ...user,
-            region: selectState.region,
-            province: selectState.province,
-            city: selectState.city,
-            userTypeId: 3,
-          };
-      
-          // Create the user after verification
-          const response = await addUser(newUser);
-          if (!response.success) {
-            const errorMessage = response.message || "Something went wrong. Please try again.";
-            setError(errorMessage);
+            const { success: isVerified } = await verifyPass(password);
+            if (!isVerified) {
+                setError("Invalid password. Please try again.");
+                return;
+            }
+            setError(""); // Clear previous errors
+
+            // Construct the new user object
+            const newUser = {
+                ...user,
+                region: selectState.region,
+                province: selectState.province,
+                city: selectState.city,
+                userTypeId: 3,
+            };
+
+            // Create the user after verification
+            const response = await addUser(newUser);
+            if (!response.success) {
+                const errorMessage = response.message || "Something went wrong. Please try again.";
+                setError(errorMessage);
+                Swal.fire({
+                    icon: "error",
+                    title: "Error!",
+                    text: errorMessage,
+                    confirmButtonColor: "#D32F2F",
+                });
+                return;
+            }
+
+            // Success notification
             Swal.fire({
-              icon: "error",
-              title: "Error!",
-              text: errorMessage,
-              confirmButtonColor: "#D32F2F",
+                icon: "success",
+                title: "Manager Created!",
+                text: "The manager has been added successfully.",
+                confirmButtonColor: "#67ABEB",
             });
-            return;
-          }
-      
-          // Success notification
-          Swal.fire({
-            icon: "success",
-            title: "Manager Created!",
-            text: "The manager has been added successfully.",
-            confirmButtonColor: "#67ABEB",
-          });
-      
-          onSubmit(newUser);
-          onClose();
+
+            onSubmit(newUser);
+            onClose();
         } catch (error) {
-          console.error("Error creating manager:", error);
-          setError("An unexpected error occurred. Please try again.");
-          Swal.fire({
-            icon: "error",
-            title: "Unexpected Error!",
-            text: "An unexpected error occurred. Please try again.",
-            confirmButtonColor: "#D32F2F",
-          });
+            console.error("Error creating manager:", error);
+            setError("An unexpected error occurred. Please try again.");
+            Swal.fire({
+                icon: "error",
+                title: "Unexpected Error!",
+                text: "An unexpected error occurred. Please try again.",
+                confirmButtonColor: "#D32F2F",
+            });
         }
-      };
-      
+    };
 
     return (
         <Dialog open={open} onClose={onClose}>

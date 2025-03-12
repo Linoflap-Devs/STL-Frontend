@@ -34,7 +34,7 @@ const Header: React.FC<HeaderProps> = ({ handleDrawerToggle, collapsed }) => {
   const [user, setUser] = useState<{ firstName: string; lastName: string; userTypeId: number } | null>(null);
 
   useEffect(() => {
-    const fetchUser = async () => {
+    (async () => {
       try {
         const response = await getCurrentUser({});
         if (response.success && response.data) {
@@ -49,9 +49,7 @@ const Header: React.FC<HeaderProps> = ({ handleDrawerToggle, collapsed }) => {
       } catch (error) {
         console.error("Error fetching user:", error);
       }
-    };
-
-    fetchUser();
+    })();
   }, []);
 
   const handleLogout = async () => {

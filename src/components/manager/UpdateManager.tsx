@@ -55,7 +55,6 @@ interface UpdateManagerProps {
   regions: any[];
   provinces: any[];
   cities: any[];
-  loadData: () => Promise<void>;
   isDisabled: boolean;
   isClicked: boolean;
 }
@@ -68,7 +67,6 @@ const UpdateManager: React.FC<UpdateManagerProps> = React.memo(({
   regions,
   provinces,
   cities,
-  loadData,
   isDisabled,
   isClicked,
 }) => {

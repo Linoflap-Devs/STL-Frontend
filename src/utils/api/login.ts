@@ -2,10 +2,10 @@ import axiosInstance from '../axiosInstance';
 import axios from 'axios';
 
 interface LoginPayload {
-  email: string; // Matches 'user' in backend
+  email: string;
   password: string;
-  id: number; // Matches 'id' (UserId) in backend
-  role: number; // Matches 'role' (UserTypeId) in backend
+  id: number;
+  role: number;
 }
 
 interface LoginResponse {

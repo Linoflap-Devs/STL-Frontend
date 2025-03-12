@@ -21,10 +21,10 @@ import { SelectChangeEvent } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 import { inputErrorStyles } from "../../styles/theme";
 import { UserSectionData } from "~/data/AdminSectionData";
-import Swal from "sweetalert2";
 import { formatKey } from "~/utils/format"
 import { validateUser } from "~/utils/validation"
 import ConfirmCreateManagerPage from "./ConfirmCreateManager";
+import Swal from "sweetalert2";
 
 interface CreateManagerProps {
   open: boolean;

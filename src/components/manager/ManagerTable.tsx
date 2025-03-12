@@ -57,9 +57,10 @@ interface ManagerTableProps {
   onCreate: () => void;
   onEdit: (user: User, action?: "view" | "update") => void;
   onDelete: (ids: number[]) => void;
+  loadData: () => Promise<void>;
 }
 
-const ManagerTable: React.FC<ManagerTableProps> = ({ managers, onCreate, onEdit, onDelete, }) => {
+const ManagerTable: React.FC<ManagerTableProps> = ({ managers, onCreate, onEdit, loadData,  }) => {
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [isFilterVisible, setIsFilterVisible] = useState(false);
@@ -130,7 +131,6 @@ const ManagerTable: React.FC<ManagerTableProps> = ({ managers, onCreate, onEdit,
     setIsFilterVisible((prev) => !prev);
   };
 
-  // Filter change handler
   const handleFilterChange = (key: string) => (value: string | Dayjs | null) => {
     let filterValue: string;
 
