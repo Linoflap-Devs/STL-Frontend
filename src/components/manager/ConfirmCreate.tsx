@@ -5,6 +5,7 @@ import { addUser } from "~/utils/api/users";
 import Swal from "sweetalert2";
 import { LoginSectionData } from "../../data/LoginSectionData";
 import ArrowBackIosNewIcon from "@mui/icons-material/ArrowBackIosNew";
+import { Visibility, VisibilityOff } from "@mui/icons-material";
 
 interface ConfirmCreateProps {
     open: boolean;
@@ -18,6 +19,10 @@ interface ConfirmCreateProps {
 const ConfirmCreatePage: React.FC<ConfirmCreateProps> = ({ open, onClose, user, selectState, onSubmit }) => {
     const [password, setPassword] = useState("");
     const [error, setError] = useState("");
+    const [showPassword, setShowPassword] = useState<boolean>(false);
+
+    const handleTogglePasswordVisibility = () =>
+        setShowPassword((prev) => !prev);
 
     const handleVerify = async () => {
         try {
@@ -98,7 +103,7 @@ const ConfirmCreatePage: React.FC<ConfirmCreateProps> = ({ open, onClose, user, 
                     <Box
                         sx={{
                             maxWidth: 500,
-                            p: "1rem 0rem",
+                            p: "0rem 0rem",
                             display: "flex",
                             flexDirection: "column",
                             alignItems: "center",
@@ -114,7 +119,7 @@ const ConfirmCreatePage: React.FC<ConfirmCreateProps> = ({ open, onClose, user, 
                                     left: 30,
                                     top: 40,
                                     color: "#D1D5D8"[300],
-                                    backgroundColor: "#374151",
+                                    backgroundColor: "#171717",
                                     fontWeight: "bold",
                                 }}
                             >
@@ -129,7 +134,7 @@ const ConfirmCreatePage: React.FC<ConfirmCreateProps> = ({ open, onClose, user, 
                                 flexDirection: "column",
                                 textAlign: "center",
                                 marginTop: "1rem",
-                                paddingX: 3,
+                                //paddingX: 3,
                             }}
                         >
                             <Box
@@ -159,16 +164,32 @@ const ConfirmCreatePage: React.FC<ConfirmCreateProps> = ({ open, onClose, user, 
                             >
                                 {LoginSectionData.ConfirmIdentityDescription}
                             </Typography>
+                            <Box sx={{ paddingX: 4, }}>
                             <TextField
                                 label="Enter your password"
-                                type="password"
+                                type={showPassword ? "text" : "password"}
                                 fullWidth
                                 value={password}
                                 onChange={(e) => setPassword(e.target.value)}
                                 error={!!error}
                                 helperText={error}
                                 autoFocus
-                                sx={{marginTop: 3, }}
+                                sx={{ marginTop: 4, }}
+                                InputProps={{
+                                    endAdornment: (
+                                        <IconButton
+                                            sx={{ color: "#9CA3AF", fontSize: "1.3rem" }}
+                                            onClick={handleTogglePasswordVisibility}
+                                            edge="end"
+                                        >
+                                            {showPassword ? (
+                                                <VisibilityOff sx={{ fontSize: "inherit" }} />
+                                            ) : (
+                                                <Visibility sx={{ fontSize: "inherit" }} />
+                                            )}
+                                        </IconButton>
+                                    ),
+                                }}
                             />
                             <Button
                                 type="submit"
@@ -186,6 +207,7 @@ const ConfirmCreatePage: React.FC<ConfirmCreateProps> = ({ open, onClose, user, 
                             >
                                 Confirm
                             </Button>
+                            </Box>
                         </Box>
                     </Box>
                 </Box>
