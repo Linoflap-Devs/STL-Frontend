@@ -88,8 +88,26 @@ const ConfirmCreatePage: React.FC<ConfirmCreateProps> = ({ open, onClose, user, 
     };
 
     return (
-        <Dialog open={open} onClose={onClose} fullWidth maxWidth="sm">
+        <Dialog open={open} onClose={onClose}>
             <DialogContent sx={{ paddingX: 0, }}>
+                <Tooltip title={"Back"}>
+                    <IconButton
+                        aria-label="close"
+                        href="/"
+                        sx={{
+                            position: "absolute",
+                            left: 30,
+                            top: 40,
+                            color: "#D1D5D8"[300],
+                            backgroundColor: "#171717",
+                            fontWeight: "bold",
+                        }}
+                    >
+                        <ArrowBackIosNewIcon
+                            sx={{ fontSize: 23, fontWeight: "bold" }}
+                        />
+                    </IconButton>
+                </Tooltip>
                 <Box
                     sx={{
                         position: "relative",
@@ -103,31 +121,13 @@ const ConfirmCreatePage: React.FC<ConfirmCreateProps> = ({ open, onClose, user, 
                     <Box
                         sx={{
                             maxWidth: 500,
-                            p: "0rem 0rem",
+                            paddingBottom: "1rem",
                             display: "flex",
                             flexDirection: "column",
                             alignItems: "center",
                             position: "relative",
                         }}
                     >
-                        <Tooltip title={"Back to Login"}>
-                            <IconButton
-                                aria-label="close"
-                                href="/"
-                                sx={{
-                                    position: "absolute",
-                                    left: 30,
-                                    top: 40,
-                                    color: "#D1D5D8"[300],
-                                    backgroundColor: "#171717",
-                                    fontWeight: "bold",
-                                }}
-                            >
-                                <ArrowBackIosNewIcon
-                                    sx={{ fontSize: 23, fontWeight: "bold" }}
-                                />
-                            </IconButton>
-                        </Tooltip>
                         <Box
                             sx={{
                                 display: "flex",
@@ -164,49 +164,49 @@ const ConfirmCreatePage: React.FC<ConfirmCreateProps> = ({ open, onClose, user, 
                             >
                                 {LoginSectionData.ConfirmIdentityDescription}
                             </Typography>
-                            <Box sx={{ paddingX: 4, }}>
-                            <TextField
-                                label="Enter your password"
-                                type={showPassword ? "text" : "password"}
-                                fullWidth
-                                value={password}
-                                onChange={(e) => setPassword(e.target.value)}
-                                error={!!error}
-                                helperText={error}
-                                autoFocus
-                                sx={{ marginTop: 4, }}
-                                InputProps={{
-                                    endAdornment: (
-                                        <IconButton
-                                            sx={{ color: "#9CA3AF", fontSize: "1.3rem" }}
-                                            onClick={handleTogglePasswordVisibility}
-                                            edge="end"
-                                        >
-                                            {showPassword ? (
-                                                <VisibilityOff sx={{ fontSize: "inherit" }} />
-                                            ) : (
-                                                <Visibility sx={{ fontSize: "inherit" }} />
-                                            )}
-                                        </IconButton>
-                                    ),
-                                }}
-                            />
-                            <Button
-                                type="submit"
-                                onClick={handleVerify}
-                                variant="contained"
-                                fullWidth
-                                sx={{
-                                    py: 1.5,
-                                    borderRadius: "8px",
-                                    textTransform: "none",
-                                    marginTop: 4,
-                                }}
+                            <Box sx={{ paddingX: 5, }}>
+                                <TextField
+                                    label="Enter your password"
+                                    type={showPassword ? "text" : "password"}
+                                    fullWidth
+                                    value={password}
+                                    onChange={(e) => setPassword(e.target.value)}
+                                    error={!!error}
+                                    helperText={error}
+                                    autoFocus
+                                    sx={{ marginTop: 4, }}
+                                    InputProps={{
+                                        endAdornment: (
+                                            <IconButton
+                                                sx={{ color: "#9CA3AF", fontSize: "1.3rem" }}
+                                                onClick={handleTogglePasswordVisibility}
+                                                edge="end"
+                                            >
+                                                {showPassword ? (
+                                                    <VisibilityOff sx={{ fontSize: "inherit" }} />
+                                                ) : (
+                                                    <Visibility sx={{ fontSize: "inherit" }} />
+                                                )}
+                                            </IconButton>
+                                        ),
+                                    }}
+                                />
+                                <Button
+                                    type="submit"
+                                    onClick={handleVerify}
+                                    variant="contained"
+                                    fullWidth
+                                    sx={{
+                                        py: 1.5,
+                                        borderRadius: "8px",
+                                        textTransform: "none",
+                                        marginTop: 3,
+                                    }}
 
-                                disabled={false}
-                            >
-                                Confirm
-                            </Button>
+                                    disabled={false}
+                                >
+                                    Confirm
+                                </Button>
                             </Box>
                         </Box>
                     </Box>
