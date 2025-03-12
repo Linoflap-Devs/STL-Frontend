@@ -24,7 +24,7 @@ import { UserSectionData } from "~/data/AdminSectionData";
 import Swal from "sweetalert2";
 import { formatKey } from "~/utils/format"
 import { validateUser } from "~/utils/validation"
-import ConfirmCreatePage from "./ConfirmCreate";
+import ConfirmCreateManagerPage from "./ConfirmCreateManager";
 
 interface CreateManagerProps {
   open: boolean;
@@ -42,7 +42,6 @@ const CreateManager: React.FC<CreateManagerProps> = ({
   onClose,
   onSubmit,
   userData,
-  managers,
   regions,
   provinces,
   cities,
@@ -190,7 +189,6 @@ const CreateManager: React.FC<CreateManagerProps> = ({
       </DialogTitle>
       <DialogContent>
         <Grid container rowSpacing={2.5} columnSpacing={{ xs: 1, sm: 3, md: 2.5 }}>
-          {/* Column 1 - Personal Information */}
           <Grid item xs={6} sm={6}>
             <Typography variant="h6" sx={{ marginBottom: "0.9rem" }}>
               Personal Information
@@ -298,7 +296,6 @@ const CreateManager: React.FC<CreateManagerProps> = ({
               </Grid>
             ))}
           </Grid>
-          {/* Column 2 - Assigned Location */}
           <Grid item xs={6}>
             <Typography variant="h6" sx={{ marginBottom: "0.9rem" }}>
               Assigned Location
@@ -387,16 +384,16 @@ const CreateManager: React.FC<CreateManagerProps> = ({
         >
           {UserSectionData.addManagerButton}
         </Button>
-{isVerifyModalOpen && (
-    <ConfirmCreatePage
-        open={isVerifyModalOpen}
-        onClose={() => setIsVerifyModalOpen(false)}
-        onVerified={handleCreateManagerSubmit}
-        user={user} // Ensure this is correctly defined
-        selectState={selectState} // Ensure this is correctly defined
-        onSubmit={onSubmit} // Ensure this is correctly defined
-    />
-)}
+        {isVerifyModalOpen && (
+            <ConfirmCreateManagerPage
+                open={isVerifyModalOpen}
+                onClose={() => setIsVerifyModalOpen(false)}
+                onVerified={handleCreateManagerSubmit}
+                user={user}
+                selectState={selectState}
+                onSubmit={onSubmit}
+            />
+        )}
       </DialogContent>
     </Dialog>
   );

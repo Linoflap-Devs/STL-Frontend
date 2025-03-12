@@ -4,7 +4,6 @@ import {
   DialogContent,
   DialogTitle,
   Button,
-  TextField,
   Typography,
   Grid,
   Select,
@@ -14,21 +13,20 @@ import {
   FormHelperText,
   InputLabel,
   OutlinedInput,
-  InputAdornment,
   Box,
   Tooltip,
 } from "@mui/material";
 import { formatKey } from "../../utils/format";
 import { User } from "./ManagerTable";
-import { Visibility, VisibilityOff } from "@mui/icons-material";
 import { SelectChangeEvent } from "@mui/material";
 import CloseIcon from '@mui/icons-material/Close';
-import { inputStyles, inputErrorStyles, selectStyles } from "../../styles/theme";
-import { fetchUserById, updateUser } from "~/utils/api/users";
+import { inputStyles, selectStyles } from "../../styles/theme";
+import { fetchUserById } from "~/utils/api/users";
 import dayjs, { Dayjs } from "dayjs";
 import Swal from "sweetalert2";
 import EditLogModalPage from "./EditLogModal";
 import { validateUser } from "~/utils/validation"
+import ConfirmUpdateManagerPage from "./ConfirmUpdateManager";
 
 type LogType = {
   id: number;
@@ -38,7 +36,6 @@ type LogType = {
 
 interface UpdateManagerProps {
   open: boolean;
-
   manager: User | null;
   onClose: () => void;
   onSubmit: (userData: {
@@ -130,6 +127,7 @@ const UpdateManager: React.FC<UpdateManagerProps> = React.memo(({
   const [selectedUserId, setSelectedUserId] = useState<number | null>(null);
   const [openEditLogModal, setOpenEditLogModal] = useState(false);
   const [selectedLog, setSelectedLog] = useState<LogType | null>(null);
+  const [isVerifyModalOpen, setIsVerifyModalOpen] = useState(false);
 
   useEffect(() => {
     if (!open || !manager?.userId) return;
@@ -344,64 +342,8 @@ const UpdateManager: React.FC<UpdateManagerProps> = React.memo(({
       return;
     }
 
-    try {
-      console.log("Updating user with data:", { ...user, remarks: user.remarks });
-
-      if (user.UserId === null) {
-        console.error("UserId is null");
-        return;
-      }
-
-      const response = await updateUser(user.UserId!, {
-        ...user,
-        remarks: user.remarks,
-      });
-
-      if (response.success) {
-        console.log("User updated successfully:", response.data);
-
-        await loadData(); 
-
-        const updatedResponse = await updateUser(user.UserId!, { ...user });
-        if (updatedResponse.success) {
-          console.log("Fetched updated user data:", updatedResponse.data);
-
-          setUser((prevUser) => ({
-            ...prevUser,
-            ...updatedResponse.data,
-            remarks: updatedResponse.data.remarks ?? prevUser.remarks ?? "",
-          }));
-        } else {
-          console.warn("Failed to fetch updated user data:", updatedResponse.message);
-        }
-
-        Swal.fire({
-          icon: "success",
-          title: "Manager Updated!",
-          text: "The manager details have been updated successfully.",
-          confirmButtonColor: "#67ABEB",
-        });
-
-        onSubmit(user);
-        onClose();
-      } else {
-        setErrors(response.errors || { form: response.message });
-        Swal.fire({
-          icon: "error",
-          title: "Error!",
-          text: response.message || "Something went wrong. Please try again.",
-          confirmButtonColor: "#D32F2F",
-        });
-      }
-    } catch (error) {
-      setErrors({ form: error instanceof Error ? error.message : "An unexpected error occurred. Please try again." });
-      Swal.fire({
-        icon: "error",
-        title: "Unexpected Error!",
-        text: error instanceof Error ? error.message : "An unexpected error occurred. Please try again.",
-        confirmButtonColor: "#D32F2F",
-      });
-    }
+    // Open verification modal before proceeding
+    setIsVerifyModalOpen(true);
   };
 
   return (
@@ -676,12 +618,24 @@ const UpdateManager: React.FC<UpdateManagerProps> = React.memo(({
               fontSize: "12px",
               padding: "0.8rem",
               borderRadius: "8px",
-              color: '#181A1B',
+              color: "#181A1B",
             }}
             variant="contained"
           >
             Update Manager
           </Button>
+        )}
+
+        {isVerifyModalOpen && (
+          <ConfirmUpdateManagerPage
+            open={isVerifyModalOpen}
+            onClose={() => setIsVerifyModalOpen(false)}
+            onVerified={handleUpdateManagerSubmit}
+            user={user}
+            selectState={selectState}
+            onSubmit={onSubmit}
+            setUser={setUser} // Pass it here
+          />
         )}
       </DialogContent>
     </Dialog>

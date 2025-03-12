@@ -7,20 +7,19 @@ import { LoginSectionData } from "../../data/LoginSectionData";
 import ArrowBackIosNewIcon from "@mui/icons-material/ArrowBackIosNew";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
 
-interface ConfirmCreateProps {
+interface ConfirmCreateManagerPageProps {
     open: boolean;
     onClose: () => void;
     onVerified: () => void;
-    user: any; // Replace with actual user type
-    selectState: any; // Replace with actual selectState type
-    onSubmit: (newUser: any) => void; // Replace with actual type
+    user: any;
+    selectState: any;
+    onSubmit: (newUser: any) => void;
 }
 
-const ConfirmCreatePage: React.FC<ConfirmCreateProps> = ({ open, onClose, user, selectState, onSubmit }) => {
+const ConfirmCreateManagerPage: React.FC<ConfirmCreateManagerPageProps> = ({ open, onClose, user, selectState, onSubmit }) => {
     const [password, setPassword] = useState("");
     const [error, setError] = useState("");
     const [showPassword, setShowPassword] = useState<boolean>(false);
-
     const handleTogglePasswordVisibility = () =>
         setShowPassword((prev) => !prev);
 
@@ -34,7 +33,7 @@ const ConfirmCreatePage: React.FC<ConfirmCreateProps> = ({ open, onClose, user, 
             const verifyResponse = await verifyPass(password);
 
             if (!verifyResponse.success) {
-                setError(verifyResponse.message || "Invalid password. Please try again.");
+                setError("Invalid password. Please try again.");
                 return;
             }
 
@@ -90,10 +89,11 @@ const ConfirmCreatePage: React.FC<ConfirmCreateProps> = ({ open, onClose, user, 
     return (
         <Dialog open={open} onClose={onClose}>
             <DialogContent sx={{ paddingX: 0, }}>
-                <Tooltip title={"Back"}>
+                <Tooltip title={"Close"}>
                     <IconButton
+                        component="a"
                         aria-label="close"
-                        href="/"
+                        onClick={onClose}
                         sx={{
                             position: "absolute",
                             left: 30,
@@ -101,6 +101,7 @@ const ConfirmCreatePage: React.FC<ConfirmCreateProps> = ({ open, onClose, user, 
                             color: "#D1D5D8"[300],
                             backgroundColor: "#171717",
                             fontWeight: "bold",
+                            cursor: "pointer",
                         }}
                     >
                         <ArrowBackIosNewIcon
@@ -166,7 +167,8 @@ const ConfirmCreatePage: React.FC<ConfirmCreateProps> = ({ open, onClose, user, 
                             </Typography>
                             <Box sx={{ paddingX: 5, }}>
                                 <TextField
-                                    label="Enter your password"
+                                    label="Password"
+                                    placeholder="Enter your Password"
                                     type={showPassword ? "text" : "password"}
                                     fullWidth
                                     value={password}
@@ -178,7 +180,7 @@ const ConfirmCreatePage: React.FC<ConfirmCreateProps> = ({ open, onClose, user, 
                                     InputProps={{
                                         endAdornment: (
                                             <IconButton
-                                                sx={{ color: "#9CA3AF", fontSize: "1.3rem" }}
+                                                sx={{ color: "#9CA3AF", fontSize: "1.3rem", }}
                                                 onClick={handleTogglePasswordVisibility}
                                                 edge="end"
                                             >
@@ -216,4 +218,4 @@ const ConfirmCreatePage: React.FC<ConfirmCreateProps> = ({ open, onClose, user, 
     );
 };
 
-export default ConfirmCreatePage;
+export default ConfirmCreateManagerPage;
