@@ -1,17 +1,18 @@
 import { createTheme } from "@mui/material/styles";
-import {Montserrat} from "@next/font/google"
+import { Montserrat } from "@next/font/google"
 
 // Load Montserrat font properly
 const montserrat = Montserrat({
-  subsets: ["latin"],
-  weight: ["400", "700"], // Load Regular (400) and Bold (700)
-  display: "swap",
+  subsets: ['latin'],
+  weight: ['400', '700'],
+  display: 'swap',
 });
+
 const darkTheme = createTheme({
   palette: {
     mode: "dark",
     background: {
-      default: "#181A1B",
+      default: "#212121",
     },
     text: {
       primary: "#FFFFFF",
@@ -19,19 +20,18 @@ const darkTheme = createTheme({
     },
   },
   typography: {
-    fontFamily:  montserrat.style.fontFamily,
+    fontFamily: montserrat.style.fontFamily,
   },
   components: {
     MuiButton: {
       styleOverrides: {
         contained: {
-          color: "#ffffff", 
+          color: "#181A1B",
           borderRadius: 5,
-          backgroundColor: "#CCA1FD",
+          backgroundColor: "#67ABEB",
           "&:hover": {
-            backgroundColor: "#A070D3",
-          // backgroundColor: "#65308B",
-   },
+            backgroundColor: "#559AD6",
+          },
         },
       },
     },
@@ -47,14 +47,14 @@ const darkTheme = createTheme({
             backgroundColor: "#282828",
             transition: "background-color 0.3s ease, border-color 0.3s ease",
             "&:hover .MuiOutlinedInput-notchedOutline": {
-              borderColor: "#475569",
+              borderColor: "#FFFFFF",
             },
             "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
-              borderColor: "#475569",
+              borderColor: "#FFFFFF",
             },
           },
           "& .MuiOutlinedInput-notchedOutline": {
-            borderColor: "#374151",
+            borderColor: "#3F3F3F",
             transition: "border-color 0.3s ease",
           },
           "& .MuiOutlinedInput-input": {
@@ -76,7 +76,7 @@ const darkTheme = createTheme({
     MuiTable: {
       styleOverrides: {
         root: {
-          backgroundColor: "#1F2937",
+          backgroundColor: "#171717",
           borderRadius: 5,
           borderCollapse: "collapse",
           padding: 1,
@@ -89,10 +89,10 @@ const darkTheme = createTheme({
           color: "#D1D5D8",
           fontSize: "13px",
           padding: "auto",
-          borderBottom: "1px solid #374151",
+          borderBottom: "1px solid #3F3F3F",
         },
         head: {
-          color: "#9CA3AF",
+          color: "#FFFFFF",
           fontWeight: "bold",
         },
       },
@@ -100,7 +100,7 @@ const darkTheme = createTheme({
     MuiTableHead: {
       styleOverrides: {
         root: {
-          backgroundColor: "#374151",
+          backgroundColor: "#2F2F2F",
           lineHeight: "1.5rem",
           textTransform: "uppercase",
           fontWeight: "bold",
@@ -110,12 +110,12 @@ const darkTheme = createTheme({
     MuiTableRow: {
       styleOverrides: {
         root: {
-          borderBottom: "0.5px solid #374151",
+          borderBottom: "0.5px solid #2F2F2F",
           "&:hover": {
-            backgroundColor: "#374151",
+            backgroundColor: "#2F2F2F",
           },
           "&.Mui-selected": {
-            backgroundColor: "#28313F",
+            backgroundColor: "#2F2F2F",
           },
         },
       },
@@ -128,14 +128,14 @@ const darkTheme = createTheme({
             color: "#e5e7eb",
           },
           "&:hover": {
-            backgroundColor: "#374151",
+            backgroundColor: "#3F3F3F",
           },
           "& .MuiSvgIcon-root": {
             fill: "#6C7480",
             padding: 0,
             margin: 0,
             fontSize: "21px",
-            backgroundColor: "#374151 !important",
+            backgroundColor: "#3F3F3F !important",
             borderRadius: "5px",
             height: "20px",
             width: "20px",
@@ -154,6 +154,9 @@ const darkTheme = createTheme({
     },
     MuiMenu: {
       styleOverrides: {
+        root: {
+          borderRadius: "0px",
+        },
         paper: {
           boxShadow: "0px 5px 5px -2px rgba(0,0,0,0.2)",
         },
@@ -188,6 +191,7 @@ const darkTheme = createTheme({
           backgroundImage: "none",
           borderRadius: "6px",
           padding: "25px 8px 27px 8px",
+          backgroundColor: '#212121',
         },
       },
     },
@@ -214,29 +218,13 @@ const darkTheme = createTheme({
         },
       },
     },
-    // sa loob ng text
-    MuiOutlinedInput: {
+    MuiInputLabel: {
       styleOverrides: {
         root: {
-          backgroundColor: "#374151",
-          color: "#ffffff",
-          fontSize: "0.85rem",
-          "&:hover fieldset": {
-            borderColor: "#D1D5DB",
-          },
-          "&.Mui-error fieldset": {
-            borderColor: "#F05252",
-          },
-          width: "100% !important",
-        },
-        input: {
-          color: "#ffffff",
-          padding: "9px 16px",
-          width: "100% !important",
+          fontSize: '15px',
         },
       },
     },
-
     MuiInputBase: {
       styleOverrides: {
         root: {
@@ -253,35 +241,21 @@ const darkTheme = createTheme({
       styleOverrides: {
         root: {
           fontSize: "0.80rem",
+          marginBottom: "0px !important",
           marginLeft: "0px",
+          color: '#FF7A7A !important', // Custom color for error text
         },
       },
     },
-    MuiSelect: {
+    MuiOutlinedInput: {
       styleOverrides: {
-        root: {
-          backgroundColor: "#282828",
-          borderColor: "#D1D5DB !important",
-          width: "100%",
-        },
-        icon: {
+        input: {
           color: "#ffffff",
-        },
-        select: {
-          padding: "9px 16px",
-          "& .MuiInputBase-input": {
-            color: "#D1D5DB",
-            padding: "9px 16px",
-            "&::placeholder": {
-              color: "#D1D5DB",
-            },
-            "&:focus": {
-              color: "#ffffff",
-            },
-          },
+          //padding: "15px 16px",
+          width: "100% !important",
         },
       },
-    },
+    },    
   },
 });
 
@@ -291,8 +265,8 @@ export const buttonStyles = {
   textTransform: "none",
   fontSize: 12,
   borderRadius: "8px",
-  backgroundColor: "#2563EB",
   width: "auto",
+  color: '#181A1B',
 };
 
 export const deleteStyles = {
@@ -311,15 +285,17 @@ export const deleteStyles = {
 
 export const inputStyles = {
   "& .MuiOutlinedInput-root": {
-    "& fieldset": { borderColor: "#D1D5DB", 
-      padding: "14px 40px 10px 14px" },
-    "&.Mui-error fieldset": { borderColor: "#F05252" },
+    "& fieldset": {
+      borderColor: "#D1D5DB",
+      padding: "14px 40px 10px 14px",
+    },
+    "&.Mui-error fieldset": { borderColor: "#FF7A7A" },
   },
 };
 
 export const selectStyles = {
   "& .MuiOutlinedInput-root": {
-    "& fieldset": { 
+    "& fieldset": {
       borderColor: "#D1D5DB !important",
       padding: "14px 40px 10px 14px",
     },
@@ -329,11 +305,8 @@ export const selectStyles = {
 
 export const inputErrorStyles = {
   display: "flex",
-  alignItems: "center",
-  gap: "4px",
-  color: "#F05252",
-  marginTop: "4px",
-  fontSize: "12px",
+  color: "#FF7A7A",
+  fontSize: "13px",
 };
 
 export const filterStyles = {
@@ -351,6 +324,17 @@ export const filterStyles = {
   },
 };
 
+export const cardDashboardStyles = {
+  height: "auto",
+  border: "1px solid",
+  borderColor: "#171717",
+  backgroundColor: "#171717",
+  borderRadius: "8px",
+  paddingY: "1.9rem",
+  paddingX: "1rem",
+  margin: "0 auto",
+};
+
 export const buttonDrawStyles = {
   width: 'auto',
   height: 'auto',
@@ -363,16 +347,16 @@ export const buttonDrawStyles = {
 };
 
 export const buttonNumberStyles = {
-  width: 'auto',
-  height: 'auto',
-  border: '1px solid',
-  borderColor: '#575757',
-  borderRadius: '8px',
-  backgroundColor: '#575757',
-  py: '4.3%',
-  px: '14%',
-  mt: '0.5rem',
+  width: "100%",
+  height: "auto",
+  border: "1px solid",
+  borderColor: "#303030",
+  borderRadius: "8px",
+  mt: "0.5rem",
+  display: "flex",
+  justifyContent: "center",
+  alignItems: "center",
+  minWidth: 0,
 };
 
 export default darkTheme;
-      

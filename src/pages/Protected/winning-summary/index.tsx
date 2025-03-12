@@ -9,7 +9,7 @@ import TopWinningRegionPage from "~/components/dashboard/TopWinningRegion";
 import SummaryBettorsBetsPlacedPage from "~/components/dashboard/SummaryBettorsBetsPlaced";
 import SummaryWinnersDrawTimePage from "~/components/dashboard/SummaryWinnersDrawTime";
 
-const DashboardPage = () => {
+const WinningSummaryPage = () => {
   return (
     <Box>
       <Typography sx={{ fontWeight: 700 }} variant="h4">
@@ -42,4 +42,4 @@ const DashboardPage = () => {
   );
 };
 
-export default DashboardPage;
+export default WinningSummaryPage;

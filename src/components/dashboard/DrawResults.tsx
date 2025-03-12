@@ -1,5 +1,15 @@
-import React from "react";
-import { Box, Typography, Select, MenuItem } from "@mui/material";
+import React, { useState } from "react";
+import {
+  Box,
+  Typography,
+  Select,
+  MenuItem,
+  Divider,
+  FormControl,
+  InputLabel,
+} from "@mui/material";
+import CasinoIcon from "@mui/icons-material/Casino";
+
 import { buttonDrawStyles, buttonNumberStyles } from "../../styles/theme";
 
 interface DrawResultsProps {
@@ -8,20 +18,18 @@ interface DrawResultsProps {
 }
 
 const DrawResultsPage: React.FC<DrawResultsProps> = ({
-  value1 = "4",
+  value1 = "04",
   value2 = "20",
 }) => {
+  const [selectedRegion, setSelectedRegion] = useState("");
+  const [selectedProvince, setSelectedProvince] = useState("");
   const displayValue = (value: number | string | null | undefined) => {
     if (value === null || value === undefined) {
-      return (
-        <Typography sx={{ padding: '0.8rem' }}>
-          {"\u00A0"}
-        </Typography>
-      );
+      return <Typography sx={{ padding: "0.8rem" }}>{"\u00A0"}</Typography>;
     }
     if (typeof value === "string" && value.trim() === "") {
       return (
-        <Typography sx={{ paddingY: '1rem', paddingX: '0.6rem' }}>
+        <Typography sx={{ paddingY: "1rem", paddingX: "0.6rem" }}>
           {"\u00A0"}
         </Typography>
       );
@@ -30,102 +38,121 @@ const DrawResultsPage: React.FC<DrawResultsProps> = ({
   };
 
   return (
-    <Box sx={{}}>
-      <Typography sx={{ color: "#E3C9FF", fontWeight: 700 }} variant="h6">
-        Official Draw Result
-      </Typography>
-      <Box sx={{ display: 'flex', flexDirection: 'row', gap: 2, }}>
+    <Box
+      sx={{
+        backgroundColor: "#171717",
+        padding: 2,
+        borderRadius: "10px",
+      }}
+    >
+      <Box sx={{ display: "flex", mb: 1 }}>
+        <Box sx={{ backgroundColor: "#2F2F2F" }}>
+          <CasinoIcon sx={{ color: "#67ABEB" }} />
+        </Box>
+        <Typography sx={{ fontWeight: 300, fontSize: "16px", ml: 1 }}>
+          Draw Results Today
+        </Typography>
+      </Box>
+      <Divider sx={{ backgroundColor: "#303030", mb: "1rem" }} />
+
+      <Box
+        sx={{ display: "flex", flexDirection: "row", gap: 2, width: "100%" }}
+      >
         {/* Region Select */}
-        <Box sx={{ display: 'flex', flexDirection: 'column', }}>
-          <Typography variant="subtitle1">Region</Typography>
-          <Select
-            name="Region"
-            fullWidth
-            displayEmpty
-            sx={{ width: '312px !important' }}
-            renderValue={(selected) =>
-              selected ? (selected as string) : 'Select Region'
-            }
-            MenuProps={{
-              PaperProps: {
-                sx: { mt: 1 },
-              },
-            }}
-            value="" // add value prop for controlled component
-          >
-            <MenuItem value="" disabled>
-              Select Region
-            </MenuItem>
-            <MenuItem value="option1">Option 1</MenuItem>
-            <MenuItem value="option2">Option 2</MenuItem>
-            <MenuItem value="option3">Option 3</MenuItem>
-          </Select>
+        <Box sx={{ display: "flex", flexDirection: "column", flex: 1 }}>
+          <FormControl fullWidth>
+            <InputLabel>Region</InputLabel>
+            <Select
+              name="Region"
+              fullWidth
+              displayEmpty
+              sx={{ backgroundColor: "#171717", color: "#fff" }}
+              value={selectedRegion}
+              onChange={(e) => setSelectedRegion(e.target.value)}
+              MenuProps={{
+                PaperProps: {
+                  sx: {
+                    mt: 1.5,
+                    backgroundColor: "#171717",
+                    border: "1px solid white",
+                  },
+                },
+              }}
+            >
+              <MenuItem value="option1" sx={{ py: 0.5 }}>
+                Option 1
+              </MenuItem>
+              <MenuItem value="option2" sx={{ py: 0.5 }}>
+                Option 2
+              </MenuItem>
+              <MenuItem value="option3" sx={{ py: 0.5 }}>
+                Option 3
+              </MenuItem>
+            </Select>
+          </FormControl>
         </Box>
 
         {/* Province Select */}
-        <Box sx={{ display: 'flex', flexDirection: 'column', flex: 1 }}>
-          <Typography variant="subtitle1">Province</Typography>
-          <Select
-            name="Province"
-            fullWidth
-            displayEmpty
-            sx={{ width: '312px !important' }}
-            renderValue={(selected) =>
-              selected ? (selected as string) : 'Select Province'
-            }
-            MenuProps={{
-              PaperProps: {
-                sx: { mt: 1.5 },
-              },
-            }}
-            value="" // add value prop for controlled component
-          >
-            <MenuItem value="" disabled>
-              Select Province
-            </MenuItem>
-            <MenuItem value="province1">Province 1</MenuItem>
-            <MenuItem value="province2">Province 2</MenuItem>
-            <MenuItem value="province3">Province 3</MenuItem>
-          </Select>
+        <Box sx={{ display: "flex", flexDirection: "column", flex: 1 }}>
+          <FormControl fullWidth>
+            <InputLabel>Province</InputLabel>
+            <Select
+              name="Province"
+              fullWidth
+              displayEmpty
+              sx={{ backgroundColor: "#171717", color: "#fff" }}
+              value={selectedProvince}
+              onChange={(e) => setSelectedProvince(e.target.value)}
+              MenuProps={{
+                PaperProps: {
+                  sx: {
+                    mt: 1.5,
+                    backgroundColor: "#171717",
+                    border: "1px solid white",
+                  },
+                },
+              }}
+            >
+              <MenuItem value="option1" sx={{ py: 0.5 }}>
+                Option 1
+              </MenuItem>
+              <MenuItem value="option2" sx={{ py: 0.5 }}>
+                Option 2
+              </MenuItem>
+              <MenuItem value="option3" sx={{ py: 0.5 }}>
+                Option 3
+              </MenuItem>
+            </Select>
+          </FormControl>
         </Box>
       </Box>
 
-      <Box sx={{ mt: 2, textAlign: "left" }}>
+      <Box sx={{ mt: 2, width: "100%" }}>
         <Box
           sx={{
             display: "flex",
             gap: 2,
-            justifyContent: "flex-start",
+            justifyContent: "space-between",
             alignItems: "flex-start",
+            width: "100%",
           }}
         >
-          <Box sx={{ ...buttonDrawStyles }}>
+          {/* First Draw */}
+          <Box sx={{ flex: 1 }}>
             <Typography
-              sx={{ fontSize: "14px", fontWeight: 700, lineHeight: 1.2 }}
+              sx={{ fontSize: "14px", fontWeight: 300, lineHeight: 1.2 }}
             >
               First Draw
             </Typography>
-            <Typography
-              sx={{ fontSize: "30px", fontWeight: 700, lineHeight: 1.1 }}
-            >
-              10:30 AM
-            </Typography>
-            <Box
-              sx={{
-                display: "flex",
-                gap: 1,
-                justifyContent: "flex-start",
-                alignItems: "center",
-              }}
-            >
-              <Box sx={{ ...buttonNumberStyles }}>
+            <Box sx={{ display: "flex", gap: 1, width: "100%" }}>
+              <Box sx={{ ...buttonNumberStyles, flex: 1 }}>
                 <Typography
                   sx={{ color: "#fff", fontWeight: 700, fontSize: "36px" }}
                 >
                   {displayValue(value1)}
                 </Typography>
               </Box>
-              <Box sx={{ ...buttonNumberStyles }}>
+              <Box sx={{ ...buttonNumberStyles, flex: 1 }}>
                 <Typography
                   sx={{ color: "#fff", fontWeight: 700, fontSize: "36px" }}
                 >
@@ -135,33 +162,22 @@ const DrawResultsPage: React.FC<DrawResultsProps> = ({
             </Box>
           </Box>
 
-          <Box sx={{ ...buttonDrawStyles }}>
+          {/* Second Draw */}
+          <Box sx={{ flex: 1 }}>
             <Typography
-              sx={{ fontSize: "14px", fontWeight: 700, lineHeight: 1.2 }}
+              sx={{ fontSize: "14px", fontWeight: 300, lineHeight: 1.2 }}
             >
               Second Draw
             </Typography>
-            <Typography
-              sx={{ fontSize: "30px", fontWeight: 700, lineHeight: 1.1 }}
-            >
-              3:00 AM
-            </Typography>
-            <Box
-              sx={{
-                display: "flex",
-                gap: 1,
-                justifyContent: "flex-start",
-                alignItems: "center",
-              }}
-            >
-              <Box sx={{ ...buttonNumberStyles }}>
+            <Box sx={{ display: "flex", gap: 1, width: "100%" }}>
+              <Box sx={{ ...buttonNumberStyles, flex: 1 }}>
                 <Typography
                   sx={{ color: "#fff", fontWeight: 700, fontSize: "36px" }}
                 >
                   {displayValue(value1)}
                 </Typography>
               </Box>
-              <Box sx={{ ...buttonNumberStyles }}>
+              <Box sx={{ ...buttonNumberStyles, flex: 1 }}>
                 <Typography
                   sx={{ color: "#fff", fontWeight: 700, fontSize: "36px" }}
                 >
@@ -170,33 +186,23 @@ const DrawResultsPage: React.FC<DrawResultsProps> = ({
               </Box>
             </Box>
           </Box>
-          <Box sx={{ ...buttonDrawStyles }}>
+
+          {/* Third Draw */}
+          <Box sx={{ flex: 1 }}>
             <Typography
-              sx={{ fontSize: "14px", fontWeight: 700, lineHeight: 1.2 }}
+              sx={{ fontSize: "14px", fontWeight: 300, lineHeight: 1.2 }}
             >
               Third Draw
             </Typography>
-            <Typography
-              sx={{ fontSize: "30px", fontWeight: 700, lineHeight: 1.1 }}
-            >
-              7:00 PM
-            </Typography>
-            <Box
-              sx={{
-                display: "flex",
-                gap: 1,
-                justifyContent: "flex-start",
-                alignItems: "center",
-              }}
-            >
-              <Box sx={{ ...buttonNumberStyles, display: "flex", gap: 1 }}>
+            <Box sx={{ display: "flex", gap: 1, width: "100%" }}>
+              <Box sx={{ ...buttonNumberStyles, flex: 1 }}>
                 <Typography
                   sx={{ color: "#fff", fontWeight: 700, fontSize: "36px" }}
                 >
                   {displayValue(value1)}
                 </Typography>
               </Box>
-              <Box sx={{ ...buttonNumberStyles, display: "flex", gap: 1 }}>
+              <Box sx={{ ...buttonNumberStyles, flex: 1 }}>
                 <Typography
                   sx={{ color: "#fff", fontWeight: 700, fontSize: "36px" }}
                 >

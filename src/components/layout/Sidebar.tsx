@@ -82,6 +82,8 @@ const Sidebar: React.FC = () => {
         ? "/managers"
         : page === "Executive"
         ? "/executives"
+        : page === "Winning Summary"
+        ? "/winning-summary"
         : page === "Betting Summary"
         ? "/betting-summary"
         : page === "Draw Summary"

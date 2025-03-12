@@ -64,7 +64,7 @@ const RegionSection: React.FC<RegionSectionProps> = ({ regionName }) => {
           ))}
         </Box>
         
-        {/* Right Scroll Button */}
+        {/* Right Scroll Button  */}
         <Box
           onClick={() => handleScroll('right')}
           sx={{

@@ -32,6 +32,10 @@ const nextConfig = {
         destination: '/Protected/betting-summary',
       },
       {
+        source: '/winning-summary',
+        destination: '/Protected/winning-summary',
+      },
+      {
         source: '/draw-summary',
         destination: '/Protected/draw-summary',
       },

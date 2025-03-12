@@ -73,7 +73,7 @@ const BetTimePage: React.FC<BetTimePageProps> = ({ data }) => {
                                 Side by Side Comparison of
                             </Typography>
                             <Typography color="#FFFFFF" sx={{ fontSize: "21px", lineHeight: 1.3, fontWeight: "700" }}>
-                                Regional Winner Report by Game Type
+                                Regional Winner Report by Bet Time
                             </Typography>
                         </Box>
                         <CustomLegend />

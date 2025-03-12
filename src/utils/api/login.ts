@@ -1,10 +1,11 @@
-import { jwtDecode } from "jwt-decode";
 import axiosInstance from '../axiosInstance';
 import axios from 'axios';
 
 interface LoginPayload {
-  username: string;
+  email: string; // Matches 'user' in backend
   password: string;
+  id: number; // Matches 'id' (UserId) in backend
+  role: number; // Matches 'role' (UserTypeId) in backend
 }
 
 interface LoginResponse {
@@ -12,11 +13,9 @@ interface LoginResponse {
   refreshToken: string;
 }
 
-export const loginUser = async (payload: LoginPayload, router: any): Promise<LoginResponse> => {
+export const loginUser = async (payload: { email: string; password: string }, router: any) => {
   try {
-    const response = await axiosInstance.post('/auth/login', payload, {
-      withCredentials: true,
-    });
+    const response = await axiosInstance.post('/auth/login', payload, { withCredentials: true });
 
     const apiData = response.data.data;
     const token = apiData?.token;
@@ -24,26 +23,25 @@ export const loginUser = async (payload: LoginPayload, router: any): Promise<Log
     if (!token) {
       throw new Error("Access token is missing from response!");
     }
-
     router.push("/dashboard");
 
     return {
       token,
       refreshToken: apiData.refresh,
+
     };
   } catch (error: unknown) {
     if (axios.isAxiosError(error) && error.response) {
-      const errorMessage = error.response?.data?.message || 'Login failed. Please check your credentials.';
-      console.error("Axios Error:", error.response);
+      const errorMessage = error.response?.data?.message || "Login failed. Please check your credentials.";
       throw new Error(errorMessage);
     } else if (error instanceof Error) {
-      console.error("General Error:", error.message);
-      throw new Error(error.message || 'An unexpected error occurred during login.');
+      throw new Error(error.message || "An unexpected error occurred during login.");
     } else {
-      console.error("Unknown Error occurred during login.");
-      throw new Error('An unexpected error occurred during login.');
+      throw new Error("An unexpected error occurred.");
     }
   }
+  
 };
+
 
 
