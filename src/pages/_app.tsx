@@ -4,7 +4,7 @@ import Layout from "../layout";
 import darkTheme from "../styles/theme";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
-import axiosInstance from "../utils/axiosInstance";
+import { getCurrentUser } from "../utils/api/auth";
 import "../styles/globals.css";
 
 const excludedPaths = [
@@ -26,18 +26,23 @@ const App = ({ Component, pageProps }: AppProps) => {
       setLoading(false);
       return;
     }
+    
     console.log("Checking authentication status...");
-    axiosInstance
-      .get("/users/getCurrentUser", { withCredentials: true })
-      .then((response) => {
-        console.log("Authenticated user:", response.data);
-        setLoading(false);
+
+    getCurrentUser({})
+      .then((data) => {
+        if (data.success) {
+          console.log("Authenticated user:", data);
+          setLoading(false);
+        } else {
+          throw new Error("No valid auth found!");
+        }
       })
       .catch(() => {
         console.log("No valid auth found! Redirecting to login...");
         router.replace("/auth/login");
       });
-  }, [router.pathname]);
+  }, [isExcludedPath, router]);
 
   if (loading) {
     return (
@@ -49,7 +54,7 @@ const App = ({ Component, pageProps }: AppProps) => {
       </ThemeProvider>
     );
   }
-  
+
   return (
     <ThemeProvider theme={darkTheme}>
       <CssBaseline />

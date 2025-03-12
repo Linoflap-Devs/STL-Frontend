@@ -16,15 +16,9 @@
   }
 } */
 
-@font-face {
-  font-family: 'Montserrat';
-  src: url('/fonts/Montserrat-Regular.woff2') format('woff2');
-  font-weight: 400;
-  font-style: normal;
-}
-
 .MuiTypography-root,
 .MuiTableCell-root,
+.MuiOutlinedInput-root,
 .MuiButtonBase-root.MuiMenuItem-root {
   font-family: 'Montserrat', sans-serif !important;
 }
@@ -35,10 +29,10 @@ input:-webkit-autofill {
   color: white !important;
   -webkit-box-shadow: 0 0 0 30px #282828 inset !important;
   -webkit-text-fill-color: white !important;
-}
+} 
 
 .swal2-backdrop-show {
-  z-index: 999999 !important; /* Ensure it appears above other elements */
+  z-index: 999999 !important;
 }
 
 .MuiChartsAxis-tick text:empty {

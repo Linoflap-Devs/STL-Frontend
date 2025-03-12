@@ -19,12 +19,12 @@ import { User } from "./ManagerTable";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
 import { SelectChangeEvent } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
-import { inputStyles, inputErrorStyles } from "../../styles/theme";
+import { inputErrorStyles } from "../../styles/theme";
 import { UserSectionData } from "~/data/AdminSectionData";
-import { addUser } from "~/utils/api/users"
 import Swal from "sweetalert2";
 import { formatKey } from "~/utils/format"
 import { validateUser } from "~/utils/validation"
+import ConfirmCreatePage from "./ConfirmCreate";
 
 interface CreateManagerProps {
   open: boolean;
@@ -66,6 +66,8 @@ const CreateManager: React.FC<CreateManagerProps> = ({
   });
   const [filteredProvinces, setFilteredProvinces] = useState<any[]>([]);
   const [filteredCities, setFilteredCities] = useState<any[]>([]);
+  // for confirm create modal
+  const [isVerifyModalOpen, setIsVerifyModalOpen] = useState(false);
 
   const handleSelectChange = (e: SelectChangeEvent<string>, name: string) => {
     const value = e.target.value;
@@ -146,51 +148,8 @@ const CreateManager: React.FC<CreateManagerProps> = ({
       return;
     }
 
-    const newUser = {
-      firstName: user.firstName,
-      lastName: user.lastName,
-      region: selectState.region,
-      province: selectState.province,
-      city: selectState.city,
-      barangay: user.barangay,
-      street: user.street,
-      email: user.email,
-      password: user.password,
-      suffix: user.suffix,
-      phoneNumber: user.phoneNumber,
-      userTypeId: 3,
-    };
-
-    try {
-      const response = await addUser(newUser);
-      if (response.success) {
-        Swal.fire({
-          icon: "success",
-          title: "Manager Created!",
-          text: `The manager has been added successfully.`,
-          confirmButtonColor: "#67ABEB",
-        });
-
-        onSubmit(newUser);
-        onClose();
-      } else {
-        setErrors(response.errors || { form: response.message });
-        Swal.fire({
-          icon: "error",
-          title: "Error!",
-          text: response.message || "Something went wrong. Please try again.",
-          confirmButtonColor: "#D32F2F",
-        });
-      }
-    } catch (error) {
-      setErrors({ form: error instanceof Error ? error.message : "An unexpected error occurred. Please try again." });
-      Swal.fire({
-        icon: "error",
-        title: "Unexpected Error!",
-        text: error instanceof Error ? error.message : "An unexpected error occurred. Please try again.",
-        confirmButtonColor: "#D32F2F",
-      });
-    }
+    // Open the password verification modal
+    setIsVerifyModalOpen(true);
   };
 
   const handleGeneratePassword = () => {
@@ -428,6 +387,16 @@ const CreateManager: React.FC<CreateManagerProps> = ({
         >
           {UserSectionData.addManagerButton}
         </Button>
+{isVerifyModalOpen && (
+    <ConfirmCreatePage
+        open={isVerifyModalOpen}
+        onClose={() => setIsVerifyModalOpen(false)}
+        onVerified={handleCreateManagerSubmit}
+        user={user} // Ensure this is correctly defined
+        selectState={selectState} // Ensure this is correctly defined
+        onSubmit={onSubmit} // Ensure this is correctly defined
+    />
+)}
       </DialogContent>
     </Dialog>
   );

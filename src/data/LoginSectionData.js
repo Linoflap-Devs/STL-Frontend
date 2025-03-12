@@ -56,4 +56,11 @@ export const LoginSectionData = {
   SetNewPasswordDescription: "Please enter new password.",
   ConfirmPassword: "Confirm Password",
   UpdatePassword: "Update Password",
+  ConfirmIdentity: "Confirm Your Identity",
+  ConfirmIdentityDescription: (
+    <>
+      For security reasons, please enter your password to confirm <br />
+      the deletion of this item. This action cannot be undone.
+    </>
+  ),
 };
