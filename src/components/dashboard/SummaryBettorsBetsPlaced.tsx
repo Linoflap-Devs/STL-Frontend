@@ -32,17 +32,17 @@ const SummaryBettorsBetsPlacedPage = () => {
 
           // Aggregate TotalBets and TotalBettors per GameTypeId
           const aggregatedData = response.data.reduce(
-            (acc: { gameTypeId: number; gameName: string; bettors: number; bets: number }[], 
+            (acc: { gameTypeId: number; gameName: string; bettors: number; bets: number }[],
               item: { GameTypeId: number; TotalBettors: any; TotalBets: any; GameName: any; }) => {
               const existing = acc.find((g) => g.gameTypeId === item.GameTypeId);
-              
+
               // Map GameTypeId to Custom Labels
               const gameNameMapping: Record<number, string> = {
                 1: "First Draw",
                 2: "Second Draw",
                 3: "Third Draw",
               };
-              
+
               if (existing) {
                 existing.bettors += item.TotalBettors || 0;
                 existing.bets += item.TotalBets || 0;
@@ -54,12 +54,12 @@ const SummaryBettorsBetsPlacedPage = () => {
                   bets: item.TotalBets || 0,
                 });
               }
-              
+
               return acc;
             },
             []
           );
-          
+
           console.log("Aggregated Data:", aggregatedData);
           setData(aggregatedData);
         } else {
