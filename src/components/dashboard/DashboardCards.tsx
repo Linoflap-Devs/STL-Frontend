@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Box, Typography } from "@mui/material";
 import { cardDashboardStyles } from "../../styles/theme";
-import fetchHistoricalSummary from "../../utils/api/transactions";
+import { fetchHistoricalSummary } from "../../utils/api/transactions";
 
 const DashboardCardsPage = () => {
   const [dashboardData, setDashboardData] = useState({

@@ -7,7 +7,7 @@ const validateRelativeUrl = (url: string) => {
     return url;
 };
 
-const fetchHistoricalSummary = async () => {
+export const fetchHistoricalSummary = async () => {
     try {
         const url = validateRelativeUrl("/transactions/getHistorical");
         const response = await axiosInstance.get(url, {
@@ -21,6 +21,20 @@ const fetchHistoricalSummary = async () => {
     }
 };
 
-export default fetchHistoricalSummary;
+export const fetchHistoricalRegion = async () => {
+    try {
+        const url = validateRelativeUrl("/transactions/getHistoricalRegion");
+        const response = await axiosInstance.get(url, {
+            withCredentials: true,
+        });
+
+        return response.data;
+    } catch (error) {
+        console.error("Error fetching users:", (error as Error).message);
+        return { success: false, message: (error as Error).message, data: [] };
+    }
+};
+
+export default { fetchHistoricalSummary, fetchHistoricalRegion };
 
 

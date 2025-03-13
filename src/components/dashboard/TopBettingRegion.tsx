@@ -1,99 +1,121 @@
-import React from "react";
-import {
-  Box,
-  Typography,
-  Select,
-  MenuItem,
-  Divider,
-  FormControl,
-  InputLabel,
-} from "@mui/material";
+import React, { useState, useEffect } from "react";
+import { Box, Typography, Divider } from "@mui/material";
 import CasinoIcon from "@mui/icons-material/Casino";
 import ArrowUpwardIcon from "@mui/icons-material/ArrowUpward";
 import ArrowDownwardIcon from "@mui/icons-material/ArrowDownward";
+import { fetchHistoricalRegion } from "~/utils/api/transactions";
+
+interface RegionData {
+  TransactionDate: string;
+  RegionId: number;
+  Region: string;
+  RegionFull: string;
+  TotalBets: number;
+  TotalBettors: number;
+  TotalWinners: number;
+  TotalBetAmount: number;
+  TotalPayout: number;
+  TotalEarnings: number;
+}
 
 const TopBettingRegionPage = () => {
+  const [rankedRegions, setRankedRegions] = useState<
+    { region: RegionData; rank: number; trend: "up" | "down" | "same" }[]
+  >([]);
+
+  const getRankedRegions = async () => {
+    const response = await fetchHistoricalRegion();
+    console.log("API Response:", response);
+
+    if (response.success && response.data.length > 0) {
+      const regionMap = new Map<number, RegionData>();
+
+      response.data.forEach((entry: RegionData) => {
+        console.log(`Processing: ${entry.RegionFull} - Bettors: ${entry.TotalBettors}`);
+
+        if (regionMap.has(entry.RegionId)) {
+          const existing = regionMap.get(entry.RegionId)!;
+          existing.TotalBettors += entry.TotalBettors;
+        } else {
+          regionMap.set(entry.RegionId, { ...entry });
+        }
+      });
+
+      const aggregatedRegions = Array.from(regionMap.values())
+        .filter(region => region.TotalBettors > 0); // ✅ Remove regions with 0 bettors
+
+      console.log("Filtered Data (No Zero Bettors):", aggregatedRegions);
+
+      const sortedRegions = aggregatedRegions.sort((a, b) => b.TotalBettors - a.TotalBettors);
+      console.log("Sorted Regions:", sortedRegions.slice(0, 5));
+
+      const ranked = sortedRegions.slice(0, 5).map((region, index) => ({
+        region,
+        rank: index + 1,
+        trend: index % 2 === 0 ? "up" : "down" as "up" | "down" | "same",
+      }));
+
+      console.log("Final Ranked Data:", ranked);
+
+      setRankedRegions(ranked);
+    } else {
+      console.warn("No data found in API response!");
+    }
+  };
+
+  useEffect(() => {
+    getRankedRegions();
+  }, []);
+
   return (
-    <Box
-      sx={{
-        backgroundColor: "#171717",
-        padding: 2,
-        borderRadius: "10px",
-      }}
-    >
+    <Box sx={{ backgroundColor: "#171717", padding: 2, borderRadius: "10px" }}>
       <Box sx={{ display: "flex", mb: 1 }}>
         <Box sx={{ backgroundColor: "#2F2F2F" }}>
           <CasinoIcon sx={{ color: "#67ABEB" }} />
         </Box>
-        <Typography sx={{ fontWeight: 300, fontSize: "16px", ml: 1 }}>
-          Top Betting Region Today
+        <Typography sx={{ fontWeight: 300, fontSize: "16px", ml: 2 }}>
+          Top Betting Regions Today
         </Typography>
       </Box>
       <Divider sx={{ backgroundColor: "#303030", mb: "1rem" }} />
 
-      {/* List of items */}
-      <Box sx={{ mt: 2, width: "100%" }}>
-        {[
-          {
-            rank: 9,
-            region: "National Capital Region",
-            bets: "673,998",
-            trend: "up",
-          },
-          { rank: 8, region: "Central Luzon", bets: "502,134", trend: "down" },
-          { rank: 7, region: "CALABARZON", bets: "489,765", trend: "up" },
-          { rank: 8, region: "Central Luzon", bets: "502,134", trend: "down" },
-          { rank: 7, region: "CALABARZON", bets: "489,765", trend: "up" },
-          
-        ].map((item, index) => (
-          <Box
-            key={index}
-            sx={{
-              display: "flex",
-              alignItems: "center",
-              padding: "5px 0",
-            }}
-          >
+      {/* Display Ranked Regions */}
+      {rankedRegions.length > 0 ? (
+        rankedRegions.map(({ region, rank, trend }) => (
+          <Box key={region.RegionId} sx={{ display: "flex", alignItems: "center", padding: "5px 0" }}>
             {/* Rank with Dynamic Color & Icon */}
             <Box sx={{ display: "flex", alignItems: "center", width: "15%" }}>
               <Typography
                 sx={{
                   fontWeight: "bold",
-                  color: item.trend === "up" ? "#3d8440" : "#894747",
+                  color: trend === "up" ? "#4CAF50" : "#FF7A7A",
                 }}
               >
-                {item.rank}
+                {rank}
               </Typography>
-              {item.trend === "up" ? (
-                <ArrowUpwardIcon
-                  sx={{ color: "#3d8440", ml: 0.5, fontSize: 18 }}
-                />
+              {trend === "up" ? (
+                <ArrowUpwardIcon sx={{ color: "#4CAF50", ml: 0.5, fontSize: 18 }} />
               ) : (
-                <ArrowDownwardIcon
-                  sx={{ color: "#894747", ml: 0.5, fontSize: 18 }}
-                />
+                <ArrowDownwardIcon sx={{ color: "#FF7A7A", ml: 0.5, fontSize: 18 }} />
               )}
             </Box>
 
-            {/* Region */}
-            <Typography sx={{ color: "#fff", flex: 1, ml: 2 }}>
-              {item.region}
+            {/* Region Name */}
+            <Typography sx={{ color: "#fff", fontWeight: "bold", flex: 1, ml: 2 }}>
+              {region.RegionFull}
             </Typography>
 
-            {/* Bets Centered */}
-            <Typography
-              sx={{
-                color: "#67ABEB",
-                fontWeight: "bold",
-                textAlign: "center",
-                flex: 1,
-              }}
-            >
-              {item.bets}
+            {/* Total Bettors */}
+            <Typography sx={{ textAlign: "center", flex: 1 }}>
+              {region.TotalBettors.toLocaleString()}
             </Typography>
           </Box>
-        ))}
-      </Box>
+        ))
+      ) : (
+        <Typography sx={{ textAlign: "center", color: "#888" }}>
+          No data available
+        </Typography>
+      )}
     </Box>
   );
 };

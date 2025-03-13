@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Box, Typography, Stack } from "@mui/material";
 import { BarChart } from "@mui/x-charts/BarChart";
-import fetchHistoricalSummary from "../../utils/api/transactions";
+import { fetchHistoricalSummary } from "../../utils/api/transactions";
 
 // Custom Legend
 const CustomLegend = () => (
