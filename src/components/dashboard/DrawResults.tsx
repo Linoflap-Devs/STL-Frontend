@@ -18,7 +18,7 @@ const buttonNumberStyles = {
   padding: "8px 0",
 };
 
-const displayValue = (value: string | null) => (value ? value : "");
+const displayValue = (value: string | null) => (value ? value : "\u00A0");
 
 const DrawResultsPage = () => {
   const [selectedRegion, setSelectedRegion] = useState("");
@@ -42,9 +42,6 @@ const DrawResultsPage = () => {
     const fetchWinningCombinations = async () => {
       try {
         const response = await getTodaysWinningCombination();
-        console.log("Raw API Response:", response.data);
-        console.log("Response Keys:", Object.keys(response.data));
-
         const data = Array.isArray(response.data) ? response.data : response.data.data;
 
         if (!Array.isArray(data)) {
@@ -52,36 +49,19 @@ const DrawResultsPage = () => {
           return;
         }
 
-        console.log("Fetched Data:", data);
-
-        // Ensure missing WinningCombination values are replaced with "00"
         const processedData = data.map((item) => ({
           ...item,
-          WinningCombinationOne: item.WinningCombinationOne || "==",
-          WinningCombinationTwo: item.WinningCombinationTwo || "==",
+          WinningCombinationOne: item.WinningCombinationOne || "\u00A0",
+          WinningCombinationTwo: item.WinningCombinationTwo || "\u00A0",
         }));
 
-        // Extract unique regions
         const uniqueRegions = Array.from(
           new Map(
             processedData.map((item) => [item.RegionId, { RegionId: item.RegionId, Region: item.Region }])
           ).values()
         );
+        setRegions(uniqueRegions);
 
-        setRegions(uniqueRegions.length > 0 ? uniqueRegions : [{ RegionId: 0, Region: "Unknown Region" }]);
-
-        // Extract unique provinces
-        const filteredProvinces = selectedRegion
-          ? processedData.filter((item) => item.RegionId === Number(selectedRegion))
-          : processedData;
-
-        const uniqueProvinces = Array.from(
-          new Map(
-            filteredProvinces.map((item) => [item.ProvinceId, { ProvinceId: item.ProvinceId, Province: item.Province }])
-          ).values()
-        );
-
-        setProvinces(uniqueProvinces.length > 0 ? uniqueProvinces : [{ ProvinceId: 0, Province: "Unknown Province" }]);
         setWinningCombinations(processedData);
       } catch (error) {
         console.error("Error fetching winning combinations:", error);
@@ -89,7 +69,21 @@ const DrawResultsPage = () => {
     };
 
     fetchWinningCombinations();
-  }, [selectedRegion]);
+  }, []);
+
+  useEffect(() => {
+    if (selectedRegion) {
+      const filteredProvinces = winningCombinations.filter((item) => item.RegionId === Number(selectedRegion));
+      const uniqueProvinces = Array.from(
+        new Map(
+          filteredProvinces.map((item) => [item.ProvinceId, { ProvinceId: item.ProvinceId, Province: item.Province }])
+        ).values()
+      );
+      setProvinces(uniqueProvinces);
+    } else {
+      setProvinces([]);
+    }
+  }, [selectedRegion, winningCombinations]);
 
   return (
     <Box sx={{ backgroundColor: "#171717", padding: 2, borderRadius: "10px" }}>
@@ -103,10 +97,9 @@ const DrawResultsPage = () => {
       </Box>
       <Divider sx={{ backgroundColor: "#303030", mb: "1rem" }} />
 
-      {/* Region & Province Select Dropdowns */}
       <Box sx={{ display: "flex", gap: 2, width: "100%" }}>
         <FormControl fullWidth>
-          <InputLabel>Region</InputLabel>
+          <InputLabel>Select a Region</InputLabel>
           <Select
             value={selectedRegion}
             onChange={(e) => {
@@ -114,7 +107,6 @@ const DrawResultsPage = () => {
               setSelectedProvince("");
             }}
           >
-            <MenuItem value="">All Regions</MenuItem>
             {regions.map((region) => (
               <MenuItem key={region.RegionId} value={region.RegionId}>
                 {region.Region}
@@ -123,14 +115,9 @@ const DrawResultsPage = () => {
           </Select>
         </FormControl>
 
-        <FormControl fullWidth>
-          <InputLabel>Province</InputLabel>
-          <Select
-            value={selectedProvince}
-            onChange={(e) => setSelectedProvince(e.target.value)}
-            disabled={!selectedRegion}
-          >
-            <MenuItem value="">All Provinces</MenuItem>
+        <FormControl fullWidth disabled={!selectedRegion}>
+          <InputLabel>Select a Province</InputLabel>
+          <Select value={selectedProvince} onChange={(e) => setSelectedProvince(e.target.value)}>
             {provinces.map((province) => (
               <MenuItem key={province.ProvinceId} value={province.ProvinceId}>
                 {province.Province}
@@ -141,88 +128,45 @@ const DrawResultsPage = () => {
       </Box>
 
       <Box sx={{ mt: 2, width: "100%" }}>
-        {winningCombinations
-          .filter(
-            (item) =>
-              (!selectedRegion || item.RegionId === Number(selectedRegion)) &&
-              (!selectedProvince || item.ProvinceId === Number(selectedProvince))
-          )
-          .map((item, index) => (
-            <Box key={index} sx={{ width: "100%", mt: 2 }}>
-              <Box
-                sx={{
-                  display: "flex",
-                  gap: 2,
-                  justifyContent: "space-between",
-                  alignItems: "flex-start",
-                  width: "100%",
-                }}
-              >
-                {/* First Draw */}
-                {item.GameTypeId === 1 && (
-                  <Box sx={{ flex: 1 }}>
-                    <Typography sx={{ fontSize: "14px", fontWeight: 300, lineHeight: 1.2 }}>
-                      First Draw
+        {selectedRegion && !selectedProvince ? (
+          <Typography sx={{ color: "#fff", textAlign: "center", fontSize: "16px" }}>
+            Please select a province
+          </Typography>
+        ) : (
+          <Box sx={{ display: "flex", gap: 2, justifyContent: "space-between", width: "100%" }}>
+            {[1, 2, 3].map((gameTypeId) => (
+              <Box key={gameTypeId} sx={{ flex: 1 }}>
+                <Typography sx={{ fontSize: "14px", fontWeight: 300, mb: 0.5 }}>
+                  {gameTypeId === 1 ? "First Draw" : gameTypeId === 2 ? "Second Draw" : "Third Draw"}
+                </Typography>
+                <Box sx={{ display: "flex", gap: 1, width: "100%" }}>
+                  {/* First Winning Number */}
+                  <Box sx={{ ...buttonNumberStyles, flex: 1 }}>
+                    <Typography sx={{ color: "#fff", fontWeight: 700, fontSize: "36px" }}>
+                      {displayValue(
+                        winningCombinations.find(
+                          (item) => item.GameTypeId === gameTypeId && item.RegionId === Number(selectedRegion)
+                            && item.ProvinceId === Number(selectedProvince)
+                        )?.WinningCombinationOne || "\u00A0"
+                      )}
                     </Typography>
-                    <Box sx={{ display: "flex", gap: 1, width: "100%" }}>
-                      <Box sx={{ ...buttonNumberStyles, flex: 1 }}>
-                        <Typography sx={{ color: "#fff", fontWeight: 700, fontSize: "36px" }}>
-                          {displayValue(item.WinningCombinationOne)}
-                        </Typography>
-                      </Box>
-                      <Box sx={{ ...buttonNumberStyles, flex: 1 }}>
-                        <Typography sx={{ color: "#fff", fontWeight: 700, fontSize: "36px" }}>
-                          {displayValue(item.WinningCombinationTwo)}
-                        </Typography>
-                      </Box>
-                    </Box>
                   </Box>
-                )}
-
-                {/* Second Draw */}
-                {item.GameTypeId === 2 && (
-                  <Box sx={{ flex: 1 }}>
-                    <Typography sx={{ fontSize: "14px", fontWeight: 300, lineHeight: 1.2 }}>
-                      Second Draw
+                  {/* Second Winning Number */}
+                  <Box sx={{ ...buttonNumberStyles, flex: 1 }}>
+                    <Typography sx={{ color: "#fff", fontWeight: 700, fontSize: "36px" }}>
+                      {displayValue(
+                        winningCombinations.find(
+                          (item) => item.GameTypeId === gameTypeId && item.RegionId === Number(selectedRegion)
+                            && item.ProvinceId === Number(selectedProvince)
+                        )?.WinningCombinationTwo || "\u00A0"
+                      )}
                     </Typography>
-                    <Box sx={{ display: "flex", gap: 1, width: "100%" }}>
-                      <Box sx={{ ...buttonNumberStyles, flex: 1 }}>
-                        <Typography sx={{ color: "#fff", fontWeight: 700, fontSize: "36px" }}>
-                          {displayValue(item.WinningCombinationOne)}
-                        </Typography>
-                      </Box>
-                      <Box sx={{ ...buttonNumberStyles, flex: 1 }}>
-                        <Typography sx={{ color: "#fff", fontWeight: 700, fontSize: "36px" }}>
-                          {displayValue(item.WinningCombinationTwo)}
-                        </Typography>
-                      </Box>
-                    </Box>
                   </Box>
-                )}
-
-                {/* Third Draw */}
-                {item.GameTypeId === 3 && (
-                  <Box sx={{ flex: 1 }}>
-                    <Typography sx={{ fontSize: "14px", fontWeight: 300, lineHeight: 1.2 }}>
-                      Third Draw
-                    </Typography>
-                    <Box sx={{ display: "flex", gap: 1, width: "100%" }}>
-                      <Box sx={{ ...buttonNumberStyles, flex: 1 }}>
-                        <Typography sx={{ color: "#fff", fontWeight: 700, fontSize: "36px" }}>
-                          {displayValue(item.WinningCombinationOne)}
-                        </Typography>
-                      </Box>
-                      <Box sx={{ ...buttonNumberStyles, flex: 1 }}>
-                        <Typography sx={{ color: "#fff", fontWeight: 700, fontSize: "36px" }}>
-                          {displayValue(item.WinningCombinationTwo)}
-                        </Typography>
-                      </Box>
-                    </Box>
-                  </Box>
-                )}
+                </Box>
               </Box>
-            </Box>
-          ))}
+            ))}
+          </Box>
+        )}
       </Box>
     </Box>
   );
