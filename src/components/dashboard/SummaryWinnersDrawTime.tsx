@@ -110,8 +110,8 @@ const SummaryWinnersDrawTimePage = () => {
             {
               label: "Total Winners",
               scaleType: "linear",
-              min: 1,
-              max: Math.max(...data.map((item) => item.winners), 100),
+              min: 0,
+              max: Math.max(...data.map((item) => item.winners), 10000),
               valueFormatter: (value: number) => `${value}`,
               tickSize: 8,
               barCategoryGap: 0.7,

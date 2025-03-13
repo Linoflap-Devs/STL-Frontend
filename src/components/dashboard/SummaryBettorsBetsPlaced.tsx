@@ -118,7 +118,7 @@ const SummaryBettorsBetsPlacedPage = () => {
               label: "Amount (in 100,000 units)",
               scaleType: "linear",
               min: 0,
-              max: Math.max(...data.map((item) => item.bets / 100000), 10),
+              max: Math.max(...data.map((item) => item.bets / 100000), 70),
               valueFormatter: (value: number) => `${value}`,
               tickSize: 2,
               barCategoryGap: 0.3,
