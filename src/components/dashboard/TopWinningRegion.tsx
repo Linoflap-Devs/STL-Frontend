@@ -17,43 +17,44 @@ const TopWinningRegionPage = () => {
     { region: RegionData; rank: number; trend: "up" | "down" | "same" }[]
   >([]);
 
-  const getRankedRegions = async () => {
+  const getWinningRegions = async () => {
     const response = await fetchHistoricalRegion();
 
-    if (response.success && response.data.length > 0) {
-      const regionMap = new Map<number, RegionData>();
+    if (!response.success || response.data.length === 0) {
+      console.warn("No data found in API response!");
+      return;
+    }
 
-      response.data.forEach((entry: RegionData) => {
+    // Aggregate TotalBettors per RegionId using reduce()
+    const regionMap: Map<number, RegionData> = response.data.reduce((map: { get: (arg0: any) => any; set: (arg0: any, arg1: any) => void; }, entry: { RegionId: any; TotalBettors: any; }) => {
+      const existing = map.get(entry.RegionId);
+      if (existing) {
+        existing.TotalBettors += entry.TotalBettors;
+      } else {
+        map.set(entry.RegionId, { ...entry });
+      }
+      return map;
+    }, new Map<number, RegionData>());
 
-        if (regionMap.has(entry.RegionId)) {
-          const existing = regionMap.get(entry.RegionId)!;
-          existing.TotalWinners += entry.TotalWinners;
-        } else {
-          regionMap.set(entry.RegionId, { ...entry });
-        }
-      });
+    // Convert to array and explicitly cast to RegionData[]
+    const sortedRegions = Array.from(regionMap.values() as Iterable<RegionData>)
+      .sort((a, b) => b.TotalWinners - a.TotalWinners)
+      .filter(region => region.TotalWinners > 0);
 
-      const aggregatedRegions = Array.from(regionMap.values())
-        .filter(region => region.TotalWinners > 0);
-
-      const sortedRegions = aggregatedRegions.sort((a, b) => b.TotalWinners - a.TotalWinners);
-
-      const ranked = sortedRegions.slice(0, 5).map((region, index) => ({
+    const ranked: { region: RegionData; rank: number; trend: "up" | "down" | "same" }[] =
+      sortedRegions.slice(0, 5).map((region, index) => ({
         region,
         rank: index + 1,
-        trend: index % 2 === 0 ? "up" : "down" as "up" | "down" | "same",
+        trend: index % 2 === 0 ? "up" : "down",
       }));
 
-      console.log("Final Ranked Data:", ranked);
+    //console.log("Final Ranked Data:", ranked);
 
-      setRankedRegions(ranked);
-    } else {
-      console.warn("No data found in API response!");
-    }
+    setRankedRegions(ranked);
   };
 
   useEffect(() => {
-    getRankedRegions();
+    getWinningRegions();
   }, []);
 
   return (
