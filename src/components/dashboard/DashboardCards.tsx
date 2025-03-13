@@ -1,16 +1,60 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Box, Typography } from "@mui/material";
-import {
-  cardDashboardStyles,
-} from "../../styles/theme";
+import { cardDashboardStyles } from "../../styles/theme";
+import fetchHistoricalSummary from "../../utils/api/transactions";
 
 const DashboardCardsPage = () => {
+  const [dashboardData, setDashboardData] = useState({
+    totalBettors: 0,
+    totalWinners: 0,
+    totalBetsPlaced: 0,
+    totalPayout: 0,
+    totalRevenue: 0,
+  });
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        console.log("Fetching data...");
+
+        const response = await fetchHistoricalSummary(); // No query params
+        console.log("API Response:", response);
+
+        if (response.success) {
+          console.log("Raw Data:", response.data);
+
+          // Aggregate the totals by summing the respective columns
+          const totals = response.data.reduce(
+            (acc: { totalBettors: any; totalWinners: any; totalBetsPlaced: any; totalPayout: any; totalRevenue: any; }, item: { TotalBettors: any; TotalWinners: any; TotalBetAmount: any; TotalPayout: any; TotalEarnings: any; }) => {
+              acc.totalBettors += item.TotalBettors || 0;
+              acc.totalWinners += item.TotalWinners || 0;
+              acc.totalBetsPlaced += item.TotalBetAmount || 0;
+              acc.totalPayout += item.TotalPayout || 0;
+              acc.totalRevenue += item.TotalEarnings || 0;
+              return acc;
+            },
+            { totalBettors: 0, totalWinners: 0, totalBetsPlaced: 0, totalPayout: 0, totalRevenue: 0 }
+          );
+
+          console.log("Aggregated Totals:", totals);
+          setDashboardData(totals);
+        } else {
+          console.error("API Request Failed:", response.message);
+        }
+      } catch (error) {
+        console.error("Error Fetching Data:", error);
+      }
+    };
+
+    fetchData();
+  }, []);
+
   return (
     <Box
       sx={{
         mt: 2,
         display: "flex",
-        flexWrap: "wrap", // Wrap items on smaller screens
+        flexWrap: "wrap",
         gap: 2,
         justifyContent: "center",
         alignItems: "center",
@@ -18,21 +62,21 @@ const DashboardCardsPage = () => {
       }}
     >
       {[
-        { title: "Total Bettors", value: "302,329" },
-        { title: "Total Winners", value: "21" },
-        { title: "Total Bets Placed", value: "₱ 1,221,432" },
-        { title: "Total Payout", value: "₱ 294,000" },
-        { title: "Total Revenue", value: "₱ 927,432" },
+        { title: "Total Bettors", value: dashboardData.totalBettors },
+        { title: "Total Winners", value: dashboardData.totalWinners },
+        { title: "Total Bets Placed", value: `₱ ${dashboardData.totalBetsPlaced.toLocaleString()}` },
+        { title: "Total Payout", value: `₱ ${dashboardData.totalPayout.toLocaleString()}` },
+        { title: "Total Revenue", value: `₱ ${dashboardData.totalRevenue.toLocaleString()}` },
       ].map((item, index) => (
-        <Box 
-          key={index} 
-          sx={{ 
-            ...cardDashboardStyles, 
-            flex: "1 1 200px", // Ensures responsiveness
-            minWidth: "200px", // Prevents shrinking too much
+        <Box
+          key={index}
+          sx={{
+            ...cardDashboardStyles,
+            flex: "1 1 200px",
+            minWidth: "200px",
           }}
         >
-          <Typography sx={{ fontSize: "12px", lineHeight: 1.5, color: '#D5D5D5' }}>
+          <Typography sx={{ fontSize: "12px", lineHeight: 1.5, color: "#D5D5D5" }}>
             {item.title}
           </Typography>
           <Typography sx={{ fontSize: "30px", fontWeight: 700, lineHeight: 1.1 }}>

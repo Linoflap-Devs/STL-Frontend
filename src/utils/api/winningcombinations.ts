@@ -7,10 +7,11 @@ const validateRelativeUrl = (url: string) => {
     return url;
 };
 
-const fetchHistoricalSummary = async () => {
+const getTodaysWinningCombination = async (queryParams: Record<string, any>) => {
     try {
-        const url = validateRelativeUrl("/transactions/getHistorical");
+        const url = validateRelativeUrl("/winningcombinations/getWinningCombinations");
         const response = await axiosInstance.get(url, {
+            params: queryParams,
             withCredentials: true,
         });
 
@@ -21,6 +22,6 @@ const fetchHistoricalSummary = async () => {
     }
 };
 
-export default fetchHistoricalSummary;
+export default getTodaysWinningCombination;
 
 
