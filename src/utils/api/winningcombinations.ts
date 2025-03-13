@@ -7,11 +7,10 @@ const validateRelativeUrl = (url: string) => {
     return url;
 };
 
-const getTodaysWinningCombination = async (queryParams: Record<string, any>) => {
+const getTodaysWinningCombination = async () => {
     try {
-        const url = validateRelativeUrl("/winningcombinations/getWinningCombinations");
+        const url = validateRelativeUrl("/winningcombinations/getTodayWinningCombinations");
         const response = await axiosInstance.get(url, {
-            params: queryParams,
             withCredentials: true,
         });
 

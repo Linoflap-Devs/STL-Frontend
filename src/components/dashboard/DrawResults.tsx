@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Box,
   Typography,
@@ -9,42 +9,90 @@ import {
   InputLabel,
 } from "@mui/material";
 import CasinoIcon from "@mui/icons-material/Casino";
+import getTodaysWinningCombination from "../../utils/api/winningcombinations";
 
-import { buttonDrawStyles, buttonNumberStyles } from "../../styles/theme";
+const buttonNumberStyles = {
+  backgroundColor: "#2F2F2F",
+  borderRadius: "8px",
+  textAlign: "center",
+  padding: "8px 0",
+};
 
-interface DrawResultsProps {
-  value1?: number | string | null;
-  value2?: number | string | null;
-}
+const displayValue = (value: string | null) => (value ? value : "");
 
-const DrawResultsPage: React.FC<DrawResultsProps> = ({
-  value1 = "04",
-  value2 = "20",
-}) => {
+const DrawResultsPage = () => {
   const [selectedRegion, setSelectedRegion] = useState("");
   const [selectedProvince, setSelectedProvince] = useState("");
-  const displayValue = (value: number | string | null | undefined) => {
-    if (value === null || value === undefined) {
-      return <Typography sx={{ padding: "0.8rem" }}>{"\u00A0"}</Typography>;
-    }
-    if (typeof value === "string" && value.trim() === "") {
-      return (
-        <Typography sx={{ paddingY: "1rem", paddingX: "0.6rem" }}>
-          {"\u00A0"}
-        </Typography>
-      );
-    }
-    return value;
-  };
+  const [regions, setRegions] = useState<{ RegionId: number; Region: string }[]>([]);
+  const [provinces, setProvinces] = useState<{ ProvinceId: number; Province: string }[]>([]);
+  const [winningCombinations, setWinningCombinations] = useState<
+    {
+      RegionId: number;
+      Region: string;
+      ProvinceId: number;
+      Province: string;
+      GameTypeId: number;
+      GameType: string;
+      WinningCombinationOne: string;
+      WinningCombinationTwo: string;
+    }[]
+  >([]);
+
+  useEffect(() => {
+    const fetchWinningCombinations = async () => {
+      try {
+        const response = await getTodaysWinningCombination();
+        console.log("Raw API Response:", response.data);
+        console.log("Response Keys:", Object.keys(response.data));
+
+        const data = Array.isArray(response.data) ? response.data : response.data.data;
+
+        if (!Array.isArray(data)) {
+          console.error("Invalid data format:", data);
+          return;
+        }
+
+        console.log("Fetched Data:", data);
+
+        // Ensure missing WinningCombination values are replaced with "00"
+        const processedData = data.map((item) => ({
+          ...item,
+          WinningCombinationOne: item.WinningCombinationOne || "==",
+          WinningCombinationTwo: item.WinningCombinationTwo || "==",
+        }));
+
+        // Extract unique regions
+        const uniqueRegions = Array.from(
+          new Map(
+            processedData.map((item) => [item.RegionId, { RegionId: item.RegionId, Region: item.Region }])
+          ).values()
+        );
+
+        setRegions(uniqueRegions.length > 0 ? uniqueRegions : [{ RegionId: 0, Region: "Unknown Region" }]);
+
+        // Extract unique provinces
+        const filteredProvinces = selectedRegion
+          ? processedData.filter((item) => item.RegionId === Number(selectedRegion))
+          : processedData;
+
+        const uniqueProvinces = Array.from(
+          new Map(
+            filteredProvinces.map((item) => [item.ProvinceId, { ProvinceId: item.ProvinceId, Province: item.Province }])
+          ).values()
+        );
+
+        setProvinces(uniqueProvinces.length > 0 ? uniqueProvinces : [{ ProvinceId: 0, Province: "Unknown Province" }]);
+        setWinningCombinations(processedData);
+      } catch (error) {
+        console.error("Error fetching winning combinations:", error);
+      }
+    };
+
+    fetchWinningCombinations();
+  }, [selectedRegion]);
 
   return (
-    <Box
-      sx={{
-        backgroundColor: "#171717",
-        padding: 2,
-        borderRadius: "10px",
-      }}
-    >
+    <Box sx={{ backgroundColor: "#171717", padding: 2, borderRadius: "10px" }}>
       <Box sx={{ display: "flex", mb: 1 }}>
         <Box sx={{ backgroundColor: "#2F2F2F" }}>
           <CasinoIcon sx={{ color: "#67ABEB" }} />
@@ -55,163 +103,126 @@ const DrawResultsPage: React.FC<DrawResultsProps> = ({
       </Box>
       <Divider sx={{ backgroundColor: "#303030", mb: "1rem" }} />
 
-      <Box
-        sx={{ display: "flex", flexDirection: "row", gap: 2, width: "100%" }}
-      >
-        {/* Region Select */}
-        <Box sx={{ display: "flex", flexDirection: "column", flex: 1 }}>
-          <FormControl fullWidth>
-            <InputLabel>Region</InputLabel>
-            <Select
-              name="Region"
-              fullWidth
-              displayEmpty
-              sx={{ backgroundColor: "#171717", color: "#fff" }}
-              value={selectedRegion}
-              onChange={(e) => setSelectedRegion(e.target.value)}
-              MenuProps={{
-                PaperProps: {
-                  sx: {
-                    mt: 1.5,
-                    backgroundColor: "#171717",
-                    border: "1px solid white",
-                  },
-                },
-              }}
-            >
-              <MenuItem value="option1" sx={{ py: 0.5 }}>
-                Option 1
+      {/* Region & Province Select Dropdowns */}
+      <Box sx={{ display: "flex", gap: 2, width: "100%" }}>
+        <FormControl fullWidth>
+          <InputLabel>Region</InputLabel>
+          <Select
+            value={selectedRegion}
+            onChange={(e) => {
+              setSelectedRegion(e.target.value);
+              setSelectedProvince("");
+            }}
+          >
+            <MenuItem value="">All Regions</MenuItem>
+            {regions.map((region) => (
+              <MenuItem key={region.RegionId} value={region.RegionId}>
+                {region.Region}
               </MenuItem>
-              <MenuItem value="option2" sx={{ py: 0.5 }}>
-                Option 2
-              </MenuItem>
-              <MenuItem value="option3" sx={{ py: 0.5 }}>
-                Option 3
-              </MenuItem>
-            </Select>
-          </FormControl>
-        </Box>
+            ))}
+          </Select>
+        </FormControl>
 
-        {/* Province Select */}
-        <Box sx={{ display: "flex", flexDirection: "column", flex: 1 }}>
-          <FormControl fullWidth>
-            <InputLabel>Province</InputLabel>
-            <Select
-              name="Province"
-              fullWidth
-              displayEmpty
-              sx={{ backgroundColor: "#171717", color: "#fff" }}
-              value={selectedProvince}
-              onChange={(e) => setSelectedProvince(e.target.value)}
-              MenuProps={{
-                PaperProps: {
-                  sx: {
-                    mt: 1.5,
-                    backgroundColor: "#171717",
-                    border: "1px solid white",
-                  },
-                },
-              }}
-            >
-              <MenuItem value="option1" sx={{ py: 0.5 }}>
-                Option 1
+        <FormControl fullWidth>
+          <InputLabel>Province</InputLabel>
+          <Select
+            value={selectedProvince}
+            onChange={(e) => setSelectedProvince(e.target.value)}
+            disabled={!selectedRegion}
+          >
+            <MenuItem value="">All Provinces</MenuItem>
+            {provinces.map((province) => (
+              <MenuItem key={province.ProvinceId} value={province.ProvinceId}>
+                {province.Province}
               </MenuItem>
-              <MenuItem value="option2" sx={{ py: 0.5 }}>
-                Option 2
-              </MenuItem>
-              <MenuItem value="option3" sx={{ py: 0.5 }}>
-                Option 3
-              </MenuItem>
-            </Select>
-          </FormControl>
-        </Box>
+            ))}
+          </Select>
+        </FormControl>
       </Box>
 
       <Box sx={{ mt: 2, width: "100%" }}>
-        <Box
-          sx={{
-            display: "flex",
-            gap: 2,
-            justifyContent: "space-between",
-            alignItems: "flex-start",
-            width: "100%",
-          }}
-        >
-          {/* First Draw */}
-          <Box sx={{ flex: 1 }}>
-            <Typography
-              sx={{ fontSize: "14px", fontWeight: 300, lineHeight: 1.2 }}
-            >
-              First Draw
-            </Typography>
-            <Box sx={{ display: "flex", gap: 1, width: "100%" }}>
-              <Box sx={{ ...buttonNumberStyles, flex: 1 }}>
-                <Typography
-                  sx={{ color: "#fff", fontWeight: 700, fontSize: "36px" }}
-                >
-                  {displayValue(value1)}
-                </Typography>
-              </Box>
-              <Box sx={{ ...buttonNumberStyles, flex: 1 }}>
-                <Typography
-                  sx={{ color: "#fff", fontWeight: 700, fontSize: "36px" }}
-                >
-                  {displayValue(value2)}
-                </Typography>
-              </Box>
-            </Box>
-          </Box>
+        {winningCombinations
+          .filter(
+            (item) =>
+              (!selectedRegion || item.RegionId === Number(selectedRegion)) &&
+              (!selectedProvince || item.ProvinceId === Number(selectedProvince))
+          )
+          .map((item, index) => (
+            <Box key={index} sx={{ width: "100%", mt: 2 }}>
+              <Box
+                sx={{
+                  display: "flex",
+                  gap: 2,
+                  justifyContent: "space-between",
+                  alignItems: "flex-start",
+                  width: "100%",
+                }}
+              >
+                {/* First Draw */}
+                {item.GameTypeId === 1 && (
+                  <Box sx={{ flex: 1 }}>
+                    <Typography sx={{ fontSize: "14px", fontWeight: 300, lineHeight: 1.2 }}>
+                      First Draw
+                    </Typography>
+                    <Box sx={{ display: "flex", gap: 1, width: "100%" }}>
+                      <Box sx={{ ...buttonNumberStyles, flex: 1 }}>
+                        <Typography sx={{ color: "#fff", fontWeight: 700, fontSize: "36px" }}>
+                          {displayValue(item.WinningCombinationOne)}
+                        </Typography>
+                      </Box>
+                      <Box sx={{ ...buttonNumberStyles, flex: 1 }}>
+                        <Typography sx={{ color: "#fff", fontWeight: 700, fontSize: "36px" }}>
+                          {displayValue(item.WinningCombinationTwo)}
+                        </Typography>
+                      </Box>
+                    </Box>
+                  </Box>
+                )}
 
-          {/* Second Draw */}
-          <Box sx={{ flex: 1 }}>
-            <Typography
-              sx={{ fontSize: "14px", fontWeight: 300, lineHeight: 1.2 }}
-            >
-              Second Draw
-            </Typography>
-            <Box sx={{ display: "flex", gap: 1, width: "100%" }}>
-              <Box sx={{ ...buttonNumberStyles, flex: 1 }}>
-                <Typography
-                  sx={{ color: "#fff", fontWeight: 700, fontSize: "36px" }}
-                >
-                  {displayValue(value1)}
-                </Typography>
-              </Box>
-              <Box sx={{ ...buttonNumberStyles, flex: 1 }}>
-                <Typography
-                  sx={{ color: "#fff", fontWeight: 700, fontSize: "36px" }}
-                >
-                  {displayValue(value2)}
-                </Typography>
-              </Box>
-            </Box>
-          </Box>
+                {/* Second Draw */}
+                {item.GameTypeId === 2 && (
+                  <Box sx={{ flex: 1 }}>
+                    <Typography sx={{ fontSize: "14px", fontWeight: 300, lineHeight: 1.2 }}>
+                      Second Draw
+                    </Typography>
+                    <Box sx={{ display: "flex", gap: 1, width: "100%" }}>
+                      <Box sx={{ ...buttonNumberStyles, flex: 1 }}>
+                        <Typography sx={{ color: "#fff", fontWeight: 700, fontSize: "36px" }}>
+                          {displayValue(item.WinningCombinationOne)}
+                        </Typography>
+                      </Box>
+                      <Box sx={{ ...buttonNumberStyles, flex: 1 }}>
+                        <Typography sx={{ color: "#fff", fontWeight: 700, fontSize: "36px" }}>
+                          {displayValue(item.WinningCombinationTwo)}
+                        </Typography>
+                      </Box>
+                    </Box>
+                  </Box>
+                )}
 
-          {/* Third Draw */}
-          <Box sx={{ flex: 1 }}>
-            <Typography
-              sx={{ fontSize: "14px", fontWeight: 300, lineHeight: 1.2 }}
-            >
-              Third Draw
-            </Typography>
-            <Box sx={{ display: "flex", gap: 1, width: "100%" }}>
-              <Box sx={{ ...buttonNumberStyles, flex: 1 }}>
-                <Typography
-                  sx={{ color: "#fff", fontWeight: 700, fontSize: "36px" }}
-                >
-                  {displayValue(value1)}
-                </Typography>
-              </Box>
-              <Box sx={{ ...buttonNumberStyles, flex: 1 }}>
-                <Typography
-                  sx={{ color: "#fff", fontWeight: 700, fontSize: "36px" }}
-                >
-                  {displayValue(value2)}
-                </Typography>
+                {/* Third Draw */}
+                {item.GameTypeId === 3 && (
+                  <Box sx={{ flex: 1 }}>
+                    <Typography sx={{ fontSize: "14px", fontWeight: 300, lineHeight: 1.2 }}>
+                      Third Draw
+                    </Typography>
+                    <Box sx={{ display: "flex", gap: 1, width: "100%" }}>
+                      <Box sx={{ ...buttonNumberStyles, flex: 1 }}>
+                        <Typography sx={{ color: "#fff", fontWeight: 700, fontSize: "36px" }}>
+                          {displayValue(item.WinningCombinationOne)}
+                        </Typography>
+                      </Box>
+                      <Box sx={{ ...buttonNumberStyles, flex: 1 }}>
+                        <Typography sx={{ color: "#fff", fontWeight: 700, fontSize: "36px" }}>
+                          {displayValue(item.WinningCombinationTwo)}
+                        </Typography>
+                      </Box>
+                    </Box>
+                  </Box>
+                )}
               </Box>
             </Box>
-          </Box>
-        </Box>
+          ))}
       </Box>
     </Box>
   );

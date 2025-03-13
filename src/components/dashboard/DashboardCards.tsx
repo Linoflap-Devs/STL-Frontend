@@ -13,19 +13,15 @@ const DashboardCardsPage = () => {
   });
 
   useEffect(() => {
-    const fetchData = async () => {
+    const fetchDataDashboard = async () => {
       try {
-        console.log("Fetching data...");
-
-        const response = await fetchHistoricalSummary(); // No query params
-        console.log("API Response:", response);
+        const response = await fetchHistoricalSummary();
 
         if (response.success) {
-          console.log("Raw Data:", response.data);
-
           // Aggregate the totals by summing the respective columns
           const totals = response.data.reduce(
-            (acc: { totalBettors: any; totalWinners: any; totalBetsPlaced: any; totalPayout: any; totalRevenue: any; }, item: { TotalBettors: any; TotalWinners: any; TotalBetAmount: any; TotalPayout: any; TotalEarnings: any; }) => {
+            (acc: { totalBettors: any; totalWinners: any; totalBetsPlaced: any; totalPayout: any; totalRevenue: any; }, 
+                item: { TotalBettors: any; TotalWinners: any; TotalBetAmount: any; TotalPayout: any; TotalEarnings: any; }) => {
               acc.totalBettors += item.TotalBettors || 0;
               acc.totalWinners += item.TotalWinners || 0;
               acc.totalBetsPlaced += item.TotalBetAmount || 0;
@@ -36,7 +32,7 @@ const DashboardCardsPage = () => {
             { totalBettors: 0, totalWinners: 0, totalBetsPlaced: 0, totalPayout: 0, totalRevenue: 0 }
           );
 
-          console.log("Aggregated Totals:", totals);
+          // console.log("Aggregated Totals:", totals);
           setDashboardData(totals);
         } else {
           console.error("API Request Failed:", response.message);
@@ -46,7 +42,7 @@ const DashboardCardsPage = () => {
       }
     };
 
-    fetchData();
+    fetchDataDashboard();
   }, []);
 
   return (
