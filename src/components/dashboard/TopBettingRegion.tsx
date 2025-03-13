@@ -9,7 +9,6 @@ interface RegionData {
   RegionId: number;
   Region: string;
   RegionFull: string;
-  TotalBets: number;
   TotalBettors: number;
 }
 
@@ -74,7 +73,6 @@ const TopBettingRegionPage = () => {
       {rankedRegions.length > 0 ? (
         rankedRegions.map(({ region, rank, trend }) => (
           <Box key={region.RegionId} sx={{ display: "flex", alignItems: "center", padding: "5px 0" }}>
-            {/* Rank with Dynamic Color & Icon */}
             <Box sx={{ display: "flex", alignItems: "center", width: "15%" }}>
               <Typography
                 sx={{
@@ -90,13 +88,9 @@ const TopBettingRegionPage = () => {
                 <ArrowDownwardIcon sx={{ color: "#FF7A7A", ml: 0.5, fontSize: 18 }} />
               )}
             </Box>
-
-            {/* Region Name */}
             <Typography sx={{ color: "#fff", fontWeight: "bold", flex: 1, ml: 2 }}>
               {region.RegionFull}
             </Typography>
-
-            {/* Total Bettors */}
             <Typography sx={{ textAlign: "center", flex: 1 }}>
               {region.TotalBettors.toLocaleString()}
             </Typography>

@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import {
   Typography,
   Box,
-
 } from "@mui/material";
 import { UserSectionData } from "~/data/AdminSectionData";
 import ManagerTable, { User } from '~/components/manager/ManagerTable';

@@ -12,10 +12,9 @@ const BettingSummaryPage = () => {
         <Typography sx={{ fontWeight: 700, fontSize: 20 }}>
           Small Town Lottery Betting Summary
         </Typography>
-
-      <BettorsvsBetsPlacedPage />
-      <BetsPlacedvsTotalWinningsPage />
-      <BetTimePage />
+        <BettorsvsBetsPlacedPage />
+        <BetsPlacedvsTotalWinningsPage />
+        <BetTimePage />
       </Box>
     </div>
   );
