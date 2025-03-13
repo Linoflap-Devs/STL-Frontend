@@ -6,16 +6,11 @@ import ArrowDownwardIcon from "@mui/icons-material/ArrowDownward";
 import { fetchHistoricalRegion } from "~/utils/api/transactions";
 
 interface RegionData {
-  TransactionDate: string;
   RegionId: number;
   Region: string;
   RegionFull: string;
   TotalBets: number;
   TotalBettors: number;
-  TotalWinners: number;
-  TotalBetAmount: number;
-  TotalPayout: number;
-  TotalEarnings: number;
 }
 
 const TopBettingRegionPage = () => {
@@ -25,13 +20,11 @@ const TopBettingRegionPage = () => {
 
   const getRankedRegions = async () => {
     const response = await fetchHistoricalRegion();
-    console.log("API Response:", response);
 
     if (response.success && response.data.length > 0) {
       const regionMap = new Map<number, RegionData>();
 
       response.data.forEach((entry: RegionData) => {
-        console.log(`Processing: ${entry.RegionFull} - Bettors: ${entry.TotalBettors}`);
 
         if (regionMap.has(entry.RegionId)) {
           const existing = regionMap.get(entry.RegionId)!;
@@ -42,12 +35,9 @@ const TopBettingRegionPage = () => {
       });
 
       const aggregatedRegions = Array.from(regionMap.values())
-        .filter(region => region.TotalBettors > 0); // ✅ Remove regions with 0 bettors
-
-      console.log("Filtered Data (No Zero Bettors):", aggregatedRegions);
+        .filter(region => region.TotalBettors > 0);
 
       const sortedRegions = aggregatedRegions.sort((a, b) => b.TotalBettors - a.TotalBettors);
-      console.log("Sorted Regions:", sortedRegions.slice(0, 5));
 
       const ranked = sortedRegions.slice(0, 5).map((region, index) => ({
         region,
