@@ -40,12 +40,16 @@ const ConfirmSuspendManagerPage: React.FC<ConfirmSuspendManagerPageProps> = ({
     onVerified,
 }) => {
     const [password, setPassword] = useState("");
-    const [remarks, setRemarks] = useState("");
-
     const [error, setError] = useState("");
     const [showPassword, setShowPassword] = useState<boolean>(false);
     const [errors, setErrors] = useState<{ [key: string]: string }>({});
     const handleTogglePasswordVisibility = () => setShowPassword((prev) => !prev);
+
+    const handleManagerChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        if (selectedUser) {
+            setSelectedUser((prevUser) => prevUser ? { ...prevUser, remarks: e.target.value } : null);
+        }
+    };
 
     const handleVerifySuspendManager = async () => {
         try {
@@ -61,7 +65,7 @@ const ConfirmSuspendManagerPage: React.FC<ConfirmSuspendManagerPageProps> = ({
 
             const response = await updateUser(selectedUser.userId, { isActive: 0, remarks: selectedUser.remarks });
             if (!response.success) {
-                setError(response.errors || { form: response.message });
+                setError(response.errors ? response.errors : response.message);
                 return Swal.fire({
                     icon: "error",
                     title: "Error!",
@@ -173,8 +177,8 @@ const ConfirmSuspendManagerPage: React.FC<ConfirmSuspendManagerPageProps> = ({
                                         id="remarks"
                                         name="remarks"
                                         placeholder="Enter Remarks"
-                                        value={remarks}
-                                        onChange={(e) => setRemarks(e.target.value)}
+                                        value={selectedUser?.remarks || ""}
+                                        onChange={handleManagerChange}
                                         multiline
                                         minRows={3}
                                         label="Remarks"
