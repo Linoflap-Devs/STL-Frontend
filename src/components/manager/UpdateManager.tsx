@@ -14,7 +14,6 @@ import {
   InputLabel,
   OutlinedInput,
   Box,
-  Tooltip,
 } from "@mui/material";
 import { formatKey } from "../../utils/format";
 import { User } from "./ManagerTable";
@@ -135,14 +134,12 @@ const UpdateManager: React.FC<UpdateManagerProps> = React.memo(({
       const signal = controller.signal;
 
       try {
-        console.log("Fetching manager with ID:", manager.userId);
         const response = await fetchUserById(manager.userId);
 
         if (!response.success) {
           console.error("Failed to fetch manager details:", response.message);
           return;
         }
-        console.log("Fetched Manager Details:", response.data);
 
         const updatedUser = {
           UserId: response.data.UserId ?? null,

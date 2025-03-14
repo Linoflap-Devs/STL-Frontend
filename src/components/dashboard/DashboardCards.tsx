@@ -60,7 +60,7 @@ const DashboardCardsPage = () => {
       {[
         { title: "Total Bettors", value: dashboardData.totalBettors },
         { title: "Total Winners", value: dashboardData.totalWinners },
-        { title: "Total Bets Placed", value: `₱ ${dashboardData.totalBetsPlaced.toLocaleString()}` },
+        { title: "Total Bets Placed", value: `${dashboardData.totalBetsPlaced.toLocaleString()}` },
         { title: "Total Payout", value: `₱ ${dashboardData.totalPayout.toLocaleString()}` },
         { title: "Total Revenue", value: `₱ ${dashboardData.totalRevenue.toLocaleString()}` },
       ].map((item, index) => (

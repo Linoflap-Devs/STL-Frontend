@@ -48,8 +48,6 @@ const fetchUserById = async (userId: string | number) => {
             withCredentials: true,
         });
 
-        console.log("API Response:", response.data);
-
         if (Array.isArray(response.data.data)) {
             const user = response.data.data.find((u: any) => u.UserId == userId);
 
@@ -82,7 +80,7 @@ const updateUser = async (userId: number, userData: Record<string, any>) => {
         const url = validateRelativeUrl("/users/edituser");
         const response = await axiosInstance.patch(
             url,
-            { userId, ...userData }, // Ensure userId is included in the request payload
+            { userId, ...userData },
             { withCredentials: true }
         );
 
@@ -109,6 +107,7 @@ const editLogUser = async (userId: number, p0: {}) => {
     }
 };
 
+// hindi na valid. gamitin nalang yung editUser for user suspension
 const suspendUser = async (userId: number, userData: Record<string, any>) => {
     try {
         const url = validateRelativeUrl("/auth/disableUser");
@@ -123,6 +122,5 @@ const suspendUser = async (userId: number, userData: Record<string, any>) => {
         return { success: false, message: (error as Error).message, data: {} };
     }
 };
-
 
 export { fetchUsers, addUser, updateUser, fetchUserById, editLogUser, suspendUser };

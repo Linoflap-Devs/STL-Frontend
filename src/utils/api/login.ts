@@ -1,18 +1,6 @@
 import axiosInstance from '../axiosInstance';
 import axios from 'axios';
 
-interface LoginPayload {
-  email: string;
-  password: string;
-  id: number;
-  role: number;
-}
-
-interface LoginResponse {
-  token: string;
-  refreshToken: string;
-}
-
 export const loginUser = async (payload: { email: string; password: string }, router: any) => {
   try {
     const response = await axiosInstance.post('/auth/login', payload, { withCredentials: true });
@@ -39,7 +27,6 @@ export const loginUser = async (payload: { email: string; password: string }, ro
       throw new Error("An unexpected error occurred.");
     }
   }
-  
 };
 
 

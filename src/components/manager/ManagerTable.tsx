@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { UserSectionData } from "../../data/AdminSectionData";
-import { buttonStyles, deleteStyles, } from "../../styles/theme";
+import { buttonStyles, } from "../../styles/theme";
 import {
   Typography,
   Box,
@@ -34,8 +34,8 @@ import FilterListOffIcon from "@mui/icons-material/FilterListOff";
 import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
 import dayjs, { Dayjs } from "dayjs";
 import { EditLogFields } from "./EditLogModal";
-import { suspendUser } from "~/utils/api/users"
 import Swal from "sweetalert2";
+import ConfirmSuspendManagerPage from "./ConfirmSuspendManager";
 
 export interface User {
   firstName: string;
@@ -57,10 +57,11 @@ interface ManagerTableProps {
   onCreate: () => void;
   onEdit: (user: User, action?: "view" | "update") => void;
   onDelete: (ids: number[]) => void;
-  loadData: () => Promise<void>;
+  onSubmit: (updatedUser: User) => void;
 }
 
-const ManagerTable: React.FC<ManagerTableProps> = ({ managers, onCreate, onEdit, loadData,  }) => {
+const ManagerTable: React.FC<ManagerTableProps> = ({ managers, onCreate, onEdit, onSubmit }) => {
+  const [user, setUser] = useState<User | null>(null);
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [isFilterVisible, setIsFilterVisible] = useState(false);
@@ -68,6 +69,7 @@ const ManagerTable: React.FC<ManagerTableProps> = ({ managers, onCreate, onEdit,
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
   const [searchQuery, setSearchQuery] = useState<string>("");
+  const [isVerifyModalOpen, setIsVerifyModalOpen] = useState(false);
   const onSortWrapper = (sortKey: keyof (User & EditLogFields)) => {
       handleSort(sortKey, sortConfig, setSortConfig);
   };
@@ -75,6 +77,7 @@ const ManagerTable: React.FC<ManagerTableProps> = ({ managers, onCreate, onEdit,
     key: keyof User;
     direction: "asc" | "desc";
   }>({ key: "id", direction: "asc" });
+  
   const [filters, setFilters] = useState<{ [key: string]: string }>({
     FirstName: "",
     LastName: "",
@@ -85,6 +88,7 @@ const ManagerTable: React.FC<ManagerTableProps> = ({ managers, onCreate, onEdit,
     Status: "",
     DateOfRegistration: "",
   });
+
   const filteredUsers = filterData(
     managers.map((user) => {
       const lastLogin = user.LastLogin ? dayjs(user.LastLogin) : null;
@@ -151,75 +155,45 @@ const ManagerTable: React.FC<ManagerTableProps> = ({ managers, onCreate, onEdit,
     event?: React.MouseEvent<HTMLButtonElement>,
     user?: User
   ) => {
-    console.log("Opening menu for User:", user);
     setAnchorEl(event?.currentTarget || null);
     setSelectedUser(user || null);
   };
 
-  const handleManagerSuspend = async (user: User) => {
-    if (!user) {
-      console.error("No selected user or invalid user data.");
+  const handleManagerSuspend = async (selectedUser: User) => {
+    if (!selectedUser || !selectedUser.userId) {
+      console.error("Invalid user:", selectedUser);
       return;
     }
   
-    // Construct the full name safely
-    const fullName = `${user.FirstName || ""} ${user.LastName || ""}`.trim();
-    if (!fullName) {
-      console.error("Invalid user name.");
-      return;
-    }
-
-    const userId = user.userId ?? user.UserId;
-    if (typeof userId !== "number" || isNaN(userId)) {
-      return;
-    }
-  
-    try {
-      const confirmation = await Swal.fire({
-        title: `Are you sure?`,
-        text: `Do you want to suspend ${fullName}?`,
-        icon: "warning",
-        showCancelButton: true,
-        confirmButtonColor: "#d33",
-        cancelButtonColor: "#3085d6",
-        confirmButtonText: "Yes, suspend it!",
-        cancelButtonText: "Cancel",
-      });
-  
-      if (!confirmation.isConfirmed) {
-        return;
-      }
-  
-      const result = await suspendUser(userId, { isActive: false });
-  
-      if (result.success) {
-        await Swal.fire({
-          title: "Suspended!",
-          text: `${fullName} has been suspended.`,
-          icon: "success",
-          confirmButtonColor: "#3085d6",
-        });
-  
-        handleToggleMenu();
-      } else {
-        console.error("Suspension failed:", result.message);
-        await Swal.fire({
-          title: "Failed!",
-          text: `Failed to suspend ${fullName}: ${result.message}`,
-          icon: "error",
-          confirmButtonColor: "#3085d6",
-        });
-      }
-    } catch (error) {
-      console.error("Error suspending user:", error);
-  
+    // Check if the user is already suspended
+    if (selectedUser.isActive === 0) {
       await Swal.fire({
-        title: "Error!",
-        text: `An error occurred while suspending ${fullName}.`,
-        icon: "error",
+        title: "Already Suspended",
+        text: `${selectedUser.FirstName} ${selectedUser.LastName} is already suspended.`,
+        icon: "info",
         confirmButtonColor: "#3085d6",
       });
+      return;
     }
+  
+    const confirmation = await Swal.fire({
+      title: "Suspend Confirmation",
+      html: `This action will suspend <span style="font-weight: bold;">${selectedUser.FirstName} ${selectedUser.LastName}</span>'s account.`,
+      icon: "question",
+      showCancelButton: true,
+      confirmButtonText: '<span style="color: #ffffff;">Suspend</span>',
+      cancelButtonText: '<span style="color: #212121;">Cancel</span>',
+      confirmButtonColor: "#F05252",
+      cancelButtonColor: "#f0f0f0",
+      customClass: {
+        cancelButton: "no-hover",
+      },
+    });
+  
+    if (!confirmation.isConfirmed) return;
+  
+    setUser(selectedUser);
+    setIsVerifyModalOpen(true);
   };
 
   return (
@@ -455,6 +429,14 @@ const ManagerTable: React.FC<ManagerTableProps> = ({ managers, onCreate, onEdit,
         <MenuItem onClick={() => selectedUser ? handleManagerSuspend(selectedUser) : null}>
             Suspend
         </MenuItem>
+        <ConfirmSuspendManagerPage
+          open={isVerifyModalOpen}
+          onClose={() => setIsVerifyModalOpen(false)}
+          onVerified={() => { setIsVerifyModalOpen(false); }}
+          selectedUser={selectedUser}
+          onSubmit={onSubmit}
+          setSelectedUser={setSelectedUser}
+        />
       </Menu>
       <Box
         sx={{
