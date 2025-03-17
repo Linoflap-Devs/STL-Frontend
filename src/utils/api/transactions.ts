@@ -10,7 +10,7 @@ const fetchHistoricalSummary = async (queryParams: Record<string, any>) => {
             withCredentials: true,
         });
         
-        console.log('Response Dataa:' + response.data)
+        console.log('Response Data (GetHistorical):' + response.data)
         return response.data;
     } catch (error) {
         console.error("Error fetching historical summary:", (error as Error).message);
