@@ -1,6 +1,5 @@
 import React from "react";
 import { Box, Typography, Grid } from "@mui/material";
-
 import DashboardCardsPage from "~/components/dashboard/DashboardCards";
 import DrawResultsPage from "~/components/dashboard/DrawResults";
 import TopBettingRegionPage from "~/components/dashboard/TopBettingRegion";

@@ -16,7 +16,7 @@ const getUserRole = (userTypeId: number) => {
     case 1:
       return "Super Admin";
     case 2:
-      return "Manager";
+      return "Executive";
     case 3:
       return "Manager";
     case 4:

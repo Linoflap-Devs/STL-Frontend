@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Typography, Box } from '@mui/material';
 import ManagerTable, { User } from '~/components/user/UserTable';
-import ManagerDashboardPage from '~/components/user/ManagerDashboard';
+import UserDashboardPage from '~/components/user/UserDashboard';
 import CreateManager from '~/components/user/CreateUser';
 import UpdateManager from '~/components/user/UpdateUser';
 import { fetchUsers } from '~/utils/api/users';
@@ -11,10 +11,9 @@ const cities = require('philippines/cities');
 
 interface UsersPageProps {
   roleId: number;
-  title: string;
 }
 
-const UsersPage: React.FC<UsersPageProps> = ({ roleId, title }) => {
+const UsersPage: React.FC<UsersPageProps> = ({ roleId, }) => {
   const [users, setUsers] = useState<User[]>([]);
   const [regions, setRegions] = useState([]);
   const [provinces, setProvinces] = useState([]);
@@ -129,22 +128,7 @@ const UsersPage: React.FC<UsersPageProps> = ({ roleId, title }) => {
   };
 
   return (
-    <Box>
-      <Box
-        sx={{
-          display: 'flex',
-          flexDirection: 'row',
-          justifyContent: 'space-between',
-          alignItems: 'center',
-        }}
-      >
-        <Typography variant="h4" sx={{ fontWeight: 'bold', marginBottom: 0 }} gutterBottom>
-          {title}
-        </Typography>
-      </Box>
-      <Box sx={{ marginTop: 2, marginBottom: 3 }}>
-        <ManagerDashboardPage />
-      </Box>
+    <>
       <Box>
         <ManagerTable
           onCreate={handleUserCreate}
@@ -177,7 +161,7 @@ const UsersPage: React.FC<UsersPageProps> = ({ roleId, title }) => {
           isClicked={isClicked}
         />
       )}
-    </Box>
+    </>
   );
 };
 
