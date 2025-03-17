@@ -101,7 +101,7 @@ const BettingSummaryPage = () => {
         "date": "2025/01/22 13:05:32",
         "drawTime": "First Draw",
         "betAmount": "P 20",
-        "gameType": "STL Pares",
+        "gameType": "STL Pares", 
         "betType": "Tumbok",
         "selectedPair": "6-31",
         "status": "Confirm"

@@ -1,159 +1,153 @@
-import React from "react";
-import { Box, Typography, Stack } from "@mui/material";
+import React, { useEffect, useState } from "react";
+import { Box, Typography, Stack, CircularProgress } from "@mui/material";
 import { BarChart } from "@mui/x-charts/BarChart";
+import fetchHistoricalSummary from "~/utils/api/transactions";
 
-// Custom Legend
-const CustomLegend = () => (
-  <Stack
-    direction="row"
-    spacing={2}
-    justifyContent="left"
-    sx={{ mt: 0.5, mr: 4 }}
-  >
-    <Box sx={{ display: "flex", alignItems: "center" }}>
-      <Box
-        sx={{
-          width: 14,
-          height: 14,
-          borderRadius: "50%",
-          backgroundColor: "#BB86FC",
-          mr: 1.5,
-        }}
-      />
-      <Typography color="white">Bettors</Typography>
-    </Box>
-    <Box sx={{ display: "flex", alignItems: "center" }}>
-      <Box
-        sx={{
-          width: 14,
-          height: 14,
-          borderRadius: "50%",
-          backgroundColor: "#5050A5",
-          mr: 1.5,
-        }}
-      />
-      <Typography color="white">Bets</Typography>
-    </Box>
+// Mapping GameTypeId to Draw Names
+// const drawNames: Record<number, string> = {
+//   1: "First Draw",
+//   2: "Second Draw",
+//   3: "Third Draw",
+// };
+
+// Custom Legend (Dynamically Handles Bet Types)
+const CustomLegend = ({ betTypes }: { betTypes: string[] }) => (
+  <Stack direction="row" spacing={2} justifyContent="left" sx={{ mt: 0.5, mr: 4 }}>
+    {betTypes.map((betType, index) => (
+      <Box key={betType} sx={{ display: "flex", alignItems: "center" }}>
+        <Box
+          sx={{
+            width: 14,
+            height: 14,
+            borderRadius: "50%",  
+            backgroundColor: ["#BB86FC", "#5050A5"][index] || "#808080", // Assigns colors dynamically
+            mr: 1.5,
+          }}
+        />
+        <Typography color="white">{betType}</Typography>
+      </Box>
+    ))}
   </Stack>
 );
 
-// Data for Bettors and Bets
-const data = [
-  { draw: "First\nDraw", bettors: 5, bets: 2900000 },
-  { draw: "Second\nDraw", bettors: 5, bets: 2600000 },
-  { draw: "Third\nDraw", bettors: 8, bets: 2700000 },
-];
-
-// Ensure maxX reaches at least 70
-const maxX = Math.max(
-  70, // Ensures the x-axis can display up to 70
-  ...data.map((item) => item.bettors),
-  ...data.map((item) => item.bets / 100000) // Scale bets down to match
-);
-
-// Explicit tick values
-const xAxisTicks = [1, 5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 55, 60, 65, 70];
-
 const ChartBetTypeSummary = () => {
-  return (
-    <Box
-      sx={{
-        backgroundColor: "#171717",
-        padding: "1rem",
-        borderRadius: "8px",
-        paddingBottom: "2rem",
-        marginRight: 0,
-      }}
-    >
-      <Box>
-        <Box
-          sx={{
-            display: "flex",
-            justifyContent: "space-between",
-            alignItems: "center",
-          }}
-        >
-          <Box
-            sx={{
-              display: "flex",
-              justifyContent: "space-between",
-              alignItems: "center",
-              width: "100%",
-            }}
-          >
-            <Typography color="#FFFFFF" sx={{ fontSize: "20px" }}>
-              <strong>Total Summary:</strong> Bet Type
-            </Typography>
-            <Typography
-              color="#67ABEB"
-              sx={{ fontSize: "12px", cursor: "pointer", textAlign: "right" }}
-            >
-              View Bet Summary
-            </Typography>
-          </Box>
-        </Box>
-        <CustomLegend />
-      </Box>
+  const [chartData, setChartData] = useState<Array<{ gameType: string } & Record<string, number>>>([]);
+  const [loading, setLoading] = useState(true);
+  const [betTypes, setBetTypes] = useState<string[]>([]);
 
-      <Box
-        sx={{
-          height: "100%",
-          display: "flex",
-          flexDirection: "column",
-          flexGrow: 1,
-          "& svg": {
-            marginRight: 0, // Remove right margin
-          },
-        }}
-      >
-        <BarChart
-          sx={{
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "stretch",
-            flexGrow: 1,
-            marginLeft: "1rem",
-            marginTop: "-10px",
-            height: "100%",
-            width: "100%",
-            "& svg": {
-              marginRight: 0, // Remove right margin
-            },
-          }}
-          height={270}
-          grid={{ vertical: true }}
-          layout="horizontal"
-          series={[
-            { data: data.map((item) => item.bettors), color: "#BB86FC" },
-            { data: data.map((item) => item.bets / 100000), color: "#5050A5" },
-          ]}
-          yAxis={[
-            {
-              scaleType: "band",
-              data: data.map((item) => item.draw),
-              tickLabelProps: {
-                style: {
-                  fontSize: "12px",
-                  whiteSpace: "pre-line",
-                  paddingLeft: "2px",
-                },
-              },
-            } as any,
-          ]}
-          xAxis={[
-            {
-              label: "Amount (in 100,000 units)",
-              scaleType: "linear",
-              min: 0, // Ensure it starts from zero
-              max: maxX, // Ensures at least 70 is covered
-              ticks: xAxisTicks, // Explicit tick values
-              valueFormatter: (value: number) => `${value}`,
-              tickSize: 2,
-              barCategoryGap: 0.3,
-            } as any,
-          ]}
-        />
+  useEffect(() => {
+    const fetchData = async () => {
+      setLoading(true);
+      try {
+        const res = await fetchHistoricalSummary({});
+  
+        console.log("Result Data from BetTypeChart:", JSON.stringify(res.data, null, 2));
+  
+        if (res.success && Array.isArray(res.data)) {
+          // Aggregate TotalBetAmount by GameTypeId and BetType
+          // Aggregated Data is an object where
+          // keys - number
+          // values - object where:
+          // key(string) value(number)
+          const aggregatedData: Record<number, Record<string, number>> = {};
+  
+          res.data.forEach((item: { GameTypeId: number; BetType: string; TotalBetAmount: number }) => {
+            if (!aggregatedData[item.GameTypeId]) {
+              aggregatedData[item.GameTypeId] = {};
+            }
+  
+            if (!aggregatedData[item.GameTypeId][item.BetType]) {
+              aggregatedData[item.GameTypeId][item.BetType] = 0;
+            } 
+  
+            aggregatedData[item.GameTypeId][item.BetType] += item.TotalBetAmount;
+          });
+  
+          console.log("Aggregated Data from BetTypeChart:", JSON.stringify(aggregatedData, null, 2));
+  
+          // Extract unique Bet Types
+          const uniqueBetTypes = Array.from(new Set(res.data.map((item) => item.BetType)));
+  
+          // Format Data for Chart
+          const formattedData = Object.entries(aggregatedData).map(([gameTypeId, betTypes]) => ({
+            gameTypeId: Number(gameTypeId),...uniqueBetTypes.reduce((acc, betType) => {
+              acc[betType] = betTypes[betType] || 0;
+              return acc;
+            }, {} as Record<string, number>),
+          }));
+  
+          console.log("Formatted Chart Data:", formattedData);
+  
+          setChartData(formattedData);
+          setBetTypes(uniqueBetTypes); // Store unique bet types for reference
+        }
+      } catch (error) {
+        console.error("Error loading data:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+  
+    fetchData();
+  }, []);
+  
+
+  const maxX = chartData.length > 0
+    ? Math.max(70, ...chartData.flatMap((item) => betTypes.map((bet) => (item[bet] || 0) / 100000)))
+    : 70;
+  const xAxisTicks = Array.from({ length: 15 }, (_, i) => (i + 1) * 5); // Generates [5, 10, ..., 70]
+
+  return (
+    <Box sx={{ backgroundColor: "#171717", padding: "1rem", borderRadius: "8px", paddingBottom: "2rem", marginRight: 0 }}>
+      <Box>
+        <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+          <Typography color="#FFFFFF" sx={{ fontSize: "20px" }}>
+            <strong>Total Summary:</strong> Bet Type
+          </Typography>
+          <Typography color="#67ABEB" sx={{ fontSize: "12px", cursor: "pointer", textAlign: "right" }}>
+            View Bet Summary
+          </Typography>
+        </Box>
+        <CustomLegend betTypes={betTypes} />
       </Box>
+      {loading ? (
+        <Box sx={{ display: "flex", justifyContent: "center", alignItems: "center", height: 200 }}>
+          <CircularProgress />
+        </Box>
+      ) : (
+        <Box sx={{ height: "100%", display: "flex", flexDirection: "column", flexGrow: 1 }}>
+          <BarChart
+            sx={{ display: "flex", justifyContent: "center", alignItems: "stretch", flexGrow: 1, marginLeft: "1rem", marginTop: "-10px" }}
+            height={270}
+            grid={{ vertical: true }}
+            layout="horizontal"
+            series={betTypes.map((betType, index) => ({
+              data: chartData.map((item) => (item[betType] || 0)),
+              color: ["#BB86FC", "#5050A5"][index] || "#808080",
+              label: betType,
+            }))}
+            yAxis={[
+              {
+                scaleType: "band",
+                data: chartData.map((item) => item.gameTypeId.toString()),
+                tickLabelProps: { style: { fontSize: "12px", whiteSpace: "pre-line", paddingLeft: "2px" } },
+              } as any,
+            ]}
+            xAxis={[
+              {
+                label: "Amount (in 100,000 units)",
+                scaleType: "linear",
+                min: 0,
+                max: maxX,
+                ticks: xAxisTicks,
+                valueFormatter: (value: number) => `${value}`,
+                tickSize: 2,
+                barCategoryGap: 0.3,
+              } as any,
+            ]}
+          />
+        </Box>
+      )}
     </Box>
   );
 };
