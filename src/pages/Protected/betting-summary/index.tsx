@@ -1,9 +1,8 @@
 import React from "react";
+import { Box, Typography } from '@mui/material';
 import BetsPlacedvsTotalWinningsPage from "~/components/betting-summary/BetsPlacedvsTotalWinnings";
 import BettorsvsBetsPlacedPage from "~/components/betting-summary/BettorsvsBetsPlaced";
 import BetTimePage from "~/components/betting-summary/BetTime";
-
-import { Box, Typography } from '@mui/material';
 
 const BettingSummaryPage = () => {
   return (

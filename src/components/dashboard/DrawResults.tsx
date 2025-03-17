@@ -15,7 +15,7 @@ const buttonNumberStyles = {
   backgroundColor: "#2F2F2F",
   borderRadius: "8px",
   textAlign: "center",
-  padding: "8px 0",
+  padding: "3px 0",
 };
 
 const displayValue = (value: string | null) => (value ? value : "\u00A0");

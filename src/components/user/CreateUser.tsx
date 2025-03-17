@@ -15,7 +15,7 @@ import {
   OutlinedInput,
   InputAdornment,
 } from "@mui/material";
-import { User } from "./UserTable";
+import { User } from "./UsersTable";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
 import { SelectChangeEvent } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
@@ -56,6 +56,7 @@ const CreateManager: React.FC<CreateManagerProps> = ({
     barangay: userData?.barangay ?? "",
     street: userData?.Street ?? "",
   });
+  const pageType = window.location.pathname.includes('manager') ? 'manager' : 'executive';
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
   const [showPassword, setShowPassword] = useState(false);
   const [selectState, setSelectState] = useState({
@@ -174,7 +175,7 @@ const CreateManager: React.FC<CreateManagerProps> = ({
       }}
     >
       <DialogTitle sx={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-        Add Manager
+      {pageType === 'manager' ? 'Add Manager' : 'Add Executive'}
         <IconButton
           aria-label="close"
           onClick={onClose}
@@ -381,7 +382,7 @@ const CreateManager: React.FC<CreateManagerProps> = ({
           }}
           variant="contained"
         >
-          {UserSectionData.addManagerButton}
+          {pageType === 'manager' ? 'Add Manager' : 'Add Executive'}
         </Button>
         {isVerifyModalOpen && (
           <ConfirmCreateManagerPage

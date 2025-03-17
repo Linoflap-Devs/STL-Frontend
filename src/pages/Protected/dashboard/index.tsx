@@ -26,7 +26,6 @@ const DashboardPage = () => {
               <Box sx={{ flex: 1 }}><TopWinningRegionPage /></Box>
             </Box>
           </Grid>
-
           {/* Column 2 (2 Cards) */}
           <Grid item xs={12} md={8} sx={{ display: "flex", flexDirection: "column", }}>
             <Box sx={{ display: "flex", flexDirection: "column", gap: 2, height: "100%" }}>

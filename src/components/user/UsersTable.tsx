@@ -61,6 +61,7 @@ interface ManagerTableProps {
 }
 
 const ManagerTable: React.FC<ManagerTableProps> = ({ managers, onCreate, onEdit, onSubmit }) => {
+  const pageType = window.location.pathname.includes('manager') ? 'manager' : 'executive';
   const [user, setUser] = useState<User | null>(null);
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
@@ -71,13 +72,13 @@ const ManagerTable: React.FC<ManagerTableProps> = ({ managers, onCreate, onEdit,
   const [searchQuery, setSearchQuery] = useState<string>("");
   const [isVerifyModalOpen, setIsVerifyModalOpen] = useState(false);
   const onSortWrapper = (sortKey: keyof (User & EditLogFields)) => {
-      handleSort(sortKey, sortConfig, setSortConfig);
+    handleSort(sortKey, sortConfig, setSortConfig);
   };
   const [sortConfig, setSortConfig] = useState<{
     key: keyof User;
     direction: "asc" | "desc";
   }>({ key: "id", direction: "asc" });
-  
+
   const [filters, setFilters] = useState<{ [key: string]: string }>({
     FirstName: "",
     LastName: "",
@@ -94,18 +95,18 @@ const ManagerTable: React.FC<ManagerTableProps> = ({ managers, onCreate, onEdit,
       const lastLogin = user.LastLogin ? dayjs(user.LastLogin) : null;
       const lastTokenRefresh = user.LastTokenRefresh ? dayjs(user.LastTokenRefresh) : null;
       const sevenDaysAgo = dayjs().subtract(7, "days");
-  
+
       let status = "Active"; // Default status
-  
+
       if (user.IsActive === 0) {
         status = "Suspended"; // Prioritize Suspended and stop further checks
       } else if (
-        (!lastLogin || lastLogin.isBefore(sevenDaysAgo)) && 
+        (!lastLogin || lastLogin.isBefore(sevenDaysAgo)) &&
         (!lastTokenRefresh || lastTokenRefresh.isBefore(sevenDaysAgo))
       ) {
         status = "Inactive"; // Only mark inactive if NOT suspended
       }
-  
+
       return {
         ...user,
         fullName: `${user.FirstName || ""} ${user.LastName || ""}`.trim().toLowerCase(),
@@ -118,7 +119,7 @@ const ManagerTable: React.FC<ManagerTableProps> = ({ managers, onCreate, onEdit,
     { ...filters, searchQuery },
     ["fullName", "UserName", "Region", "Province", "CreatedBy", "Status", "DateOfRegistration"]
   );
-  
+
   const sortedFilteredUsers: User[] = sortData(filteredUsers, {
     key: sortConfig.key,
     direction: sortConfig.direction,
@@ -164,7 +165,7 @@ const ManagerTable: React.FC<ManagerTableProps> = ({ managers, onCreate, onEdit,
       console.error("Invalid user:", selectedUser);
       return;
     }
-  
+
     // Check if the user is already suspended
     if (selectedUser.isActive === 0) {
       await Swal.fire({
@@ -175,7 +176,7 @@ const ManagerTable: React.FC<ManagerTableProps> = ({ managers, onCreate, onEdit,
       });
       return;
     }
-  
+
     const confirmation = await Swal.fire({
       title: "Suspend Confirmation",
       html: `This action will suspend <span style="font-weight: bold;">${selectedUser.FirstName} ${selectedUser.LastName}</span>'s account.`,
@@ -189,9 +190,9 @@ const ManagerTable: React.FC<ManagerTableProps> = ({ managers, onCreate, onEdit,
         cancelButton: "no-hover",
       },
     });
-  
+
     if (!confirmation.isConfirmed) return;
-  
+
     setUser(selectedUser);
     setIsVerifyModalOpen(true);
   };
@@ -245,11 +246,13 @@ const ManagerTable: React.FC<ManagerTableProps> = ({ managers, onCreate, onEdit,
               />
             )}
           </Box>
-          <Box sx={{ display: "flex", alignItems: "center" }}>
-            <Button variant="contained" onClick={onCreate} sx={buttonStyles}>
-              {UserSectionData.addManagerButton}
-            </Button>
-          </Box>
+          {pageType === "manager" && (
+            <Box sx={{ display: "flex", alignItems: "center" }}>
+              <Button variant="contained" onClick={onCreate} sx={buttonStyles}>
+                {pageType === 'manager' ? 'Add Manager' : 'Add Executive'}
+              </Button>
+            </Box>
+          )}
         </Box>
       </Box>
       <Table size="small">
@@ -333,10 +336,10 @@ const ManagerTable: React.FC<ManagerTableProps> = ({ managers, onCreate, onEdit,
                     color="textSecondary"
                     sx={{ mt: 2, fontWeight: 500 }}
                   >
-                    No managers available
+                    {pageType === 'manager' ? 'No managers available' : 'No executives available'}
                   </Typography>
                   <Typography variant="body2" color="textSecondary">
-                    Add a new manager to get started.
+                    {pageType === 'manager' ? 'Add a new manager to get started.' : 'Add a new executive to get started.'}
                   </Typography>
                 </Box>
               </TableCell>
@@ -370,11 +373,15 @@ const ManagerTable: React.FC<ManagerTableProps> = ({ managers, onCreate, onEdit,
             sortedFilteredUsers
               .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
               .map((user) => (
-                <TableRow>
-                  <TableCell>{user.userId} {`${user.FirstName} ${user.LastName}`}</TableCell>
+                <TableRow key={user.userId}>
+                  <TableCell>
+                    {user.userId} {`${user.FirstName} ${user.LastName}`}
+                  </TableCell>
                   <TableCell>{user.Email}</TableCell>
                   <TableCell>{user.Region}</TableCell>
-                  <TableCell>{dayjs(user.DateOfRegistration).format("YYYY/MM/DD HH:mm:ss")}</TableCell>
+                  <TableCell>
+                    {dayjs(user.DateOfRegistration).format("YYYY/MM/DD HH:mm:ss")}
+                  </TableCell>
                   <TableCell>{user?.CreatedBy}</TableCell>
                   <TableCell>
                     <Button
@@ -387,18 +394,18 @@ const ManagerTable: React.FC<ManagerTableProps> = ({ managers, onCreate, onEdit,
                         fontSize: "14px",
                         backgroundColor:
                           user.Status === "Suspended"
-                            ? "#FF7A7A" // Red for Suspended
+                            ? "#FF7A7A"
                             : user.Status === "Inactive"
-                            ? "#FFA726" // Orange for Inactive
-                            : "#4CAF50", // Green for Active
+                              ? "#FFA726"
+                              : "#4CAF50",
                         color: "#171717",
                         "&:hover": {
                           backgroundColor:
                             user.Status === "Suspended"
-                              ? "#F05252" // Lighter Red
+                              ? "#F05252"
                               : user.Status === "Inactive"
-                              ? "#FFA726" // Lighter Orange
-                              : "#4CAF50", // Lighter Green
+                                ? "#FFA726"
+                                : "#4CAF50",
                         },
                       }}
                     >
@@ -406,38 +413,62 @@ const ManagerTable: React.FC<ManagerTableProps> = ({ managers, onCreate, onEdit,
                     </Button>
                   </TableCell>
                   <TableCell>
-                    <IconButton onClick={(event) => handleToggleMenu(event, user)}>
-                      <MoreHorizIcon />
-                    </IconButton>
+                    {pageType === "manager" ? (
+                      <IconButton onClick={(event) => handleToggleMenu(event, user)}>
+                        <MoreHorizIcon />
+                      </IconButton>
+                    ) : (
+                      <Button
+                        onClick={() => selectedUser ? onEdit(selectedUser, "view") : null}
+                        sx={{
+                          color: '#67ABEB',
+                          textTransform: "none",
+                          fontSize: "14px",
+                          padding: "2px 10px",
+                          "&:hover": {
+                            backgroundColor: "transparent",
+                          },
+                        }}
+                      >
+                        View
+                      </Button>
+                    )}
                   </TableCell>
                 </TableRow>
               ))
           )}
         </TableBody>
       </Table>
-      <Menu
-        anchorEl={anchorEl}
-        open={Boolean(anchorEl)}
-        onClose={() => handleToggleMenu()}
-        MenuListProps={{ "aria-labelledby": "basic-button" }}>
-        <MenuItem onClick={() => selectedUser ? onEdit(selectedUser, "view") : null}>
-          View
-        </MenuItem>
-        <MenuItem onClick={() => selectedUser ? onEdit(selectedUser, "update") : null}>
-          Update
-        </MenuItem>
-        <MenuItem onClick={() => selectedUser ? handleManagerSuspend(selectedUser) : null}>
+      {pageType === "manager" && (
+        <Menu
+          anchorEl={anchorEl}
+          open={Boolean(anchorEl)}
+          onClose={() => handleToggleMenu()}
+          MenuListProps={{ "aria-labelledby": "basic-button" }}
+        >
+          <MenuItem
+            onClick={() =>
+              selectedUser ? onEdit(selectedUser, "view") : null
+            }
+          >
+            View
+          </MenuItem>
+          <MenuItem
+            onClick={() =>
+              selectedUser ? onEdit(selectedUser, "update") : null
+            }
+          >
+            Update
+          </MenuItem>
+          <MenuItem
+            onClick={() =>
+              selectedUser ? handleManagerSuspend(selectedUser) : null
+            }
+          >
             Suspend
-        </MenuItem>
-        <ConfirmSuspendManagerPage
-          open={isVerifyModalOpen}
-          onClose={() => setIsVerifyModalOpen(false)}
-          onVerified={() => { setIsVerifyModalOpen(false); }}
-          selectedUser={selectedUser}
-          onSubmit={onSubmit}
-          setSelectedUser={setSelectedUser}
-        />
-      </Menu>
+          </MenuItem>
+        </Menu>
+      )}
       <Box
         sx={{
           padding: "12px",

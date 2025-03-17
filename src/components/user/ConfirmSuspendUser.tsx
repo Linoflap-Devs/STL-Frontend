@@ -20,7 +20,7 @@ import Swal from "sweetalert2";
 import { LoginSectionData } from "../../data/LoginSectionData";
 import ArrowBackIosNewIcon from "@mui/icons-material/ArrowBackIosNew";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
-import { User } from "./UserTable";
+import { User } from "./UsersTable";
 
 interface ConfirmSuspendManagerPageProps {
     open: boolean;

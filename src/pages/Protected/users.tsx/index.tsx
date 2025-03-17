@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { Typography, Box } from '@mui/material';
-import ManagerTable, { User } from '~/components/user/UserTable';
-import UserDashboardPage from '~/components/user/UserDashboard';
+import { Box } from '@mui/material';
+import ManagerTable, { User } from '~/components/user/UsersTable';
+import UserDashboardPage from '~/components/user/UsersDashboardCards';
 import CreateManager from '~/components/user/CreateUser';
 import UpdateManager from '~/components/user/UpdateUser';
 import { fetchUsers } from '~/utils/api/users';

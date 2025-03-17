@@ -16,7 +16,7 @@ import {
   Box,
 } from "@mui/material";
 import { formatKey } from "../../utils/format";
-import { User } from "./UserTable";
+import { User } from "./UsersTable";
 import { SelectChangeEvent } from "@mui/material";
 import CloseIcon from '@mui/icons-material/Close';
 import { inputStyles, selectStyles } from "../../styles/theme";

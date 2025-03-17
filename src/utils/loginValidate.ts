@@ -1,5 +1,4 @@
 // src\utils\loginValidate.ts
-import axios from 'axios';
 
 // validation
 export const verifyCredentials = (email: string, password: string): Record<string, string> => {

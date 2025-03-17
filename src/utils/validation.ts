@@ -1,4 +1,4 @@
-import ManagerTable, { User } from "~/components/user/UserTable";
+import ManagerTable, { User } from "~/components/user/UsersTable";
 import { formatKey } from "../utils/format";
 
 // forms validation

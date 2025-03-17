@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import TableCell from "@mui/material/TableCell";
 import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
-import ManagerTable, { User } from "~/components/user/UserTable";
+import ManagerTable, { User } from "~/components/user/UsersTable";
 import EditLogModalPage, { EditLogFields } from "~/components/user/EditLogModal";
 import TextField from "@mui/material/TextField";
 import { filterStyles } from "../styles/theme";

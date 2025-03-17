@@ -1,6 +1,6 @@
 import React from 'react';
 import { Box, Typography } from '@mui/material';
-import UserDashboardPage from '~/components/user/UserDashboard';
+import UserDashboardPage from '~/components/user/UsersDashboardCards';
 import UsersPage from '../users.tsx';
 
 const ManagersPage: React.FC = () => {
@@ -18,12 +18,10 @@ const ManagersPage: React.FC = () => {
           Small Town Lottery Managers
         </Typography>
       </Box>
-
       {/* Dashboard */}
       <Box sx={{ marginBottom: 2 }}>
         <UserDashboardPage roleId={3} />
       </Box>
-
       {/* Users Page */}
       <UsersPage roleId={3} />
     </Box>
