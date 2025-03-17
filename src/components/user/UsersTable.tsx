@@ -266,7 +266,6 @@ const ManagerTable: React.FC<ManagerTableProps> = ({ managers, onCreate, onEdit,
                 onSort={onSortWrapper}
                 onFilterChange={handleFilterChange("fullName")}
               />
-
               <SortableTableCell
                 label="Email Address"
                 sortKey="Email"
@@ -274,7 +273,6 @@ const ManagerTable: React.FC<ManagerTableProps> = ({ managers, onCreate, onEdit,
                 onSort={onSortWrapper}
                 onFilterChange={handleFilterChange("Email")}
               />
-
               <SortableTableCell
                 label="Assigned Region"
                 sortKey="Region"
@@ -284,7 +282,6 @@ const ManagerTable: React.FC<ManagerTableProps> = ({ managers, onCreate, onEdit,
                 filterValue={filters.Region}
                 onFilterChange={handleFilterChange("Region")}
               />
-
               <SortableTableCell
                 label="Creation Date"
                 sortKey="DateOfRegistration"
@@ -294,7 +291,6 @@ const ManagerTable: React.FC<ManagerTableProps> = ({ managers, onCreate, onEdit,
                 filterValue={filters.DateOfRegistration}
                 onFilterChange={handleFilterChange("DateOfRegistration")}
               />
-
               <SortableTableCell
                 label="Created By"
                 sortKey="CreatedBy"
@@ -304,7 +300,6 @@ const ManagerTable: React.FC<ManagerTableProps> = ({ managers, onCreate, onEdit,
                 filterValue={filters.CreatedBy}
                 onFilterChange={handleFilterChange("CreatedBy")}
               />
-
               <SortableTableCell
                 label="Status"
                 sortKey="Status"
@@ -394,18 +389,18 @@ const ManagerTable: React.FC<ManagerTableProps> = ({ managers, onCreate, onEdit,
                         fontSize: "14px",
                         backgroundColor:
                           user.Status === "Suspended"
-                            ? "#FF7A7A"
+                            ? "#FF7A7A" // Red for Suspended
                             : user.Status === "Inactive"
-                              ? "#FFA726"
-                              : "#4CAF50",
+                              ? "#FFA726" // Orange for Inactive
+                              : "#4CAF50", // Green for Active
                         color: "#171717",
                         "&:hover": {
                           backgroundColor:
                             user.Status === "Suspended"
-                              ? "#F05252"
+                              ? "#F05252" // Lighter Red
                               : user.Status === "Inactive"
-                                ? "#FFA726"
-                                : "#4CAF50",
+                                ? "#FFA726" // Lighter Orange
+                                : "#4CAF50", // Lighter Green
                         },
                       }}
                     >
@@ -419,9 +414,9 @@ const ManagerTable: React.FC<ManagerTableProps> = ({ managers, onCreate, onEdit,
                       </IconButton>
                     ) : (
                       <Button
-                        onClick={() => selectedUser ? onEdit(selectedUser, "view") : null}
+                        onClick={() => onEdit(user, "view")}
                         sx={{
-                          color: '#67ABEB',
+                          color: "#67ABEB",
                           textTransform: "none",
                           fontSize: "14px",
                           padding: "2px 10px",
@@ -467,6 +462,14 @@ const ManagerTable: React.FC<ManagerTableProps> = ({ managers, onCreate, onEdit,
           >
             Suspend
           </MenuItem>
+          <ConfirmSuspendManagerPage
+            open={isVerifyModalOpen}
+            onClose={() => setIsVerifyModalOpen(false)}
+            onVerified={() => { setIsVerifyModalOpen(false); }}
+            selectedUser={selectedUser}
+            onSubmit={onSubmit}
+            setSelectedUser={setSelectedUser}
+          />
         </Menu>
       )}
       <Box

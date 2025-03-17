@@ -1,7 +1,7 @@
 import React from 'react';
 import { Box, Typography } from '@mui/material';
 import UsersPage from '../users.tsx';
-import UserDashboardPage from '~/components/user/UsersDashboardCards';
+import UserDashboardPage from '~/components/user/UsersDashboard';
 
 const ExecutivePage: React.FC = () => {
   return (
