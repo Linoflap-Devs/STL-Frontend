@@ -16,7 +16,7 @@ import {
   Box,
 } from "@mui/material";
 import { formatKey } from "../../utils/format";
-import { User } from "./ManagerTable";
+import { User } from "./UserTable";
 import { SelectChangeEvent } from "@mui/material";
 import CloseIcon from '@mui/icons-material/Close';
 import { inputStyles, selectStyles } from "../../styles/theme";
@@ -25,7 +25,7 @@ import dayjs, { Dayjs } from "dayjs";
 import Swal from "sweetalert2";
 import EditLogModalPage from "./EditLogModal";
 import { validateUser } from "~/utils/validation"
-import ConfirmUpdateManagerPage from "./ConfirmUpdateManager";
+import ConfirmUpdateManagerPage from "./ConfirmUpdateUser";
 
 type LogType = {
   id: number;

@@ -15,7 +15,7 @@ import {
   OutlinedInput,
   InputAdornment,
 } from "@mui/material";
-import { User } from "./ManagerTable";
+import { User } from "./UserTable";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
 import { SelectChangeEvent } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
@@ -23,7 +23,7 @@ import { inputErrorStyles } from "../../styles/theme";
 import { UserSectionData } from "~/data/AdminSectionData";
 import { formatKey } from "~/utils/format"
 import { validateUser } from "~/utils/validation"
-import ConfirmCreateManagerPage from "./ConfirmCreateManager";
+import ConfirmCreateManagerPage from "./ConfirmCreateUser";
 import Swal from "sweetalert2";
 
 interface CreateManagerProps {

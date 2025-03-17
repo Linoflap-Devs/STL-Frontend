@@ -35,7 +35,7 @@ import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
 import dayjs, { Dayjs } from "dayjs";
 import { EditLogFields } from "./EditLogModal";
 import Swal from "sweetalert2";
-import ConfirmSuspendManagerPage from "./ConfirmSuspendManager";
+import ConfirmSuspendManagerPage from "./ConfirmSuspendUser";
 
 export interface User {
   firstName: string;

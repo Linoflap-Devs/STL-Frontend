@@ -1,4 +1,4 @@
-import ManagerTable, { User } from "~/components/manager/ManagerTable";
+import ManagerTable, { User } from "~/components/user/UserTable";
 import Swal from "sweetalert2";
 
 export const executiveDeletion = (
