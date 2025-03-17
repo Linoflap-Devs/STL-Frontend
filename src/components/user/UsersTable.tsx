@@ -385,8 +385,7 @@ const ManagerTable: React.FC<ManagerTableProps> = ({ managers, onCreate, onEdit,
                         cursor: "auto",
                         textTransform: "none",
                         borderRadius: "12px",
-                        padding: "1.2px 13.5px",
-                        fontSize: "14px",
+                        padding: "1px 13.5px",
                         backgroundColor:
                           user.Status === "Suspended"
                             ? "#FF7A7A" // Red for Suspended
@@ -416,10 +415,10 @@ const ManagerTable: React.FC<ManagerTableProps> = ({ managers, onCreate, onEdit,
                       <Button
                         onClick={() => onEdit(user, "view")}
                         sx={{
-                          color: "#67ABEB",
+                          cursor: "pointer",
                           textTransform: "none",
-                          fontSize: "14px",
-                          padding: "2px 10px",
+                          borderRadius: "12px",
+                          padding: "8px 13.5px",
                           "&:hover": {
                             backgroundColor: "transparent",
                           },

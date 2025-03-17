@@ -19,7 +19,7 @@ const ManagersPage: React.FC = () => {
         </Typography>
       </Box>
       {/* Dashboard */}
-      <Box sx={{ marginBottom: 2 }}>
+      <Box>
         <UserDashboardPage roleId={3} />
       </Box>
       {/* Users Page */}

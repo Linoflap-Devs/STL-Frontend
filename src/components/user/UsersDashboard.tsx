@@ -115,7 +115,7 @@ const UserDashboardPage: React.FC<UserDashboardPageProps> = ({ roleId }) => {
   ];
 
   return (
-    <Box>
+    <Box sx={{ mb: 3, }}>
       {/* Cards Display */}
       <Box
         sx={{
@@ -154,7 +154,6 @@ const UserDashboardPage: React.FC<UserDashboardPageProps> = ({ roleId }) => {
         <Box
           sx={{
             paddingTop: 5,
-            paddingBottom: 4,
             paddingLeft: 2,
             backgroundColor: "#171717",
             borderRadius: "10px",
@@ -177,7 +176,7 @@ const UserDashboardPage: React.FC<UserDashboardPageProps> = ({ roleId }) => {
                   mb: 0.7,
                   paddingX: 4,
                   paddingY: 0.9,
-                  mr: 2, 
+                  mr: 2,
                   width: 'auto', "&:hover": {
                     backgroundColor: '',
                   },

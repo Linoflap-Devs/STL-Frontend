@@ -80,8 +80,8 @@ const darkTheme = createTheme({
         root: {
           color: "#D1D5D8",
           fontSize: "13px",
-          padding: "auto",
           borderBottom: "1px solid #3F3F3F",
+          //padding: '12px 16px !important',
         },
         head: {
           padding: "13px",
@@ -249,7 +249,7 @@ const darkTheme = createTheme({
           width: "100% !important",
         },
       },
-    },    
+    },
   },
 });
 
