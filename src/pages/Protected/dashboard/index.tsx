@@ -20,7 +20,7 @@ const DashboardPage = () => {
       <Box sx={{ display: "flex", justifyContent: "center", mt: 2 }}>
         <Grid container spacing={2} alignItems="stretch">
           {/* Column 1 (3 Cards) */}
-          <Grid item xs={12} md={6}>
+          <Grid item xs={12} md={4}>
             <Box sx={{ display: "flex", flexDirection: "column", gap: 2, }}>
               <Box sx={{ flex: 1 }}><DrawResultsPage /></Box>
               <Box sx={{ flex: 1 }}><TopBettingRegionPage /></Box>
@@ -29,7 +29,7 @@ const DashboardPage = () => {
           </Grid>
 
           {/* Column 2 (2 Cards) */}
-          <Grid item xs={12} md={6} sx={{ display: "flex", flexDirection: "column", }}>
+          <Grid item xs={12} md={8} sx={{ display: "flex", flexDirection: "column", }}>
             <Box sx={{ display: "flex", flexDirection: "column", gap: 2, height: "100%" }}>
               <Box sx={{ flex: 1 }}><SummaryBettorsBetsPlacedPage /></Box>
               <Box sx={{ flex: 1 }}><SummaryWinnersDrawTimePage /></Box>

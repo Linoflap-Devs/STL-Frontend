@@ -82,20 +82,20 @@ const SummaryWinnersDrawTimePage = () => {
         </Box>
         <CustomLegend />
       </Box>
-
-      <Box sx={{ height: "100%", display: "flex", flexDirection: "column", flexGrow: 1 }}>
+      <Box sx={{ height: "100%", display: "flex", flexDirection: "row", flexGrow: 1 }}>
         <BarChart
           sx={{
             display: "flex",
             justifyContent: "center",
             alignItems: "stretch",
             flexGrow: 1,
-            marginLeft: "1rem",
+            marginLeft: "3rem",
             marginTop: "-10px",
             height: "100%",
             width: "100%",
           }}
           height={270}
+          width={790}
           grid={{ vertical: true }}
           layout="horizontal"
           series={[{ data: data.map((item) => item.winners), color: "#BB86FC" }]}

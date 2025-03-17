@@ -102,34 +102,19 @@ const Sidebar: React.FC<SidebarProps> = ({ collapsed }) => {
         sx={{
           display: "flex",
           alignItems: "center",
-          textTransform: "capitalize",
-          color: currentPath === formattedPage ? "#67ABEB" : "inherit",
           px: collapsed ? 0 : 1,
           py: 1.5,
-          borderRadius: "6px",
           my: 1,
           textDecoration: "none",
+          transition: "transform 0.20s ease, opacity 0.30s ease",
+          opacity: collapsed ? 0 : 1,
+          transform: collapsed ? "translateX(-40px)" : "translateX(0)",
+          color: currentPath === formattedPage ? "#67ABEB" : "inherit",
         }}
       >
-        {React.cloneElement(icon, {
-          sx: {
-            fontSize: collapsed ? "1.4rem" : "1.4rem",
-            mr: collapsed ? 0 : 1,
-            ml: collapsed ? 0.5 : 0,
-            transition: "all 0.3s ease",
-          },
-        })}
-
+        {!collapsed && icon}
         {!collapsed && (
-          <Typography
-            sx={{
-              transition: "opacity 0.3s ease",
-              fontSize: 14,
-              fontWeight: currentPath === formattedPage ? "400" : "400",
-            }}
-          >
-            {page}
-          </Typography>
+          <Typography sx={{ fontSize: "14px" }}>{page}</Typography>
         )}
       </Box>
     );
@@ -165,11 +150,12 @@ const Sidebar: React.FC<SidebarProps> = ({ collapsed }) => {
           flexShrink: 0,
           "& .MuiDrawer-paper": {
             width: collapsed ? collapsedWidth : drawerWidth,
+            minWidth: collapsed ? collapsedWidth : drawerWidth,
             boxSizing: "border-box",
             backgroundColor: "#171717",
             color: "white",
-            transition: "width 0.3s ease",
-            overflow: "hidden",
+            transition: "width 0.40s cubic-bezier(0.4, 0, 0.4, 1)",
+            overflowX: "hidden",
           },
         }}
       >

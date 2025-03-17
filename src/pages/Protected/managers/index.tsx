@@ -157,7 +157,7 @@ const ManagersPage = () => {
           onEdit={(user, mode = "view") => handleUserEdit(user, mode)}
           managers={managers}
           onDelete={handleDeleteManager}
-          loadData={loadData}
+          onSubmit={handleSubmitUser}
         />
       </Box>
       <CreateManager
