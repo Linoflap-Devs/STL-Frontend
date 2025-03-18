@@ -105,7 +105,7 @@ const darkTheme = createTheme({
         root: {
           borderBottom: "0.5px solid #2F2F2F",
           "&:hover": {
-            backgroundColor: "#2F2F2F",
+            backgroundColor: "#212121",
           },
           "&.Mui-selected": {
             backgroundColor: "#2F2F2F",

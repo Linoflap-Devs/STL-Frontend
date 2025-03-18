@@ -16,21 +16,39 @@ axiosInstance.interceptors.request.use((config) => {
 });
 
 // Response interceptor to handle token expiration
+let isRefreshing = false;
+let refreshSubscribers: (() => void)[] = [];
+
 axiosInstance.interceptors.response.use(
   (response) => response,
   async (error) => {
-    if (error.response?.status === 403 && error.response?.data?.message === "Token expired.") {
-      try {
-        // Send refresh token request
-        await axiosInstance.post("/auth/tokenRefresh", {}, { withCredentials: true });
+    const originalRequest = error.config;
 
-        // Retry the failed request
-        return axiosInstance(error.config);
-      } catch (refreshError) {
-        console.error("Refresh token failed", refreshError);
-        window.location.href = "/auth/login";
+    if (error.response?.status === 403 && error.response?.data?.message === "Token expired.") {
+      if (!isRefreshing) {
+        isRefreshing = true;
+        try {
+          await axiosInstance.post("/auth/tokenRefresh", {}, { withCredentials: true });
+
+          isRefreshing = false;
+          refreshSubscribers.forEach((cb) => cb());
+          refreshSubscribers = [];
+
+          return axiosInstance(originalRequest);
+        } catch (refreshError) {
+          isRefreshing = false;
+          refreshSubscribers = [];
+          console.error("Refresh token failed", refreshError);
+          window.location.href = "/auth/login";
+          return Promise.reject(refreshError);
+        }
+      } else {
+        return new Promise((resolve) => {
+          refreshSubscribers.push(() => resolve(axiosInstance(originalRequest)));
+        });
       }
     }
+
     return Promise.reject(error);
   }
 );
