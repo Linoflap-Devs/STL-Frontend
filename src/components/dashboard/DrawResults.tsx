@@ -7,6 +7,7 @@ import {
   Divider,
   FormControl,
   InputLabel,
+  SelectChangeEvent,
 } from "@mui/material";
 import CasinoIcon from "@mui/icons-material/Casino";
 import getTodaysWinningCombination from "../../utils/api/winningcombinations";
@@ -99,13 +100,16 @@ const DrawResultsPage = () => {
 
       <Box sx={{ display: "flex", gap: 2, width: "100%" }}>
         <FormControl fullWidth>
-          <InputLabel>Select a Region</InputLabel>
+          <InputLabel id="region-label">Select a Region</InputLabel>
           <Select
+            labelId="region-label"
+            id="region-select"
             value={selectedRegion}
             onChange={(e) => {
-              setSelectedRegion(e.target.value);
+              setSelectedRegion(e.target.value as string);
               setSelectedProvince("");
             }}
+            label="Select a Region"
           >
             {regions.map((region) => (
               <MenuItem key={region.RegionId} value={region.RegionId}>
@@ -114,10 +118,14 @@ const DrawResultsPage = () => {
             ))}
           </Select>
         </FormControl>
-
         <FormControl fullWidth disabled={!selectedRegion}>
-          <InputLabel>Select a Province</InputLabel>
-          <Select value={selectedProvince} onChange={(e) => setSelectedProvince(e.target.value)}>
+          <InputLabel id="province-label">Select a Province</InputLabel>
+          <Select
+            labelId="province-label"
+            value={selectedProvince}
+            onChange={(e: SelectChangeEvent) => setSelectedProvince(e.target.value)}
+            label="Select a Province"
+          >
             {provinces.map((province) => (
               <MenuItem key={province.ProvinceId} value={province.ProvinceId}>
                 {province.Province}
@@ -126,7 +134,6 @@ const DrawResultsPage = () => {
           </Select>
         </FormControl>
       </Box>
-
       <Box sx={{ mt: 2, width: "100%" }}>
         {selectedRegion && !selectedProvince ? (
           <Typography sx={{ color: "#fff", textAlign: "center", fontSize: "16px" }}>
