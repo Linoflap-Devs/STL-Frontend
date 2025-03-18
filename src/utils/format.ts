@@ -12,7 +12,7 @@ export const formatKey = (key: string) => {
     province: "Assigned Province",
     city: "Assigned City",
     barangay: "Assigned Barangay",
-    streetaddress: "Assigned Street Address",
+    street: "Assigned Address",
   };
   return mapping[key] || key;
 };

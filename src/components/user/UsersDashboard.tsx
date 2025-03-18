@@ -288,8 +288,8 @@ const UserDashboardPage: React.FC<UserDashboardPageProps> = ({ roleId }) => {
           </Box>
           <Box sx={{ height: 270, width: "100%", minWidth: 0 }}>
             <BarChart
-              xAxis={[{ scaleType: "band", data: regions }]}
-              yAxis={[{ label: "Number of Users" }]}
+              xAxis={[{ label: "REGIONS", scaleType: "band", data: regions }]}
+              yAxis={[ ]}
               series={chartData.map(({ label, color, data }) => ({
                 data,
                 label,

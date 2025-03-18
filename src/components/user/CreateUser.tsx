@@ -175,7 +175,7 @@ const CreateManager: React.FC<CreateManagerProps> = ({
       }}
     >
       <DialogTitle sx={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-      {pageType === 'manager' ? 'Add Manager' : 'Add Executive'}
+        {pageType === 'manager' ? 'Add Manager' : 'Add Executive'}
         <IconButton
           aria-label="close"
           onClick={onClose}
@@ -197,9 +197,11 @@ const CreateManager: React.FC<CreateManagerProps> = ({
               <Grid item xs={12} key={key} sx={{ marginBottom: "1rem" }}>
                 {key === "lastName" ? (
                   <Grid container spacing={1.5} alignItems="flex-start" wrap="nowrap">
-                    <Grid item xs={8}>
-                      <FormControl fullWidth error={!!errors.lastName} >
-                        <InputLabel sx={{ fontSize: '14px' }} htmlFor="lastName">Last Name</InputLabel>
+                    <Grid item xs={8} key="lastName-field">
+                      <FormControl fullWidth error={!!errors.lastName}>
+                        <InputLabel sx={{ fontSize: "14px" }} htmlFor="lastName">
+                          Last Name
+                        </InputLabel>
                         <OutlinedInput
                           id="lastName"
                           name="lastName"
@@ -212,8 +214,8 @@ const CreateManager: React.FC<CreateManagerProps> = ({
                       </FormControl>
                     </Grid>
 
-                    <Grid item xs={4}>
-                      <FormControl fullWidth error={!!errors.suffix} >
+                    <Grid item xs={4} key="suffix-field">
+                      <FormControl fullWidth error={!!errors.suffix}>
                         <InputLabel htmlFor="suffix">Suffix</InputLabel>
                         <OutlinedInput
                           id="suffix"
@@ -228,7 +230,7 @@ const CreateManager: React.FC<CreateManagerProps> = ({
                   </Grid>
                 ) : key === "password" ? (
                   <Grid container spacing={1} alignItems="center">
-                    <Grid item xs={7} sx={{ marginBottom: 1, }}>
+                    <Grid item xs={7} sx={{ marginBottom: 1 }} key="password-field">
                       <FormControl fullWidth error={!!errors.password} variant="outlined">
                         <InputLabel htmlFor="password">Password</InputLabel>
                         <OutlinedInput
@@ -252,7 +254,7 @@ const CreateManager: React.FC<CreateManagerProps> = ({
                         />
                       </FormControl>
                     </Grid>
-                    <Grid item xs={5}>
+                    <Grid item xs={5} key="password-generate-btn">
                       <Button
                         variant="contained"
                         color="secondary"
@@ -270,10 +272,8 @@ const CreateManager: React.FC<CreateManagerProps> = ({
                     </Grid>
 
                     {errors.password && (
-                      <Grid item xs={12} sx={{ paddingTop: '0px !important' }}>
-                        <Typography sx={inputErrorStyles}>
-                          {errors.password}
-                        </Typography>
+                      <Grid item xs={12} sx={{ paddingTop: "0px !important" }} key="password-error">
+                        <Typography sx={inputErrorStyles}>{errors.password}</Typography>
                       </Grid>
                     )}
                   </Grid>
@@ -288,9 +288,7 @@ const CreateManager: React.FC<CreateManagerProps> = ({
                       onChange={handleManagerChange}
                       label={formatKey(key)}
                     />
-                    {errors[key] && (
-                      <FormHelperText error={true}>{errors[key]}</FormHelperText>
-                    )}
+                    {errors[key] && <FormHelperText error={true}>{errors[key]}</FormHelperText>}
                   </FormControl>
                 )}
               </Grid>
@@ -307,14 +305,15 @@ const CreateManager: React.FC<CreateManagerProps> = ({
                     <InputLabel id={`${key}-label`}>{formatKey(key)}</InputLabel>
                     <Select
                       labelId={`${key}-label`}
+                      id={`${key}-select`}  // Use a different id to avoid conflicts
                       value={selectState[key as keyof typeof selectState] || ""}
-                      name={key}
                       onChange={(e) => handleSelectChange(e, key)}
                       disabled={
                         (key === 'province' && !selectState.region) ||
                         (key === 'city' && !selectState.province)
                       }
                       inputProps={{ 'aria-label': formatKey(key) }}
+                      label={formatKey(key)}  // this is to make the label work properly
                     >
                       <MenuItem value="" disabled>Select {formatKey(key)}</MenuItem>
                       {(key === "region"
@@ -324,13 +323,7 @@ const CreateManager: React.FC<CreateManagerProps> = ({
                           : filteredCities
                       ).map((option) => (
                         <MenuItem
-                          key={
-                            key === "region"
-                              ? option.ProvinceName
-                              : key === "province"
-                                ? option.ProvinceId
-                                : option.name
-                          }
+                          key={`${key}-${option.ProvinceId || option.RegionId || option.name}`}
                           value={
                             key === "region"
                               ? option.RegionName
@@ -343,13 +336,13 @@ const CreateManager: React.FC<CreateManagerProps> = ({
                             ? option.RegionName
                             : key === "province"
                               ? option.ProvinceName
-                              : option.name
-                          }
+                              : option.name}
                         </MenuItem>
                       ))}
                     </Select>
                     {errors[key] && <FormHelperText>{errors[key]}</FormHelperText>}
                   </FormControl>
+
                 ) : (
                   <FormControl fullWidth error={!!errors[key]}>
                     <InputLabel htmlFor={key}>{formatKey(key)}</InputLabel>

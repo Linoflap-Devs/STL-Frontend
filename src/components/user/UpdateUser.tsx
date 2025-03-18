@@ -523,9 +523,9 @@ const UpdateManager: React.FC<UpdateManagerProps> = React.memo(({
               <Grid item xs={12} key={key} sx={{ marginBottom: "1rem" }}>
                 {["region", "province", "city"].includes(key) ? (
                   <FormControl fullWidth error={!!errors[key]} sx={selectStyles}>
-                    <InputLabel id={`${key}-label`}>{key.charAt(0).toUpperCase() + key.slice(1)}</InputLabel>
+                    <InputLabel id={`${formatKey(key)}-label`}>{key.charAt(0).toUpperCase() + key.slice(1)}</InputLabel>
                     <Select
-                      labelId={`${key}-label`}
+                      labelId={`${formatKey(key)}-label`}
                       value={selectState[key as keyof typeof selectState] || ""}
                       name={key}
                       onChange={(e) => handleSelectChange(e, key)}
@@ -567,17 +567,16 @@ const UpdateManager: React.FC<UpdateManagerProps> = React.memo(({
                     {errors[key] && <FormHelperText>{errors[key]}</FormHelperText>}
                   </FormControl>
                 ) : (
-                  <FormControl fullWidth error={!!errors[key]} variant="outlined" sx={inputStyles} >
-                    <InputLabel htmlFor={key}>{key.charAt(0).toUpperCase() + key.slice(1)}</InputLabel>
+                  <FormControl fullWidth error={!!errors[key]} variant="outlined" sx={inputStyles}>
+                    <InputLabel htmlFor={key}>{formatKey(key)}</InputLabel>
                     <OutlinedInput
                       id={key}
                       name={key}
                       disabled={isDisabled}
-                      placeholder={`Enter ${key.charAt(0).toUpperCase() + key.slice(1)}`}
+                      placeholder={`Enter ${formatKey(key)}`}
                       value={user[key as keyof typeof user] || ""}
                       onChange={handleManagerChange}
-                      label={key.charAt(0).toUpperCase() + key.slice(1)}
-
+                      label={formatKey(key)}
                     />
                     {errors[key] && <FormHelperText>{errors[key]}</FormHelperText>}
                   </FormControl>
