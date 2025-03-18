@@ -279,9 +279,12 @@ export const deleteStyles = {
 
 export const inputStyles = {
   "& .MuiOutlinedInput-root": {
+    input: {
+      padding: "12px 16px !important",
+    },
     "& fieldset": {
       borderColor: "#D1D5DB",
-      padding: "14px 40px 10px 14px",
+       padding: "10px 16px !important",
     },
     "&.Mui-error fieldset": { borderColor: "#FF7A7A" },
   },

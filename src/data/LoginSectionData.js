@@ -1,13 +1,13 @@
 export const LoginSectionData = {
 
-  image: "/images/stl-logo.png",
+  image: "/images/STL_Logo.png",
   image2: "/images/stl_bg.png",
   title: "Small Town Lottery",
   description: "Big wins. Stronger communities.",
   cardTitle: "Welcome!",
   cardDescription: (
     <>
-      Welcome back! Please enter your details.
+      Great to see you again! Let’s get you signed in.
     </>
   ),
   rememberMe: "Remember Me?",

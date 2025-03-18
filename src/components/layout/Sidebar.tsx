@@ -4,7 +4,6 @@ import {
   IconButton,
   Box,
   Typography,
-  Divider,
 } from "@mui/material";
 import MenuIcon from "@mui/icons-material/Menu";
 import HomeIcon from "@mui/icons-material/Home";
@@ -175,7 +174,7 @@ const Sidebar: React.FC<SidebarProps> = ({ collapsed }) => {
                 <Box
                   sx={{
                     textAlign: "center",
-                    mt: 0.5,
+                    mt: 3.5,
                     mb: 2,
                     display: "flex",
                     justifyContent: "center",
@@ -184,7 +183,7 @@ const Sidebar: React.FC<SidebarProps> = ({ collapsed }) => {
                   <img
                     src={UserSectionData.image}
                     alt="Logo"
-                    style={{ maxWidth: "120px", width: "100%" }}
+                    style={{ maxWidth: "100px", width: "100%" }}
                   />
                 </Box>
               </Box>

@@ -9,7 +9,7 @@ import { inputStyles, inputErrorStyles } from "../../styles/theme";
 const LoginPage = () => {
   const router = useRouter();
   const [credentials, setCredentials] = useState({
-    email: "", // Matches API
+    email: "",
     password: "",
   });
   const [showPassword, setShowPassword] = useState(false);
@@ -23,10 +23,10 @@ const LoginPage = () => {
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     if (isLoggingIn) return;
-  
+
     setIsLoggingIn(true);
     setErrors({});
-  
+
     try {
       const response = await loginUser(credentials, router);
     } catch (error) {
@@ -34,7 +34,7 @@ const LoginPage = () => {
       setIsLoggingIn(false);
     }
   };
-  
+
   const handleTogglePasswordVisibility = () =>
     setShowPassword((prev) => !prev);
 
@@ -85,12 +85,12 @@ const LoginPage = () => {
             borderRadius: "8px",
           }}
         >
-          <Box sx={{ textAlign: "center", marginBottom: "1rem" }}>
+          <Box sx={{ textAlign: "center", marginBottom: "1rem", marginTop: 2, }}>
             <Box
               component="img"
               src={LoginSectionData.image}
               alt="altLogo"
-              sx={{ maxWidth: "30%", margin: "0 auto 0.7rem" }}
+              sx={{ maxWidth: "60%", margin: "0 auto 0.7rem", }}
               loading="lazy"
             />
             <Typography variant="h4" sx={{ fontWeight: "bold" }}>
@@ -102,7 +102,6 @@ const LoginPage = () => {
           </Box>
           <form onSubmit={handleLogin} style={{ width: "85%" }}>
             <Box sx={{ display: "flex", flexDirection: "column", width: "100%" }}>
-              {/* Username Field */}
               <Box sx={{ mb: "1rem" }}>
                 <Typography
                   sx={{ textAlign: "left", marginBottom: "0.5rem" }}
@@ -113,7 +112,7 @@ const LoginPage = () => {
                 <TextField
                   fullWidth
                   variant="outlined"
-                  placeholder="Enter Username"
+                  placeholder="Email Address"
                   value={credentials.email}
                   onChange={(e) => setCredentials({ ...credentials, email: e.target.value })}
                   error={!!errors.email || !!errors.general}
@@ -122,8 +121,6 @@ const LoginPage = () => {
                 {errors.email && <span style={inputErrorStyles}>{errors.email}</span>}
                 {errors.general && <span style={inputErrorStyles}>{errors.general}</span>}
               </Box>
-
-              {/* Password Field */}
               <Box>
                 <Typography
                   sx={{ textAlign: "left", marginBottom: "0.5rem" }}
@@ -134,7 +131,7 @@ const LoginPage = () => {
                 <TextField
                   fullWidth
                   variant="outlined"
-                  placeholder="Enter Password"
+                  placeholder="Password"
                   type={showPassword ? "text" : "password"}
                   value={credentials.password}
                   onChange={(e) => setCredentials({ ...credentials, password: e.target.value })}
@@ -156,16 +153,14 @@ const LoginPage = () => {
                 {errors.general && <span style={inputErrorStyles}>{errors.general}</span>}
               </Box>
             </Box>
-
-            {/* Submit Button */}
             <Button
               type="submit"
               variant="contained"
               fullWidth
               disabled={isLoggingIn}
               sx={{
-                mt: 3.5,
-                py: 1.5,
+                mt: 3,
+                py: 1.1,
                 borderRadius: "8px",
                 textTransform: "none",
                 color: "#181A1B",
@@ -176,14 +171,14 @@ const LoginPage = () => {
 
             {/* Forgot Password */}
             <Typography sx={{ textAlign: "center", fontSize: 13, mt: "0.5rem" }}>
-              <a href="/auth/forgot-password" style={{ textDecoration: "none" }}>
+              <a href="/auth/forgot-password" style={{ textDecoration: "none", color: '#67ABEB', }}>
                 {LoginSectionData.forgotPassword}
               </a>
             </Typography>
           </form>
 
           {/* Footer */}
-          <Box sx={{ position: "absolute", bottom: 25, textAlign: "center", }}>
+          <Box sx={{ position: "absolute", bottom: 30, textAlign: "center", }}>
             <Typography sx={{ fontSize: "13px" }}>{LoginSectionData.copyright}</Typography>
           </Box>
         </Box>
