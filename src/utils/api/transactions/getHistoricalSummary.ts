@@ -1,4 +1,4 @@
-import axiosInstance from '../axiosInstance';
+import axiosInstance from '../../axiosInstance';
 import { AxiosError } from 'axios';
 
 // Pass query parameters to get desired data.

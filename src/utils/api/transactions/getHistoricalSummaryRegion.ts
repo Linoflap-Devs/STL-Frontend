@@ -1,14 +1,14 @@
-import axiosInstance from '../axiosInstance';
+import axiosInstance from '../../axiosInstance';
 import { AxiosError } from 'axios';
 
 // Pass query parameters to get desired data.
-const fetchCompareHistoricalDate = async (queryParams: Record<string, any>) => {
+const fetchHistoricalSummaryRegion = async (queryParams: Record<string, any>) => {
     try {
 
         // Retirieving authToken but not using it in the request, add it to the request headers if required.
         const token = localStorage.getItem("authToken");
 
-        const response = await axiosInstance.get("/transactions/compareHistoricalDate", {
+        const response = await axiosInstance.get("/transactions/getHistoricalRegion", {
             params: queryParams,
             headers: {
                 Authorization: `Bearer ${token}`
@@ -17,11 +17,11 @@ const fetchCompareHistoricalDate = async (queryParams: Record<string, any>) => {
             // withCredentials: true,
         });
         
-        console.log(`Response Data (fetchCompareHistoricalDate): ${JSON.stringify(response.data)}`);
+        console.log(`Response Data (fetchHistoricalSummaryRegion): ${JSON.stringify(response.data)}`);
         return response.data;
     } catch (error) {
         if (error instanceof AxiosError) {
-            console.error("Error fetching CompareHistoricalDate:", error.response?.data?.message || error.message);
+            console.error("Error fetching historical summary region:", error.response?.data?.message || error.message);
 
             return {success: false, message: error.response?.data?.message || error.message, data: []};
         }
@@ -30,5 +30,5 @@ const fetchCompareHistoricalDate = async (queryParams: Record<string, any>) => {
     }
 };
 
-export default fetchCompareHistoricalDate;
+export default fetchHistoricalSummaryRegion;
 

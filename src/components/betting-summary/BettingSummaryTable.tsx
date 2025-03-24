@@ -19,7 +19,7 @@ import {
 import SearchIcon from "@mui/icons-material/Search";
 import PersonOffIcon from "@mui/icons-material/PersonOff";
 import FilterListIcon from "@mui/icons-material/FilterList";
-import fetchTransactions from "~/utils/api/getTransactions";
+import fetchTransactions from "~/utils/api/transactions/getTransactions";
 
 export interface User {
   transactionNumber: string;
@@ -89,7 +89,9 @@ const TableBettingSummary: React.FC = () => {
       const lowercasedQuery = searchQuery.toLowerCase();
       const filtered = transactions.filter(
         (transaction) =>
-          transaction.transactionNumber.toLowerCase().includes(lowercasedQuery) ||
+          transaction.transactionNumber
+            .toLowerCase()
+            .includes(lowercasedQuery) ||
           transaction.gameType.toLowerCase().includes(lowercasedQuery) ||
           transaction.betType.toLowerCase().includes(lowercasedQuery) ||
           transaction.selectedPair.toLowerCase().includes(lowercasedQuery)
@@ -204,7 +206,8 @@ const TableBettingSummary: React.FC = () => {
                   <TableCell>{transaction.transactionNumber}</TableCell>
                   <TableCell>{transaction.date}</TableCell>
                   <TableCell>{transaction.drawTime}</TableCell>
-                  <TableCell>₱{transaction.betAmount}</TableCell> {/* Add peso sign */}
+                  <TableCell>₱{transaction.betAmount}</TableCell>{" "}
+                  {/* Add peso sign */}
                   <TableCell>{transaction.gameType}</TableCell>
                   <TableCell>{transaction.betType}</TableCell>
                   <TableCell>{transaction.selectedPair}</TableCell>
@@ -222,7 +225,9 @@ const TableBettingSummary: React.FC = () => {
                         color: "#171717",
                         "&:hover": {
                           backgroundColor:
-                            transaction.status === "Void" ? "#F05252" : "#4CAF50",
+                            transaction.status === "Void"
+                              ? "#F05252"
+                              : "#4CAF50",
                         },
                       }}
                     >

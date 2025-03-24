@@ -3,7 +3,7 @@ import { Box, Typography } from "@mui/material";
 import { cardDashboardStyles } from "../../styles/theme";
 import { useEffect } from "react";
 
-import fetchHistoricalSummary from "~/utils/api/getHistoricalSummary";
+import fetchHistoricalSummary from "~/utils/api/transactions/getHistoricalSummary";
 
 const DashboardCardsPage = () => {
   const [summary, setSummary] = useState({

@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Box, Typography, Stack, CircularProgress } from "@mui/material";
 import { BarChart } from "@mui/x-charts/BarChart";
-import fetchHistoricalSummary from "~/utils/api/getHistoricalSummary";
+import fetchHistoricalSummary from "~/utils/api/transactions/getHistoricalSummary";
 
 // Mapping GameTypeId to Draw Names
 // const drawNames: Record<number, string> = {
