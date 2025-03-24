@@ -10,7 +10,7 @@ interface RegionData {
   trend?: number;
 }
 
-const TableBettingActivityToday = () => {
+const WinningActivityToday = () => {
   const [regionData, setRegionData] = useState<RegionData[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -37,7 +37,7 @@ const TableBettingActivityToday = () => {
 
       // Aggregate totalBetAmount per Region
       const aggregatedData: Record<string, number> = {};
-      response.data.forEach((item) => {
+      response.data.forEach((item:any) => {
         if (!item.Region) return;
         const region = item.Region;
         const betAmount = Number(item.TotalBetAmount) || 0; // Ensure it's a number
@@ -85,7 +85,7 @@ const TableBettingActivityToday = () => {
           <MoneyIcon sx={{ color: "#67ABEB" }} />
         </Box>
         <Typography sx={{ fontWeight: 300, fontSize: "16px", ml: 1, color: "#fff" }}>
-          Betting Activity by Region Today
+          Winning Activity by Region Today
         </Typography>
       </Box>
       <Divider sx={{ backgroundColor: "#303030", mb: "1rem" }} />
@@ -127,4 +127,4 @@ const TableBettingActivityToday = () => {
   );
 };
 
-export default TableBettingActivityToday;
+export default WinningActivityToday;

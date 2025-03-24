@@ -1,4 +1,3 @@
-// src\utils\axiosInstance.ts
 
 import axios from "axios";
   
@@ -9,6 +8,7 @@ const axiosInstance = axios.create({
   },
   withCredentials: true,
 });
+
 
 // Response interceptor to handle token expiration
 axiosInstance.interceptors.response.use(

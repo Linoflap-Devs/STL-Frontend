@@ -1,20 +1,31 @@
 import axiosInstance from '../axiosInstance';
-import axios from "axios";
+import { AxiosError } from 'axios';
 
 const fetchHistoricalSummary = async (queryParams: Record<string, any>) => {
     try {
+
+        // Retirieving authToken but not using it in the request, add it to the request headers if required.
         const token = localStorage.getItem("authToken");
 
         const response = await axiosInstance.get("/transactions/getHistorical", {
             params: queryParams,
-            withCredentials: true,
+            headers: {
+                Authorization: `Bearer ${token}`
+            },
+            // unnecessary because a default header is already set in axiosInstance.ts
+            // withCredentials: true,
         });
         
-        console.log('Response Data (GetHistorical):' + response.data)
+        console.log('Response Data (GetHistorical): ${JSON.stringify(response.data)}');
         return response.data;
     } catch (error) {
-        console.error("Error fetching historical summary:", (error as Error).message);
-        return { success: false, message: (error as Error).message, data: [] };
+        if (error instanceof AxiosError) {
+            console.error("Error fetching historical summary:", error.response?.data?.message || error.message);
+
+            return {success: false, message: error.response?.data?.message || error.message, data: []};
+        }
+        console.error("Unexepected error:", error);
+        return {success: false, message: "An unexpected eeror occured", data: []}
     }
 };
 

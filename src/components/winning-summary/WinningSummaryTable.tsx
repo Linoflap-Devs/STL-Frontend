@@ -33,7 +33,7 @@ export interface User {
   [key: string]: any;
 }
 
-const TableBettingSummary: React.FC = () => {
+const TableWinningSummary: React.FC = () => {
   const [transactions, setTransactions] = useState<User[]>([]);
   const [filteredTransactions, setFilteredTransactions] = useState<User[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
@@ -269,4 +269,4 @@ const TableBettingSummary: React.FC = () => {
   );
 };
 
-export default TableBettingSummary;
+export default TableWinningSummary;

@@ -10,123 +10,19 @@ import ChartBetTypeSummary from "~/components/betting-summary/BetTypeChart";
 import TableBettingSummary from "~/components/betting-summary/BettingSummaryTable";
 
 const BettingSummaryPage = () => {
-  const [managers, setManagers] = useState([]); // Example state for managers
+  // const [managers, setManagers] = useState([]); // Example state for managers
 
-  const handleCreate = () => {
-    // Handle create action
-  };
+  // const handleCreate = () => {
+  //   // Handle create action
+  // };
 
-  const handleEdit = (user, action) => {
-    // Handle edit action
-  };
+  // const handleEdit = (user, action) => {
+  //   // Handle edit action
+  // };
 
-  const handleDelete = (ids) => {
-    // Handle delete action
-  };
-
-
-  const hardcodedData = [
-      {
-        "transactionNumber": "2025040300000001",
-        "date": "2025/01/22 13:05:32",
-        "drawTime": "First Draw",
-        "betAmount": "P 20",
-        "gameType": "STL Pares",
-        "betType": "Tumbok",
-        "selectedPair": "25-12",
-        "status": "Confirm"
-      },
-      {
-        "transactionNumber": "2025040300000002",
-        "date": "2025/01/22 13:05:32",
-        "drawTime": "First Draw",
-        "betAmount": "P 20",
-        "gameType": "STL Pares",
-        "betType": "Sahod",
-        "selectedPair": "5-17",
-        "status": "Void"
-      },
-      {
-        "transactionNumber": "2025040300000003",
-        "date": "2025/01/22 13:05:32",
-        "drawTime": "First Draw",
-        "betAmount": "P 20",
-        "gameType": "STL Pares",
-        "betType": "Tumbok",
-        "selectedPair": "8-29",
-        "status": "Confirm"
-      },
-      {
-        "transactionNumber": "2025040300000004",
-        "date": "2025/01/22 13:05:32",
-        "drawTime": "First Draw",
-        "betAmount": "P 20",
-        "gameType": "STL Pares",
-        "betType": "Tumbok",
-        "selectedPair": "21-39",
-        "status": "Confirm"
-      },
-      {
-        "transactionNumber": "2025040300000005",
-        "date": "2025/01/22 13:05:32",
-        "drawTime": "First Draw",
-        "betAmount": "P 20",
-        "gameType": "STL Pares",
-        "betType": "Sahod",
-        "selectedPair": "3-27",
-        "status": "Confirm"
-      },
-      {
-        "transactionNumber": "2025040300000006",
-        "date": "2025/01/22 13:05:32",
-        "drawTime": "First Draw",
-        "betAmount": "P 20",
-        "gameType": "STL Pares",
-        "betType": "Tumbok",
-        "selectedPair": "14-36",
-        "status": "Confirm"
-      },
-      {
-        "transactionNumber": "2025040300000007",
-        "date": "2025/01/22 13:05:32",
-        "drawTime": "First Draw",
-        "betAmount": "P 20",
-        "gameType": "STL Pares",
-        "betType": "Tumbok",
-        "selectedPair": "19-25",
-        "status": "Confirm"
-      },
-      {
-        "transactionNumber": "2025040300000008",
-        "date": "2025/01/22 13:05:32",
-        "drawTime": "First Draw",
-        "betAmount": "P 20",
-        "gameType": "STL Pares", 
-        "betType": "Tumbok",
-        "selectedPair": "6-31",
-        "status": "Confirm"
-      },
-      {
-        "transactionNumber": "2025040300000009",
-        "date": "2025/01/22 13:05:32",
-        "drawTime": "First Draw",
-        "betAmount": "P 20",
-        "gameType": "STL Pares",
-        "betType": "Tumbok",
-        "selectedPair": "10-40",
-        "status": "Confirm"
-      },
-      {
-        "transactionNumber": "2025040300000010",
-        "date": "2025/01/22 13:05:32",
-        "drawTime": "First Draw",
-        "betAmount": "P 20",
-        "gameType": "STL Pares",
-        "betType": "Tumbok",
-        "selectedPair": "12-33",
-        "status": "Confirm"
-      }
-    ]
+  // const handleDelete = (ids) => {
+  //   // Handle delete action
+  // };
 
   return (
     <>
@@ -192,12 +88,7 @@ const BettingSummaryPage = () => {
         </Box>
         {/* TableBettingSummary component */}
         <Box sx={{ width: '100%', mt: 2 }}>
-          <TableBettingSummary
-            managers={hardcodedData}
-            onCreate={handleCreate}
-            onEdit={handleEdit}
-            onDelete={handleDelete}
-          />
+          <TableBettingSummary/>
         </Box>
       </Box>
     </>
