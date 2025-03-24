@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Box, Typography, Stack } from "@mui/material";
 import { BarChart } from "@mui/x-charts/BarChart";
 
-import fetchHistoricalSummary from "~/utils/api/transactions";
+import fetchHistoricalSummary from "~/utils/api/getHistoricalSummary";
 
 const CustomLegend = () => (
   <Stack

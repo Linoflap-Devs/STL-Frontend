@@ -1,5 +1,5 @@
 import axiosInstance from '../axiosInstance';
-import axios from "axios";
+import { AxiosError } from 'axios';
 
 interface Transaction {
     TransactionId: number;
@@ -28,23 +28,28 @@ interface ApiResponse {
 
 const fetchTransactions = async (queryParams: Record<string, any>):Promise<ApiResponse> => {
     try {
+        // Retirieving authToken but not using it in the request, add it to the request headers if required.
         const token = localStorage.getItem("authToken");
 
         const response = await axiosInstance.get("/transactions/getTransactions" , {
             params: queryParams,
-            withCredentials: true,
+            headers: {
+                Authorization: `Bearer ${token}`
+            },
+            // unnecessary because a default header is already set in axiosInstance.ts
+            // withCredentials: true,
         })
 
-        console.log('Response Data (fetchTransactions):' + response.data)
+        console.log(`Response Data (fetchTransactions): ${JSON.stringify(response.data)}`)
         return response.data;
     } catch (error){
-        if (axios.isAxiosError(error)) {
-            console.log('Axios error fetching transactions (fetchTransactions):', error.response?.data || error.message);
+        if (error instanceof AxiosError) {
+            console.error("Error fetching transactions:", error.response?.data?.message || error.message);
+
             return {success: false, message: error.response?.data?.message || error.message, data: []};
-        } else {    
-            console.error("Unexpected error fetching transactions", (error as Error).message);  
-            return{ success: false, message: (error as Error).message, data: [] };
         }
+        console.error("Unexepected error:", error);
+        return {success: false, message: "An unexpected eeror occured", data: []}
     }
 }
 

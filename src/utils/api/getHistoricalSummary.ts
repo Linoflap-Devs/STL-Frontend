@@ -1,6 +1,7 @@
 import axiosInstance from '../axiosInstance';
 import { AxiosError } from 'axios';
 
+// Pass query parameters to get desired data.
 const fetchHistoricalSummary = async (queryParams: Record<string, any>) => {
     try {
 
@@ -16,7 +17,7 @@ const fetchHistoricalSummary = async (queryParams: Record<string, any>) => {
             // withCredentials: true,
         });
         
-        console.log('Response Data (GetHistorical): ${JSON.stringify(response.data)}');
+        console.log(`Response Data (fetchHistoricalSummary): ${JSON.stringify(response.data)}`);
         return response.data;
     } catch (error) {
         if (error instanceof AxiosError) {

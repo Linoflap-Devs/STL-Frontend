@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import { Box, Typography, Divider } from "@mui/material";
 import MoneyIcon from "@mui/icons-material/AttachMoney";
-import fetchHistoricalRegion from "~/utils/api/GetHistoricalRegion";
+import fetchHistoricalRegion from "~/utils/api/getHistoricalRegion";
 
 // Define types
 interface RegionData {
@@ -31,7 +31,11 @@ const TableBettingActivityToday = () => {
       console.log("Raw API Response:", response);
 
       // Validate response
-      if (!response || typeof response !== "object" || !Array.isArray(response.data)) {
+      if (
+        !response ||
+        typeof response !== "object" ||
+        !Array.isArray(response.data)
+      ) {
         throw new Error("Invalid API response format.");
       }
 
@@ -48,16 +52,22 @@ const TableBettingActivityToday = () => {
       console.log("Aggregated Data:", aggregatedData);
 
       // Convert to array and sort
-      const data: RegionData[] = Object.entries(aggregatedData).map(([Region, totalBetAmount]) => ({
-        Region,
-        totalBetAmount,
-      }));
+      const data: RegionData[] = Object.entries(aggregatedData).map(
+        ([Region, totalBetAmount]) => ({
+          Region,
+          totalBetAmount,
+        })
+      );
 
-      const sortedData = data.sort((a, b) => b.totalBetAmount - a.totalBetAmount);
+      const sortedData = data.sort(
+        (a, b) => b.totalBetAmount - a.totalBetAmount
+      );
       console.log("Sorted Data:", sortedData);
 
       // Optimize trend calculation using a Map for fast lookup
-      const prevDataMap = new Map(prevRegionDataRef.current.map((r, index) => [r.Region, index]));
+      const prevDataMap = new Map(
+        prevRegionDataRef.current.map((r, index) => [r.Region, index])
+      );
 
       const updatedData = sortedData.map((region, index) => {
         const prevIndex = prevDataMap.get(region.Region);
@@ -81,34 +91,60 @@ const TableBettingActivityToday = () => {
   return (
     <Box sx={{ backgroundColor: "#171717", padding: 2, borderRadius: "10px" }}>
       <Box sx={{ display: "flex", mb: 1 }}>
-        <Box sx={{ backgroundColor: "#2F2F2F", padding: "5px", borderRadius: "5px" }}>
+        <Box
+          sx={{
+            backgroundColor: "#2F2F2F",
+            padding: "5px",
+            borderRadius: "5px",
+          }}
+        >
           <MoneyIcon sx={{ color: "#67ABEB" }} />
         </Box>
-        <Typography sx={{ fontWeight: 300, fontSize: "16px", ml: 1, color: "#fff" }}>
+        <Typography
+          sx={{ fontWeight: 300, fontSize: "16px", ml: 1, color: "#fff" }}
+        >
           Betting Activity by Region Today
         </Typography>
       </Box>
       <Divider sx={{ backgroundColor: "#303030", mb: "1rem" }} />
 
       {loading ? (
-        <Typography sx={{ color: "#fff", textAlign: "center" }}>Loading betting activity...</Typography>
+        <Typography sx={{ color: "#fff", textAlign: "center" }}>
+          Loading betting activity...
+        </Typography>
       ) : error ? (
-        <Typography sx={{ color: "red", textAlign: "center" }}>{error}</Typography>
+        <Typography sx={{ color: "red", textAlign: "center" }}>
+          {error}
+        </Typography>
       ) : (
         <Box sx={{ mt: 2, width: "100%" }}>
           {regionData.map((item, index) => (
-            <Box key={index} sx={{ display: "flex", alignItems: "center", padding: "5px 0" }}>
+            <Box
+              key={index}
+              sx={{ display: "flex", alignItems: "center", padding: "5px 0" }}
+            >
               <Box sx={{ display: "flex", alignItems: "center", width: "15%" }}>
                 <Typography
                   sx={{
                     fontWeight: "bold",
-                    color: item.trend! > 0 ? "#3d8440" : item.trend! < 0 ? "#894747" : "#aaa",
+                    color:
+                      item.trend! > 0
+                        ? "#3d8440"
+                        : item.trend! < 0
+                          ? "#894747"
+                          : "#aaa",
                   }}
                 >
-                  {item.trend! > 0 ? `+${item.trend}` : item.trend! < 0 ? `${item.trend}` : "0"}
+                  {item.trend! > 0
+                    ? `+${item.trend}`
+                    : item.trend! < 0
+                      ? `${item.trend}`
+                      : "0"}
                 </Typography>
               </Box>
-              <Typography sx={{ color: "#fff", flex: 1, ml: 2 }}>{item.Region}</Typography>
+              <Typography sx={{ color: "#fff", flex: 1, ml: 2 }}>
+                {item.Region}
+              </Typography>
               <Typography
                 sx={{
                   color: "#67ABEB",

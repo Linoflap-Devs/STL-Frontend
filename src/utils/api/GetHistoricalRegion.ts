@@ -1,5 +1,5 @@
 import axiosInstance from '../axiosInstance';
-import axios from "axios";
+import { AxiosError } from 'axios';
 
 const fetchHistoricalRegion = async (queryParams: Record<string, any>) => {
     try {
@@ -13,9 +13,14 @@ const fetchHistoricalRegion = async (queryParams: Record<string, any>) => {
         console.log('Response Data (GetHistorialRegion):' + response.data)
         return response.data;
     } catch (error){
-        console.error("Error fetching historical region:", (error as Error).message);
-        return { success: false, message: (error as Error).message, data: [] };
-    }
-}
-
+        if (error instanceof AxiosError) {
+                    console.error("Error fetching CollectorDashboardSummary:", error.response?.data?.message || error.message);
+        
+                    return {success: false, message: error.response?.data?.message || error.message, data: []};
+                }
+                console.error("Unexepected error:", error);
+                return {success: false, message: "An unexpected eeror occured", data: []}
+            }
+        };
+        
 export default fetchHistoricalRegion;
