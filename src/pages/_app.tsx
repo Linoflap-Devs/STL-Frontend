@@ -6,6 +6,7 @@ import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import { getCurrentUser } from "../utils/api/auth";
 import "../styles/globals.css";
+import { refreshSubscribers } from "../utils/axiosInstance";
 
 const excludedPaths = [
   "/",
@@ -26,22 +27,45 @@ const App = ({ Component, pageProps }: AppProps) => {
       setLoading(false);
       return;
     }
-    
+
     console.log("Checking authentication status...");
 
-    getCurrentUser({})
-      .then((data) => {
-        if (data.success) {
+    const checkAuth = async () => {
+      try {
+        const data = await getCurrentUser({});
+        if (data?.success) {
           console.log("Authenticated user:", data);
           setLoading(false);
-        } else {
-          throw new Error("No valid auth found!");
+          return;
         }
-      })
-      .catch(() => {
-        console.log("No valid auth found! Redirecting to login...");
-        router.replace("/auth/login");
-      });
+        throw new Error("No valid auth found!");
+      } catch (error: any) {
+        if (error.response?.status === 403 && error.response?.data?.message === "Token expired.") {
+          console.log("Token expired, waiting for refresh...");
+
+          // Wait for the interceptor to complete token refresh
+          await new Promise<void>((resolve) => refreshSubscribers.push(() => resolve()));
+
+          // Retry getCurrentUser after refresh
+          try {
+            const data = await getCurrentUser({});
+            if (data?.success) {
+              console.log("Authenticated user (after refresh):", data);
+              setLoading(false);
+              return;
+            }
+          } catch (retryError) {
+            console.log("No valid auth found after refresh! Redirecting to login...");
+            router.replace("/auth/login");
+          }
+        } else {
+          console.log("No valid auth found! Redirecting to login...");
+          router.replace("/auth/login");
+        }
+      }
+    };
+
+    checkAuth();
   }, [isExcludedPath, router]);
 
   if (loading) {

@@ -108,19 +108,19 @@ const editLogUser = async (userId: number, p0: {}) => {
 };
 
 // hindi na valid. gamitin nalang yung editUser for user suspension
-const suspendUser = async (userId: number, userData: Record<string, any>) => {
-    try {
-        const url = validateRelativeUrl("/auth/disableUser");
-        const payload = { userId, ...userData };
-        const response = await axiosInstance.post(url, payload, {
-            withCredentials: true,
-        });
+// const suspendUser = async (userId: number, userData: Record<string, any>) => {
+//     try {
+//         const url = validateRelativeUrl("/auth/disableUser");
+//         const payload = { userId, ...userData };
+//         const response = await axiosInstance.post(url, payload, {
+//             withCredentials: true,
+//         });
 
-        return response.data;
-    } catch (error) {
-        console.error("Error updating user:", error);
-        return { success: false, message: (error as Error).message, data: {} };
-    }
-};
+//         return response.data;
+//     } catch (error) {
+//         console.error("Error updating user:", error);
+//         return { success: false, message: (error as Error).message, data: {} };
+//     }
+// };
 
-export { fetchUsers, addUser, updateUser, fetchUserById, editLogUser, suspendUser };
+export { fetchUsers, addUser, updateUser, fetchUserById, editLogUser };
