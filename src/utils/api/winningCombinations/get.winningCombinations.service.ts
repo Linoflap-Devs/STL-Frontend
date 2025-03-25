@@ -2,7 +2,7 @@ import axiosInstance from '../../axiosInstance';
 import { AxiosError } from 'axios';
 
 /**
- * A service function to fetch data from the winners API endpoint.
+ * A service function to fetch data from the Winning Combinations API endpoint.
 
  * @template T - the expected response data type (defaults to unknown if not provided).
  * @param endpoint - The API endpoint to fetch data from.
@@ -16,18 +16,18 @@ import { AxiosError } from 'axios';
     * Add type gradually as our API respose become clearer:
 
     Early usage (no type specified):
-    const response = await getWinnerssData('/some/endpoint');
+    const response = await getWinningsCombinationsData('/some/endpoint');
 
     Later usage (with type):
     interface MyResponseType {
         items: Array<{id: string, value: number}>;
         total: number;
     }
-    const typedResponse = await getWinnerssData<MyResponseType>('/typed/endpoint');
+    const typedResponse = await getWinningsCombinationsData<MyResponseType>('/typed/endpoint');
 */
 
 // <T> generic type parameter, placeholder for the actual type that will be provided when the function is called, unknown = default
-const getWinnerssData = async <T = unknown>(
+const getWinningsCombinationsData = async <T = unknown>(
     endpoint: string,
     queryParams: Record<string, unknown> = {}
 ):Promise<{
@@ -54,7 +54,7 @@ const getWinnerssData = async <T = unknown>(
 
         return {
             success: true,
-            message: "GET Request on Winners Data Succeeded",
+            message: "GET Request on Winning Combinations Data Succeeded",
             data: response.data
         }
     } catch (error) {
