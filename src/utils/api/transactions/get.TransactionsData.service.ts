@@ -3,7 +3,7 @@ import { AxiosError } from 'axios';
 
 /**
  * A service function to fetch data from the Transactions API endpoint.
- * 
+
  * @template T - the expected response data type (defaults to unknown if not provided).
  * @param endpoint - The API endpoint to fetch data from.
  * @param queryParams - Optional query parameters (remain loosely typed for now)
@@ -26,6 +26,7 @@ import { AxiosError } from 'axios';
     const typedResponse = await fetchTransactionsData<MyResponseType>('/typed/endpoint');
 */
 
+// <T> generic type parameter, placeholder for the actual type that will be provided when the function is called, unknown = default
 const getTransactionsData = async <T = unknown>(
     endpoint: string,
     queryParams: Record<string, unknown> = {}
@@ -53,6 +54,7 @@ const getTransactionsData = async <T = unknown>(
 
         return {
             success: true,
+            message: "GET Request on Transactions Data Succeeded",
             data: response.data
         }
     } catch (error) {

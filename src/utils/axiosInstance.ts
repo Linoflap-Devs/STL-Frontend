@@ -1,6 +1,7 @@
 
 import axios from "axios";
-  
+
+// Axios Instance Setup 
 const axiosInstance = axios.create({
   baseURL: process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000",
   headers: {
@@ -10,22 +11,25 @@ const axiosInstance = axios.create({
 });
 
 
-// Response interceptor to handle token expiration
+// Response Interceptor (Token Refresh Logic)
 axiosInstance.interceptors.response.use(
-  (response) => response,
+  (response) => response, // Pass through successful responses
   async (error) => {
+     // Check for token expiration (403 + specific error message)
     if (error.response?.status === 403 && error.response?.data?.message === "Token expired.") {
       try {
-        // Send refresh token request
+        // Attempt to refresh token
         await axiosInstance.post("/auth/tokenRefresh", {}, { withCredentials: true });
 
         // Retry the failed request
         return axiosInstance(error.config);
       } catch (refreshError) {
+        // Refresh failed → redirect to login
         console.error("Refresh token failed", refreshError);
         window.location.href = "/auth/login";
       }
     }
+    // Forward other errors
     return Promise.reject(error);
   }
 );
