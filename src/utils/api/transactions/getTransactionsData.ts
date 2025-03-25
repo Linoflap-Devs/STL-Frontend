@@ -2,34 +2,26 @@ import axiosInstance from '../../axiosInstance';
 import { AxiosError } from 'axios';
 
 /**
- * A generic function to fetch data from the transactions API.
+ * A service function to fetch data from the Transactions API endpoint.
  * 
- * @param endpoint - The API endpoint to fetch data from (e.g., "/transactions/getHistoricalRegion").
- * @param queryParams - An object containing query parameters to filter or customize the request.
- * @returns A promise that resolves to the response data or an error object.
- * 
- * @example
- * // Fetch historical summary region data
- * const historicalSummaryRegionData = await fetchTransactionsData("/transactions/getHistoricalRegion", { startDate: "2023-01-01", endDate: "2023-12-31" });
- * 
- * @example
- * // Fetch compare historical date data
- * const compareHistoricalDateData = await fetchTransactionsData("/transactions/compareHistoricalDate", { startDate: "2023-01-01", endDate: "2023-12-31" });
+ * @template T - the expected response data type (defaults to unknown if not provided).
+ * @param endpoint - The API endpoint to fetch data from.
+ * @param queryParams - Optional query parameters (remain loosely typed for now)
+ * @returns Promise containing either properly typed response or erro object.
+
  */
 
 
+/*
+    * Enable this code block if you want to use TypeScript interfaces for query parameters
+    * Define the interfaces for query parameters to provide type checking and documentation.
 
-interface HistoricalSummaryRegionParams {
-    startDate: string;
-    endDate: string;
-    region?: string; // Optional parameter
-}
-
-interface CompareHistoricalDateParams {
-    startDate: string;
-    endDate: string;
-    comparisonType?: string; // Optional parameter
-}
+    interface SampleInterface {
+        sampleParam: string;
+        sampleParam: string;
+        sampleParam: string;
+    }
+*/
 
 const fetchTransactionsData = async (endpoint: string, queryParams: Record<string, any>) => {
     try {
