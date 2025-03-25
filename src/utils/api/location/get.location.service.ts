@@ -2,7 +2,7 @@ import axiosInstance from '../../axiosInstance';
 import { AxiosError } from 'axios';
 
 /**
- * A service function to fetch data from the Transactions API endpoint.
+ * A service function to fetch data from the Location API endpoint.
 
  * @template T - the expected response data type (defaults to unknown if not provided).
  * @param endpoint - The API endpoint to fetch data from.
