@@ -12,7 +12,7 @@ import { AxiosError } from "axios";
  */
 /*
  * Basic Usage
-  const result = await postBetData<{ id: string }>(
+  const result = await postBetTypesData<{ id: string }>(
     "/api/bets",
     { amount: 100, currency: "USD" }, // requestBody
     { ref: "promo2023" }              // queryParams
@@ -25,12 +25,12 @@ import { AxiosError } from "axios";
   }
 
   * Type Safety
-  interface BetResponse {
+  interface BetTypesResponse {
     id: string;
     status: 'pending' | 'won' | 'lost';
   }
 
-  const response = await postBetData<BetResponse>(
+  const response = await postBetTypesData<BetTypesResponse>(
       "/api/bets",
       { amount: 50, game: "roulette" }
   );
@@ -69,7 +69,7 @@ const postBetData = async <T = unknown>(
 
     return {
       success: true,
-      message: "POST Request on Bets Data Succeeded",
+      message: "POST Request on Bet Types Data Succeeded",
       data: response.data,
     };
   } catch (error) {

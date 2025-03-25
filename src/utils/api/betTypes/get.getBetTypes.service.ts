@@ -16,18 +16,18 @@ import { AxiosError } from 'axios';
     * Add type gradually as our API respose become clearer:
 
     Early usage (no type specified):
-    const response = await getBetsData('/some/endpoint');
+    const response = await getBetTypesData('/some/endpoint');
 
     Later usage (with type):
     interface MyResponseType {
         items: Array<{id: string, value: number}>;
         total: number;
     }
-    const typedResponse = await getBetsData<MyResponseType>('/typed/endpoint');
+    const typedResponse = await getBetTypesData<MyResponseType>('/typed/endpoint');
 */
 
 // <T> generic type parameter, placeholder for the actual type that will be provided when the function is called, unknown = default
-const getBetsData = async <T = unknown>(
+const getBetTypesData = async <T = unknown>(
     endpoint: string,
     queryParams: Record<string, unknown> = {}
 ):Promise<{
@@ -48,13 +48,13 @@ const getBetsData = async <T = unknown>(
             params: queryParams,
             headers: {
                 Authorization: `Bearer ${token}`,
-                'Content-Type': 'application/json'
+                // 'Content-Type': 'application/json'
             }
         })
 
         return {
             success: true,
-            message: "GET Request on Bets Data Succeeded",
+            message: "GET Request on Bet Types Data Succeeded",
             data: response.data
         }
     } catch (error) {
