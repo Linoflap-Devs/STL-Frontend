@@ -3,7 +3,7 @@ import { Box, Typography, Stack } from "@mui/material";
 import { BarChart } from "@mui/x-charts/BarChart";
 import { fetchHistoricalSummary } from "../../utils/api/transactions";
 
-// Custom Legend
+// Custom Legend Component
 const CustomLegend = () => (
   <Stack direction="row" spacing={2} justifyContent="left" sx={{ mt: 0.5, mr: 4 }}>
     <Box sx={{ display: "flex", alignItems: "center" }}>
@@ -13,56 +13,95 @@ const CustomLegend = () => (
   </Stack>
 );
 
+// Mapping for game names
+const gameNameMapping: { [key: number]: string } = {
+  1: "First Draw",
+  2: "Second Draw",
+  3: "Third Draw",
+};
+
+// Default data structure when no data is available
+const defaultGameData = [
+  { gameName: "First Draw", winners: 0 },
+  { gameName: "Second Draw", winners: 0 },
+  { gameName: "Third Draw", winners: 0 },
+];
+
 const SummaryWinnersDrawTimePage = () => {
-  const [data, setData] = useState<{ gameName: string; winners: number }[]>([]);
+  const [data, setData] = useState<{ gameName: string; winners: number }[]>(defaultGameData);
 
   useEffect(() => {
     const fetchDataDashboard = async () => {
       try {
-        console.log("Fetching historical summary data...");
         const response = await fetchHistoricalSummary();
-        console.log("API Response:", response);
+        console.log("Full Response:", response);
 
-        if (response.success) {
-          console.log("Processing data...");
-
-          // Aggregate TotalWinners per GameTypeId
-          const aggregatedData = response.data.reduce(
-            (
-              acc: { gameTypeId: number; gameName: string; winners: number }[],
-              item: { GameTypeId: number; GameName: string; TotalWinners: number }
-            ) => {
-              const existing = acc.find((g) => g.gameTypeId === item.GameTypeId);
-
-              // Map GameTypeId to Custom Labels
-              const gameNameMapping: Record<number, string> = {
-                1: "First Draw",
-                2: "Second Draw",
-                3: "Third Draw",
-              };
-
-              if (existing) {
-                existing.winners += item.TotalWinners || 0;
-              } else {
-                acc.push({
-                  gameTypeId: item.GameTypeId,
-                  gameName: gameNameMapping[item.GameTypeId] || item.GameName,
-                  winners: item.TotalWinners || 0,
-                });
-              }
-
-              return acc;
-            },
-            []
-          );
-
-          console.log("Aggregated Data:", aggregatedData);
-          setData(aggregatedData);
-        } else {
+        if (!response.success) {
           console.error("API Request Failed:", response.message);
+          return;
         }
+
+        if (!Array.isArray(response.data) || response.data.length === 0) {
+          console.warn("No data available, using default dataset.");
+          setData(defaultGameData);
+          return;
+        }
+
+        // Determine today's date in UTC
+        const today = new Date();
+        today.setUTCHours(0, 0, 0, 0);
+        const todayISO = today.toISOString().split("T")[0];
+
+        // Detect the correct date field dynamically
+        const dateField = Object.keys(response.data[0]).find((key) =>
+          key.toLowerCase().includes("date")
+        );
+
+        if (!dateField) {
+          console.error("No valid date field found in response data.");
+          setData(defaultGameData);
+          return;
+        }
+
+        // Filter data by today's date
+        let filteredData = response.data.filter((item: { [key: string]: string }) => {
+          const itemDate = new Date(item[dateField]);
+          itemDate.setUTCHours(0, 0, 0, 0);
+          const itemISO = itemDate.toISOString().split("T")[0];
+
+          //console.log(`Checking Date: ${itemISO} === ${todayISO} -> ${itemISO === todayISO}`);
+          return itemISO === todayISO;
+        });
+
+        console.log("Filtered Data:", filteredData);
+
+        // Aggregate data by game type
+        const aggregatedData = filteredData.reduce((acc: { gameName: string; winners: any; }[], item: { GameTypeId: any; TotalWinners: any; }) => {
+          const gameTypeId = item.GameTypeId;
+          const gameName = gameNameMapping[gameTypeId] || `Game ${gameTypeId}`;
+
+          const existing = acc.find((g) => g.gameName === gameName);
+
+          if (existing) {
+            existing.winners += item.TotalWinners || 0;
+          } else {
+            acc.push({
+              gameName,
+              winners: item.TotalWinners || 0,
+            });
+          }
+
+          return acc;
+        }, [] as { gameName: string; winners: number }[]);
+
+        // Ensure labels always exist, even if winners are 0
+        const finalData = aggregatedData.length > 0 ? aggregatedData : defaultGameData;
+
+        console.log("Final Aggregated Data:", finalData);
+        setData(finalData);
       } catch (error) {
         console.error("Error Fetching Data:", error);
+        setData(defaultGameData);
       }
     };
 
@@ -98,7 +137,12 @@ const SummaryWinnersDrawTimePage = () => {
           width={790}
           grid={{ vertical: true }}
           layout="horizontal"
-          series={[{ data: data.map((item) => item.winners), color: "#BB86FC" }]}
+          series={[
+            {
+              data: data.map((item) => item.winners),
+              color: "#BB86FC",
+            },
+          ]}
           yAxis={[
             {
               scaleType: "band",

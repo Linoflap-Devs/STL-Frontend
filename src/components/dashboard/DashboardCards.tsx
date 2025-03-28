@@ -18,10 +18,17 @@ const DashboardCardsPage = () => {
         const response = await fetchHistoricalSummary();
 
         if (response.success) {
-          // Aggregate the totals by summing the respective columns
-          const totals = response.data.reduce(
-            (acc: { totalBettors: any; totalWinners: any; totalBetsPlaced: any; totalPayout: any; totalRevenue: any; }, 
-                item: { TotalBettors: any; TotalWinners: any; TotalBetAmount: any; TotalPayout: any; TotalEarnings: any; }) => {
+          const today = new Date().toISOString().split("T")[0]; // Get today's date in YYYY-MM-DD
+
+          // Filter data for today's date
+          const filteredData = response.data.filter((item: { TransactionDate: string }) => 
+            item.TransactionDate.startsWith(today)
+          );
+
+          // Aggregate the totals
+          const totals = filteredData.reduce(
+            (acc: { totalBettors: number; totalWinners: number; totalBetsPlaced: number; totalPayout: number; totalRevenue: number; },
+                item: { TotalBettors: number; TotalWinners: number; TotalBetAmount: number; TotalPayout: number; TotalEarnings: number; }) => {
               acc.totalBettors += item.TotalBettors || 0;
               acc.totalWinners += item.TotalWinners || 0;
               acc.totalBetsPlaced += item.TotalBetAmount || 0;
@@ -32,7 +39,6 @@ const DashboardCardsPage = () => {
             { totalBettors: 0, totalWinners: 0, totalBetsPlaced: 0, totalPayout: 0, totalRevenue: 0 }
           );
 
-          // console.log("Aggregated Totals:", totals);
           setDashboardData(totals);
         } else {
           console.error("API Request Failed:", response.message);

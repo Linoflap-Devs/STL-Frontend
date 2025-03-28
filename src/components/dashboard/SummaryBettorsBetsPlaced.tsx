@@ -17,51 +17,54 @@ const CustomLegend = () => (
   </Stack>
 );
 
+const summary: Record<number, { gameName: string; bettors: number; bets: number; winners: number }> = {
+  1: { gameName: "First Draw", bettors: 0, bets: 0, winners: 0 },
+  2: { gameName: "Second Draw", bettors: 0, bets: 0, winners: 0 },
+  3: { gameName: "Third Draw", bettors: 0, bets: 0, winners: 0 },
+};
+
 const SummaryBettorsBetsPlacedPage = () => {
-  const [data, setData] = useState<{ gameName: string; bettors: number; bets: number }[]>([]);
+  const [data, setData] = useState<{ gameName: string; bettors: number; bets: number; winners: number }[]>([]);
+  const summaryRecord = summary as Record<number, { gameName: string; bettors: number; bets: number; winners: number }>;
 
   useEffect(() => {
     const fetchDataDashboard = async () => {
       try {
-        console.log("Fetching historical summary data...");
         const response = await fetchHistoricalSummary();
-        console.log("API Response:", response);
+        //console.log("API Response of Bettors charts:", response);
 
         if (response.success) {
-          console.log("Processing data...");
+          //console.log("Processing data...");
 
-          // Aggregate TotalBets and TotalBettors per GameTypeId
-          const aggregatedData = response.data.reduce(
-            (acc: { gameTypeId: number; gameName: string; bettors: number; bets: number }[],
-              item: { GameTypeId: number; TotalBettors: any; TotalBets: any; GameName: any; }) => {
-              const existing = acc.find((g) => g.gameTypeId === item.GameTypeId);
+          const today = new Date().toISOString().split("T")[0];
+          console.log(today); // Output: "2025-03-25T00:00:00.000Z"
 
-              // Map GameTypeId to Custom Labels
-              const gameNameMapping: Record<number, string> = {
-                1: "First Draw",
-                2: "Second Draw",
-                3: "Third Draw",
-              };
-
-              if (existing) {
-                existing.bettors += item.TotalBettors || 0;
-                existing.bets += item.TotalBets || 0;
-              } else {
-                acc.push({
-                  gameTypeId: item.GameTypeId,
-                  gameName: gameNameMapping[item.GameTypeId] || item.GameName,
-                  bettors: item.TotalBettors || 0,
-                  bets: item.TotalBets || 0,
-                });
-              }
-
-              return acc;
-            },
-            []
+          // Filter Data for Today's Date
+          const filteredData = response.data.filter((item: { TransactionDate: string }) =>
+            item.TransactionDate.startsWith(today)
           );
 
-          console.log("Aggregated Data:", aggregatedData);
-          setData(aggregatedData);
+          // Initialize Data Aggregation
+          const summary = {
+            1: { gameName: "First Draw", bettors: 0, bets: 0, winners: 0 },
+            2: { gameName: "Second Draw", bettors: 0, bets: 0, winners: 0 },
+            3: { gameName: "Third Draw", bettors: 0, bets: 0, winners: 0 },
+          };
+
+          // Loop through filtered data and update summary
+          filteredData.forEach((item: { DrawOrder: number; TotalBettors: number; TotalBets: number; TotalWinners: number }) => {
+            if (summaryRecord[item.DrawOrder]) {
+              summaryRecord[item.DrawOrder].bettors += item.TotalBettors || 0;
+              summaryRecord[item.DrawOrder].bets += item.TotalBets || 0;
+              summaryRecord[item.DrawOrder].winners += item.TotalWinners || 0;
+            }
+          });
+
+          // Convert summary object to an array
+          const formattedData = Object.values(summary);
+
+          //console.log("Aggregated Data:", formattedData);
+          setData(formattedData);
         } else {
           console.error("API Request Failed:", response.message);
         }
