@@ -11,13 +11,7 @@ import {
 } from "@mui/material";
 import CasinoIcon from "@mui/icons-material/Casino";
 import getTodaysWinningCombination from "../../utils/api/winningcombinations";
-
-const buttonNumberStyles = {
-  backgroundColor: "#2F2F2F",
-  borderRadius: "8px",
-  textAlign: "center",
-  padding: "3px 0",
-};
+import { buttonNumberStyles } from "../../styles/theme";
 
 const displayValue = (value: string | null) => (value ? value : "\u00A0");
 
@@ -136,9 +130,13 @@ const DrawResultsPage = () => {
       </Box>
       <Box sx={{ mt: 2, width: "100%" }}>
         {selectedRegion && !selectedProvince ? (
-          <Typography sx={{ color: "#fff", textAlign: "center", fontSize: "16px" }}>
-            Please select a province
-          </Typography>
+          <Box>
+            <Box sx={{ ...buttonNumberStyles, flex: 1, padding: 3,  }}>
+            <Typography sx={{ color: "#fff", textAlign: "center", fontSize: "16px" }}>
+              Please select a province
+            </Typography>
+            </Box>
+          </Box>
         ) : (
           <Box sx={{ display: "flex", gap: 2, justifyContent: "space-between", width: "100%" }}>
             {[1, 2, 3].map((gameTypeId) => (

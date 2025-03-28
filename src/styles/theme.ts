@@ -346,16 +346,12 @@ export const buttonDrawStyles = {
 };
 
 export const buttonNumberStyles = {
-  width: "100%",
-  height: "auto",
-  border: "1px solid",
-  borderColor: "#303030",
+  backgroundColor: "transparent",
+  border: '1px solid #303030',
   borderRadius: "8px",
-  mt: "0.5rem",
-  display: "flex",
-  justifyContent: "center",
-  alignItems: "center",
-  minWidth: 0,
+  textAlign: "center",
+  padding: "0.1rem 0",
 };
 
 export default darkTheme;
+
