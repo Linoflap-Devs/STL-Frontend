@@ -12,12 +12,11 @@ interface ConfirmUpdateManagerPageProps {
     onClose: () => void;
     onVerified: () => void;
     user: any;
-    selectState: any;
     onSubmit: (newUser: any) => void;
     setUser: React.Dispatch<React.SetStateAction<any>>;
 }
 
-const ConfirmUpdateManagerPage: React.FC<ConfirmUpdateManagerPageProps> = ({ open, onClose, user, selectState, onSubmit, setUser }) => {
+const ConfirmUpdateManagerPage: React.FC<ConfirmUpdateManagerPageProps> = ({ open, onClose, user, onSubmit, setUser }) => {
     const [password, setPassword] = useState("");
     const [error, setError] = useState("");
     const [showPassword, setShowPassword] = useState<boolean>(false);

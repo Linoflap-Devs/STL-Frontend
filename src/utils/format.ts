@@ -9,6 +9,7 @@ export const formatKey = (key: string) => {
     email: "Email",
     userName: "Username",
     password: "Password",
+    AreaOfOperations: "Area Of Operations",
   };
   return mapping[key] || key;
 };

@@ -40,7 +40,7 @@ const addUser = async (userData: Record<string, any>) => {
 };
 
 // Fetch user by ID function
-const fetchUserById = async (userId: string | number) => {
+const fetchUserById = async (userId: string | number, ) => {
     try {
         const url = validateRelativeUrl("/users/getUsers");
         const response = await axiosInstance.get(url, {

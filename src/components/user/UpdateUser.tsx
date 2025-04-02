@@ -5,7 +5,6 @@ import {
   DialogTitle,
   Button,
   Typography,
-  Grid,
   Select,
   MenuItem,
   IconButton,
@@ -15,18 +14,19 @@ import {
   InputLabel,
   OutlinedInput,
   Box,
+  Stack,
 } from "@mui/material";
+
 import { formatKey } from "../../utils/format";
 import { User } from "./UsersTable";
-import { SelectChangeEvent } from "@mui/material";
 import CloseIcon from '@mui/icons-material/Close';
 import { inputStyles, selectStyles } from "../../styles/theme";
 import { fetchUserById } from "~/utils/api/users";
 import dayjs, { Dayjs } from "dayjs";
-import Swal from "sweetalert2";
 import EditLogModalPage from "./EditLogModal";
 import { validateUser } from "~/utils/validation"
 import ConfirmUpdateManagerPage from "./ConfirmUpdateUser";
+import Swal from "sweetalert2";
 
 type LogType = {
   id: number;
@@ -51,10 +51,8 @@ interface UpdateManagerProps {
     password: string;
     email: string;
     remarks: string;
+    operatorName: string;
   }) => void;
-  regions: any[];
-  provinces: any[];
-  cities: any[];
   isDisabled: boolean;
   isClicked: boolean;
 }
@@ -64,9 +62,6 @@ const UpdateManager: React.FC<UpdateManagerProps> = React.memo(({
   onClose,
   onSubmit,
   manager,
-  regions,
-  provinces,
-  cities,
 }) => {
   const [user, setUser] = useState<{
     UserId: number | null;
@@ -76,11 +71,6 @@ const UpdateManager: React.FC<UpdateManagerProps> = React.memo(({
     email: string;
     password: string;
     suffix: string;
-    region: string;
-    province: string;
-    city: string;
-    barangay: string;
-    street: string;
     CreatedBy: string;
     DateOfRegistration: string;
     IsActive: number;
@@ -97,11 +87,6 @@ const UpdateManager: React.FC<UpdateManagerProps> = React.memo(({
     email: "",
     password: "",
     suffix: "",
-    region: "",
-    province: "",
-    city: "",
-    barangay: "",
-    street: "",
     CreatedBy: "",
     DateOfRegistration: "",
     IsActive: 1,
@@ -113,30 +98,19 @@ const UpdateManager: React.FC<UpdateManagerProps> = React.memo(({
   });
   const pageType = window.location.pathname.includes('manager') ? 'manager' : 'executive';
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
-  const [showPassword, setShowPassword] = useState(false);
-  const [selectState, setSelectState] = useState({
-    region: manager?.region ?? "",
-    province: manager?.province ?? "",
-    city: manager?.city ?? "",
-    barangay: manager?.barangay ?? "",
-  });
-  const [filteredProvinces, setFilteredProvinces] = useState<any[]>([]);
-  const [filteredCities, setFilteredCities] = useState<any[]>([]);
+  //const [showPassword, setShowPassword] = useState(false);
   const [status, setStatus] = useState("");
   const [selectedUserId, setSelectedUserId] = useState<number | null>(null);
   const [openEditLogModal, setOpenEditLogModal] = useState(false);
   const [selectedLog, setSelectedLog] = useState<LogType | null>(null);
   const [isVerifyModalOpen, setIsVerifyModalOpen] = useState(false);
-  const [isDisabled, setIsDisabled] = useState(false);
+  const [isDisabled, setIsDisabled] = useState(true);
   const [isViewMode, setIsViewMode] = useState(false);
 
   useEffect(() => {
     if (!open || !manager?.userId) return;
 
     const fetchManagerDetails = async () => {
-      const controller = new AbortController();
-      const signal = controller.signal;
-
       try {
         const response = await fetchUserById(manager.userId);
 
@@ -153,11 +127,6 @@ const UpdateManager: React.FC<UpdateManagerProps> = React.memo(({
           email: response.data.Email || "",
           password: response.data.password || "",
           suffix: response.data.Suffix || "",
-          region: response.data.Region || "",
-          province: response.data.Province || "",
-          city: response.data.City || "",
-          barangay: response.data.Barangay || "",
-          street: response.data.Street || "",
           CreatedBy: response.data.CreatedBy || "",
           DateOfRegistration: response.data.DateOfRegistration || "",
           IsActive: response.data.IsActive ?? 1,
@@ -169,58 +138,19 @@ const UpdateManager: React.FC<UpdateManagerProps> = React.memo(({
         };
 
         setUser(updatedUser);
-        setSelectState(updatedUser);
+        //setSelectState(updatedUser);
         setStatus(updatedUser.Status);
-
-        // Handle region selection
-        if (updatedUser.region) {
-          const selectedRegion = regions.find((r) => r.RegionName === updatedUser.region);
-          if (selectedRegion) {
-            setFilteredProvinces(provinces.filter((p) => p.RegionId === selectedRegion.RegionId));
-          }
-        }
-
-        // Handle province selection
-        if (updatedUser.province) {
-          const selectedProvince = provinces.find((p) => p.ProvinceName === updatedUser.province);
-          if (selectedProvince) {
-            const filteredCities = cities.filter((c) => c.province === selectedProvince.ProvinceKey);
-            setFilteredCities(filteredCities);
-
-            if (filteredCities.some((c) => c.name === updatedUser.city)) {
-              setSelectState((prev) => ({ ...prev, city: updatedUser.city }));
-              console.log("Updated City Value:", updatedUser.city);
-            } else {
-              console.warn(`City "${updatedUser.city}" not found in filtered cities!`);
-              setSelectState((prev) => ({ ...prev, city: "" }));
-            }
-          } else {
-            console.log("No matching province found!");
-            setFilteredCities([]);
-          }
-        }
       } catch (error) {
-        if (signal.aborted) {
-          console.log("Fetch aborted:", error);
-        } else {
-          console.error("Error fetching manager:", error);
-        }
+        console.error("Error fetching manager:", error);
       }
-
-      return () => controller.abort();
     };
 
     fetchManagerDetails();
-  }, [open, manager?.userId, regions, provinces, cities]);
-  
+  }, [open, manager?.userId]);
+
   const handleDisable = () => {
-    if (isViewMode) {
-      setIsDisabled(false);
-      setIsViewMode(false);
-    } else {
-      setIsViewMode(true);
-      setIsDisabled(true);
-    }
+    setIsViewMode((prev) => !prev);
+    setIsDisabled((prev) => prev ? false : true);
   };
 
   const handleManagerChange = (
@@ -306,7 +236,6 @@ const UpdateManager: React.FC<UpdateManagerProps> = React.memo(({
       return;
     }
 
-    // Open verification modal before proceeding
     setIsVerifyModalOpen(true);
   };
 
@@ -344,88 +273,70 @@ const UpdateManager: React.FC<UpdateManagerProps> = React.memo(({
         </Typography>
       </DialogTitle>
       <DialogContent>
+        <Stack spacing={2} key={status} sx={{ my: 1.5 }}>
+          <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", width: "100%" }}>
+            <Box sx={{ flex: 1, maxWidth: 100 }}>
+              <FormControl fullWidth sx={selectStyles}>
+                <InputLabel id="status-label">Status</InputLabel>
+                <Select
+                  labelId="status-label"
+                  id="status"
+                  value={status}
+                  onChange={(e) => setStatus(e.target.value)}
+                  label="Status"
+                  disabled={isDisabled}
+                >
+                  <MenuItem value="Active">Active</MenuItem>
+                  <MenuItem value="Inactive">Inactive</MenuItem>
+                </Select>
+              </FormControl>
+            </Box>
 
-        {/* Status Field */}
-        <Grid item xs={12} key={status} sx={{ my: 1.5, }}>
-          <Grid container spacing={1} alignItems="center">
-            <Grid item xs={12} sx={{ marginBottom: 1 }}>
-              <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                <Box>
-                  <FormControl fullWidth sx={selectStyles}>
-                    <InputLabel id="status-label">Status</InputLabel>
-                    <Select
-                      labelId="status-label"
-                      id="status"
-                      value={status}
-                      onChange={(e) => setStatus(e.target.value)}
-                      label="Status"
-                      disabled={isDisabled}
-                    >
-                      <MenuItem value="Active">Active</MenuItem>
-                      <MenuItem value="Inactive">Inactive</MenuItem>
-                    </Select>
-                  </FormControl>
-                </Box>
-                <Box>
-                  <Button
-                    onClick={handleDisable}
-                    sx={{
-                      mt: 1,
-                      backgroundColor: "#67ABEB",
-                      textTransform: "none",
-                      fontSize: "14px",
-                      px: "1.7rem",
-                      borderRadius: "8px",
-                      color: "#181A1B",
-                    }}
-                    variant="contained"
-                  >
-                    {isViewMode ? "View" : "Update"}
-                  </Button>
-                </Box>
-              </Box>
-            </Grid>
-          </Grid>
-        </Grid>
+            <Box>
+              <Button
+                onClick={handleDisable}
+                sx={{
+                  mt: 1,
+                  backgroundColor: "#67ABEB",
+                  textTransform: "none",
+                  fontSize: "14px",
+                  px: "1.7rem",
+                  borderRadius: "8px",
+                  color: "#181A1B",
+                }}
+                variant="contained"
+              >
+                {isViewMode ? "Update" : "View"}
+              </Button>
+            </Box>
+          </Box>
 
-        {/* Start Rows for other text fields */}
-        <Grid container rowSpacing={2.5} columnSpacing={{ xs: 1, sm: 3, md: 2.5 }}>
-          <Grid item xs={6} sm={6}>
-            <Typography sx={{ marginBottom: "0.9rem" }}>
-              Personal Information
-            </Typography>
-            {["firstName", "lastName", "phoneNumber", "email",].map((key) => (
-              <Grid item xs={12} key={key} sx={{ mb: 3, }}>
-                {key === "status" ? (
-                  <Grid container spacing={1} alignItems="center">
-                    <Grid item xs={12} sx={{ marginBottom: 1 }}>
-                      <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                        <Box>
-                          <Typography variant="body1">Status</Typography>
-                        </Box>
-                        <Box sx={{ marginLeft: "1rem", minWidth: 150 }}>
-                          <FormControl fullWidth sx={selectStyles}>
-                            <InputLabel id="status-label">Status</InputLabel>
-                            <Select
-                              labelId="status-label"
-                              id="status"
-                              value={status}
-                              onChange={(e) => setStatus(e.target.value)}
-                              label="Status"
-                              disabled={isDisabled}
-                            >
-                              <MenuItem value="Active">Active</MenuItem>
-                              <MenuItem value="Inactive">Inactive</MenuItem>
-                            </Select>
-                          </FormControl>
-                        </Box>
-                      </Box>
-                    </Grid>
-                  </Grid>
-
-                ) : key === "lastName" ? (
-                  <Grid container spacing={1.5} alignItems="flex-start" wrap="nowrap">
-                    <Grid item xs={8}>
+          {/* Personal Information Fields */}
+          <Stack direction="row" spacing={3}>
+            <Stack spacing={3} sx={{ flex: 1 }}>
+              <Typography>Personal Information</Typography>
+              {["firstName", "lastName", "phoneNumber", "email"].map((key) => (
+                <Stack key={key} spacing={0}>
+                  {key === "status" ? (
+                    <Stack direction="row" spacing={2} alignItems="center">
+                      <Typography variant="body1">Status</Typography>
+                      <FormControl fullWidth sx={selectStyles}>
+                        <InputLabel id="status-label">Status</InputLabel>
+                        <Select
+                          labelId="status-label"
+                          id="status"
+                          value={status}
+                          onChange={(e) => setStatus(e.target.value)}
+                          label="Status"
+                          disabled={isDisabled}
+                        >
+                          <MenuItem value="Active">Active</MenuItem>
+                          <MenuItem value="Inactive">Inactive</MenuItem>
+                        </Select>
+                      </FormControl>
+                    </Stack>
+                  ) : key === "lastName" ? (
+                    <Stack direction="row" spacing={2}>
                       <FormControl fullWidth error={!!errors.lastName} sx={inputStyles}>
                         <InputLabel sx={{ fontSize: '14px' }} htmlFor="lastName">Last Name</InputLabel>
                         <OutlinedInput
@@ -439,8 +350,6 @@ const UpdateManager: React.FC<UpdateManagerProps> = React.memo(({
                         />
                         {errors.lastName && <FormHelperText>{errors.lastName}</FormHelperText>}
                       </FormControl>
-                    </Grid>
-                    <Grid item xs={4}>
                       <FormControl fullWidth error={!!errors.suffix} sx={inputStyles}>
                         <InputLabel htmlFor="suffix">Suffix</InputLabel>
                         <OutlinedInput
@@ -454,9 +363,72 @@ const UpdateManager: React.FC<UpdateManagerProps> = React.memo(({
                         />
                         {errors.suffix && <FormHelperText>{errors.suffix}</FormHelperText>}
                       </FormControl>
-                    </Grid>
-                  </Grid>
-                ) : (
+                    </Stack>
+                  ) : (
+                    <FormControl fullWidth error={!!errors[key]} sx={inputStyles} variant="outlined">
+                      <InputLabel htmlFor={key}>{formatKey(key)}</InputLabel>
+                      <OutlinedInput
+                        id={key}
+                        name={key}
+                        placeholder={`Enter ${formatKey(key)}`}
+                        value={user[key as keyof typeof user] || ""}
+                        onChange={handleManagerChange}
+                        label={formatKey(key)}
+                        disabled={isDisabled || key === "firstName" || key === "email"}
+                      />
+                      {errors[key] && <FormHelperText error>{errors[key]}</FormHelperText>}
+                    </FormControl>
+                  )}
+                </Stack>
+              ))}
+            </Stack>
+
+            {/* History Fields */}
+            <Stack spacing={3} sx={{ flex: 1 }}>
+              <Typography sx={{ marginBottom: 0 }}>History</Typography> {/* Remove marginBottom */}
+              {["CreatedBy", "DateOfRegistration", "phoneNumber", "email"].map((key) => (
+                <FormControl key={key} fullWidth error={!!errors[key]} sx={inputStyles} variant="outlined">
+                  <InputLabel htmlFor={key}>{formatKey(key)}</InputLabel>
+                  <OutlinedInput
+                    id={key}
+                    name={key}
+                    placeholder={`Enter ${formatKey(key)}`}
+                    value={user[key as keyof typeof user] || ""}
+                    onChange={handleManagerChange}
+                    label={formatKey(key)}
+                    disabled={isDisabled || key === "CreatedBy" || key === "DateOfRegistration" || key === "DateOfRegistration"}
+                  />
+                  {errors[key] && <FormHelperText error>{errors[key]}</FormHelperText>}
+                </FormControl>
+              ))}
+
+              {/* View Summary */}
+              <Box sx={{ display: 'flex', justifyContent: 'flex-end', alignItems: 'center' }}>
+                <Typography
+                  sx={{ fontSize: 12, color: "#67ABEB", cursor: "pointer", mt: -1 }}
+                  onClick={() => handleOpenEditLogModal(user.UserId)}
+                >
+                  View Summary
+                </Typography>
+                {openEditLogModal && selectedUserId !== null && (
+                  <EditLogModalPage
+                    open={openEditLogModal}
+                    onClose={handleCloseEditLogModal}
+                    userId={selectedUserId}
+                  />
+                )}
+              </Box>
+            </Stack>
+          </Stack>
+
+          {/* Authorized Agents Corporations */}
+          <Stack sx={{ flex: 1, width: '100%' }}>
+            <Typography>Authorized Agents</Typography>
+          </Stack>
+          <Stack direction="row" spacing={3}>
+            <Stack spacing={3} sx={{ flex: 1 }}>
+              {["firstName", "DateOfRegistration"].map((key) => (
+                <Stack key={key} spacing={3}>
                   <FormControl fullWidth error={!!errors[key]} sx={inputStyles} variant="outlined">
                     <InputLabel htmlFor={key}>{formatKey(key)}</InputLabel>
                     <OutlinedInput
@@ -470,161 +442,73 @@ const UpdateManager: React.FC<UpdateManagerProps> = React.memo(({
                     />
                     {errors[key] && <FormHelperText error>{errors[key]}</FormHelperText>}
                   </FormControl>
-                )}
-              </Grid>
-            ))}
-          </Grid>
-          <Grid item xs={6}>
-            <Typography sx={{ marginBottom: "0.9rem" }}>
-              History
-            </Typography>
-            {["CreatedBy", "DateOfRegistration", "phoneNumber", "email",].map((key) => (
-              <Grid item xs={12} key={key} sx={{ mb: 3, }}>
-                <FormControl fullWidth error={!!errors[key]} sx={inputStyles} variant="outlined">
-                  <InputLabel htmlFor={key}>{formatKey(key)}</InputLabel>
-                  <OutlinedInput
-                    id={key}
-                    name={key}
-                    placeholder={`Enter ${formatKey(key)}`}
-                    value={user[key as keyof typeof user] || ""}
-                    onChange={handleManagerChange}
-                    label={formatKey(key)}
-                    disabled={isDisabled || key === "CreatedBy" || key === "DateOfRegistration" }
-                  />
-                  {errors[key] && <FormHelperText error>{errors[key]}</FormHelperText>}
-                </FormControl>
-              </Grid>
-            ))}
+                </Stack>
+              ))}
+            </Stack>
 
-            {/* View Summary */}
-            <Box sx={{ display: 'flex', justifyContent: 'flex-end', alignItems: 'center' }}>
-              <Typography
-                sx={{ fontSize: 12, color: "#67ABEB", cursor: "pointer", mt: -1, }}
-                onClick={() => handleOpenEditLogModal(user.UserId)}
-              >
-                View Summary
-              </Typography>
-
-              {openEditLogModal && selectedUserId !== null && (
-                <EditLogModalPage
-                  open={openEditLogModal}
-                  onClose={handleCloseEditLogModal}
-                  userId={selectedUserId}
-                />
-              )}
-            </Box>
-          </Grid>
-        </Grid>
-
-        {/* Second Row */}
-        <Grid container rowSpacing={2.5} columnSpacing={{ xs: 1, sm: 3, md: 2.5 }} sx={{ mt: 0.1, }}>
-          <Grid item xs={12}>
-            <Typography>
-              Authorized Agents Corporations
-            </Typography>
-          </Grid>
-
-          <Grid item xs={6}>
-            {["DateOfRegistration", "DateOfRegistration"].map((key) => (
-              <Grid item xs={12} key={key} sx={{ mb: 3, }}>
-                <FormControl fullWidth error={!!errors[key]} sx={inputStyles} variant="outlined">
-                  <InputLabel htmlFor={key}>{formatKey(key)}</InputLabel>
-                  <OutlinedInput
-                    id={key}
-                    name={key}
-                    placeholder={`Enter ${formatKey(key)}`}
-                    value={user[key as keyof typeof user] || ""}
-                    onChange={handleManagerChange}
-                    label={formatKey(key)}
-                    disabled={isDisabled || key === "firstName" || key === "email"}
-                  />
-                  {errors[key] && <FormHelperText error>{errors[key]}</FormHelperText>}
-                </FormControl>
-              </Grid>
-            ))}
-          </Grid>
-
-          <Grid item xs={6}>
-            <Grid container spacing={1}>
-              <Grid item xs={12}>
-                <FormControl
-                  fullWidth
-                  error={!!errors.AreaOfOperations}
-                  sx={inputStyles}
+            {/* History Fields */}
+            <Stack spacing={3} sx={{ flex: 1 }}>
+              <FormControl fullWidth variant="outlined" sx={inputStyles} error={Boolean(errors.remarks)}>
+                <TextField
+                  id="AreaOfOperations"
+                  name="areaofoperations"
+                  onChange={handleManagerChange}
+                  label="Areaofoperations"
+                  disabled={isDisabled}
+                  multiline
+                  minRows={4}
                   variant="outlined"
-                >
-                  <InputLabel htmlFor="AreaOfOperations">{formatKey("AreaOfOperations")}</InputLabel>
-                  <TextField
-                    id="AreaOfOperations"
-                    name="AreaOfOperations"
-                    placeholder="Enter Area of Operations"
-                    onChange={handleManagerChange}
-                    label={formatKey("AreaOfOperations")}
-                    disabled={isDisabled}
-                    multiline
-                    minRows={4}
-                    variant="outlined"
-                    fullWidth
-                  />
-                  {errors.AreaOfOperations && (
-                    <FormHelperText error>{errors.AreaOfOperations}</FormHelperText>
-                  )}
-                </FormControl>
-              </Grid>
-            </Grid>
-          </Grid>
+                />
+              </FormControl>
+            </Stack>
+          </Stack>
 
           {/* Remarks Field */}
-          {isDisabled && (
-            <Grid item xs={12} sx={{ paddingTop: "0rem !important", }}>
-              <FormControl fullWidth variant="outlined" sx={inputStyles} error={Boolean(errors.remarks)}>
-                <InputLabel>Remarks</InputLabel>
-                <TextField
-                  id="remarks"
-                  name="remarks"
-                  value={user.remarks}
-                  onChange={handleManagerChange}
-                  label="Remarks"
-                  multiline
-                  minRows={3}
-                  variant="outlined"
-                />
-                {errors.remarks && <FormHelperText>{errors.remarks}</FormHelperText>}
-              </FormControl>
-            </Grid>
+          {!isDisabled && (
+            <FormControl fullWidth variant="outlined" sx={inputStyles} error={Boolean(errors.remarks)}>
+              <TextField
+                id="remarks"
+                name="remarks"
+                onChange={handleManagerChange}
+                label="Remarks"
+                multiline
+                minRows={3}
+                variant="outlined"
+                sx={{ mt: 1, mb: 2, }}
+              />
+            </FormControl>
           )}
-        </Grid>
 
-        {isDisabled && (
-          <Button
-            onClick={handleUpdateManagerSubmit}
-            sx={{
-              mt: 3,
-              width: "100%",
-              backgroundColor: "#67ABEB",
-              textTransform: "none",
-              fontSize: "12px",
-              padding: "0.8rem",
-              borderRadius: "8px",
-              color: "#181A1B",
-            }}
-            variant="contained"
-          >
-            Update Manager
-          </Button>
-        )}
+          {!isDisabled && (
+            <Button
+              onClick={handleUpdateManagerSubmit}
+              sx={{
+                mt: 3,
+                width: "100%",
+                backgroundColor: "#67ABEB",
+                textTransform: "none",
+                fontSize: "12px",
+                padding: "0.8rem",
+                borderRadius: "8px",
+                color: "#181A1B",
+              }}
+              variant="contained"
+            >
+              Update Manager
+            </Button>
+          )}
 
-        {isVerifyModalOpen && (
-          <ConfirmUpdateManagerPage
-            open={isVerifyModalOpen}
-            onClose={() => setIsVerifyModalOpen(false)}
-            onVerified={handleUpdateManagerSubmit}
-            user={user}
-            selectState={selectState}
-            onSubmit={onSubmit}
-            setUser={setUser}
-          />
-        )}
+          {isVerifyModalOpen && (
+            <ConfirmUpdateManagerPage
+              open={isVerifyModalOpen}
+              onClose={() => setIsVerifyModalOpen(false)}
+              onVerified={handleUpdateManagerSubmit}
+              user={user}
+              onSubmit={onSubmit}
+              setUser={setUser}
+            />
+          )}
+        </Stack>
       </DialogContent>
     </Dialog>
   );
