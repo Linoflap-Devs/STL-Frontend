@@ -7,16 +7,15 @@ import { LoginSectionData } from "../../data/LoginSectionData";
 import ArrowBackIosNewIcon from "@mui/icons-material/ArrowBackIosNew";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
 
-interface ConfirmCreateManagerPageProps {
+interface ConfirmCreateUserPageProps {
     open: boolean;
     onClose: () => void;
     onVerified: () => void;
     user: any;
-    selectState: any;
     onSubmit: (newUser: any) => void;
 }
 
-const ConfirmCreateManagerPage: React.FC<ConfirmCreateManagerPageProps> = ({ open, onClose, user, selectState, onSubmit }) => {
+const ConfirmCreateUserPage: React.FC<ConfirmCreateUserPageProps> = ({ open, onClose, user, onSubmit }) => {
     const [password, setPassword] = useState("");
     const [error, setError] = useState("");
     const [showPassword, setShowPassword] = useState<boolean>(false);
@@ -40,9 +39,6 @@ const ConfirmCreateManagerPage: React.FC<ConfirmCreateManagerPageProps> = ({ ope
             // Construct the new user object
             const newUser = {
                 ...user,
-                region: selectState.region,
-                province: selectState.province,
-                city: selectState.city,
                 userTypeId: 3,
             };
 
@@ -214,4 +210,4 @@ const ConfirmCreateManagerPage: React.FC<ConfirmCreateManagerPageProps> = ({ ope
     );
 };
 
-export default ConfirmCreateManagerPage;
+export default ConfirmCreateUserPage;

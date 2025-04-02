@@ -35,10 +35,10 @@ const regions: string[] = [
 
 const getLegendItems = (pageType: string) => [
   { color: "#BB86FC", label: pageType === "manager" ? "Total Managers" : "Total Executives" },
-  { color: "#5050A5", label: pageType === "manager" ? "Active Managers" : "Active Executives" },
-  { color: "#7266C9", label: pageType === "manager" ? "Inactive Managers" : "Inactive Executives" },
-  { color: "#3B3B81", label: pageType === "manager" ? "Suspended Managers" : "Suspended Executives" },
-  { color: "#282A68", label: pageType === "manager" ? "New Managers" : "New Executives" },
+  { color: "#5050A5", label: pageType === "manager" ? "Total Active Managers" : "Total Active Executives" },
+  { color: "#7266C9", label: pageType === "manager" ? "Total of Inactive Managers" : "Total of Inactive Executives" },
+  { color: "#3B3B81", label: pageType === "manager" ? "Total of Deleted Managers" : "Total of Deleted Executives" },
+  { color: "#282A68", label: pageType === "manager" ? "Total of New Managers" : "Total of New Executives" },
 ];
 
 const CustomLegend = ({ pageType }: { pageType: string }) => (
@@ -51,11 +51,11 @@ const CustomLegend = ({ pageType }: { pageType: string }) => (
             height: 16,
             borderRadius: "50%",
             backgroundColor: item.color,
-            mr: 1.5,
-            fontSize: '12px !important',
+            mr: 1,
+            fontSize: '10px !important',
           }}
         />
-        <Typography color="white">{item.label}</Typography>
+        <Typography sx={{ fontSize: '14px !important' }} color="white">{item.label}</Typography>
       </Box>
     ))}
   </Stack>
@@ -143,7 +143,6 @@ const UserDashboardPage: React.FC<UserDashboardPageProps> = ({ roleId }) => {
 
   useEffect(() => {
     if (!dashboardData || Object.keys(dashboardData).length === 0) return;
-
     const newChartData = [
       {
         label: "Total Managers",
@@ -231,10 +230,10 @@ const UserDashboardPage: React.FC<UserDashboardPageProps> = ({ roleId }) => {
       >
         {[
           { label: "Total Managers", value: summaryTotals.totalUsers, color: "#BB86FC" },
-          { label: "Active Managers", value: summaryTotals.activeUsers, color: "#5050A5" },
-          { label: "Inactive Managers", value: summaryTotals.inactiveUsers, color: "#7266C9" },
-          { label: "Suspended Managers", value: summaryTotals.suspendedUsers, color: "#3B3B81" },
-          { label: "New Managers", value: summaryTotals.newUsers, color: "#282A68" },
+          { label: "Total Active Managers", value: summaryTotals.activeUsers, color: "#5050A5" },
+          { label: "Total of Deleted Managers", value: summaryTotals.inactiveUsers, color: "#7266C9" },
+          { label: "Total of Inactive Managers", value: summaryTotals.inactiveUsers, color: "#7266C9" },
+          { label: "Total of New Managers", value: summaryTotals.newUsers, color: "#282A68" },
         ].map((item, index) => (
           <Box
             key={index}
@@ -258,7 +257,7 @@ const UserDashboardPage: React.FC<UserDashboardPageProps> = ({ roleId }) => {
       {/* Chart Display */}
       <Box sx={{ mt: 1 }}>
         <Box sx={{ padding: 2, backgroundColor: "#171717", borderRadius: "10px" }}>
-          <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap' }}>
+          <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
             <Box>
               <Typography color="#B3B3B3" sx={{ fontSize: "16px" }}>
                 {pageType === "manager" ? "Managers Summary" : "Executive Summary"}
@@ -267,17 +266,15 @@ const UserDashboardPage: React.FC<UserDashboardPageProps> = ({ roleId }) => {
                 <CustomLegend pageType={pageType} />
               </Box>
             </Box>
-            <Box sx={{ display: 'flex', alignItems: 'center' }}>
+            <Box sx={{ display: 'flex', flexDirection: 'column', justifyContent: 'flex-end' }}>
               <Button
                 sx={{
                   fontSize: "12px",
-                  color: "#3F3F3F",
                   textTransform: "none",
                   backgroundColor: "#67ABEB",
                   paddingX: 4,
                   paddingY: 0.9,
                   //mr: 2,
-                  mb: 1,
                   "&:hover": { backgroundColor: "#559CD1" },
                 }}
                 variant="contained"
@@ -289,7 +286,7 @@ const UserDashboardPage: React.FC<UserDashboardPageProps> = ({ roleId }) => {
           <Box sx={{ height: 270, width: "100%", minWidth: 0 }}>
             <BarChart
               xAxis={[{ label: "REGIONS", scaleType: "band", data: regions }]}
-              yAxis={[ ]}
+              yAxis={[]}
               series={chartData.map(({ label, color, data }) => ({
                 data,
                 label,

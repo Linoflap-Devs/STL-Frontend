@@ -40,15 +40,11 @@ import ConfirmSuspendManagerPage from "./ConfirmSuspendUser";
 export interface User {
   firstName: string;
   lastName: string;
+  operatorName: string;
   suffix?: string;
   phoneNumber: string;
   email: string;
   password: string;
-  street: string;
-  region?: string;
-  province?: string;
-  barangay?: string;
-  city?: string;
   [key: string]: any;
 }
 
@@ -267,20 +263,11 @@ const ManagerTable: React.FC<ManagerTableProps> = ({ managers, onCreate, onEdit,
                 onFilterChange={handleFilterChange("fullName")}
               />
               <SortableTableCell
-                label="Email Address"
-                sortKey="Email"
+                label="Company Name"
+                sortKey="companyName"
                 sortConfig={sortConfig}
                 onSort={onSortWrapper}
-                onFilterChange={handleFilterChange("Email")}
-              />
-              <SortableTableCell
-                label="Assigned Region"
-                sortKey="Region"
-                sortConfig={sortConfig}
-                onSort={onSortWrapper}
-                isFilterVisible={isFilterVisible}
-                filterValue={filters.Region}
-                onFilterChange={handleFilterChange("Region")}
+                onFilterChange={handleFilterChange("companyName")}
               />
               <SortableTableCell
                 label="Creation Date"
@@ -314,163 +301,90 @@ const ManagerTable: React.FC<ManagerTableProps> = ({ managers, onCreate, onEdit,
           </TableRow>
         </TableHead>
         <TableBody>
-          {managers.length === 0 ? (
+          {sortedFilteredUsers.length === 0 ? (
             <TableRow>
               <TableCell colSpan={9} align="center">
-                <Box
-                  sx={{
-                    display: "flex",
-                    flexDirection: "column",
-                    alignItems: "center",
-                    py: 5,
-                  }}
-                >
-                  <PersonOffIcon sx={{ fontSize: 50, color: "gray" }} />
-                  <Typography
-                    variant="h6"
-                    color="textSecondary"
-                    sx={{ mt: 2, fontWeight: 500 }}
-                  >
-                    {pageType === 'manager' ? 'No managers available' : 'No executives available'}
-                  </Typography>
-                  <Typography variant="body2" color="textSecondary">
-                    {pageType === 'manager' ? 'Add a new manager to get started.' : 'Add a new executive to get started.'}
-                  </Typography>
-                </Box>
-              </TableCell>
-            </TableRow>
-          ) : sortedFilteredUsers.length === 0 ? (
-            <TableRow>
-              <TableCell colSpan={9} align="center">
-                <Box
-                  sx={{
-                    display: "flex",
-                    flexDirection: "column",
-                    alignItems: "center",
-                    py: 5,
-                  }}
-                >
-                  <SearchOffIcon sx={{ fontSize: 50, color: "gray" }} />
-                  <Typography
-                    variant="h6"
-                    color="textSecondary"
-                    sx={{ mt: 2, fontWeight: 500 }}
-                  >
-                    No results found
-                  </Typography>
-                  <Typography variant="body2" color="textSecondary">
-                    Try adjusting your search criteria.
-                  </Typography>
+                <Box sx={{ display: "flex", flexDirection: "column", alignItems: "center", py: 5 }}>
+                  {managers.length === 0 ? (
+                    <>
+                      <PersonOffIcon sx={{ fontSize: 50, color: "gray" }} />
+                      <Typography variant="h6" color="textSecondary" sx={{ mt: 2, fontWeight: 500 }}>
+                        {pageType === "manager" ? "No managers available" : "No executives available"}
+                      </Typography>
+                      <Typography variant="body2" color="textSecondary">
+                        {pageType === "manager" ? "Add a new manager to get started." : "Add a new executive to get started."}
+                      </Typography>
+                    </>
+                  ) : (
+                    <>
+                      <SearchOffIcon sx={{ fontSize: 50, color: "gray" }} />
+                      <Typography variant="h6" color="textSecondary" sx={{ mt: 2, fontWeight: 500 }}>
+                        No results found
+                      </Typography>
+                      <Typography variant="body2" color="textSecondary">Try adjusting your search criteria.</Typography>
+                    </>
+                  )}
                 </Box>
               </TableCell>
             </TableRow>
           ) : (
-            sortedFilteredUsers
-              .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-              .map((user) => (
-                <TableRow key={user.userId}>
-                  <TableCell>
-                    {user.userId} {`${user.FirstName} ${user.LastName}`}
-                  </TableCell>
-                  <TableCell>{user.Email}</TableCell>
-                  <TableCell>{user.Region}</TableCell>
-                  <TableCell>
-                    {dayjs(user.DateOfRegistration).format("YYYY/MM/DD HH:mm:ss")}
-                  </TableCell>
-                  <TableCell>{user?.CreatedBy}</TableCell>
-                  <TableCell>
-                    <Button
-                      variant="contained"
-                      sx={{
-                        cursor: "auto",
-                        textTransform: "none",
-                        borderRadius: "12px",
-                        padding: "1px 13.5px",
+            sortedFilteredUsers.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((user) => (
+              <TableRow key={user.userId}>
+                <TableCell>{user.userId} {`${user.FirstName} ${user.LastName} ${user.Suffix}`}</TableCell>
+                <TableCell>{user.OperatorName}</TableCell>
+                <TableCell>{dayjs(user.DateOfRegistration).format("YYYY/MM/DD HH:mm:ss")}</TableCell>
+                <TableCell>{user?.CreatedBy}</TableCell>
+                <TableCell>
+                  <Button
+                    variant="contained"
+                    sx={{
+                      cursor: "auto",
+                      textTransform: "none",
+                      borderRadius: "12px",
+                      padding: "1px 13.5px",
+                      backgroundColor:
+                        user.Status === "Suspended" ? "#FF7A7A" :
+                          user.Status === "Inactive" ? "#FFA726" :
+                            "#4CAF50",
+                      color: "#171717",
+                      "&:hover": {
                         backgroundColor:
-                          user.Status === "Suspended"
-                            ? "#FF7A7A" // Red for Suspended
-                            : user.Status === "Inactive"
-                              ? "#FFA726" // Orange for Inactive
-                              : "#4CAF50", // Green for Active
-                        color: "#171717",
-                        "&:hover": {
-                          backgroundColor:
-                            user.Status === "Suspended"
-                              ? "#F05252" // Lighter Red
-                              : user.Status === "Inactive"
-                                ? "#FFA726" // Lighter Orange
-                                : "#4CAF50", // Lighter Green
-                        },
-                      }}
-                    >
-                      {user.Status}
-                    </Button>
-                  </TableCell>
-                  <TableCell>
-                    {pageType === "manager" ? (
-                      <IconButton onClick={(event) => handleToggleMenu(event, user)}>
-                        <MoreHorizIcon />
-                      </IconButton>
-                    ) : (
-                      <Button
-                        onClick={() => onEdit(user, "view")}
-                        sx={{
-                          cursor: "pointer",
-                          textTransform: "none",
-                          borderRadius: "12px",
-                          padding: "8px 13.5px",
-                          "&:hover": {
-                            backgroundColor: "transparent",
-                          },
-                        }}
-                      >
-                        View
-                      </Button>
-                    )}
-                  </TableCell>
-                </TableRow>
-              ))
+                          user.Status === "Suspended" ? "#F05252" :
+                            user.Status === "Inactive" ? "#FFA726" :
+                              "#4CAF50",
+                      },
+                    }}
+                  >
+                    {user.Status}
+                  </Button>
+                </TableCell>
+                <TableCell>
+                  <IconButton onClick={(event) => handleToggleMenu(event, user)}>
+                    <MoreHorizIcon />
+                  </IconButton>
+                  <Menu
+                    anchorEl={anchorEl}
+                    open={Boolean(anchorEl)}
+                    onClose={() => handleToggleMenu()}
+                    MenuListProps={{ "aria-labelledby": "basic-button" }}
+                  >
+                    <MenuItem onClick={() => onEdit(user, "view")}>View</MenuItem>
+                    <MenuItem onClick={() => handleManagerSuspend(user)}>Delete</MenuItem>
+                  </Menu>
+                  <ConfirmSuspendManagerPage
+                    open={isVerifyModalOpen}
+                    onClose={() => setIsVerifyModalOpen(false)}
+                    onVerified={() => setIsVerifyModalOpen(false)}
+                    selectedUser={user}
+                    onSubmit={onSubmit}
+                    setSelectedUser={setSelectedUser}
+                  />
+                </TableCell>
+              </TableRow>
+            ))
           )}
         </TableBody>
       </Table>
-      {pageType === "manager" && (
-        <Menu
-          anchorEl={anchorEl}
-          open={Boolean(anchorEl)}
-          onClose={() => handleToggleMenu()}
-          MenuListProps={{ "aria-labelledby": "basic-button" }}
-        >
-          <MenuItem
-            onClick={() =>
-              selectedUser ? onEdit(selectedUser, "view") : null
-            }
-          >
-            View
-          </MenuItem>
-          <MenuItem
-            onClick={() =>
-              selectedUser ? onEdit(selectedUser, "update") : null
-            }
-          >
-            Update
-          </MenuItem>
-          <MenuItem
-            onClick={() =>
-              selectedUser ? handleManagerSuspend(selectedUser) : null
-            }
-          >
-            Suspend
-          </MenuItem>
-          <ConfirmSuspendManagerPage
-            open={isVerifyModalOpen}
-            onClose={() => setIsVerifyModalOpen(false)}
-            onVerified={() => { setIsVerifyModalOpen(false); }}
-            selectedUser={selectedUser}
-            onSubmit={onSubmit}
-            setSelectedUser={setSelectedUser}
-          />
-        </Menu>
-      )}
       <Box
         sx={{
           padding: "12px",

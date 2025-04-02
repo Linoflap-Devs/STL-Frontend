@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
-import { AppBar, Toolbar, IconButton, Typography, Box, Tooltip } from "@mui/material";
+import { AppBar, Toolbar, IconButton, Typography, Box, Tooltip, useMediaQuery } from "@mui/material";
 import MenuIcon from "@mui/icons-material/Menu";
+import MenuOpenIcon from '@mui/icons-material/MenuOpen';
 import LogoutIcon from "@mui/icons-material/Logout";
 import { useRouter } from "next/router";
 import { useTheme } from "@mui/material/styles";
@@ -9,6 +10,7 @@ import { getCurrentUser, logoutUser } from "~/utils/api/auth";
 interface HeaderProps {
   handleDrawerToggle: () => void;
   collapsed: boolean;
+  mobileOpen: boolean;
 }
 
 const getUserRole = (userTypeId: number) => {
@@ -28,10 +30,11 @@ const getUserRole = (userTypeId: number) => {
   }
 };
 
-const Header: React.FC<HeaderProps> = ({ handleDrawerToggle, collapsed }) => {
+const Header: React.FC<HeaderProps> = ({ handleDrawerToggle, collapsed, mobileOpen }) => {
   const theme = useTheme();
   const router = useRouter();
   const [user, setUser] = useState<{ firstName: string; lastName: string; userTypeId: number } | null>(null);
+  const isMobile = useMediaQuery(theme.breakpoints.down("md"));
 
   useEffect(() => {
     (async () => {
@@ -65,10 +68,22 @@ const Header: React.FC<HeaderProps> = ({ handleDrawerToggle, collapsed }) => {
     <AppBar
       position="fixed"
       sx={{
-        zIndex: 100,
-        width: collapsed ? "100%" : `calc(100% - 240px)`,
-        ml: collapsed ? 0 : "240px",
-        transition: "width 0.3s ease",
+        zIndex: (theme) => theme.zIndex.drawer + 1, // Ensure it's above the sidebar
+        width: isMobile
+          ? mobileOpen
+            ? "100%" // Shrink when sidebar is open
+            : "100%" // Full width when sidebar is closed
+          : collapsed
+            ? "100%"
+            : `calc(100% - 240px)`, // Desktop behavior
+        ml: isMobile
+          ? mobileOpen
+            ? "240px" // Move when sidebar is open on mobile
+            : 0
+          : collapsed
+            ? 0
+            : "240px", // Desktop behavior
+        transition: "width 0.3s ease, margin-left 0.3s ease",
         backgroundColor: "#2D2D2D",
       }}
     >
@@ -78,18 +93,41 @@ const Header: React.FC<HeaderProps> = ({ handleDrawerToggle, collapsed }) => {
           aria-label="open drawer"
           edge="start"
           onClick={handleDrawerToggle}
+          sx={{
+            ...(isMobile && { ml: -1 }),
+          }}
         >
-          <MenuIcon />
+          {isMobile ? (
+            mobileOpen ? (
+              <MenuOpenIcon />
+            ) : (
+              <MenuIcon />
+            )
+          ) : collapsed ? (
+            <MenuOpenIcon />
+          ) : (
+            <MenuIcon />
+          )}
         </IconButton>
-
         <Typography
           noWrap
           component="div"
-          sx={{ fontSize: "12px", flexGrow: 1, color: "white" }}
+          sx={{
+            fontSize: "12px",
+            flexGrow: 1,
+            color: "white",
+            display: { xs: "block", md: "block" },
+            textAlign: "left",
+          }}
         >
-          Hide Menu
+          {isMobile
+            ? mobileOpen
+              ? "Hide Menu"
+              : "Show Menu"
+            : collapsed
+              ? "Show Menu"
+              : "Hide Menu"}
         </Typography>
-
         <Box
           sx={{
             display: "flex",

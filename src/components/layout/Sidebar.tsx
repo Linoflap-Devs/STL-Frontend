@@ -5,7 +5,6 @@ import {
   Box,
   Typography,
 } from "@mui/material";
-import MenuIcon from "@mui/icons-material/Menu";
 import HomeIcon from "@mui/icons-material/Home";
 import BusinessIcon from "@mui/icons-material/Business";
 import ExitToAppIcon from "@mui/icons-material/ExitToApp";
@@ -22,13 +21,18 @@ const drawerWidth = 240;
 const collapsedWidth = 0;
 
 interface SidebarProps {
+  handleDrawerToggle: () => void;
   collapsed: boolean;
+  mobileOpen: boolean;
 }
 
-const Sidebar: React.FC<SidebarProps> = ({ collapsed }) => {
+const Sidebar: React.FC<SidebarProps> = ({
+  collapsed,
+  handleDrawerToggle,
+  mobileOpen,
+}) => {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("md"));
-  const [mobileOpen, setMobileOpen] = useState(false);
   const [dateTime, setDateTime] = useState<Date | null>(null);
 
   const router = useRouter();
@@ -55,42 +59,36 @@ const Sidebar: React.FC<SidebarProps> = ({ collapsed }) => {
     hour12: true,
   });
 
-  const handleDrawerToggle = () => {
-    setMobileOpen(!mobileOpen);
-  };
-
   const renderMenuItem = (page: string) => {
     const formattedPage =
       page === "Managers"
         ? "/managers"
         : page === "Executive"
-        ? "/executives"
-        : page === "Betting Summary"
-        ? "/betting-summary"
-        : page === "Logout"
-        ? "/"
-        : `/${page.toLowerCase()}`;
+          ? "/executives"
+          : page === "Betting Summary"
+            ? "/betting-summary"
+            : page === "Logout"
+              ? "/"
+              : `/${page.toLowerCase()}`;
 
     // Define icons for each page.
     const icon =
       page === "Dashboard" ? (
-        <HomeIcon sx={{ mr: collapsed ? 0 : 1,  }} />
+        <HomeIcon sx={{ mr: collapsed ? 0 : 1 }} />
       ) : page === "Managers" ? (
-        <SupervisorAccountIcon
-          sx={{ mr: collapsed ? 0 : 1,  }}
-        />
+        <SupervisorAccountIcon sx={{ mr: collapsed ? 0 : 1 }} />
       ) : page === "Executive" ? (
-        <BusinessIcon sx={{ mr: collapsed ? 0 : 1,  }} />
+        <BusinessIcon sx={{ mr: collapsed ? 0 : 1 }} />
       ) : page === "Betting Summary" ? (
-        <CasinoIcon sx={{ mr: collapsed ? 0 : 1,  }} />
+        <CasinoIcon sx={{ mr: collapsed ? 0 : 1 }} />
       ) : page === "Winning Summary" ? (
-        <FaxIcon sx={{ mr: collapsed ? 0 : 1,  }} />
+        <FaxIcon sx={{ mr: collapsed ? 0 : 1 }} />
       ) : page === "Draw Summary" ? (
-        <PaymentsIcon sx={{ mr: collapsed ? 0 : 1,  }} />
+        <PaymentsIcon sx={{ mr: collapsed ? 0 : 1 }} />
       ) : page === "Logout" ? (
-        <ExitToAppIcon sx={{ mr: collapsed ? 0 : 1,  }} />
+        <ExitToAppIcon sx={{ mr: collapsed ? 0 : 1 }} />
       ) : (
-        <HomeIcon sx={{ mr: collapsed ? 0 : 1,  }} />
+        <HomeIcon sx={{ mr: collapsed ? 0 : 1 }} />
       );
 
     return (
@@ -121,40 +119,32 @@ const Sidebar: React.FC<SidebarProps> = ({ collapsed }) => {
 
   return (
     <>
-      {/* Mobile Menu Button */}
-      {isMobile && (
-        <IconButton
-          onClick={handleDrawerToggle}
-          sx={{
-            position: "absolute",
-            top: 16,
-            left: 16,
-            color: "white",
-            backgroundColor: "rgba(0,0,0,0.2)",
-            "&:hover": { backgroundColor: "rgba(0,0,0,0.3)" },
-          }}
-        >
-          <MenuIcon />
-        </IconButton>
-      )}
-
-      {/* Sidebar Drawer */}
       <MuiDrawer
         variant={isMobile ? "temporary" : "permanent"}
         open={isMobile ? mobileOpen : !collapsed}
         onClose={handleDrawerToggle}
         anchor="left"
         sx={{
-          width: collapsed ? collapsedWidth : drawerWidth,
+          width: isMobile
+            ? mobileOpen
+              ? drawerWidth // 240px when open on mobile
+              : collapsedWidth // 0px when closed on mobile
+            : collapsed
+              ? collapsedWidth
+              : drawerWidth, // Regular behavior for desktop
           flexShrink: 0,
           "& .MuiDrawer-paper": {
-            width: collapsed ? collapsedWidth : drawerWidth,
-            minWidth: collapsed ? collapsedWidth : drawerWidth,
-            boxSizing: "border-box",
-            backgroundColor: "#171717",
-            color: "white",
+            width: isMobile
+              ? mobileOpen
+                ? drawerWidth // 240px when open on mobile
+                : collapsedWidth // 0px when closed on mobile
+              : collapsed
+                ? collapsedWidth
+                : drawerWidth, // Regular behavior for desktop
             transition: "width 0.40s cubic-bezier(0.4, 0, 0.4, 1)",
             overflowX: "hidden",
+            backgroundColor: "#171717",
+            color: "white",
           },
         }}
       >
@@ -165,9 +155,9 @@ const Sidebar: React.FC<SidebarProps> = ({ collapsed }) => {
             flexDirection: "column",
             height: "100%",
             position: "relative",
+            mt: isMobile ? 7 : 0,
           }}
         >
-          {/* Top Section: Logo, User Info & Divider */}
           {!collapsed && (
             <Box>
               <Box sx={{ display: "flex", alignItems: "center" }}>
@@ -199,18 +189,26 @@ const Sidebar: React.FC<SidebarProps> = ({ collapsed }) => {
                   transition: "opacity 0.3s ease",
                 }}
               >
-                <Typography sx={{ color: "white", fontWeight: "700", fontSize: 25, lineHeight: '1.3' }}>
+                <Typography
+                  sx={{
+                    color: "white",
+                    fontWeight: "700",
+                    fontSize: 25,
+                    lineHeight: "1.3",
+                  }}
+                >
                   {formattedTime}
                 </Typography>
-                <Typography sx={{ color: "white", fontWeight: "400", fontSize: 13 }}>
+                <Typography
+                  sx={{ color: "white", fontWeight: "400", fontSize: 13 }}
+                >
                   {formattedDate}
                 </Typography>
               </Box>
             </Box>
           )}
-
           {/* Menu Items */}
-          <Box sx={{ flex: 1, }}>
+          <Box sx={{ flex: 1 }}>
             {UserSectionData.pages.map((page) => renderMenuItem(page))}
           </Box>
         </Box>

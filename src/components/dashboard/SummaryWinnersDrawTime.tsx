@@ -34,15 +34,15 @@ const SummaryWinnersDrawTimePage = () => {
     const fetchDataDashboard = async () => {
       try {
         const response = await fetchHistoricalSummary();
-        console.log("Full Response:", response);
+        //console.log("Full Response:", response);
 
         if (!response.success) {
-          console.error("API Request Failed:", response.message);
+          //console.error("API Request Failed:", response.message);
           return;
         }
 
         if (!Array.isArray(response.data) || response.data.length === 0) {
-          console.warn("No data available, using default dataset.");
+          //console.warn("No data available, using default dataset.");
           setData(defaultGameData);
           return;
         }

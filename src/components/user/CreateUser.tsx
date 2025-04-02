@@ -1,13 +1,12 @@
 import React, { useState, useEffect } from "react";
 import {
+  Box,
   Dialog,
   DialogContent,
   DialogTitle,
   Button,
   Typography,
   Grid,
-  Select,
-  MenuItem,
   IconButton,
   FormControl,
   FormHelperText,
@@ -20,11 +19,10 @@ import { Visibility, VisibilityOff } from "@mui/icons-material";
 import { SelectChangeEvent } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 import { inputErrorStyles } from "../../styles/theme";
-import { UserSectionData } from "~/data/AdminSectionData";
 import { formatKey } from "~/utils/format"
 import { validateUser } from "~/utils/validation"
-import ConfirmCreateManagerPage from "./ConfirmCreateUser";
 import Swal from "sweetalert2";
+import ConfirmCreateUserPage from "./ConfirmCreateUser";
 
 interface CreateManagerProps {
   open: boolean;
@@ -32,9 +30,6 @@ interface CreateManagerProps {
   onSubmit: (userData: User | null) => Promise<void>;
   userData: User | null;
   managers: User[];
-  regions: any[];
-  provinces: any[];
-  cities: any[];
 }
 
 const CreateManager: React.FC<CreateManagerProps> = ({
@@ -42,76 +37,20 @@ const CreateManager: React.FC<CreateManagerProps> = ({
   onClose,
   onSubmit,
   userData,
-  regions,
-  provinces,
-  cities,
 }) => {
   const [user, setUser] = useState({
     firstName: userData?.firstName ?? "",
     lastName: userData?.lastName ?? "",
     suffix: userData?.suffix ?? "",
+    operatorName: userData?.operatorName ?? "",
     phoneNumber: userData?.phoneNumber ?? "",
     email: userData?.email ?? "",
     password: "",
-    barangay: userData?.barangay ?? "",
-    street: userData?.Street ?? "",
   });
   const pageType = window.location.pathname.includes('manager') ? 'manager' : 'executive';
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
   const [showPassword, setShowPassword] = useState(false);
-  const [selectState, setSelectState] = useState({
-    region: userData?.region ?? "",
-    province: userData?.province ?? "",
-    city: userData?.city ?? "",
-  });
-  const [filteredProvinces, setFilteredProvinces] = useState<any[]>([]);
-  const [filteredCities, setFilteredCities] = useState<any[]>([]);
   const [isVerifyModalOpen, setIsVerifyModalOpen] = useState(false);
-
-  const handleSelectChange = (e: SelectChangeEvent<string>, name: string) => {
-    const value = e.target.value;
-
-    setSelectState((prevState) => ({
-      ...prevState,
-      [name]: value,
-    }));
-
-    if (name === "region") {
-      const selectedRegion = regions.find((r) => r.RegionName === value);
-      if (selectedRegion) {
-        const newProvinces = provinces.filter((p) => p.RegionId === selectedRegion.RegionId);
-        console.log("Filtered Provinces:", newProvinces);
-        setFilteredProvinces(newProvinces);
-      } else {
-        console.log("No matching region found!");
-        setFilteredProvinces([]);
-      }
-
-      setFilteredCities([]);
-      setSelectState((prevState) => ({
-        ...prevState,
-        province: "",
-        city: "",
-      }));
-    }
-
-    if (name === "province") {
-      const selectedProvince = provinces.find((p) => p.ProvinceName === value);
-      if (selectedProvince) {
-        const newCities = cities.filter((c) => c.province === selectedProvince.ProvinceKey);
-        console.log("Filtered Cities:", newCities);
-        setFilteredCities(newCities);
-      } else {
-        console.log("No matching province found!");
-        setFilteredCities([]);
-      }
-
-      setSelectState((prevState) => ({
-        ...prevState,
-        city: "",
-      }));
-    }
-  };
 
   const handleManagerChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement> | SelectChangeEvent<string>
@@ -121,7 +60,7 @@ const CreateManager: React.FC<CreateManagerProps> = ({
   };
 
   const handleCreateManagerSubmit = async () => {
-    const validationErrors = validateUser(user, selectState);
+    const validationErrors = validateUser(user);
     console.log("Validation Errors:", validationErrors);
 
     if (Object.keys(validationErrors).length > 0) {
@@ -174,30 +113,29 @@ const CreateManager: React.FC<CreateManagerProps> = ({
         },
       }}
     >
-      <DialogTitle sx={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-        {pageType === 'manager' ? 'Add Manager' : 'Add Executive'}
+      <DialogTitle sx={{ display: "flex", flexDirection: "column", alignItems: "flex-start", py: 0 }}>
         <IconButton
+          sx={{
+            backgroundColor: "#171717",
+            alignSelf: "flex-end",
+          }}
           aria-label="close"
           onClick={onClose}
-          sx={{
-            color: "#fffff",
-            backgroundColor: '#282828',
-          }}
         >
-          <CloseIcon sx={{ fontSize: 20, fontWeight: "700" }} />
+          <CloseIcon sx={{ fontSize: 20, fontWeight: 700 }} />
         </IconButton>
+        <Typography variant="h5" sx={{ fontWeight: "bold", mt: -1 }}>
+          {pageType === "manager" ? "Add Manager" : "Add Executive"}
+        </Typography>
       </DialogTitle>
       <DialogContent>
-        <Grid container rowSpacing={2.5} columnSpacing={{ xs: 1, sm: 3, md: 2.5 }}>
+        <Grid container rowSpacing={2.5} columnSpacing={{ xs: 1, sm: 3, md: 2.5 }} sx={{ mt: 0.1, }}>
           <Grid item xs={6} sm={6}>
-            <Typography variant="h6" sx={{ marginBottom: "0.9rem" }}>
-              Personal Information
-            </Typography>
-            {["firstName", "lastName", "phoneNumber", "email", "password"].map((key) => (
+            {["firstName", "lastName", "phoneNumber"].map((key) => (
               <Grid item xs={12} key={key} sx={{ marginBottom: "1rem" }}>
                 {key === "lastName" ? (
                   <Grid container spacing={1.5} alignItems="flex-start" wrap="nowrap">
-                    <Grid item xs={8} key="lastName-field">
+                    <Grid item xs={8}>
                       <FormControl fullWidth error={!!errors.lastName}>
                         <InputLabel sx={{ fontSize: "14px" }} htmlFor="lastName">
                           Last Name
@@ -213,8 +151,7 @@ const CreateManager: React.FC<CreateManagerProps> = ({
                         {errors.lastName && <FormHelperText>{errors.lastName}</FormHelperText>}
                       </FormControl>
                     </Grid>
-
-                    <Grid item xs={4} key="suffix-field">
+                    <Grid item xs={4}>
                       <FormControl fullWidth error={!!errors.suffix}>
                         <InputLabel htmlFor="suffix">Suffix</InputLabel>
                         <OutlinedInput
@@ -228,9 +165,29 @@ const CreateManager: React.FC<CreateManagerProps> = ({
                       </FormControl>
                     </Grid>
                   </Grid>
-                ) : key === "password" ? (
+                ) : (
+                  <FormControl fullWidth error={!!errors[key]}>
+                    <InputLabel htmlFor={key}>{formatKey(key)}</InputLabel>
+                    <OutlinedInput
+                      id={key}
+                      name={key}
+                      placeholder={`Enter ${formatKey(key)}`}
+                      value={user[key as keyof typeof user]}
+                      onChange={handleManagerChange}
+                      label={formatKey(key)}
+                    />
+                    {errors[key] && <FormHelperText>{errors[key]}</FormHelperText>}
+                  </FormControl>
+                )}
+              </Grid>
+            ))}
+          </Grid>
+          <Grid item xs={6} sm={6}>
+            {["operatorName", "email", "password"].map((key) => (
+              <Grid item xs={12} key={key} sx={{ marginBottom: "1rem" }}>
+                {key === "password" ? (
                   <Grid container spacing={1} alignItems="center">
-                    <Grid item xs={7} sx={{ marginBottom: 1 }} key="password-field">
+                    <Grid item xs={7}>
                       <FormControl fullWidth error={!!errors.password} variant="outlined">
                         <InputLabel htmlFor="password">Password</InputLabel>
                         <OutlinedInput
@@ -254,95 +211,22 @@ const CreateManager: React.FC<CreateManagerProps> = ({
                         />
                       </FormControl>
                     </Grid>
-                    <Grid item xs={5} key="password-generate-btn">
+                    <Grid item xs={5}>
                       <Button
                         variant="contained"
                         color="secondary"
-                        sx={{
-                          width: "100%",
-                          textTransform: "none",
-                          backgroundColor: "#67ABEB",
-                          borderRadius: "8px",
-                          color: "#282828",
-                        }}
+                        sx={{ width: "100%", textTransform: "none", backgroundColor: "#67ABEB", borderRadius: "8px", color: "#282828" }}
                         onClick={handleGeneratePassword}
                       >
                         Generate
                       </Button>
                     </Grid>
-
                     {errors.password && (
-                      <Grid item xs={12} sx={{ paddingTop: "0px !important" }} key="password-error">
+                      <Grid item xs={12}>
                         <Typography sx={inputErrorStyles}>{errors.password}</Typography>
                       </Grid>
                     )}
                   </Grid>
-                ) : (
-                  <FormControl fullWidth error={!!errors[key]}>
-                    <InputLabel id={key}>{formatKey(key)}</InputLabel>
-                    <OutlinedInput
-                      id={key}
-                      name={key}
-                      placeholder={`Enter ${formatKey(key)}`}
-                      value={user[key as keyof typeof user]}
-                      onChange={handleManagerChange}
-                      label={formatKey(key)}
-                    />
-                    {errors[key] && <FormHelperText error={true}>{errors[key]}</FormHelperText>}
-                  </FormControl>
-                )}
-              </Grid>
-            ))}
-          </Grid>
-          <Grid item xs={6}>
-            <Typography variant="h6" sx={{ marginBottom: "0.9rem" }}>
-              Assigned Location
-            </Typography>
-            {['region', 'province', 'city', 'barangay', 'street'].map((key) => (
-              <Grid item xs={12} key={key} sx={{ marginBottom: "1rem" }}>
-                {['region', 'province', 'city'].includes(key) ? (
-                  <FormControl fullWidth error={!!errors[key]}>
-                    <InputLabel id={`${key}-label`}>{formatKey(key)}</InputLabel>
-                    <Select
-                      labelId={`${key}-label`}
-                      id={`${key}-select`}  // Use a different id to avoid conflicts
-                      value={selectState[key as keyof typeof selectState] || ""}
-                      onChange={(e) => handleSelectChange(e, key)}
-                      disabled={
-                        (key === 'province' && !selectState.region) ||
-                        (key === 'city' && !selectState.province)
-                      }
-                      inputProps={{ 'aria-label': formatKey(key) }}
-                      label={formatKey(key)}  // this is to make the label work properly
-                    >
-                      <MenuItem value="" disabled>Select {formatKey(key)}</MenuItem>
-                      {(key === "region"
-                        ? regions
-                        : key === "province"
-                          ? filteredProvinces
-                          : filteredCities
-                      ).map((option) => (
-                        <MenuItem
-                          key={`${key}-${option.ProvinceId || option.RegionId || option.name}`}
-                          value={
-                            key === "region"
-                              ? option.RegionName
-                              : key === "province"
-                                ? option.ProvinceName
-                                : option.name
-                          }
-                        >
-                          {key === "region"
-                            ? option.RegionName
-                            : key === "province"
-                              ? option.ProvinceName
-                              : option.name}
-                        </MenuItem>
-                      ))}
-                    </Select>
-                    {errors[key] && <FormHelperText>{errors[key]}</FormHelperText>}
-                  </FormControl>
-
                 ) : (
                   <FormControl fullWidth error={!!errors[key]}>
                     <InputLabel htmlFor={key}>{formatKey(key)}</InputLabel>
@@ -350,7 +234,7 @@ const CreateManager: React.FC<CreateManagerProps> = ({
                       id={key}
                       name={key}
                       placeholder={`Enter ${formatKey(key)}`}
-                      value={user[key as keyof typeof user] || ""}
+                      value={user[key as keyof typeof user]}
                       onChange={handleManagerChange}
                       label={formatKey(key)}
                     />
@@ -364,12 +248,12 @@ const CreateManager: React.FC<CreateManagerProps> = ({
         <Button
           onClick={handleCreateManagerSubmit}
           sx={{
-            mt: 1,
+            mt: 2,
             width: "100%",
             backgroundColor: "#67ABEB",
             textTransform: "none",
             fontSize: "12px",
-            padding: "0.8rem",
+            padding: "0.5rem",
             borderRadius: "8px",
             color: '#181A1B',
           }}
@@ -378,12 +262,11 @@ const CreateManager: React.FC<CreateManagerProps> = ({
           {pageType === 'manager' ? 'Add Manager' : 'Add Executive'}
         </Button>
         {isVerifyModalOpen && (
-          <ConfirmCreateManagerPage
+          <ConfirmCreateUserPage
             open={isVerifyModalOpen}
             onClose={() => setIsVerifyModalOpen(false)}
             onVerified={handleCreateManagerSubmit}
             user={user}
-            selectState={selectState}
             onSubmit={onSubmit}
           />
         )}

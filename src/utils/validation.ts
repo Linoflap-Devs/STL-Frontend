@@ -2,13 +2,13 @@ import ManagerTable, { User } from "~/components/user/UsersTable";
 import { formatKey } from "../utils/format";
 
 // forms validation
-export const validateUser = (user: User, selectState: Record<string, any>) => {
+export const validateUser = (user: User) => {
   const newErrors: { [key: string]: string } = {};
   const nameRegex = /^[A-Za-z\s]+$/;
   //const phoneRegex = /^09\d{2} \d{3} \d{4}$/;
   const phoneRegex = /^09\d{2}[\s-]?\d{3}[\s-]?\d{4}$/;
   const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
-  const mergedUser = { ...user, ...selectState };
+  const mergedUser = { ...user};
 
   Object.entries(mergedUser).forEach(([key, value]) => {
     if (value === null || value === undefined || value === "") {

@@ -42,6 +42,7 @@ const UsersPage: React.FC<UsersPageProps> = ({ roleId, }) => {
           name: city.name,
           province: city.province,
         }));
+
         setCityList(cityData);
 
         const filteredUsers = userResponse.data
@@ -50,13 +51,11 @@ const UsersPage: React.FC<UsersPageProps> = ({ roleId, }) => {
             userId: user.UserId,
             FirstName: user.FirstName ?? 'N/A',
             LastName: user.LastName ?? 'N/A',
+            Suffix: user.Suffix ?? '',
+            OperatorName: user.OperatorName ?? 'N/A',
             Email: user.Email ?? 'N/A',
             DateOfRegistration: user.DateOfRegistration ?? 'N/A',
             CreatedBy: user.CreatedBy ?? 'N/A',
-            Region: user.Region ?? 'N/A',
-            Province: user.Province ?? 'N/A',
-            City: user.City ?? 'N/A',
-            Street: user.Street ?? 'N/A',
           }));
 
         setUsers(filteredUsers);
@@ -144,9 +143,6 @@ const UsersPage: React.FC<UsersPageProps> = ({ roleId, }) => {
         onSubmit={handleSubmitUser}
         userData={selectedUser}
         managers={users}
-        regions={regions}
-        provinces={provinces}
-        cities={cityList}
       />
       {isUpdateModalOpen && (
         <UpdateManager
