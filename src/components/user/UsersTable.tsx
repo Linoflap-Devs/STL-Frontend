@@ -242,13 +242,11 @@ const ManagerTable: React.FC<ManagerTableProps> = ({ managers, onCreate, onEdit,
               />
             )}
           </Box>
-          {pageType === "manager" && (
-            <Box sx={{ display: "flex", alignItems: "center" }}>
-              <Button variant="contained" onClick={onCreate} sx={buttonStyles}>
-                {pageType === 'manager' ? 'Add Manager' : 'Add Executive'}
-              </Button>
-            </Box>
-          )}
+          <Box sx={{ display: "flex", alignItems: "center" }}>
+            <Button variant="contained" onClick={onCreate} sx={buttonStyles}>
+              {pageType === 'manager' ? 'Add Manager' : 'Add Executive'}
+            </Button>
+          </Box>
         </Box>
       </Box>
       <Table size="small">

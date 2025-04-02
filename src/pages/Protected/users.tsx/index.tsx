@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Box } from '@mui/material';
 import ManagerTable, { User } from '~/components/user/UsersTable';
-import UserDashboardPage from '~/components/user/UsersDashboard';
 import CreateManager from '~/components/user/CreateUser';
 import UpdateManager from '~/components/user/UpdateUser';
 import { fetchUsers } from '~/utils/api/users';
@@ -150,9 +149,6 @@ const UsersPage: React.FC<UsersPageProps> = ({ roleId, }) => {
           onClose={closeUpdateModal}
           onSubmit={handleSaveUpdatedUser}
           manager={selectedManager}
-          cities={cityList}
-          regions={regions}
-          provinces={provinces}
           isDisabled={isDisabled}
           isClicked={isClicked}
         />

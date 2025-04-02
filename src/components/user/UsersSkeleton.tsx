@@ -1,6 +1,6 @@
 import React from "react";
 import { Box } from "@mui/material";
-import { cardDashboardStyles } from "~/styles/theme";
+import { cardDashboardStyles, skeletonRowStyles } from "~/styles/theme";
 
 interface SkeletonCardProps {
   height?: string | number;
@@ -22,7 +22,6 @@ const SkeletonCard: React.FC<SkeletonCardProps> = ({ height = "110px" }) => (
 const UsersSkeletonPage: React.FC = () => {
   return (
     <Box className="animate-pulse space-y-4">
-      {/* Header Skeletons */}
       {[...Array(2)].map((_, index) => (
         <Box
           key={index}
@@ -48,16 +47,6 @@ const UsersSkeletonPage: React.FC = () => {
       ))}
     </Box>
   );
-};
-
-const skeletonRowStyles = {
-  display: "flex",
-  flexWrap: "wrap",
-  gap: 2,
-  justifyContent: "center",
-  alignItems: "center",
-  width: "100%",
-  mt: 2,
 };
 
 export default UsersSkeletonPage;

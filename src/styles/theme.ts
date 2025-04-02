@@ -250,6 +250,15 @@ const darkTheme = createTheme({
         },
       },
     },
+    MuiTooltip: {
+      styleOverrides: {
+        tooltip: {
+          backgroundColor: "#2F2F2F !important", // Custom background color
+          color: "#fff",
+          fontSize: "12px",
+        },
+      },
+    },
   },
 });
 
@@ -351,6 +360,16 @@ export const buttonNumberStyles = {
   borderRadius: "8px",
   textAlign: "center",
   padding: "0.1rem 0",
+};
+
+export const skeletonRowStyles = {
+  display: "flex",
+  flexWrap: "wrap",
+  gap: 2,
+  justifyContent: "center",
+  alignItems: "center",
+  width: "100%",
+  mt: 2,
 };
 
 export default darkTheme;

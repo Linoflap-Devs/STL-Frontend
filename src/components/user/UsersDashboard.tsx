@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Box, Typography, Stack, Button } from "@mui/material";
+import { Box, Typography, Stack, Button, Tooltip } from "@mui/material";
 import { cardDashboardStyles } from "../../styles/theme";
 import { fetchUsers } from "../../utils/api/users";
 import { BarChart } from "@mui/x-charts/BarChart";
@@ -218,7 +218,6 @@ const UserDashboardPage: React.FC<UserDashboardPageProps> = ({ roleId }) => {
 
   return (
     <Box sx={{ mb: 3 }}>
-      {/* Summary Cards */}
       <Box
         sx={{
           mt: 0.5,
@@ -253,7 +252,6 @@ const UserDashboardPage: React.FC<UserDashboardPageProps> = ({ roleId }) => {
           </Box>
         ))}
       </Box>
-
       {/* Chart Display */}
       <Box sx={{ mt: 1 }}>
         <Box sx={{ padding: 2, backgroundColor: "#171717", borderRadius: "10px" }}>
@@ -274,7 +272,6 @@ const UserDashboardPage: React.FC<UserDashboardPageProps> = ({ roleId }) => {
                   backgroundColor: "#67ABEB",
                   paddingX: 4,
                   paddingY: 0.9,
-                  //mr: 2,
                   "&:hover": { backgroundColor: "#559CD1" },
                 }}
                 variant="contained"
@@ -296,6 +293,7 @@ const UserDashboardPage: React.FC<UserDashboardPageProps> = ({ roleId }) => {
                 legend: { hidden: true },
                 bar: {
                   style: {
+                    fill: "#2F2F2F !important",
                     borderTopLeftRadius: 5,
                     borderTopRightRadius: 5,
                     transition: "fill 0.3s ease-in-out",

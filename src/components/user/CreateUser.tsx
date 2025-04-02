@@ -6,13 +6,15 @@ import {
   DialogTitle,
   Button,
   Typography,
-  Grid,
   IconButton,
   FormControl,
   FormHelperText,
   InputLabel,
   OutlinedInput,
   InputAdornment,
+  Select,
+  MenuItem,
+  Stack,
 } from "@mui/material";
 import { User } from "./UsersTable";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
@@ -94,7 +96,7 @@ const CreateManager: React.FC<CreateManagerProps> = ({
     const generatedPassword = "0912Gg33*12";
     setUser((prevUser) => ({ ...prevUser, password: generatedPassword }));
   };
-
+  
   return (
     <Dialog
       open={open}
@@ -129,13 +131,14 @@ const CreateManager: React.FC<CreateManagerProps> = ({
         </Typography>
       </DialogTitle>
       <DialogContent>
-        <Grid container rowSpacing={2.5} columnSpacing={{ xs: 1, sm: 3, md: 2.5 }} sx={{ mt: 0.1, }}>
-          <Grid item xs={6} sm={6}>
-            {["firstName", "lastName", "phoneNumber"].map((key) => (
-              <Grid item xs={12} key={key} sx={{ marginBottom: "1rem" }}>
-                {key === "lastName" ? (
-                  <Grid container spacing={1.5} alignItems="flex-start" wrap="nowrap">
-                    <Grid item xs={8}>
+        <Stack spacing={2.5} sx={{ mt: 3 }}>
+          <Stack direction="row" spacing={2.5}>
+            {/* Left Column */}
+            <Stack flex={1} spacing={2}>
+              {["firstName", "lastName", "phoneNumber"].map((key) => (
+                <Stack key={key} spacing={1}>
+                  {key === "lastName" ? (
+                    <Stack direction="row" spacing={1.5} alignItems="flex-start">
                       <FormControl fullWidth error={!!errors.lastName}>
                         <InputLabel sx={{ fontSize: "14px" }} htmlFor="lastName">
                           Last Name
@@ -150,8 +153,6 @@ const CreateManager: React.FC<CreateManagerProps> = ({
                         />
                         {errors.lastName && <FormHelperText>{errors.lastName}</FormHelperText>}
                       </FormControl>
-                    </Grid>
-                    <Grid item xs={4}>
                       <FormControl fullWidth error={!!errors.suffix}>
                         <InputLabel htmlFor="suffix">Suffix</InputLabel>
                         <OutlinedInput
@@ -163,31 +164,49 @@ const CreateManager: React.FC<CreateManagerProps> = ({
                         />
                         {errors.suffix && <FormHelperText>{errors.suffix}</FormHelperText>}
                       </FormControl>
-                    </Grid>
-                  </Grid>
-                ) : (
-                  <FormControl fullWidth error={!!errors[key]}>
-                    <InputLabel htmlFor={key}>{formatKey(key)}</InputLabel>
-                    <OutlinedInput
-                      id={key}
-                      name={key}
-                      placeholder={`Enter ${formatKey(key)}`}
-                      value={user[key as keyof typeof user]}
-                      onChange={handleManagerChange}
-                      label={formatKey(key)}
-                    />
-                    {errors[key] && <FormHelperText>{errors[key]}</FormHelperText>}
-                  </FormControl>
-                )}
-              </Grid>
-            ))}
-          </Grid>
-          <Grid item xs={6} sm={6}>
-            {["operatorName", "email", "password"].map((key) => (
-              <Grid item xs={12} key={key} sx={{ marginBottom: "1rem" }}>
-                {key === "password" ? (
-                  <Grid container spacing={1} alignItems="center">
-                    <Grid item xs={7}>
+                    </Stack>
+                  ) : (
+                    <FormControl fullWidth error={!!errors[key]}>
+                      <InputLabel htmlFor={key}>{formatKey(key)}</InputLabel>
+                      <OutlinedInput
+                        id={key}
+                        name={key}
+                        placeholder={`Enter ${formatKey(key)}`}
+                        value={user[key as keyof typeof user]}
+                        onChange={handleManagerChange}
+                        label={formatKey(key)}
+                      />
+                      {errors[key] && <FormHelperText>{errors[key]}</FormHelperText>}
+                    </FormControl>
+                  )}
+                </Stack>
+              ))}
+            </Stack>
+
+            {/* Right Column */}
+            <Stack flex={1} spacing={2}>
+              {["operatorName", "email", "password"].map((key) => (
+                <Stack key={key} spacing={1}>
+                  {key === "operatorName" ? (
+                    <FormControl fullWidth error={!!errors.operatorName}>
+                      <InputLabel id="operatorName-label">Operator Name</InputLabel>
+                      <Select
+                        labelId="operatorName-label"
+                        id="operatorName"
+                        name="operatorName"
+                        value={user.operatorName || ""}
+                        onChange={handleManagerChange}
+                        label="Operator Name"
+                      >
+                        <MenuItem value="">Select an operator</MenuItem>
+                        <MenuItem value="Operator A">Operator A</MenuItem>
+                        <MenuItem value="Operator B">Operator B</MenuItem>
+                        <MenuItem value="Operator C">Operator C</MenuItem>
+                      </Select>
+                      {errors.operatorName && <FormHelperText>{errors.operatorName}</FormHelperText>}
+                    </FormControl>
+                  ) : key === "password" ? (
+                    <Stack direction="row" spacing={1} alignItems="center">
                       <FormControl fullWidth error={!!errors.password} variant="outlined">
                         <InputLabel htmlFor="password">Password</InputLabel>
                         <OutlinedInput
@@ -210,50 +229,50 @@ const CreateManager: React.FC<CreateManagerProps> = ({
                           }
                         />
                       </FormControl>
-                    </Grid>
-                    <Grid item xs={5}>
                       <Button
                         variant="contained"
                         color="secondary"
-                        sx={{ width: "100%", textTransform: "none", backgroundColor: "#67ABEB", borderRadius: "8px", color: "#282828" }}
+                        sx={{
+                          textTransform: "none",
+                          backgroundColor: "#67ABEB",
+                          borderRadius: "8px",
+                          color: "#282828",
+                          minWidth: "120px",
+                        }}
                         onClick={handleGeneratePassword}
                       >
                         Generate
                       </Button>
-                    </Grid>
-                    {errors.password && (
-                      <Grid item xs={12}>
-                        <Typography sx={inputErrorStyles}>{errors.password}</Typography>
-                      </Grid>
-                    )}
-                  </Grid>
-                ) : (
-                  <FormControl fullWidth error={!!errors[key]}>
-                    <InputLabel htmlFor={key}>{formatKey(key)}</InputLabel>
-                    <OutlinedInput
-                      id={key}
-                      name={key}
-                      placeholder={`Enter ${formatKey(key)}`}
-                      value={user[key as keyof typeof user]}
-                      onChange={handleManagerChange}
-                      label={formatKey(key)}
-                    />
-                    {errors[key] && <FormHelperText>{errors[key]}</FormHelperText>}
-                  </FormControl>
-                )}
-              </Grid>
-            ))}
-          </Grid>
-        </Grid>
+                    </Stack>
+                  ) : (
+                    <FormControl fullWidth error={!!errors[key]}>
+                      <InputLabel htmlFor={key}>{formatKey(key)}</InputLabel>
+                      <OutlinedInput
+                        id={key}
+                        name={key}
+                        placeholder={`Enter ${formatKey(key)}`}
+                        value={user[key as keyof typeof user]}
+                        onChange={handleManagerChange}
+                        label={formatKey(key)}
+                      />
+                      {errors[key] && <FormHelperText>{errors[key]}</FormHelperText>}
+                    </FormControl>
+                  )}
+                </Stack>
+              ))}
+            </Stack>
+          </Stack>
+        </Stack>
+
         <Button
           onClick={handleCreateManagerSubmit}
           sx={{
-            mt: 2,
+            mt: 3,
             width: "100%",
             backgroundColor: "#67ABEB",
             textTransform: "none",
             fontSize: "12px",
-            padding: "0.5rem",
+            padding: "0.6rem",
             borderRadius: "8px",
             color: '#181A1B',
           }}

@@ -16,13 +16,11 @@ import {
   Box,
   Stack,
 } from "@mui/material";
-
 import { formatKey } from "../../utils/format";
 import { User } from "./UsersTable";
 import CloseIcon from '@mui/icons-material/Close';
 import { inputStyles, selectStyles } from "../../styles/theme";
 import { fetchUserById } from "~/utils/api/users";
-import dayjs, { Dayjs } from "dayjs";
 import EditLogModalPage from "./EditLogModal";
 import { validateUser } from "~/utils/validation"
 import ConfirmUpdateManagerPage from "./ConfirmUpdateUser";
@@ -306,7 +304,7 @@ const UpdateManager: React.FC<UpdateManagerProps> = React.memo(({
                 }}
                 variant="contained"
               >
-                {isViewMode ? "Update" : "View"}
+                {isViewMode ? "View" : "Update"}
               </Button>
             </Box>
           </Box>

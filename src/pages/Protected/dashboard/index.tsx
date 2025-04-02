@@ -1,6 +1,6 @@
 import React, { Suspense } from "react";
-import { Box, Typography, Grid } from "@mui/material";
-import DashboardSkeleton from "~/components/dashboard/DashboardSkeleton"; // Skeleton Loader
+import { Typography, Stack } from "@mui/material";
+import DashboardSkeleton from "~/components/dashboard/DashboardSkeleton";
 
 const DashboardCardsPage = React.lazy(() => import("~/components/dashboard/DashboardCards"));
 const DrawResultsPage = React.lazy(() => import("~/components/dashboard/DrawResults"));
@@ -11,30 +11,32 @@ const SummaryWinnersDrawTimePage = React.lazy(() => import("~/components/dashboa
 
 const DashboardPage = () => {
   return (
-    <Box>
+    <Stack spacing={2}>
       <Suspense fallback={<DashboardSkeleton />}>
-      <Typography sx={{ fontWeight: 700 }} variant="h4">
-        Dashboard
-      </Typography>
+        <Typography sx={{ fontWeight: 700 }} variant="h4">
+          Dashboard
+        </Typography>
         <DashboardCardsPage />
-        <Box sx={{ display: "flex", justifyContent: "center", mt: 2 }}>
-          <Grid container spacing={2} alignItems="stretch">
-            <Grid item xs={12} md={4}>
-              <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
+        <Stack spacing={2} alignItems="center">
+          <Stack spacing={2} width="100%">
+            <Stack direction={{ xs: "column", md: "row" }} spacing={2} width="100%">
+              {/* Left Column */}
+              <Stack spacing={2} flex={1}>
                 <DrawResultsPage />
                 <TopBettingRegionPage />
                 <TopWinningRegionPage />
-              </Box>
-            </Grid>
-            <Grid item xs={12} md={8} sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
-              <SummaryBettorsBetsPlacedPage />
-              <SummaryWinnersDrawTimePage />
-            </Grid>
-          </Grid>
-        </Box>
+              </Stack>
+              {/* Right Column */}
+              <Stack spacing={2} flex={2}>
+                <SummaryBettorsBetsPlacedPage />
+                <SummaryWinnersDrawTimePage />
+              </Stack>
+            </Stack>
+          </Stack>
+        </Stack>
       </Suspense>
-    </Box>
-  );  
+    </Stack>
+  );
 };
 
 export default DashboardPage;
