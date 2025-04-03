@@ -1,14 +1,13 @@
 import React, { Suspense } from 'react';
-import { drawResultCard, oneLineCode, blackOpacityHover, visibleOnHover, secondPartCard, firstPartCard } from "../../styles/tailwindClasses";
+import { drawResultCard, oneLineCode, blackOpacityHover, visibleOnHover, secondPartCard, firstPartCard, badgeLiveStyle } from "../../styles/tailwindClasses";
 
 const UsersSkeletonPage = React.lazy(() => import("~/components/user/UsersSkeleton"));
 
 const drawData = [
-  { id: 1, title: "Ilocos Norte" },
-  { id: 2, title: "Ilocos Sur" },
-  { id: 3, title: "La Union" },
-  { id: 4, title: "Pangasinan" },
-  { id: 5, title: "Cagayan" },
+  { id: 1, title: "Ilocos Norte", hasLive: true },
+  { id: 2, title: "Ilocos Sur", hasLive: false },
+  { id: 3, title: "La Union", hasLive: true },
+  { id: 4, title: "Pangasinan", hasLive: false },
 ];
 
 const drawResults = [
@@ -26,6 +25,12 @@ const DrawCardsPage: React.FC = () => {
           {drawData.map((draw) => (
             <div key={draw.id}>
               <div className={firstPartCard}>
+                {/* Conditionally render Live Badge */}
+                {draw.hasLive && (
+                  <div className={badgeLiveStyle}>
+                    Live
+                  </div>
+                )}
                 <div className={blackOpacityHover}></div>
                 <a href="#" className={visibleOnHover}>
                   View Draw Feed
@@ -42,10 +47,7 @@ const DrawCardsPage: React.FC = () => {
                         {/* First set of numbers */}
                         <div className="flex gap-1">
                           {draw.numbers1.map((num, i) => (
-                            <div
-                              key={`set1-${index}-${i}`}
-                              className={drawResultCard}
-                            >
+                            <div key={`set1-${index}-${i}`} className={drawResultCard}>
                               {num}
                             </div>
                           ))}
@@ -53,10 +55,7 @@ const DrawCardsPage: React.FC = () => {
                         {/* Second set of numbers */}
                         <div className="flex gap-1">
                           {draw.numbers2.map((num, i) => (
-                            <div
-                              key={`set2-${index}-${i}`}
-                              className={drawResultCard}
-                            >
+                            <div key={`set2-${index}-${i}`} className={drawResultCard}>
                               {num}
                             </div>
                           ))}
