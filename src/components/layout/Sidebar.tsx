@@ -67,9 +67,11 @@ const Sidebar: React.FC<SidebarProps> = ({
           ? "/executives"
           : page === "Betting Summary"
             ? "/betting-summary"
-            : page === "Logout"
-              ? "/"
-              : `/${page.toLowerCase()}`;
+            : page === "Draw Summary"
+              ? "/draw-summary"
+              : page === "Logout"
+                ? "/"
+                : `/${page.toLowerCase()}`;
 
     // Define icons for each page.
     const icon =

@@ -1,4 +1,4 @@
-import React, { Suspense } from 'react';
+import React, { useState, useEffect, Suspense } from 'react';
 import { Box, Typography } from '@mui/material';
 
 const UsersPage = React.lazy(() => import("../users.tsx"));
@@ -24,7 +24,7 @@ const ManagersPage: React.FC = () => {
             </Typography>
           </Box>
           <Box>
-            <UserDashboardPage roleId={4} />
+            <UserDashboardPage roleId={1} />
           </Box>
           <UsersPage roleId={1} />
         </Box>

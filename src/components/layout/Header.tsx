@@ -16,15 +16,15 @@ interface HeaderProps {
 const getUserRole = (userTypeId: number) => {
   switch (userTypeId) {
     case 1:
-      return "Super Admin";
+      return "Collector";
     case 2:
-      return "Executive";
-    case 3:
       return "Manager";
+    case 3:
+      return "Executive";
     case 4:
-      return "Super Admin";
-    case 5:
       return "Admin";
+    case 5:
+      return "System Admin";
     default:
       return "Unknown Role";
   }

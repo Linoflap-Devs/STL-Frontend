@@ -131,7 +131,7 @@ const DrawResultsPage = () => {
       <Box sx={{ mt: 2, width: "100%" }}>
         {selectedRegion && !selectedProvince ? (
           <Box>
-            <Box sx={{ ...buttonNumberStyles, flex: 1, padding: 3,  }}>
+            <Box sx={{ ...buttonNumberStyles, flex: 1, padding: 4,  }}>
             <Typography sx={{ color: "#fff", textAlign: "center", fontSize: "16px" }}>
               Please select a province
             </Typography>
