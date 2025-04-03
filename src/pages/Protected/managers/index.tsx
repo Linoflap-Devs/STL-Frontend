@@ -24,9 +24,9 @@ const ManagersPage: React.FC = () => {
             </Typography>
           </Box>
           <Box>
-            <UserDashboardPage roleId={1} />
+            <UserDashboardPage roleId={2} />
           </Box>
-          <UsersPage roleId={1} />
+          <UsersPage roleId={2} />
         </Box>
       </Suspense>
     </>

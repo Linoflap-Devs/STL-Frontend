@@ -148,10 +148,8 @@ const ManagerTable: React.FC<ManagerTableProps> = ({ managers, onCreate, onEdit,
   };
 
   // Menu handling
-  const handleToggleMenu = (
-    event?: React.MouseEvent<HTMLButtonElement>,
-    user?: User
-  ) => {
+  const handleToggleMenu = (event?: React.MouseEvent<HTMLButtonElement>, user?: User) => {
+    console.log("Menu opened for user:", user);  // Debug log
     setAnchorEl(event?.currentTarget || null);
     setSelectedUser(user || null);
   };
@@ -363,11 +361,28 @@ const ManagerTable: React.FC<ManagerTableProps> = ({ managers, onCreate, onEdit,
                   <Menu
                     anchorEl={anchorEl}
                     open={Boolean(anchorEl)}
-                    onClose={() => handleToggleMenu()}
-                    MenuListProps={{ "aria-labelledby": "basic-button" }}
-                  >
-                    <MenuItem onClick={() => onEdit(user, "view")}>View</MenuItem>
-                    <MenuItem onClick={() => handleManagerSuspend(user)}>Delete</MenuItem>
+                    onClose={() => { console.log("Menu closed"); handleToggleMenu(); }}
+                    MenuListProps={{ "aria-labelledby": "basic-button" }} >
+                    <MenuItem
+                      onClick={() => {
+                        if (selectedUser) {
+                          console.log("View clicked for user:", selectedUser);
+                          onEdit(selectedUser);
+                        } else {
+                          console.error("No user selected!");
+                        }
+                      }}
+                    >
+                      View
+                    </MenuItem>
+                    <MenuItem
+                      onClick={() => {
+                        console.log("Delete clicked for user:", user);
+                        handleManagerSuspend(user);
+                      }}
+                    >
+                      Delete
+                    </MenuItem>
                   </Menu>
                   <ConfirmSuspendManagerPage
                     open={isVerifyModalOpen}

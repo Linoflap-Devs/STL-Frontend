@@ -8,6 +8,7 @@ const drawData = [
   { id: 2, title: "Ilocos Sur", hasLive: false },
   { id: 3, title: "La Union", hasLive: true },
   { id: 4, title: "Pangasinan", hasLive: false },
+  { id: 4, title: "Cagayan", hasLive: false },
 ];
 
 const drawResults = [
