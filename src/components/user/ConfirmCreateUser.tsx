@@ -39,7 +39,7 @@ const ConfirmCreateUserPage: React.FC<ConfirmCreateUserPageProps> = ({ open, onC
             // Construct the new user object
             const newUser = {
                 ...user,
-                userTypeId: 3,
+                userTypeId: 2,
             };
 
             // Create the user after verification

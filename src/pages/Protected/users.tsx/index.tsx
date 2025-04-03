@@ -4,6 +4,8 @@ import ManagerTable, { User } from '~/components/user/UsersTable';
 import CreateManager from '~/components/user/CreateUser';
 import UpdateManager from '~/components/user/UpdateUser';
 import { fetchUsers } from '~/utils/api/users';
+import { fetchOperators } from '~/utils/api/operators';
+
 import { fetchRegions, fetchProvinces } from '~/utils/api/location';
 
 const cities = require('philippines/cities');
@@ -24,26 +26,25 @@ const UsersPage: React.FC<UsersPageProps> = ({ roleId, }) => {
   const [isDisabled, setIsDisabled] = useState(true);
   const [isClicked, setIsClicked] = useState(false);
   const [refresh, setRefresh] = useState(false);
+  const [operators, setOperators] = useState<any[]>([]);
 
   const loadData = async () => {
     try {
-      const [userResponse, regionResponse, provinceResponse] = await Promise.all([
+      // Fetch users and operators concurrently
+      const [userResponse, operatorResponse] = await Promise.all([
         fetchUsers({}),
-        fetchRegions({}),
-        fetchProvinces({})
+        fetchOperators(),
       ]);
-
-      if (userResponse.success && regionResponse.success && provinceResponse.success) {
-        setRegions(regionResponse.data);
-        setProvinces(provinceResponse.data);
-
-        const cityData = cities.map((city: any) => ({
-          name: city.name,
-          province: city.province,
-        }));
-
-        setCityList(cityData);
-
+  
+      if (userResponse.success && operatorResponse.success) {
+        console.log("Fetched Operators:", operatorResponse.data);
+  
+        // Assuming the operator's name is a field in the operator object
+        const operatorMap = operatorResponse.data.reduce((map: { [key: string]: any }, operator: any) => {
+          map[operator.operatorName] = operator; // Map operator name to operator object
+          return map;
+        }, {});
+  
         const filteredUsers = userResponse.data
           .filter((user: { UserTypeId: number }) => user.UserTypeId === roleId)
           .map((user: any) => ({
@@ -55,16 +56,19 @@ const UsersPage: React.FC<UsersPageProps> = ({ roleId, }) => {
             Email: user.Email ?? 'N/A',
             DateOfRegistration: user.DateOfRegistration ?? 'N/A',
             CreatedBy: user.CreatedBy ?? 'N/A',
+            OperatorDetails: operatorMap[user.OperatorName] ?? null, // Combine the operator details
           }));
-
+  
+        // Update the state with the combined data
         setUsers(filteredUsers);
+        setOperators(operatorResponse.data);
       } else {
         console.error('Failed to fetch some data.');
       }
     } catch (error) {
       console.error('Error fetching data:', error);
     }
-  };
+  };  
 
   useEffect(() => {
     loadData();
@@ -142,6 +146,7 @@ const UsersPage: React.FC<UsersPageProps> = ({ roleId, }) => {
         onSubmit={handleSubmitUser}
         userData={selectedUser}
         managers={users}
+        operators={operators}
       />
       {isUpdateModalOpen && (
         <UpdateManager
