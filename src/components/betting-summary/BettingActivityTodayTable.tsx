@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import { Box, Typography, Divider } from "@mui/material";
 import MoneyIcon from "@mui/icons-material/AttachMoney";
-import fetchHistoricalRegion from "~/utils/api/getHistoricalRegion";
+// import fetchHistoricalRegion from "~/utils/api/getHistoricalRegion";
 
 // Define types
 interface RegionData {
@@ -15,7 +15,7 @@ const TableBettingActivityToday = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const prevRegionDataRef = useRef<RegionData[]>([]); // Use ref to store previous data
-
+/*
   useEffect(() => {
     fetchData();
   }, []);
@@ -88,6 +88,7 @@ const TableBettingActivityToday = () => {
     }
   };
 
+*/
   return (
     <Box sx={{ backgroundColor: "#171717", padding: 2, borderRadius: "10px" }}>
       <Box sx={{ display: "flex", mb: 1 }}>

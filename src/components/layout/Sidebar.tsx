@@ -5,7 +5,16 @@ import {
   Box,
   Typography,
   Divider,
+  List,
+  ListItem,
+  ListItemButton,
+  ListItemIcon,
+  ListItemText,
+  Collapse,
 } from "@mui/material";
+import ExpandLess from "@mui/icons-material/ExpandLess";
+import ExpandMore from "@mui/icons-material/ExpandMore";
+
 import MenuIcon from "@mui/icons-material/Menu";
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
@@ -26,16 +35,54 @@ import { UserSectionData } from "../../data/AdminSectionData";
 const drawerWidth = 240;
 const collapsedWidth = 0; // Fully collapsed sidebar will be 0px wide
 
+interface SubmenuItem {
+  name: string;
+  path: string;
+}
+const BETTING_SUBMENUS: SubmenuItem[] = [
+  { name: "Dashboard", path: "/betting-summary/dashboard" },
+  { name: "STL Pares", path: "/betting-summary/stl-pares" },
+  { name: "STL Swer2", path: "/betting-summary/stl-swer2" },
+  { name: "STL Swer3", path: "/betting-summary/stl-swer3" },
+  { name: "STL Swer4", path: "/betting-summary/stl-swer4" },
+];
+
 const Sidebar: React.FC = () => {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("md"));
+
   const [mobileOpen, setMobileOpen] = useState(false);
-  const [collapsed, setCollapsed] = useState(false);
   const [dateTime, setDateTime] = useState<Date | null>(null);
+  // Default Betting Summary Submenu is open.
+  const [openSubmenu, setOpenSubmenu] = useState<string | null>(null);
+  // Whole Sidebar
+  const [collapsed, setCollapsed] = useState(false);
 
   const router = useRouter();
+  // asPath - current URL path(pathname&query/search params)
   const currentPath = router.asPath;
 
+  // Handle Logout
+  const handleLogout = async () => {
+    try {
+      await axiosInstance.delete("/auth/logout", {
+        withCredentials: true, // Ensures auth cookie is sent to invalidate session
+      });
+      window.location.href = "/auth/login";
+    } catch (error: any) {
+      if (error.response) {
+        console.error(
+          "Logout Failed: ",
+          error.response.data.message || "Unknown Error"
+        );
+        // showToast("Logout Failed, Please try again.")
+      } else {
+        console.error("Network error during logout:", error.message);
+      }
+    }
+  };
+
+  // Update Date and Time
   useEffect(() => {
     const updateDateTime = () => setDateTime(new Date());
     updateDateTime();
@@ -43,54 +90,60 @@ const Sidebar: React.FC = () => {
     return () => clearInterval(interval);
   }, []);
 
+  const formattedDate = dateTime
+    ? dateTime.toLocaleDateString("en-PH", {
+        month: "long",
+        day: "numeric",
+        year: "numeric",
+      })
+    : "N/A"; // Fallback value
+
+  const formattedTime = dateTime
+    ? dateTime.toLocaleTimeString("en-PH", {
+        hour: "2-digit",
+        minute: "2-digit",
+        second: "2-digit",
+        hour12: true,
+      })
+    : "N/A";
+
+  // Set default submenu based on path
+  useEffect(() => {
+    if (router.pathname.startsWith("/betting-summary")) {
+      setOpenSubmenu("Betting Summary");
+      console.log("Navigating to:", router.pathname)
+      router.push("/betting-summary/dashboard");
+    }
+  }, [router.pathname]);
+
   if (!dateTime) return <p>Loading...</p>;
 
-  const formattedDate = dateTime.toLocaleDateString("en-PH", {
-    month: "long",
-    day: "numeric",
-    year: "numeric",
-  });
-  const formattedTime = dateTime.toLocaleTimeString("en-PH", {
-    hour: "2-digit",
-    minute: "2-digit",
-    second: "2-digit",
-    hour12: true,
-  });
-
+  // Toggle Handlers
   const handleDrawerToggle = () => {
     setMobileOpen(!mobileOpen);
   };
-
-  const handleLogout = async () => {
-    try {
-      await axiosInstance.delete("/auth/logout");
-      window.location.href = "/auth/login";
-    } catch (error) {
-      console.error("Logout failed:", error);
-    }
-  };
-
   const toggleSidebar = () => {
     setCollapsed(!collapsed);
   };
 
   // Render a single menu item based on mode (collapsed/full)
+  // 'page' was from UserSectionData.pages.map
   const renderMenuItem = (page: string) => {
     // Map pages to routes as per your logic.
     const formattedPage =
       page === "Managers"
         ? "/managers"
         : page === "Executive"
-        ? "/executives"
-        : page === "Winning Summary"
-        ? "/winning-summary"
-        : page === "Betting Summary"
-        ? "/betting-summary"
-        : page === "Draw Summary"
-        ? "/draw-summary"
-        : page === "Logout"
-        ? "/"
-        : `/${page.toLowerCase()}`;
+          ? "/executives"
+          : page === "Winning Summary"
+            ? "/winning-summary"
+            : page === "Betting Summary"
+              ? "/betting-summary"
+              : page === "fDraw Summary"
+                ? "/draw-summary"
+                : page === "Logout"
+                  ? "/"
+                  : `/${page.toLowerCase()}`;
 
     // Define icons for each page.
     const icon =
@@ -113,6 +166,95 @@ const Sidebar: React.FC = () => {
       ) : (
         <HomeIcon sx={{ mr: collapsed ? 0 : 1, fontSize: "1.2rem" }} />
       );
+
+    // Special handling for Betting Summary with submenu
+    if (page === "Betting Summary") {
+      return (
+        <Box key={page}>
+          <ListItemButton
+            onClick={() => {
+              if (collapsed) setCollapsed(false);
+              // OpenSubmenu === Betting Summary
+              setOpenSubmenu(openSubmenu === page ? null : page);
+              if (!currentPath.startsWith("/betting-summary")) {
+                console.log("Navigating to: dashboard" )
+                router.push("/betting-summary/dashboard");
+              }
+            }}
+            sx={{
+              px: collapsed ? 0 : 1,
+              py: 1.5,
+              borderRadius: "6px",
+              my: 1,
+              color: currentPath.startsWith("/betting-summary")
+                ? "#BB86FC"
+                : "inherit",
+            }}
+          >
+            <CasinoIcon
+              sx={{
+                fontSize: collapsed ? "1.4rem" : "1.3rem",
+                mr: collapsed ? 0 : 1,
+                ml: collapsed ? 0.5 : 0,
+              }}
+            />
+            {!collapsed && (
+              <>
+                <Typography
+                  sx={{
+                    flexGrow: 1,
+                    fontSize: 14,
+                    fontWeight: currentPath.startsWith("/betting-summary")
+                      ? "700"
+                      : "300",
+                  }}
+                >
+                  {page}
+                </Typography>
+                {openSubmenu === page ? <ExpandLess /> : <ExpandMore />}
+              </>
+            )}
+          </ListItemButton>
+
+          <Collapse
+            in={!collapsed && openSubmenu === page}
+            timeout="auto"
+            unmountOnExit
+          >
+            <List component="div" disablePadding>
+              {BETTING_SUBMENUS.map((subItem) => (
+                <ListItem key={subItem.path} disablePadding sx={{ pl: 4 }}>
+                  <ListItemButton
+                    component="a"
+                    href={subItem.path}
+                    selected={currentPath === subItem.path}
+                    sx={{
+                      py: 1,
+                      borderRadius: "6px",
+                      "&.Mui-selected": {
+                        backgroundColor: "rgba(187, 134, 252, 0.16)",
+                        color: "#BB86FC",
+                      },
+                    }}
+                  >
+                    <ListItemText
+                      primary={subItem.name}
+                      primaryTypographyProps={{
+                        fontSize: 14,
+                        fontWeight:
+                          currentPath === `/betting-summary/${subItem.path}`
+                            ? "700"
+                            : "300",
+                      }}
+                    />
+                  </ListItemButton>
+                </ListItem>
+              ))}
+            </List>
+          </Collapse>
+        </Box>
+      );
+    }
 
     return (
       <Box
@@ -261,10 +403,14 @@ const Sidebar: React.FC = () => {
                   transition: "opacity 0.3s ease",
                 }}
               >
-                <Typography sx={{ color: "white", fontWeight: "400", fontSize: 12.4 }}>
+                <Typography
+                  sx={{ color: "white", fontWeight: "400", fontSize: 12.4 }}
+                >
                   {formattedDate}
                 </Typography>
-                <Typography sx={{ color: "white", fontWeight: "700", fontSize: 25 }}>
+                <Typography
+                  sx={{ color: "white", fontWeight: "700", fontSize: 25 }}
+                >
                   {formattedTime}
                 </Typography>
               </Box>
@@ -286,22 +432,23 @@ const Sidebar: React.FC = () => {
               py: 1,
               borderRadius: "6px",
               textDecoration: "none",
-              mb: 1
+              mb: 1,
             }}
           >
             <Box
-              sx={{ cursor: 'pointer', display: 'flex', }}
-              component="a"             
+              sx={{ cursor: "pointer", display: "flex" }}
+              component="a"
               onClick={(e) => {
-              e.preventDefault();
-              handleLogout();
-            }} > 
-            <LogoutIcon sx={{ fontSize: "1.2rem" }} />
-            {!collapsed && (
-              <Typography sx={{ ml: 1, fontSize: 14, fontWeight: 700, }}>
-                Logout
-              </Typography>
-            )}
+                e.preventDefault();
+                handleLogout();
+              }}
+            >
+              <LogoutIcon sx={{ fontSize: "1.2rem" }} />
+              {!collapsed && (
+                <Typography sx={{ ml: 1, fontSize: 14, fontWeight: 700 }}>
+                  Logout
+                </Typography>
+              )}
             </Box>
           </Box>
         </Box>

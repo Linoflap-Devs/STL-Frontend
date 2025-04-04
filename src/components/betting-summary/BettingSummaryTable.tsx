@@ -33,7 +33,12 @@ export interface User {
   [key: string]: any;
 }
 
-const TableBettingSummary: React.FC = () => {
+interface TableBettingActivityTodayProps {
+  gameCategory?: string;
+}
+const TableBettingSummary: React.FC<TableBettingActivityTodayProps> = ({gameCategory}) => {
+  const [data, setData] = React.useState([])
+
   const [transactions, setTransactions] = useState<User[]>([]);
   const [filteredTransactions, setFilteredTransactions] = useState<User[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
@@ -46,6 +51,18 @@ const TableBettingSummary: React.FC = () => {
   // Fetch data on component mount
   useEffect(() => {
     const fetchData = async () => {
+
+    //   let url = '/api/betting-activity/today';
+    //   if (gameCategory) {
+    //     url += `?category=${gameCategory}`;
+    //   }
+      
+    //   const response = await fetch(url);
+    //   const result = await response.json();
+    //   setData(result);
+    // };
+
+    // fetchData();
       try {
         const queryParams = {
           page: 1,
@@ -81,6 +98,8 @@ const TableBettingSummary: React.FC = () => {
     };
 
     fetchData();
+
+    // gameCategory as dependency
   }, []);
 
   // Apply search functionality

@@ -1,22 +1,21 @@
 import React, { useState, useEffect } from "react";
 import { Box, Typography, Grid, Button } from "@mui/material";
-import { useRouter } from 'next/router';
+import { useRouter } from "next/router";
 
 // Components
 import DashboardCardsPage from "~/components/dashboard/DashboardCards";
-import TableBettingActivityToday from '~/components/betting-summary/BettingActivityTodayTable'
+import TableBettingActivityToday from "~/components/betting-summary/BettingActivityTodayTable";
 import ChartBettorsvsBetsPlacedSummary from "~/components/betting-summary/BettorsvsBetsPlacedChart";
 import ChartBetTypeSummary from "~/components/betting-summary/BetTypeChart";
 import TableBettingSummary from "~/components/betting-summary/BettingSummaryTable";
 
-
-interface BettingSummaryPageProps {
+interface StlParesPageProps {
   GameCategory?: string;
 }
 
-const BettingSummaryPage: React.FC<BettingSummaryPageProps> = ({ GameCategory = 'dashboard' }) => {
-
-  
+const StlPares: React.FC<StlParesPageProps> = ({
+  GameCategory = "dashboard",
+}) => {
   const router = useRouter();
 
   // Map game categories to display names
@@ -43,30 +42,37 @@ const BettingSummaryPage: React.FC<BettingSummaryPageProps> = ({ GameCategory = 
       <Typography sx={{ fontWeight: 700 }} variant="h4">
         {/* {getPageTitle()} */}
       </Typography>
-      
+
       <Box>
         <DashboardCardsPage />
         {/* <DashboardCardsPage gameCategory={gameCategory === 'dashboard' ? undefined : gameCategory} /> */}
       </Box>
-      
+
       <Box sx={{ mt: 2 }}>
         <Grid container spacing={2} alignItems="stretch">
           <Grid item xs={12} md={6}>
-            <TableBettingActivityToday 
-              // gameCategory={gameCategory === 'dashboard' ? undefined : gameCategory} 
+            <TableBettingActivityToday
+            // gameCategory={gameCategory === 'dashboard' ? undefined : gameCategory}
             />
             {/* <TableBettingActivityToday 
               gameCategory={gameCategory === 'dashboard' ? undefined : gameCategory} 
             /> */}
           </Grid>
-          
+
           <Grid item xs={12} md={6}>
-            <Box sx={{ display: "flex", flexDirection: "column", gap: 2, height: "100%" }}>
-              <ChartBettorsvsBetsPlacedSummary/>
+            <Box
+              sx={{
+                display: "flex",
+                flexDirection: "column",
+                gap: 2,
+                height: "100%",
+              }}
+            >
+              <ChartBettorsvsBetsPlacedSummary />
               {/* <ChartBettorsvsBetsPlacedSummary 
                 gameCategory={gameCategory === 'dashboard' ? undefined : gameCategory} 
               /> */}
-              <ChartBetTypeSummary/>
+              <ChartBetTypeSummary />
               {/* <ChartBetTypeSummary 
                 gameCategory={gameCategory === 'dashboard' ? undefined : gameCategory} 
               /> */}
@@ -77,7 +83,12 @@ const BettingSummaryPage: React.FC<BettingSummaryPageProps> = ({ GameCategory = 
 
       <Box sx={{ mt: 2 }}>
         <Grid container spacing={2}>
-          <Grid item xs={12} md={6} sx={{ display: "flex", justifyContent: "flex-end" }}>
+          <Grid
+            item
+            xs={12}
+            md={6}
+            sx={{ display: "flex", justifyContent: "flex-end" }}
+          >
             <Button
               variant="contained"
               sx={{
@@ -89,7 +100,12 @@ const BettingSummaryPage: React.FC<BettingSummaryPageProps> = ({ GameCategory = 
               Show Comparison
             </Button>
           </Grid>
-          <Grid item xs={12} md={6} sx={{ display: "flex", justifyContent: "flex-end" }}>
+          <Grid
+            item
+            xs={12}
+            md={6}
+            sx={{ display: "flex", justifyContent: "flex-end" }}
+          >
             <Button
               variant="contained"
               sx={{
@@ -104,17 +120,16 @@ const BettingSummaryPage: React.FC<BettingSummaryPageProps> = ({ GameCategory = 
         </Grid>
       </Box>
 
-      <Box sx={{ width: '100%', mt: 2 }}>
-        <TableBettingSummary 
-          gameCategory={GameCategory === 'dashboard' ? undefined : GameCategory} 
+      <Box sx={{ width: "100%", mt: 2 }}>
+        <TableBettingSummary
+          gameCategory={GameCategory === "dashboard" ? undefined : GameCategory}
         />
       </Box>
     </Box>
   );
 };
 
-export default BettingSummaryPage;
-
+export default StlPares;
 
 // Update Child Components:
 // Example for TableBettingActivityToday

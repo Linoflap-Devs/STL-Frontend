@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import { Box, Typography, Divider } from "@mui/material";
 import MoneyIcon from "@mui/icons-material/AttachMoney";
-import fetchHistoricalRegion from "~/utils/api/getHistoricalRegion";
+// import fetchHistoricalRegion from "~/utils/api/getHistoricalRegion";
 
 // Define types
 interface RegionData {
@@ -16,77 +16,77 @@ const WinningActivityToday = () => {
   const [error, setError] = useState<string | null>(null);
   const prevRegionDataRef = useRef<RegionData[]>([]); // Use ref to store previous data
 
-  useEffect(() => {
-    fetchData();
-  }, []);
+  // useEffect(() => {
+  //   fetchData();
+  // }, []);
 
-  const fetchData = async () => {
-    try {
-      setLoading(true);
-      setError(null);
+  // const fetchData = async () => {
+  //   try {
+  //     setLoading(true);
+  //     setError(null);
 
-      console.log("Fetching historical region data...");
-      const response = await fetchHistoricalRegion({});
+  //     console.log("Fetching historical region data...");
+  //     const response = await fetchHistoricalRegion({});
 
-      console.log("Raw API Response:", response);
+  //     console.log("Raw API Response:", response);
 
-      // Validate response
-      if (
-        !response ||
-        typeof response !== "object" ||
-        !Array.isArray(response.data)
-      ) {
-        throw new Error("Invalid API response format.");
-      }
+  //     // Validate response
+  //     if (
+  //       !response ||
+  //       typeof response !== "object" ||
+  //       !Array.isArray(response.data)
+  //     ) {
+  //       throw new Error("Invalid API response format.");
+  //     }
 
-      // Aggregate totalBetAmount per Region
-      const aggregatedData: Record<string, number> = {};
-      response.data.forEach((item: any) => {
-        if (!item.Region) return;
-        const region = item.Region;
-        const betAmount = Number(item.TotalBetAmount) || 0; // Ensure it's a number
+  //     // Aggregate totalBetAmount per Region
+  //     const aggregatedData: Record<string, number> = {};
+  //     response.data.forEach((item: any) => {
+  //       if (!item.Region) return;
+  //       const region = item.Region;
+  //       const betAmount = Number(item.TotalBetAmount) || 0; // Ensure it's a number
 
-        aggregatedData[region] = (aggregatedData[region] || 0) + betAmount;
-      });
+  //       aggregatedData[region] = (aggregatedData[region] || 0) + betAmount;
+  //     });
 
-      console.log("Aggregated Data:", aggregatedData);
+  //     console.log("Aggregated Data:", aggregatedData);
 
-      // Convert to array and sort
-      const data: RegionData[] = Object.entries(aggregatedData).map(
-        ([Region, totalBetAmount]) => ({
-          Region,
-          totalBetAmount,
-        })
-      );
+  //     // Convert to array and sort
+  //     const data: RegionData[] = Object.entries(aggregatedData).map(
+  //       ([Region, totalBetAmount]) => ({
+  //         Region,
+  //         totalBetAmount,
+  //       })
+  //     );
 
-      const sortedData = data.sort(
-        (a, b) => b.totalBetAmount - a.totalBetAmount
-      );
-      console.log("Sorted Data:", sortedData);
+  //     const sortedData = data.sort(
+  //       (a, b) => b.totalBetAmount - a.totalBetAmount
+  //     );
+  //     console.log("Sorted Data:", sortedData);
 
-      // Optimize trend calculation using a Map for fast lookup
-      const prevDataMap = new Map(
-        prevRegionDataRef.current.map((r, index) => [r.Region, index])
-      );
+  //     // Optimize trend calculation using a Map for fast lookup
+  //     const prevDataMap = new Map(
+  //       prevRegionDataRef.current.map((r, index) => [r.Region, index])
+  //     );
 
-      const updatedData = sortedData.map((region, index) => {
-        const prevIndex = prevDataMap.get(region.Region);
-        const trend = prevIndex === undefined ? 0 : prevIndex - index;
-        return { ...region, trend };
-      });
+  //     const updatedData = sortedData.map((region, index) => {
+  //       const prevIndex = prevDataMap.get(region.Region);
+  //       const trend = prevIndex === undefined ? 0 : prevIndex - index;
+  //       return { ...region, trend };
+  //     });
 
-      console.log("Final Data with Trends:", updatedData);
+  //     console.log("Final Data with Trends:", updatedData);
 
-      // Update state and store previous data
-      prevRegionDataRef.current = updatedData;
-      setRegionData(updatedData);
-    } catch (error: any) {
-      console.error("Error fetching data:", error.message || error);
-      setError(`Failed to load data: ${error.message || "Unknown error"}`);
-    } finally {
-      setLoading(false);
-    }
-  };
+  //     // Update state and store previous data
+  //     prevRegionDataRef.current = updatedData;
+  //     setRegionData(updatedData);
+  //   } catch (error: any) {
+  //     console.error("Error fetching data:", error.message || error);
+  //     setError(`Failed to load data: ${error.message || "Unknown error"}`);
+  //   } finally {
+  //     setLoading(false);
+  //   }
+  // };
 
   return (
     <Box sx={{ backgroundColor: "#171717", padding: 2, borderRadius: "10px" }}>
