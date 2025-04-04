@@ -1,11 +1,13 @@
 import { useState } from "react";
-import { Typography, Box, Tooltip, Dialog, IconButton, DialogContent, Button, TextField } from "@mui/material";
+import { Typography, Box, Tooltip, Dialog, IconButton, DialogContent, Button, TextField, FormControl, OutlinedInput, FormHelperText, InputLabel } from "@mui/material";
 import { verifyPass } from "~/utils/api/auth";
 import { addUser } from "~/utils/api/users";
 import Swal from "sweetalert2";
 import { LoginSectionData } from "../../data/LoginSectionData";
 import ArrowBackIosNewIcon from "@mui/icons-material/ArrowBackIosNew";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
+import { inputStyles } from "~/styles/theme";
+import { User } from "./UsersTable";
 
 interface ConfirmCreateUserPageProps {
     open: boolean;
@@ -13,9 +15,11 @@ interface ConfirmCreateUserPageProps {
     onVerified: () => void;
     user: any;
     onSubmit: (newUser: any) => void;
+    //selectedUser: User | null; // for remarks
+    //setSelectedUser: React.Dispatch<React.SetStateAction<User | null>>; // for remarks
 }
 
-const ConfirmCreateUserPage: React.FC<ConfirmCreateUserPageProps> = ({ open, onClose, user, onSubmit }) => {
+const ConfirmCreateUserPage: React.FC<ConfirmCreateUserPageProps> = ({ open, onClose, user, onSubmit, }) => {
     const [password, setPassword] = useState("");
     const [error, setError] = useState("");
     const [showPassword, setShowPassword] = useState<boolean>(false);
@@ -34,7 +38,7 @@ const ConfirmCreateUserPage: React.FC<ConfirmCreateUserPageProps> = ({ open, onC
                 setError("Invalid password. Please try again.");
                 return;
             }
-            setError(""); // Clear previous errors
+            setError("");
 
             // Construct the new user object
             const newUser = {
@@ -78,6 +82,12 @@ const ConfirmCreateUserPage: React.FC<ConfirmCreateUserPageProps> = ({ open, onC
         }
     };
 
+    // const handleManagerChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    //     if (selectedUser) {
+    //         setSelectedUser((prevUser) => prevUser ? { ...prevUser, remarks: e.target.value } : null);
+    //     }
+    // };
+
     return (
         <Dialog open={open} onClose={onClose}>
             <DialogContent sx={{ paddingX: 0, }}>
@@ -109,6 +119,7 @@ const ConfirmCreateUserPage: React.FC<ConfirmCreateUserPageProps> = ({ open, onC
                         width: "100%",
                         justifyContent: "center",
                         alignItems: "center",
+                        paddingX: 1,
                     }}
                 >
                     <Box
@@ -127,7 +138,6 @@ const ConfirmCreateUserPage: React.FC<ConfirmCreateUserPageProps> = ({ open, onC
                                 flexDirection: "column",
                                 textAlign: "center",
                                 marginTop: "1rem",
-                                //paddingX: 3,
                             }}
                         >
                             <Box
@@ -148,7 +158,6 @@ const ConfirmCreateUserPage: React.FC<ConfirmCreateUserPageProps> = ({ open, onC
                                 }}
                                 loading="lazy"
                             />
-
                             <Typography variant="h4" sx={{ fontWeight: "bold" }}>
                                 {LoginSectionData.ConfirmIdentity}
                             </Typography>
@@ -157,7 +166,29 @@ const ConfirmCreateUserPage: React.FC<ConfirmCreateUserPageProps> = ({ open, onC
                             >
                                 {LoginSectionData.ConfirmIdentityDescription}
                             </Typography>
-                            <Box sx={{ paddingX: 5, }}>
+                            <Box sx={{ paddingX: 5, mt: 3.5, }}>
+                                <FormControl
+                                    fullWidth
+                                    variant="outlined"
+                                    sx={inputStyles}
+                                >
+                                    <InputLabel htmlFor="remarks">Remarks</InputLabel>
+                                    <OutlinedInput
+                                        id="remarks"
+                                        name="remarks"
+                                        placeholder="Enter Remarks"
+                                        //value={selectedUser?.remarks || ""}
+                                        //onChange={handleManagerChange}
+                                        multiline
+                                        minRows={3}
+                                        label="Remarks"
+                                        onKeyDown={(e) => {
+                                            if (e.key === "Tab") {
+                                                e.stopPropagation();
+                                            }
+                                        }}
+                                    />
+                                </FormControl>
                                 <TextField
                                     label="Password"
                                     placeholder="Enter your Password"
@@ -168,7 +199,7 @@ const ConfirmCreateUserPage: React.FC<ConfirmCreateUserPageProps> = ({ open, onC
                                     error={!!error}
                                     helperText={error}
                                     autoFocus
-                                    sx={{ marginTop: 4, }}
+                                    sx={{ marginTop: 2.5, }}
                                     InputProps={{
                                         endAdornment: (
                                             <IconButton
@@ -194,9 +225,8 @@ const ConfirmCreateUserPage: React.FC<ConfirmCreateUserPageProps> = ({ open, onC
                                         py: 1.5,
                                         borderRadius: "8px",
                                         textTransform: "none",
-                                        marginTop: 3,
+                                        mt: 4,
                                     }}
-
                                     disabled={false}
                                 >
                                     Confirm

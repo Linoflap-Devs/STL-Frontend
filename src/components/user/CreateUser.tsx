@@ -47,7 +47,7 @@ const CreateManager: React.FC<CreateManagerProps> = ({
     lastName: userData?.lastName ?? "",
     suffix: userData?.suffix ?? "",
     operatorName: userData?.operatorName ?? "",
-    operatorId: userData?.operatorId ?? "",  // Add operatorId here
+    operatorId: userData?.operatorId ?? "",
     phoneNumber: userData?.phoneNumber ?? "",
     email: userData?.email ?? "",
     password: "",
@@ -56,8 +56,8 @@ const CreateManager: React.FC<CreateManagerProps> = ({
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
   const [showPassword, setShowPassword] = useState(false);
   const [isVerifyModalOpen, setIsVerifyModalOpen] = useState(false);
+  const [selectedUser, setSelectedUser] = useState<User | null>(null);
 
-  // add operator here
   const handleManagerChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement> | SelectChangeEvent<string>
   ) => {
@@ -71,14 +71,14 @@ const CreateManager: React.FC<CreateManagerProps> = ({
         setUser((prevUser) => ({
           ...prevUser,
           operatorName: selectedOperator.OperatorName,  // Update operatorName
-          operatorId: selectedOperator.OperatorId.toString(),  // Update operatorId (ensure it's a string)
+          operatorId: selectedOperator.OperatorId.toString(),
         }));
       }
     } else {
-      // For other fields, just update the state as usual
+      // For other field
       setUser((prevUser) => ({ ...prevUser, [name]: value }));
     }
-  };  
+  };
 
   const handleCreateManagerSubmit = async () => {
     const validationErrors = validateUser(user);
@@ -207,29 +207,29 @@ const CreateManager: React.FC<CreateManagerProps> = ({
               {["operatorName", "email", "password"].map((key) => (
                 <Stack key={key} spacing={1}>
                   {key === "operatorName" ? (
-<FormControl fullWidth error={!!errors.operatorId}>
-  <InputLabel id="operatorName-label">Operator Name</InputLabel>
-  <Select
-    labelId="operatorName-label"
-    id="operatorName"
-    name="operatorName"
-    value={user.operatorId || ""}  // Use operatorId as the value
-    onChange={handleManagerChange}
-    label="Operator Name"
-  >
-    <MenuItem value="">Select an operator</MenuItem>
-    {operators && operators.length > 0 ? (
-      operators.map((operator: { OperatorName: string; OperatorId: number }) => (
-        <MenuItem key={operator.OperatorId} value={operator.OperatorId}>
-          {operator.OperatorName}  {/* Display operatorName */}
-        </MenuItem>
-      ))
-    ) : (
-      <MenuItem value="">No operators available</MenuItem>
-    )}
-  </Select>
-  {errors.operatorId && <FormHelperText>{errors.operatorId}</FormHelperText>}
-</FormControl>
+                    <FormControl fullWidth error={!!errors.operatorId}>
+                      <InputLabel id="operatorName-label">Operator Name</InputLabel>
+                      <Select
+                        labelId="operatorName-label"
+                        id="operatorName"
+                        name="operatorName"
+                        value={user.operatorId || ""}
+                        onChange={handleManagerChange}
+                        label="Operator Name"
+                      >
+                        <MenuItem value="">Select an operator</MenuItem>
+                        {operators && operators.length > 0 ? (
+                          operators.map((operator: { OperatorName: string; OperatorId: number }) => (
+                            <MenuItem key={operator.OperatorId} value={operator.OperatorId}>
+                              {operator.OperatorName}
+                            </MenuItem>
+                          ))
+                        ) : (
+                          <MenuItem value="">No operators available</MenuItem>
+                        )}
+                      </Select>
+                      {errors.operatorId && <FormHelperText>{errors.operatorId}</FormHelperText>}
+                    </FormControl>
                   ) : key === "password" ? (
                     <Stack direction="row" spacing={1} alignItems="center">
                       <FormControl fullWidth error={!!errors.password} variant="outlined">
@@ -312,6 +312,8 @@ const CreateManager: React.FC<CreateManagerProps> = ({
             onVerified={handleCreateManagerSubmit}
             user={user}
             onSubmit={onSubmit}
+            //selectedUser={user}
+            //setSelectedUser={setSelectedUser}
           />
         )}
       </DialogContent>

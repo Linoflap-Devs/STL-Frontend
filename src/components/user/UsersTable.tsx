@@ -388,8 +388,8 @@ const ManagerTable: React.FC<ManagerTableProps> = ({ managers, onCreate, onEdit,
                     open={isVerifyModalOpen}
                     onClose={() => setIsVerifyModalOpen(false)}
                     onVerified={() => setIsVerifyModalOpen(false)}
-                    selectedUser={user}
                     onSubmit={onSubmit}
+                    selectedUser={user}
                     setSelectedUser={setSelectedUser}
                   />
                 </TableCell>
