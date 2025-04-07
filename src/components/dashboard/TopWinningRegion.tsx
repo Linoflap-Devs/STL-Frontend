@@ -48,8 +48,6 @@ const TopWinningRegionPage = () => {
         trend: index % 2 === 0 ? "up" : "down",
       }));
 
-    //console.log("Final Ranked Data:", ranked);
-
     setRankedRegions(ranked);
   };
 

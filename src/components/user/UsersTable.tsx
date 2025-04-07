@@ -82,7 +82,6 @@ const ManagerTable: React.FC<ManagerTableProps> = ({ managers, onCreate, onEdit,
     CreatedBy: "",
     Status: "",
     DateOfRegistration: "",
-    OperatorName: "",
   });
 
   const filteredUsers = filterData(

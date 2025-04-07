@@ -73,7 +73,7 @@ const UserDashboardPage: React.FC<UserDashboardPageProps> = ({ roleId }) => {
 
         const response = await fetchUsers({ roleId });
 
-        console.log("API Response:", response);
+        console.log("API Response USER DASHBOARD:", response);
 
         if (response.success) {
           const today = new Date();
@@ -141,6 +141,7 @@ const UserDashboardPage: React.FC<UserDashboardPageProps> = ({ roleId }) => {
     fetchData();
   }, [roleId]);
 
+
   useEffect(() => {
     if (!dashboardData || Object.keys(dashboardData).length === 0) return;
     const newChartData = [
@@ -150,7 +151,7 @@ const UserDashboardPage: React.FC<UserDashboardPageProps> = ({ roleId }) => {
         data: regions.map((region) => {
           const mappedRegion = regionMap[region];
           const value = dashboardData[mappedRegion]?.totalUsers || 0;
-          console.log(`Region: ${region} (${mappedRegion}), Total Managers: ${value}`);
+          // /console.log(`Region: ${region} (${mappedRegion}), Total Managers: ${value}`);
           return value;
         }),
       },
@@ -160,7 +161,7 @@ const UserDashboardPage: React.FC<UserDashboardPageProps> = ({ roleId }) => {
         data: regions.map((region) => {
           const mappedRegion = regionMap[region];
           const value = dashboardData[mappedRegion]?.activeUsers || 0;
-          console.log(`Region: ${region} (${mappedRegion}), Active Managers: ${value}`);
+          //console.log(`Region: ${region} (${mappedRegion}), Active Managers: ${value}`);
           return value;
         }),
       },
@@ -170,7 +171,7 @@ const UserDashboardPage: React.FC<UserDashboardPageProps> = ({ roleId }) => {
         data: regions.map((region) => {
           const mappedRegion = regionMap[region];
           const value = dashboardData[mappedRegion]?.inactiveUsers || 0;
-          console.log(`Region: ${region} (${mappedRegion}), Inactive Managers: ${value}`);
+          //console.log(`Region: ${region} (${mappedRegion}), Inactive Managers: ${value}`);
           return value;
         }),
       },
@@ -180,7 +181,7 @@ const UserDashboardPage: React.FC<UserDashboardPageProps> = ({ roleId }) => {
         data: regions.map((region) => {
           const mappedRegion = regionMap[region];
           const value = dashboardData[mappedRegion]?.suspendedUsers || 0;
-          console.log(`Region: ${region} (${mappedRegion}), Suspended Managers: ${value}`);
+          //console.log(`Region: ${region} (${mappedRegion}), Suspended Managers: ${value}`);
           return value;
         }),
       },
@@ -190,7 +191,7 @@ const UserDashboardPage: React.FC<UserDashboardPageProps> = ({ roleId }) => {
         data: regions.map((region) => {
           const mappedRegion = regionMap[region];
           const value = dashboardData[mappedRegion]?.newUsers || 0;
-          console.log(`Region: ${region} (${mappedRegion}), New Managers: ${value}`);
+          //console.log(`Region: ${region} (${mappedRegion}), New Managers: ${value}`);
           return value;
         }),
       },
@@ -252,6 +253,7 @@ const UserDashboardPage: React.FC<UserDashboardPageProps> = ({ roleId }) => {
           </Box>
         ))}
       </Box>
+
       {/* Chart Display */}
       <Box sx={{ mt: 1 }}>
         <Box sx={{ padding: 2, backgroundColor: "#171717", borderRadius: "10px" }}>
@@ -280,6 +282,7 @@ const UserDashboardPage: React.FC<UserDashboardPageProps> = ({ roleId }) => {
               </Button>
             </Box>
           </Box>
+          
           <Box sx={{ height: 270, width: "100%", minWidth: 0 }}>
             <BarChart
               xAxis={[{ label: "REGIONS", scaleType: "band", data: regions }]}

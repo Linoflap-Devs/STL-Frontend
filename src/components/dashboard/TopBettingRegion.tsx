@@ -18,13 +18,18 @@ const TopBettingRegionPage = () => {
   >([]);
 
   const getBettingRegions = async () => {
-    const response = await fetchHistoricalRegion();
+    const today = new Date().toISOString().split('T')[0];
 
+    console.log("Date Today, TopBettingRegion: ", today)
+  
+    // Assuming fetchHistoricalRegion accepts a date parameter
+    const response = await fetchHistoricalRegion({ date: today });
+  
     if (!response.success || response.data.length === 0) {
       console.warn("No data found in API response!");
       return;
     }
-
+  
     // Aggregate TotalBettors per RegionId using reduce()
     const regionMap: Map<number, RegionData> = response.data.reduce((map: { get: (arg0: any) => any; set: (arg0: any, arg1: any) => void; }, entry: { RegionId: any; TotalBettors: any; }) => {
       const existing = map.get(entry.RegionId);
@@ -35,24 +40,22 @@ const TopBettingRegionPage = () => {
       }
       return map;
     }, new Map<number, RegionData>());
-
+  
     // Convert to array and explicitly cast to RegionData[]
     const sortedRegions = Array.from(regionMap.values() as Iterable<RegionData>)
       .sort((a, b) => b.TotalBettors - a.TotalBettors)
       .filter(region => region.TotalBettors > 0);
-
+  
     const ranked: { region: RegionData; rank: number; trend: "up" | "down" | "same" }[] =
       sortedRegions.slice(0, 5).map((region, index) => ({
         region,
         rank: index + 1,
         trend: index % 2 === 0 ? "up" : "down",
       }));
-
-    //console.log("Final Ranked Data:", ranked);
-
+  
     setRankedRegions(ranked);
   };
-
+  
   useEffect(() => {
     getBettingRegions();
   }, []);

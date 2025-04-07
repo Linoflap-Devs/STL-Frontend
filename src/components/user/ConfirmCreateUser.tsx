@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Typography, Box, Tooltip, Dialog, IconButton, DialogContent, Button, TextField, FormControl, OutlinedInput, FormHelperText, InputLabel } from "@mui/material";
 import { verifyPass } from "~/utils/api/auth";
 import { addUser } from "~/utils/api/users";
@@ -8,6 +8,7 @@ import ArrowBackIosNewIcon from "@mui/icons-material/ArrowBackIosNew";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
 import { inputStyles } from "~/styles/theme";
 import { User } from "./UsersTable";
+import { useRouter } from "next/router";
 
 interface ConfirmCreateUserPageProps {
     open: boolean;
@@ -25,8 +26,19 @@ const ConfirmCreateUserPage: React.FC<ConfirmCreateUserPageProps> = ({ open, onC
     const [showPassword, setShowPassword] = useState<boolean>(false);
     const handleTogglePasswordVisibility = () =>
         setShowPassword((prev) => !prev);
+    
+    const [userType, setUserType] = useState('');
+    const router = useRouter();
 
-    const handleVerifyCreateManager = async () => {
+    useEffect(() => {
+        const pageType = router.asPath.includes('managers') ? 'manager' : 'executive';
+        setUserType(pageType);
+    }, [router.asPath]);
+
+    // Dynamically set userTypeId based on userType
+    const userTypeId = userType === 'manager' ? 2 : 3;
+
+    const handleVerifyCreateUser = async () => {
         if (!password) {
             setError("Password is required.");
             return;
@@ -40,13 +52,12 @@ const ConfirmCreateUserPage: React.FC<ConfirmCreateUserPageProps> = ({ open, onC
             }
             setError("");
 
-            // Construct the new user object
+            // Construct the new user object with dynamic userTypeId
             const newUser = {
                 ...user,
-                userTypeId: 2,
+                userTypeId: userTypeId,
             };
 
-            // Create the user after verification
             const response = await addUser(newUser);
             if (!response.success) {
                 const errorMessage = response.message || "Something went wrong. Please try again.";
@@ -60,18 +71,17 @@ const ConfirmCreateUserPage: React.FC<ConfirmCreateUserPageProps> = ({ open, onC
                 return;
             }
 
-            // Success notification
             Swal.fire({
                 icon: "success",
-                title: "Manager Created!",
-                text: "The manager has been added successfully.",
+                title: userTypeId === 2 ? "Manager Created!" : "Executive Created!",
+                text: `The ${userTypeId === 2 ? "manager" : "executive"} has been added successfully.`,
                 confirmButtonColor: "#67ABEB",
             });
 
             onSubmit(newUser);
             onClose();
         } catch (error) {
-            console.error("Error creating manager:", error);
+            console.error("Error creating user:", error);
             setError("An unexpected error occurred. Please try again.");
             Swal.fire({
                 icon: "error",
@@ -218,7 +228,7 @@ const ConfirmCreateUserPage: React.FC<ConfirmCreateUserPageProps> = ({ open, onC
                                 />
                                 <Button
                                     type="submit"
-                                    onClick={handleVerifyCreateManager}
+                                    onClick={handleVerifyCreateUser}
                                     variant="contained"
                                     fullWidth
                                     sx={{

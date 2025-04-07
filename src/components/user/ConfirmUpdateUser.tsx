@@ -17,6 +17,7 @@ interface ConfirmUpdateManagerPageProps {
 }
 
 const ConfirmUpdateManagerPage: React.FC<ConfirmUpdateManagerPageProps> = ({ open, onClose, user, onSubmit, setUser }) => {
+    const pageType = window.location.pathname.includes('manager') ? 'manager' : 'executive';
     const [password, setPassword] = useState("");
     const [error, setError] = useState("");
     const [showPassword, setShowPassword] = useState<boolean>(false);
@@ -48,7 +49,7 @@ const ConfirmUpdateManagerPage: React.FC<ConfirmUpdateManagerPageProps> = ({ ope
 
             Swal.fire({
                 icon: "success",
-                title: "Manager Updated!",
+                title: `${pageType === 'manager' ? 'Manager' : 'Executive'} Updated!`,
                 text: "The manager details have been updated successfully.",
                 confirmButtonColor: "#67ABEB",
             });
@@ -69,7 +70,7 @@ const ConfirmUpdateManagerPage: React.FC<ConfirmUpdateManagerPageProps> = ({ ope
 
     return (
         <Dialog open={open} onClose={onClose}>
-            <DialogContent sx={{ paddingX: 0, }}>
+            <DialogContent>
                 <Tooltip title={"Back"}>
                     <IconButton
                         component="a"

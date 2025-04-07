@@ -1,6 +1,6 @@
 import type { NextConfig } from "next";
 
-const nextConfig = {
+const nextConfig: NextConfig = {
   async rewrites() {
     return [
       {
@@ -21,11 +21,11 @@ const nextConfig = {
       },
       {
         source: '/executives',
-        destination: '/Protected/executives',
+        destination: '/Protected/users/executive',
       },
       {
         source: '/managers',
-        destination: '/Protected/managers',
+        destination: '/Protected/users/managers',
       },
       {
         source: '/betting-summary',

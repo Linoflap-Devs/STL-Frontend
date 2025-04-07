@@ -71,20 +71,21 @@ const EditLogModalPage: React.FC<EditLogModalProps> = ({ open, onClose, userId }
             (item.Remarks?.toLowerCase() || '').includes(searchLower)
         );
     });
+
     const paginatedData = filteredData.slice(
         page * rowsPerPage,
         page * rowsPerPage + rowsPerPage
     );
-    
+
+    const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        setSearchQuery(event.target.value);
+    };
+
     useEffect(() => {
         if (open && userId) {
             fetchEditLogDetails();
         }
     }, [open, userId]);
-
-    const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-        setSearchQuery(event.target.value);
-    };
 
     const fetchEditLogDetails = async () => {
         if (!userId) return;
@@ -124,27 +125,28 @@ const EditLogModalPage: React.FC<EditLogModalProps> = ({ open, onClose, userId }
                 },
             }}
         >
-                <DialogTitle>
-                    {userId ? (
-                        <>
-                            <Typography sx={{ fontSize: '32px', fontWeight: 'bold' }}>
-                                {logData.length > 0 ? `${logData[0]?.User}` : "Unknown User"}
-                            </Typography>
-                            <Typography variant="subtitle2" color="textSecondary">
-                                Manager
-                            </Typography>
-                        </>
-                    ) : (
-                        "No User Information"
-                    )}
-                    <IconButton
-                        aria-label="close"
-                        onClick={onClose}
-                        sx={{ position: "absolute", right: 30, top: 30 }}
-                    >
-                        <CloseIcon />
-                    </IconButton>
-                </DialogTitle>
+            <DialogTitle>
+                {userId ? (
+                    <>
+                        <Typography sx={{ fontSize: '32px', fontWeight: 'bold' }}>
+                            {logData.length > 0 && logData[0].User ? logData[0].User : "Unknown User"}
+                        </Typography>
+                        <Typography variant="subtitle2" color="textSecondary">
+                            Manager
+                        </Typography>
+                    </>
+                ) : (
+                    "No User Information"
+                )}
+                <IconButton
+                    aria-label="close"
+                    onClick={onClose}
+                    sx={{ backgroundColor: "#171717", position: "absolute", right: 30, top: 30 }}
+                >
+                    <CloseIcon />
+                </IconButton>
+            </DialogTitle>
+
             <DialogContent>
                 <Box sx={{ backgroundColor: "#171717", borderRadius: "8px", padding: 2 }}>
                     {loading ? (
@@ -213,38 +215,38 @@ const EditLogModalPage: React.FC<EditLogModalProps> = ({ open, onClose, userId }
                                         />
                                     </TableRow>
                                 </TableHead>
-                                    <TableBody>
-                                        {filteredData.length === 0 ? (
-                                            <TableRow>
-                                                <TableCell colSpan={5} align="center">
-                                                    <Box
-                                                        sx={{
-                                                            display: "flex",
-                                                            flexDirection: "column",
-                                                            alignItems: "center",
-                                                            py: 5,
-                                                        }}
-                                                    >
-                                                        <EditIcon sx={{ fontSize: 50, color: "gray" }} />
-                                                        <Typography variant="h6" color="textSecondary" sx={{ mt: 2, fontWeight: 500 }}>
-                                                            No Edit Log found
-                                                        </Typography>
-                                                    </Box>
-                                                </TableCell>
+                                <TableBody>
+                                    {filteredData.length === 0 ? (
+                                        <TableRow>
+                                            <TableCell colSpan={5} align="center">
+                                                <Box
+                                                    sx={{
+                                                        display: "flex",
+                                                        flexDirection: "column",
+                                                        alignItems: "center",
+                                                        py: 5,
+                                                    }}
+                                                >
+                                                    <EditIcon sx={{ fontSize: 50, color: "gray" }} />
+                                                    <Typography variant="h6" color="textSecondary" sx={{ mt: 2, fontWeight: 500 }}>
+                                                        No Edit Log found
+                                                    </Typography>
+                                                </Box>
+                                            </TableCell>
+                                        </TableRow>
+                                    ) : (
+                                        paginatedData.map((log) => (
+                                            <TableRow key={log.EditLogDetailsId}>
+                                                <TableCell>{log.EditedBy}</TableCell>
+                                                <TableCell>{new Date(log.CreatedAt).toLocaleString()}</TableCell>
+                                                <TableCell>{log.OldValue || "N/A"}</TableCell>
+                                                <TableCell>{log.NewValue || "N/A"}</TableCell>
+                                                <TableCell>{log.Remarks || "No remarks"}</TableCell>
                                             </TableRow>
-                                        ) : (
-                                            paginatedData.map((log) => (
-                                                <TableRow key={log.EditLogDetailsId}>
-                                                    <TableCell>{log.EditedBy}</TableCell>
-                                                    <TableCell>{new Date(log.CreatedAt).toLocaleString()}</TableCell>
-                                                    <TableCell>{log.OldValue || "N/A"}</TableCell>
-                                                    <TableCell>{log.NewValue || "N/A"}</TableCell>
-                                                    <TableCell>{log.Remarks || "No remarks"}</TableCell>
-                                                </TableRow>
-                                            ))
-                                        )}
-                                    </TableBody>
+                                        ))
+                                    )}
 
+                                </TableBody>
                             </Table>
                             <Box>
                                 <TablePagination
@@ -260,7 +262,6 @@ const EditLogModalPage: React.FC<EditLogModalProps> = ({ open, onClose, userId }
                         </TableContainer>
                     )}
                 </Box>
-                
             </DialogContent>
         </Dialog>
     );
