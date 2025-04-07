@@ -66,6 +66,7 @@ const UpdateManager: React.FC<UpdateManagerProps> = React.memo(({
     Status: any;
     remarks: string;
     OperatorId: number | null;
+    LastUpdatedDate: string | null;
   }>({
     UserId: null,
     firstName: "",
@@ -76,6 +77,7 @@ const UpdateManager: React.FC<UpdateManagerProps> = React.memo(({
     Status: "",
     remarks: "",
     OperatorId: null,
+    LastUpdatedDate: null,
   });
 
   const pageType = window.location.pathname.includes('manager') ? 'manager' : 'executive';
@@ -134,8 +136,6 @@ const UpdateManager: React.FC<UpdateManagerProps> = React.memo(({
 
         setUser(updatedUser);
         setStatus(updatedUser.Status);
-
-        console.log("Updated user fetched:", updatedUser);
       } catch (err) {
         console.error("Error fetching manager details:", err);
       }
@@ -143,12 +143,12 @@ const UpdateManager: React.FC<UpdateManagerProps> = React.memo(({
 
     fetchManagerDetails();
   }, [open, manager?.userId]);
-
+  
+  // disable functions
   const handleDisable = () => {
     setIsViewMode((prev) => !prev);
     setIsDisabled((prev) => !prev);
   };
-
   const alwaysDisabledKeys = ["firstName", "CreatedBy", "DateOfRegistration", "OperatorName", "DateOfOperation", "LastUpdatedBy", "LastUpdatedDate"];
 
   const handleManagerChange = (
@@ -165,21 +165,10 @@ const UpdateManager: React.FC<UpdateManagerProps> = React.memo(({
           phoneNumber: "",
           email: "",
           suffix: "",
-          city: "",
-          barangay: "",
-          street: "",
-          CreatedBy: "",
-          DateOfRegistration: "",
-          IsActive: 1,
-          IsDeleted: 1,
-          formattedDate: "",
           Status: "",
           remarks: "",
-
-          operatorName: "",
           OperatorId: null,
-          OperatorName: "",
-          DateOfOperation: "",
+          LastUpdatedDate: null,
           [name]: value,
         };
       }
@@ -435,7 +424,13 @@ const UpdateManager: React.FC<UpdateManagerProps> = React.memo(({
                       id={key}
                       name={key}
                       placeholder={`Enter ${formatKey(key)}`}
-                      value={user[key as keyof typeof user] || ""}
+                      value={
+                        key === "DateOfOperation"
+                          ? (user.LastUpdatedDate && !isNaN(new Date(user.LastUpdatedDate).getTime())
+                            ? new Date(user.LastUpdatedDate).toISOString().split('T')[0].replace(/-/g, '/')
+                            : user[key as keyof typeof user] || "")
+                          : user[key as keyof typeof user] || ""
+                      }
                       onChange={handleManagerChange}
                       label={formatKey(key)}
                       disabled={alwaysDisabledKeys.includes(key) || isDisabled}
@@ -445,7 +440,6 @@ const UpdateManager: React.FC<UpdateManagerProps> = React.memo(({
                 </Stack>
               ))}
             </Stack>
-
             {/* History Fields */}
             <Stack spacing={3} sx={{ flex: 1 }}>
               <FormControl fullWidth variant="outlined" sx={inputStyles}>

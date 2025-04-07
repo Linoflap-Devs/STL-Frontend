@@ -74,11 +74,6 @@ const ManagerTable: React.FC<ManagerTableProps> = ({ managers, onCreate, onEdit,
   }>({ key: "id", direction: "asc" });
 
   const [filters, setFilters] = useState<{ [key: string]: string }>({
-    FirstName: "",
-    LastName: "",
-    Email: "",
-    Region: "",
-    Province: "",
     CreatedBy: "",
     Status: "",
     DateOfRegistration: "",
@@ -325,7 +320,7 @@ const ManagerTable: React.FC<ManagerTableProps> = ({ managers, onCreate, onEdit,
             sortedFilteredUsers.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((user) => (
               <TableRow key={user.userId}>
                 <TableCell>{user.userId} {`${user.FirstName} ${user.LastName} ${user.Suffix}`}</TableCell>
-                <TableCell>{user.OperatorName}</TableCell>
+                <TableCell>{user.OperatorDetails.OperatorName}</TableCell>
                 <TableCell>{dayjs(user.DateOfRegistration).format("YYYY/MM/DD HH:mm:ss")}</TableCell>
                 <TableCell>{user?.CreatedBy}</TableCell>
                 <TableCell>

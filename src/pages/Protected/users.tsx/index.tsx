@@ -7,7 +7,6 @@ import { fetchUsers } from '~/utils/api/users';
 import { fetchOperators } from '~/utils/api/operators';
 
 //import { fetchRegions, fetchProvinces } from '~/utils/api/location';
-
 //const cities = require('philippines/cities');
 
 interface UsersPageProps {
@@ -16,9 +15,6 @@ interface UsersPageProps {
 
 const UsersPage: React.FC<UsersPageProps> = ({ roleId, }) => {
   const [users, setUsers] = useState<User[]>([]);
-  const [regions, setRegions] = useState([]);
-  const [provinces, setProvinces] = useState([]);
-  const [cityList, setCityList] = useState([]);
   const [isModalOpen, setModalOpen] = useState(false);
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
   const [isUpdateModalOpen, setUpdateModalOpen] = useState(false);
@@ -30,7 +26,6 @@ const UsersPage: React.FC<UsersPageProps> = ({ roleId, }) => {
 
   const loadData = async () => {
     try {
-      // Fetch users and operators concurrently
       const [userResponse, operatorResponse] = await Promise.all([
         fetchUsers({}),
         fetchOperators(),
@@ -41,7 +36,7 @@ const UsersPage: React.FC<UsersPageProps> = ({ roleId, }) => {
   
         // Assuming the operator's name is a field in the operator object
         const operatorMap = operatorResponse.data.reduce((map: { [key: string]: any }, operator: any) => {
-          map[operator.operatorName] = operator; // Map operator name to operator object
+          map[operator.operatorName] = operator;
           return map;
         }, {});
   
@@ -52,16 +47,15 @@ const UsersPage: React.FC<UsersPageProps> = ({ roleId, }) => {
             FirstName: user.FirstName ?? 'N/A',
             LastName: user.LastName ?? 'N/A',
             Suffix: user.Suffix ?? '',
-            OperatorName: user.OperatorName ?? 'N/A',
             Email: user.Email ?? 'N/A',
             DateOfRegistration: user.DateOfRegistration ?? 'N/A',
             CreatedBy: user.CreatedBy ?? 'N/A',
-            OperatorDetails: operatorMap[user.OperatorName] ?? null, // Combine the operator details
+            OperatorDetails: operatorMap[user.OperatorName] ?? null,
           }));
   
-        // Update the state with the combined data
         setUsers(filteredUsers);
         setOperators(operatorResponse.data);
+        console.log('OPERATORS DATA:', filteredUsers, )
       } else {
         console.error('Failed to fetch some data.');
       }

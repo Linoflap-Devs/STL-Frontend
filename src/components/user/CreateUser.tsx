@@ -62,11 +62,11 @@ const CreateManager: React.FC<CreateManagerProps> = ({
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement> | SelectChangeEvent<string>
   ) => {
     const { name, value } = e.target;
-  
+
     // If the name is operatorName, find the selected operator and update both operatorName and operatorId
     if (name === "operatorName") {
       const selectedOperator = operators.find(operator => operator.OperatorId === parseInt(value, 10));
-  
+
       if (selectedOperator) {
         setUser((prevUser) => ({
           ...prevUser,
@@ -115,7 +115,7 @@ const CreateManager: React.FC<CreateManagerProps> = ({
     const generatedPassword = "0912Gg33*12";
     setUser((prevUser) => ({ ...prevUser, password: generatedPassword }));
   };
-  
+
   return (
     <Dialog
       open={open}
@@ -178,7 +178,7 @@ const CreateManager: React.FC<CreateManagerProps> = ({
                           labelId="suffix-label"
                           id="suffix"
                           name="suffix"
-                          
+
                           onChange={handleManagerChange}
                           label="Suffix"
                         >
