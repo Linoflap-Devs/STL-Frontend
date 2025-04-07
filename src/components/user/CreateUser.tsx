@@ -56,7 +56,6 @@ const CreateManager: React.FC<CreateManagerProps> = ({
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
   const [showPassword, setShowPassword] = useState(false);
   const [isVerifyModalOpen, setIsVerifyModalOpen] = useState(false);
-  const [selectedUser, setSelectedUser] = useState<User | null>(null);
 
   const handleManagerChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement> | SelectChangeEvent<string>
@@ -182,7 +181,7 @@ const CreateManager: React.FC<CreateManagerProps> = ({
                           onChange={handleManagerChange}
                           label="Suffix"
                         >
-                          <MenuItem value="">None</MenuItem>
+                          <MenuItem value="">N/A</MenuItem>
                           <MenuItem value="Jr.">Jr.</MenuItem>
                           <MenuItem value="Sr.">Sr.</MenuItem>
                           <MenuItem value="II">II</MenuItem>
@@ -320,7 +319,6 @@ const CreateManager: React.FC<CreateManagerProps> = ({
             onVerified={handleCreateManagerSubmit}
             user={user}
             onSubmit={onSubmit}
-
           />
         )}
       </DialogContent>

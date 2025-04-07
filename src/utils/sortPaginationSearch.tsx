@@ -186,13 +186,14 @@ export const filterData = (
     if (searchValue) {
       const fullName = `${item.FirstName || ""} ${item.LastName || ""}`.toLowerCase();
       const createdByFullName = `${item.CreatedByFirstName || ""} ${item.CreatedByLastName || ""}`.toLowerCase();
-
+      const operatorName = item.OperatorDetails?.OperatorName?.toLowerCase() || "";
       const matches =
         Object.values(item).some(
           (val) => typeof val === "string" && val.toLowerCase().includes(searchValue)
         ) ||
         fullName.includes(searchValue) ||
-        createdByFullName.includes(searchValue);
+        createdByFullName.includes(searchValue) ||
+        operatorName.includes(searchValue);
 
       if (!matches) {
         return false;

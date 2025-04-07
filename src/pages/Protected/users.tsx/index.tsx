@@ -19,8 +19,6 @@ const UsersPage: React.FC<UsersPageProps> = ({ roleId, }) => {
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
   const [isUpdateModalOpen, setUpdateModalOpen] = useState(false);
   const [selectedManager, setSelectedManager] = useState<User | null>(null);
-  const [isDisabled, setIsDisabled] = useState(true);
-  const [isClicked, setIsClicked] = useState(false);
   const [refresh, setRefresh] = useState(false);
   const [operators, setOperators] = useState<any[]>([]);
 
@@ -30,16 +28,16 @@ const UsersPage: React.FC<UsersPageProps> = ({ roleId, }) => {
         fetchUsers({}),
         fetchOperators(),
       ]);
-  
+
       if (userResponse.success && operatorResponse.success) {
         console.log("Fetched Operators:", operatorResponse.data);
-  
-        // Assuming the operator's name is a field in the operator object
-        const operatorMap = operatorResponse.data.reduce((map: { [key: string]: any }, operator: any) => {
-          map[operator.operatorName] = operator;
+
+        // Map operator details by OperatorId
+        const operatorMap = operatorResponse.data.reduce((map: { [x: string]: any; }, operator: { OperatorId: string | number; }) => {
+          map[operator.OperatorId] = operator; // Map OperatorId to operator object
           return map;
         }, {});
-  
+
         const filteredUsers = userResponse.data
           .filter((user: { UserTypeId: number }) => user.UserTypeId === roleId)
           .map((user: any) => ({
@@ -50,19 +48,18 @@ const UsersPage: React.FC<UsersPageProps> = ({ roleId, }) => {
             Email: user.Email ?? 'N/A',
             DateOfRegistration: user.DateOfRegistration ?? 'N/A',
             CreatedBy: user.CreatedBy ?? 'N/A',
-            OperatorDetails: operatorMap[user.OperatorName] ?? null,
+            OperatorDetails: operatorMap[user.OperatorId] ?? null, // Assign OperatorDetails based on OperatorId
           }));
-  
+
         setUsers(filteredUsers);
         setOperators(operatorResponse.data);
-        console.log('OPERATORS DATA:', filteredUsers, )
       } else {
         console.error('Failed to fetch some data.');
       }
     } catch (error) {
       console.error('Error fetching data:', error);
     }
-  };  
+  };
 
   useEffect(() => {
     loadData();
@@ -74,17 +71,9 @@ const UsersPage: React.FC<UsersPageProps> = ({ roleId, }) => {
     setModalOpen(true);
   };
 
-  const handleUserEdit = (user: User, mode: 'view' | 'update') => {
+  const handleUserEdit = (user: User) => {
     setSelectedManager(user);
     setUpdateModalOpen(true);
-
-    if (mode === 'update') {
-      setIsClicked(true);
-      setIsDisabled(false);
-    } else {
-      setIsClicked(false);
-      setIsDisabled(true);
-    }
   };
 
   const closeUpdateModal = () => {
@@ -128,7 +117,7 @@ const UsersPage: React.FC<UsersPageProps> = ({ roleId, }) => {
       <Box>
         <ManagerTable
           onCreate={handleUserCreate}
-          onEdit={(user, mode = 'view') => handleUserEdit(user, mode)}
+          onEdit={handleUserEdit}
           managers={users}
           onDelete={handleDeleteManager}
           onSubmit={handleSubmitUser}

@@ -74,9 +74,15 @@ const ManagerTable: React.FC<ManagerTableProps> = ({ managers, onCreate, onEdit,
   }>({ key: "id", direction: "asc" });
 
   const [filters, setFilters] = useState<{ [key: string]: string }>({
+    FirstName: "",
+    LastName: "",
+    Email: "",
+    Region: "",
+    Province: "",
     CreatedBy: "",
     Status: "",
     DateOfRegistration: "",
+    OperatorName: "",
   });
 
   const filteredUsers = filterData(
