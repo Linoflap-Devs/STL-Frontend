@@ -43,7 +43,6 @@ export interface User {
   suffix?: string;
   phoneNumber: string;
   email: string;
-  password: string;
   [key: string]: any;
 }
 

@@ -26,24 +26,15 @@ const ConfirmUpdateManagerPage: React.FC<ConfirmUpdateManagerPageProps> = ({ ope
     const handleVerifyUpdateManager = async () => {
         try {
             if (!password) return setError("Password is required.");
-    
+
             const verifyResponse = await verifyPass(password);
             if (!verifyResponse.success) return setError("Invalid password. Please try again.");
-    
+
             setError(""); // Clear previous errors
             if (!user?.UserId) return console.error("UserId is null");
-    
-            const response = await updateUser(user.UserId, { ...user, remarks: user.remarks });
-            if (!response.success) {
-                setError(response.errors || { form: response.message });
-                return Swal.fire({
-                    icon: "error",
-                    title: "Error!",
-                    text: response.message || "Something went wrong. Please try again.",
-                    confirmButtonColor: "#D32F2F",
-                });
-            }
-    
+
+            const response = await updateUser(user.UserId, { ...user });
+
             const updatedResponse = await updateUser(user.UserId, { ...user });
             if (updatedResponse.success && setUser) {
                 setUser((prevUser: { remarks: any; }) => ({
@@ -54,14 +45,14 @@ const ConfirmUpdateManagerPage: React.FC<ConfirmUpdateManagerPageProps> = ({ ope
             } else {
                 console.warn("Failed to fetch updated user data:", updatedResponse.message);
             }
-    
+
             Swal.fire({
                 icon: "success",
                 title: "Manager Updated!",
                 text: "The manager details have been updated successfully.",
                 confirmButtonColor: "#67ABEB",
             });
-    
+
             onSubmit(user);
             onClose();
         } catch (error) {

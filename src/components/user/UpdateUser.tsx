@@ -41,16 +41,12 @@ interface UpdateManagerProps {
     UserId: number | null;
     firstName: string;
     lastName: string;
-    region: string;
-    province: string;
-    city: string;
-    barangay: string;
-    street: string;
     phoneNumber: string;
-    password: string;
     email: string;
+    suffix: string;
+    Status: any;
     remarks: string;
-    operatorName: string;
+    OperatorId: number | null;
   }) => void;
 }
 
@@ -66,17 +62,9 @@ const UpdateManager: React.FC<UpdateManagerProps> = React.memo(({
     lastName: string;
     phoneNumber: string;
     email: string;
-    password: string;
     suffix: string;
-    CreatedBy: string;
-    DateOfRegistration: string;
-    IsActive: number;
-    IsDeleted: number;
-    formattedDate: any;
     Status: any;
-    remarks: string,
-    OperatorName: string,
-    DateOfOperation: any;
+    remarks: string;
     OperatorId: number | null;
   }>({
     UserId: null,
@@ -84,19 +72,12 @@ const UpdateManager: React.FC<UpdateManagerProps> = React.memo(({
     lastName: "",
     phoneNumber: "",
     email: "",
-    password: "",
     suffix: "",
-    CreatedBy: "",
-    DateOfRegistration: "",
-    IsActive: 1,
-    IsDeleted: 1,
-    formattedDate: "",
     Status: "",
     remarks: "",
-    OperatorName: "",
-    DateOfOperation: "",
     OperatorId: null,
   });
+
   const pageType = window.location.pathname.includes('manager') ? 'manager' : 'executive';
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
   const [status, setStatus] = useState("");
@@ -108,6 +89,7 @@ const UpdateManager: React.FC<UpdateManagerProps> = React.memo(({
   const [isViewMode, setIsViewMode] = useState(false);
   const [areaOfOperations, setAreaOfOperations] = useState<string>("");
 
+  // fetching of data
   useEffect(() => {
     if (!open || !manager?.userId) return;
 
@@ -134,7 +116,6 @@ const UpdateManager: React.FC<UpdateManagerProps> = React.memo(({
           lastName: user.LastName ?? "",
           phoneNumber: user.PhoneNumber ?? "",
           email: user.Email ?? "",
-          password: user.password ?? "",
           suffix: user.Suffix ?? "",
           CreatedBy: user.CreatedBy ?? "",
           DateOfRegistration: user.DateOfRegistration ?? "",
@@ -147,6 +128,8 @@ const UpdateManager: React.FC<UpdateManagerProps> = React.memo(({
           DateOfOperation: operator.DateOfOperation ?? "",
           OperatorId: operator.OperatorId ?? null,
           AreaOfOperations: cities,
+          LastUpdatedBy: user.LastUpdatedBy ?? "N/A",
+          LastUpdatedDate: user.LastUpdatedDate ?? "N/A",
         };
 
         setUser(updatedUser);
@@ -166,7 +149,7 @@ const UpdateManager: React.FC<UpdateManagerProps> = React.memo(({
     setIsDisabled((prev) => !prev);
   };
 
-  const alwaysDisabledKeys = ["firstName", "email", "CreatedBy", "DateOfRegistration", "OperatorName", "DateOfOperation"];
+  const alwaysDisabledKeys = ["firstName", "CreatedBy", "DateOfRegistration", "OperatorName", "DateOfOperation", "LastUpdatedBy", "LastUpdatedDate"];
 
   const handleManagerChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -181,10 +164,7 @@ const UpdateManager: React.FC<UpdateManagerProps> = React.memo(({
           lastName: "",
           phoneNumber: "",
           email: "",
-          password: "",
           suffix: "",
-          region: "",
-          province: "",
           city: "",
           barangay: "",
           street: "",
@@ -195,6 +175,7 @@ const UpdateManager: React.FC<UpdateManagerProps> = React.memo(({
           formattedDate: "",
           Status: "",
           remarks: "",
+
           operatorName: "",
           OperatorId: null,
           OperatorName: "",
@@ -221,6 +202,7 @@ const UpdateManager: React.FC<UpdateManagerProps> = React.memo(({
     setSelectedLog(null);
   };
 
+  // form submitter
   const handleUpdateManagerSubmit = async () => {
     const validationErrors = validateUser(user);
 
@@ -404,7 +386,7 @@ const UpdateManager: React.FC<UpdateManagerProps> = React.memo(({
             {/* History Fields */}
             <Stack spacing={3} sx={{ flex: 1 }}>
               <Typography sx={{ marginBottom: 0 }}>History</Typography>
-              {["CreatedBy", "DateOfRegistration", "phoneNumber", "formattedDate"].map((key) => (
+              {["CreatedBy", "DateOfRegistration", "LastUpdatedBy", "LastUpdatedDate"].map((key) => (
                 <FormControl key={key} fullWidth error={!!errors[key]} sx={inputStyles} variant="outlined">
                   <InputLabel htmlFor={key}>{formatKey(key)}</InputLabel>
                   <OutlinedInput
