@@ -96,12 +96,12 @@ const DynamicBettingSummary = () => {
 
           if (historicalResponse.success) {
             setHistoricalData(historicalResponse.data as HistoricalRegionData[]);
-            console.log(`Get Historical Region: ${historicalResponse.data}`)
+            console.log(`Get Historical Region: `, historicalData)
           }
           if (transactionsResponse.success) {
             const responseData = transactionsResponse.data;
             setTransactionsData(responseData ? (Array.isArray(responseData) ? responseData : [responseData]) : null)
-            console.log(`Get Transactions Data: ${responseData}`)
+            console.log(`Get Transactions Data: `, transactionsData)
           }
         } catch (error) {
           console.error("Error fetching data:", error);
