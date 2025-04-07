@@ -6,9 +6,9 @@ import UpdateManager from '~/components/user/UpdateUser';
 import { fetchUsers } from '~/utils/api/users';
 import { fetchOperators } from '~/utils/api/operators';
 
-import { fetchRegions, fetchProvinces } from '~/utils/api/location';
+//import { fetchRegions, fetchProvinces } from '~/utils/api/location';
 
-const cities = require('philippines/cities');
+//const cities = require('philippines/cities');
 
 interface UsersPageProps {
   roleId: number;
@@ -154,8 +154,6 @@ const UsersPage: React.FC<UsersPageProps> = ({ roleId, }) => {
           onClose={closeUpdateModal}
           onSubmit={handleSaveUpdatedUser}
           manager={selectedManager}
-          isDisabled={isDisabled}
-          isClicked={isClicked}
         />
       )}
     </>

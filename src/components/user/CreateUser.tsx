@@ -70,7 +70,7 @@ const CreateManager: React.FC<CreateManagerProps> = ({
       if (selectedOperator) {
         setUser((prevUser) => ({
           ...prevUser,
-          operatorName: selectedOperator.OperatorName,  // Update operatorName
+          operatorName: selectedOperator.OperatorName,
           operatorId: selectedOperator.OperatorId.toString(),
         }));
       }
@@ -173,14 +173,22 @@ const CreateManager: React.FC<CreateManagerProps> = ({
                         {errors.lastName && <FormHelperText>{errors.lastName}</FormHelperText>}
                       </FormControl>
                       <FormControl fullWidth error={!!errors.suffix}>
-                        <InputLabel htmlFor="suffix">Suffix</InputLabel>
-                        <OutlinedInput
+                        <InputLabel id="suffix-label">Suffix</InputLabel>
+                        <Select
+                          labelId="suffix-label"
                           id="suffix"
                           name="suffix"
-                          placeholder="Enter Suffix"
+                          
                           onChange={handleManagerChange}
                           label="Suffix"
-                        />
+                        >
+                          <MenuItem value="">None</MenuItem>
+                          <MenuItem value="Jr.">Jr.</MenuItem>
+                          <MenuItem value="Sr.">Sr.</MenuItem>
+                          <MenuItem value="II">II</MenuItem>
+                          <MenuItem value="III">III</MenuItem>
+                          <MenuItem value="IV">IV</MenuItem>
+                        </Select>
                         {errors.suffix && <FormHelperText>{errors.suffix}</FormHelperText>}
                       </FormControl>
                     </Stack>
@@ -312,8 +320,7 @@ const CreateManager: React.FC<CreateManagerProps> = ({
             onVerified={handleCreateManagerSubmit}
             user={user}
             onSubmit={onSubmit}
-            //selectedUser={user}
-            //setSelectedUser={setSelectedUser}
+
           />
         )}
       </DialogContent>

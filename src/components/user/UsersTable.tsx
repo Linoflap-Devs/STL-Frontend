@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { UserSectionData } from "../../data/AdminSectionData";
 import { buttonStyles, } from "../../styles/theme";
 import {
@@ -40,7 +40,6 @@ import ConfirmSuspendManagerPage from "./ConfirmSuspendUser";
 export interface User {
   firstName: string;
   lastName: string;
-  operatorName: string;
   suffix?: string;
   phoneNumber: string;
   email: string;

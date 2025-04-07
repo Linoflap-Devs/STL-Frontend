@@ -25,6 +25,7 @@ import EditLogModalPage from "./EditLogModal";
 import { validateUser } from "~/utils/validation"
 import ConfirmUpdateManagerPage from "./ConfirmUpdateUser";
 import Swal from "sweetalert2";
+import { fetchOperator } from "~/utils/api/operators";
 
 type LogType = {
   id: number;
@@ -51,8 +52,6 @@ interface UpdateManagerProps {
     remarks: string;
     operatorName: string;
   }) => void;
-  isDisabled: boolean;
-  isClicked: boolean;
 }
 
 const UpdateManager: React.FC<UpdateManagerProps> = React.memo(({
@@ -76,7 +75,9 @@ const UpdateManager: React.FC<UpdateManagerProps> = React.memo(({
     formattedDate: any;
     Status: any;
     remarks: string,
-    operatorName: string,
+    OperatorName: string,
+    DateOfOperation: any;
+    OperatorId: number | null;
   }>({
     UserId: null,
     firstName: "",
@@ -92,11 +93,12 @@ const UpdateManager: React.FC<UpdateManagerProps> = React.memo(({
     formattedDate: "",
     Status: "",
     remarks: "",
-    operatorName: "",
+    OperatorName: "",
+    DateOfOperation: "",
+    OperatorId: null,
   });
   const pageType = window.location.pathname.includes('manager') ? 'manager' : 'executive';
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
-  //const [showPassword, setShowPassword] = useState(false);
   const [status, setStatus] = useState("");
   const [selectedUserId, setSelectedUserId] = useState<number | null>(null);
   const [openEditLogModal, setOpenEditLogModal] = useState(false);
@@ -104,42 +106,55 @@ const UpdateManager: React.FC<UpdateManagerProps> = React.memo(({
   const [isVerifyModalOpen, setIsVerifyModalOpen] = useState(false);
   const [isDisabled, setIsDisabled] = useState(true);
   const [isViewMode, setIsViewMode] = useState(false);
+  const [areaOfOperations, setAreaOfOperations] = useState<string>("");
 
   useEffect(() => {
     if (!open || !manager?.userId) return;
 
     const fetchManagerDetails = async () => {
       try {
-        const response = await fetchUserById(manager.userId);
+        const [userRes, operatorRes] = await Promise.all([
+          fetchUserById(manager.userId),
+          fetchOperator(manager.OperatorDetails?.OperatorId),
+        ]);
 
-        if (!response.success) {
-          console.error("Failed to fetch manager details:", response.message);
-          return;
-        }
+        const user = userRes?.data ?? {};
+        const operator = operatorRes?.data ?? {};
+
+        const cities =
+          operator.Cities?.length > 0
+            ? operator.Cities.map((c: any) => c.CityName).join(", ")
+            : "No cities available";
+
+        setAreaOfOperations(cities);
 
         const updatedUser = {
-          UserId: response.data.UserId ?? null,
-          firstName: response.data.FirstName || "",
-          lastName: response.data.LastName || "",
-          phoneNumber: response.data.PhoneNumber || "",
-          email: response.data.Email || "",
-          password: response.data.password || "",
-          suffix: response.data.Suffix || "",
-          CreatedBy: response.data.CreatedBy || "",
-          DateOfRegistration: response.data.DateOfRegistration || "",
-          IsActive: response.data.IsActive ?? 1,
-          IsDeleted: response.data.IsDeleted ?? 1,
-          formattedDate: response.data.formattedDate || "",
-          Status: response.data.Status || "Inactive",
-          remarks: response.data.remarks || "",
-          operatorName: response.data.operatorName || "",
+          UserId: user.UserId ?? null,
+          firstName: user.FirstName ?? "",
+          lastName: user.LastName ?? "",
+          phoneNumber: user.PhoneNumber ?? "",
+          email: user.Email ?? "",
+          password: user.password ?? "",
+          suffix: user.Suffix ?? "",
+          CreatedBy: user.CreatedBy ?? "",
+          DateOfRegistration: user.DateOfRegistration ?? "",
+          IsActive: user.IsActive ?? 1,
+          IsDeleted: user.IsDeleted ?? 1,
+          formattedDate: user.formattedDate ?? "",
+          Status: user.Status ?? "Inactive",
+          remarks: user.remarks ?? "",
+          OperatorName: operator.OperatorName ?? "",
+          DateOfOperation: operator.DateOfOperation ?? "",
+          OperatorId: operator.OperatorId ?? null,
+          AreaOfOperations: cities,
         };
 
         setUser(updatedUser);
-        //setSelectState(updatedUser);
         setStatus(updatedUser.Status);
-      } catch (error) {
-        console.error("Error fetching manager:", error);
+
+        console.log("Updated user fetched:", updatedUser);
+      } catch (err) {
+        console.error("Error fetching manager details:", err);
       }
     };
 
@@ -148,8 +163,10 @@ const UpdateManager: React.FC<UpdateManagerProps> = React.memo(({
 
   const handleDisable = () => {
     setIsViewMode((prev) => !prev);
-    setIsDisabled((prev) => prev ? false : true);
+    setIsDisabled((prev) => !prev);
   };
+
+  const alwaysDisabledKeys = ["firstName", "email", "CreatedBy", "DateOfRegistration", "OperatorName", "DateOfOperation"];
 
   const handleManagerChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -159,7 +176,7 @@ const UpdateManager: React.FC<UpdateManagerProps> = React.memo(({
     setUser((prevUser) => {
       if (!prevUser) {
         return {
-          UserId: null, // Ensure all required fields exist
+          UserId: null,
           firstName: "",
           lastName: "",
           phoneNumber: "",
@@ -177,15 +194,18 @@ const UpdateManager: React.FC<UpdateManagerProps> = React.memo(({
           IsDeleted: 1,
           formattedDate: "",
           Status: "",
-          remarks: "", // Include remarks
+          remarks: "",
           operatorName: "",
-          [name]: value, // Ensure dynamic field update
+          OperatorId: null,
+          OperatorName: "",
+          DateOfOperation: "",
+          [name]: value,
         };
       }
 
       return {
         ...prevUser,
-        [name]: value, // Ensure correct key update
+        [name]: value,
       };
     });
   };
@@ -372,7 +392,7 @@ const UpdateManager: React.FC<UpdateManagerProps> = React.memo(({
                         value={user[key as keyof typeof user] || ""}
                         onChange={handleManagerChange}
                         label={formatKey(key)}
-                        disabled={isDisabled || key === "firstName" || key === "email"}
+                        disabled={alwaysDisabledKeys.includes(key) || isDisabled}
                       />
                       {errors[key] && <FormHelperText error>{errors[key]}</FormHelperText>}
                     </FormControl>
@@ -383,8 +403,8 @@ const UpdateManager: React.FC<UpdateManagerProps> = React.memo(({
 
             {/* History Fields */}
             <Stack spacing={3} sx={{ flex: 1 }}>
-              <Typography sx={{ marginBottom: 0 }}>History</Typography> {/* Remove marginBottom */}
-              {["CreatedBy", "DateOfRegistration", "phoneNumber", "email"].map((key) => (
+              <Typography sx={{ marginBottom: 0 }}>History</Typography>
+              {["CreatedBy", "DateOfRegistration", "phoneNumber", "formattedDate"].map((key) => (
                 <FormControl key={key} fullWidth error={!!errors[key]} sx={inputStyles} variant="outlined">
                   <InputLabel htmlFor={key}>{formatKey(key)}</InputLabel>
                   <OutlinedInput
@@ -394,7 +414,7 @@ const UpdateManager: React.FC<UpdateManagerProps> = React.memo(({
                     value={user[key as keyof typeof user] || ""}
                     onChange={handleManagerChange}
                     label={formatKey(key)}
-                    disabled={isDisabled || key === "CreatedBy" || key === "DateOfRegistration" || key === "DateOfRegistration"}
+                    disabled={alwaysDisabledKeys.includes(key) || isDisabled}
                   />
                   {errors[key] && <FormHelperText error>{errors[key]}</FormHelperText>}
                 </FormControl>
@@ -425,7 +445,7 @@ const UpdateManager: React.FC<UpdateManagerProps> = React.memo(({
           </Stack>
           <Stack direction="row" spacing={3}>
             <Stack spacing={3} sx={{ flex: 1 }}>
-              {["firstName", "DateOfRegistration"].map((key) => (
+              {["OperatorName", "DateOfOperation"].map((key) => (
                 <Stack key={key} spacing={3}>
                   <FormControl fullWidth error={!!errors[key]} sx={inputStyles} variant="outlined">
                     <InputLabel htmlFor={key}>{formatKey(key)}</InputLabel>
@@ -436,7 +456,7 @@ const UpdateManager: React.FC<UpdateManagerProps> = React.memo(({
                       value={user[key as keyof typeof user] || ""}
                       onChange={handleManagerChange}
                       label={formatKey(key)}
-                      disabled={isDisabled || key === "firstName" || key === "email"}
+                      disabled={alwaysDisabledKeys.includes(key) || isDisabled}
                     />
                     {errors[key] && <FormHelperText error>{errors[key]}</FormHelperText>}
                   </FormControl>
@@ -446,16 +466,17 @@ const UpdateManager: React.FC<UpdateManagerProps> = React.memo(({
 
             {/* History Fields */}
             <Stack spacing={3} sx={{ flex: 1 }}>
-              <FormControl fullWidth variant="outlined" sx={inputStyles} error={Boolean(errors.remarks)}>
+              <FormControl fullWidth variant="outlined" sx={inputStyles}>
                 <TextField
                   id="AreaOfOperations"
                   name="areaofoperations"
                   onChange={handleManagerChange}
-                  label="Areaofoperations"
-                  disabled={isDisabled}
+                  label="Area of Operations"
                   multiline
                   minRows={4}
+                  value={areaOfOperations}
                   variant="outlined"
+                  disabled
                 />
               </FormControl>
             </Stack>
@@ -476,7 +497,6 @@ const UpdateManager: React.FC<UpdateManagerProps> = React.memo(({
               />
             </FormControl>
           )}
-
           {!isDisabled && (
             <Button
               onClick={handleUpdateManagerSubmit}
@@ -495,7 +515,6 @@ const UpdateManager: React.FC<UpdateManagerProps> = React.memo(({
               Update Manager
             </Button>
           )}
-
           {isVerifyModalOpen && (
             <ConfirmUpdateManagerPage
               open={isVerifyModalOpen}

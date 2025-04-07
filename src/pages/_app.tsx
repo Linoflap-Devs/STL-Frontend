@@ -8,6 +8,10 @@ import { getCurrentUser } from "../utils/api/auth";
 import "../styles/globals.css";
 import { refreshSubscribers } from "../utils/axiosInstance";
 
+import 'swiper/css';
+import 'swiper/css/navigation';
+import 'swiper/css/pagination';
+
 const excludedPaths = [
   "/",
   "/auth/login",

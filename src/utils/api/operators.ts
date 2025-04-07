@@ -21,20 +21,23 @@ export const fetchOperators = async () => {
     }
 };
 
-export const fetchOperator = async () => {
+export const fetchOperator = async (operatorId: string | number) => {
     try {
-        const url = validateRelativeUrl("/operators/getOperator");
-        const response = await axiosInstance.get(url, {
-            withCredentials: true,
-        });
-
-        return response.data;
+      // Ensure the URL is valid using the validateRelativeUrl function
+      const url = validateRelativeUrl("/operators/getOperator");
+      const response = await axiosInstance.get(url, {
+        params: { operatorId },
+        withCredentials: true,
+      });
+  
+      return response.data;
     } catch (error) {
-        console.error("Error fetching users:", (error as Error).message);
-        return { success: false, message: (error as Error).message, data: [] };
+      console.error("Error fetching operator:", (error as Error).message);
+  
+      return { success: false, message: (error as Error).message, data: [] };
     }
-};
-
+  };  
+  
 export default { fetchOperators, fetchOperator };
 
 
