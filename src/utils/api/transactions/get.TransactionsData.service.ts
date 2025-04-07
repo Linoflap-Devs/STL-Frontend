@@ -35,21 +35,22 @@ const getTransactionsData = async <T = unknown>(
     message?: string;
     data: T | null; // Changed from empty array to null for more flexibility
 }> => {
-    const token = localStorage.getItem('authToken');
+    // const token = localStorage.getItem('authToken');
 
-    if(!token) {
-        const errorMsg = "No authentication token found";
-        console.error(errorMsg);
-        return {success: false, message: errorMsg, data: null}
-    }
+    // if(!token) {
+    //     const errorMsg = "No authentication token found";
+    //     console.error(errorMsg);
+    //     return {success: false, message: errorMsg, data: null}
+    // }
 
     try {
         const response = await axiosInstance.get<T>(endpoint, {
             params: queryParams,
             headers: {
-                Authorization: `Bearer ${token}`,
+                // Authorization: `Bearer ${token}`,
                 'Content-Type': 'application/json'
             },
+            withCredentials: true,
         })
 
         return {

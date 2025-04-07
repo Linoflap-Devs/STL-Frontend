@@ -14,6 +14,7 @@ const DynamicBettingSummary = () => {
     console.log("Router Ready:", router.isReady);
     console.log("Query Params:", router.query);
   },[router.isReady, router.query])
+
   interface TransactionsData {
     TransactionId: number;
     TransactionNumber: string;
@@ -37,7 +38,6 @@ const DynamicBettingSummary = () => {
     Collector: string;
     DateOfTransaction: string; // ISO date string
   }
-
   interface HistoricalRegionData {
     TransactionDate: string; // ISO 8601 date string
     RegionId: number;
@@ -50,7 +50,6 @@ const DynamicBettingSummary = () => {
     TotalPayout: number;
     TotalEarnings: number;
   }
-
   interface TransactionResponse {
     success: boolean;
     message?: string;
@@ -80,30 +79,35 @@ const DynamicBettingSummary = () => {
     if (!router.isReady || !gameCategory) return;
     // if undefined, ensure the dynamic route is set uop correctly.
     console.log("gameCategory:", gameCategory)
-    console.log('Fetching data for category:', gameCategory);
 
     const fetchTransactionsData = async () => {
       setLoading(true);
-      try {
-        const game_category = getGameCategory(gameCategory);
-        console.log("Fetching data for category:", gameCategory);
+        try {
+          const game_category = getGameCategory(gameCategory);
+          console.log("Fetching data for category:", gameCategory);
 
-        const [historicalResponse, transactionsResponse] = await Promise.all([
-          getTransactionsData('/transaction/getHistoricalRegion'),
-          getTransactionsData<TransactionsData>('/transaction/getTransactions', game_category ? { GameCategory: game_category } : {})
-        ]);
+          const [historicalResponse, transactionsResponse] = await Promise.all([
+            getTransactionsData('/transactions/getHistoricalRegion'),
+            getTransactionsData<TransactionsData>('/transactions/getTransactions', game_category ? { GameCategory: game_category } : {})
+          ]);
 
-        if (historicalResponse.success) setHistoricalData(historicalResponse.data as HistoricalRegionData[]);
+          console.log(`Historical Response: `, historicalResponse)
+          console.log(`Transactions Response: `, transactionsResponse)
 
-        if (transactionsResponse.success) {
-          const responseData = transactionsResponse.data;
-          setTransactionsData(responseData ? (Array.isArray(responseData) ? responseData : [responseData]) : null);
+          if (historicalResponse.success) {
+            setHistoricalData(historicalResponse.data as HistoricalRegionData[]);
+            console.log(`Get Historical Region: ${historicalResponse.data}`)
+          }
+          if (transactionsResponse.success) {
+            const responseData = transactionsResponse.data;
+            setTransactionsData(responseData ? (Array.isArray(responseData) ? responseData : [responseData]) : null)
+            console.log(`Get Transactions Data: ${responseData}`)
+          }
+        } catch (error) {
+          console.error("Error fetching data:", error);
+        } finally {
+          setLoading(false);
         }
-      } catch (error) {
-        console.error("Error fetching data:", error);
-      } finally {
-        setLoading(false);
-      }
     };
 
     fetchTransactionsData();

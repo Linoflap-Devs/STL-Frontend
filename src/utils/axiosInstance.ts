@@ -21,6 +21,7 @@ axiosInstance.interceptors.response.use(
         // Attempt to refresh token
         await axiosInstance.post("/auth/tokenRefresh", {}, { withCredentials: true });
 
+        console.log(`Refreshing Access Token from axiosInstance`)
         // Retry the failed request
         return axiosInstance(error.config);
       } catch (refreshError) {
