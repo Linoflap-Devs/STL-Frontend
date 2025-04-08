@@ -141,7 +141,6 @@ const UserDashboardPage: React.FC<UserDashboardPageProps> = ({ roleId }) => {
     fetchData();
   }, [roleId]);
 
-
   useEffect(() => {
     if (!dashboardData || Object.keys(dashboardData).length === 0) return;
     const newChartData = [
@@ -259,7 +258,7 @@ const UserDashboardPage: React.FC<UserDashboardPageProps> = ({ roleId }) => {
         <Box sx={{ padding: 2, backgroundColor: "#171717", borderRadius: "10px" }}>
           <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
             <Box>
-              <Typography color="#B3B3B3" sx={{ fontSize: "16px" }}>
+              <Typography color="#B3B3B3">
                 {pageType === "manager" ? "Managers Summary" : "Executive Summary"}
               </Typography>
               <Box>

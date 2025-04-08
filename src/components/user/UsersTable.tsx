@@ -147,7 +147,7 @@ const ManagerTable: React.FC<ManagerTableProps> = ({ managers, onCreate, onEdit,
 
   // Menu handling
   const handleToggleMenu = (event?: React.MouseEvent<HTMLButtonElement>, user?: User) => {
-    console.log("Menu opened for user:", user);  // Debug log
+    //console.log("Menu opened for user:", user);  // Debug log
     setAnchorEl(event?.currentTarget || null);
     setSelectedUser(user || null);
   };

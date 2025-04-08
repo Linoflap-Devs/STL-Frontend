@@ -1,7 +1,9 @@
 import React, { Suspense } from 'react';
-import { drawResultCard, oneLineCode, blackOpacityHover, visibleOnHover, secondPartCard, firstPartCard, badgeLiveStyle } from "../../styles/tailwindClasses";
+import dynamic from 'next/dynamic';
 
-const UsersSkeletonPage = React.lazy(() => import("~/components/user/UsersSkeleton"));
+const UsersSkeletonPage = dynamic(() =>
+  import("~/components/user/UsersSkeleton").then(mod => ({ default: mod.UsersSkeletonPage }))
+);
 
 const drawData = [
   { id: 1, title: "Ilocos Norte", hasLive: true },
@@ -17,8 +19,6 @@ const drawResults = [
   { title: "3rd Draw", numbers1: [11], numbers2: [17] },
 ];
 
-//console.log(drawResultCard, oneLineCode, blackOpacityHover, visibleOnHover, secondPartCard, firstPartCard, badgeLiveStyle);
-
 const DrawCardsPage: React.FC = () => {
   return (
     <>
@@ -28,7 +28,6 @@ const DrawCardsPage: React.FC = () => {
           {drawData.map((draw) => (
             <div key={draw.id}>
               <div className="relative w-full h-48 bg-[#D5D5D5] group overflow-hidden rounded-t-lg">
-                {/* Conditionally render Live Badge */}
                 {draw.hasLive && (
                   <div className="absolute top-2 right-2 bg-[#FF7A7A] text-[#171717] text-sm font-bold px-4 py-1 rounded-[16px] z-10">
                     Live

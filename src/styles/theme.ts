@@ -373,5 +373,11 @@ export const skeletonRowStyles = {
   mt: 2,
 };
 
-export default darkTheme;
+export const buttonUpdateStyles = {
+  backgroundColor: "#67ABEB",
+  textTransform: "none",
+  borderRadius: "8px",
+  color: "#181A1B",
+};
 
+export default darkTheme;

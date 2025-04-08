@@ -19,7 +19,7 @@ import {
 import { formatKey } from "../../utils/format";
 import { User } from "./UsersTable";
 import CloseIcon from '@mui/icons-material/Close';
-import { inputStyles, selectStyles } from "../../styles/theme";
+import { buttonUpdateStyles, selectStyles } from "../../styles/theme";
 import { fetchUserById } from "~/utils/api/users";
 import EditLogModalPage from "./EditLogModal";
 import { validateUser } from "~/utils/validation"
@@ -156,6 +156,7 @@ const UpdateManager: React.FC<UpdateManagerProps> = React.memo(({
   };
 
   const alwaysDisabledKeys = ["firstName", "CreatedBy", "DateOfRegistration", "OperatorName", "DateOfOperation", "LastUpdatedBy", "LastUpdatedDate"];
+  const label = pageType === "manager" ? "Manager" : "Executive";
 
   const handleManagerChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -265,7 +266,7 @@ const UpdateManager: React.FC<UpdateManagerProps> = React.memo(({
             <CloseIcon sx={{ fontSize: 20, fontWeight: 700 }} />
           </IconButton>
           <Typography variant="h5" sx={{ fontWeight: "bold", }}>
-            {pageType === "manager" ? "View Manager" : "View Executive"}
+            {isViewMode ? `Update ${label}` : `View ${label}`}
           </Typography>
         </DialogTitle>
         <DialogContent>
@@ -282,6 +283,7 @@ const UpdateManager: React.FC<UpdateManagerProps> = React.memo(({
                     label="Status"
                     disabled={isDisabled}
                     size="small"
+                    autoFocus
                   >
                     <MenuItem value="Active">Active</MenuItem>
                     <MenuItem value="Inactive">Inactive</MenuItem>
@@ -292,15 +294,7 @@ const UpdateManager: React.FC<UpdateManagerProps> = React.memo(({
               <Box>
                 <Button
                   onClick={handleDisable}
-                  sx={{
-                    mt: 1,
-                    backgroundColor: "#67ABEB",
-                    textTransform: "none",
-                    fontSize: "14px",
-                    px: "1.7rem",
-                    borderRadius: "8px",
-                    color: "#181A1B",
-                  }}
+                  sx={{ ...buttonUpdateStyles, mt: 1, fontSize: "14px", px: "1.7rem", }}
                   variant="contained"
                 >
                   {isViewMode ? "View" : "Update"}
@@ -386,7 +380,7 @@ const UpdateManager: React.FC<UpdateManagerProps> = React.memo(({
 
               {/* History Fields */}
               <Stack spacing={3} sx={{ flex: 1 }}>
-                <Typography sx={{ marginBottom: 0 }}>History</Typography>
+                <Typography sx={{ mb: 0 }}>History</Typography>
                 {["CreatedBy", "DateOfRegistration", "LastUpdatedBy", "LastUpdatedDate"].map((key) => (
                   <FormControl key={key} fullWidth error={!!errors[key]}>
                     <InputLabel htmlFor={key}>{formatKey(key)}</InputLabel>
@@ -494,16 +488,7 @@ const UpdateManager: React.FC<UpdateManagerProps> = React.memo(({
             {!isDisabled && (
               <Button
                 onClick={handleUpdateManagerSubmit}
-                sx={{
-                  mt: 3,
-                  width: "100%",
-                  backgroundColor: "#67ABEB",
-                  textTransform: "none",
-                  fontSize: "12px",
-                  padding: "0.8rem",
-                  borderRadius: "8px",
-                  color: "#181A1B",
-                }}
+                sx={{ ...buttonUpdateStyles, mt: 3, padding: "0.8rem", fontSize: "12px", width: "100%", }}
                 variant="contained"
               >
                 Update Manager
