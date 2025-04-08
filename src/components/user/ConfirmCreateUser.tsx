@@ -24,9 +24,7 @@ const ConfirmCreateUserPage: React.FC<ConfirmCreateUserPageProps> = ({ open, onC
     const [password, setPassword] = useState("");
     const [error, setError] = useState("");
     const [showPassword, setShowPassword] = useState<boolean>(false);
-    const handleTogglePasswordVisibility = () =>
-        setShowPassword((prev) => !prev);
-    
+    const handleTogglePasswordVisibility = () => setShowPassword((prev) => !prev);
     const [userType, setUserType] = useState('');
     const router = useRouter();
 

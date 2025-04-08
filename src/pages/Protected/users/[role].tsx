@@ -6,8 +6,12 @@ import CreateManager from '~/components/user/CreateUser';
 import UpdateManager from '~/components/user/UpdateUser';
 import { fetchUsers } from '~/utils/api/users';
 import { fetchOperators } from '~/utils/api/operators';
+import dynamic from 'next/dynamic';
 
-const UsersSkeletonPage = React.lazy(() => import('~/components/user/UsersSkeleton'));
+const UsersSkeletonPage = dynamic(() =>
+  import("~/components/user/UsersSkeleton").then(mod => ({ default: mod.UsersSkeletonPage }))
+);
+
 const UserDashboardPage = React.lazy(() => import('~/components/user/UsersDashboard'));
 
 // Roles config
@@ -135,13 +139,11 @@ const UsersPage = () => {
           </Typography>
         </Box>
 
-        {/* Dashboard Summary */}
         <Box>
           <UserDashboardPage roleId={roleId} />
         </Box>
-
-        {/* Main Table */}
         <Box>
+
           <ManagerTable
             onCreate={handleUserCreate}
             onEdit={handleUserEdit}
@@ -151,7 +153,6 @@ const UsersPage = () => {
           />
         </Box>
 
-        {/* Create Modal */}
         <CreateManager
           open={isModalOpen}
           onClose={() => setModalOpen(false)}
@@ -161,7 +162,6 @@ const UsersPage = () => {
           operators={operators}
         />
 
-        {/* Update Modal */}
         {isUpdateModalOpen && (
           <UpdateManager
             open={isUpdateModalOpen}

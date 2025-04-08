@@ -17,7 +17,6 @@ import {
     TablePagination,
 } from "@mui/material";
 import EditIcon from '@mui/icons-material/Edit';
-import SearchOffIcon from "@mui/icons-material/SearchOff";
 import {
     SortableTableCell,
     sortData,
@@ -28,7 +27,6 @@ import {
 import CloseIcon from "@mui/icons-material/Close";
 import SearchIcon from "@mui/icons-material/Search";
 import { editLogUser } from "~/utils/api/users";
-import { User } from "./UsersTable";
 
 export interface EditLogFields {
     EditLogDetailsId: Key | null | undefined;

@@ -56,7 +56,7 @@ const CreateManager: React.FC<CreateManagerProps> = ({
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
   const [showPassword, setShowPassword] = useState(false);
   const [isVerifyModalOpen, setIsVerifyModalOpen] = useState(false);
-
+  
   const handleManagerChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement> | SelectChangeEvent<string>
   ) => {
@@ -121,18 +121,18 @@ const CreateManager: React.FC<CreateManagerProps> = ({
       onClose={onClose}
       fullWidth
       PaperProps={{
-        sx: {
-          width: "100%",
-          maxWidth: {
-            xs: "90%",
-            sm: "80%",
-            md: "600px",
-            lg: "650px",
-            xl: "800px",
+          sx: {
+            width: "100%",
+            maxWidth: {
+              xs: "90%",
+              sm: "80%",
+              md: "600px",
+              lg: "650px",
+              xl: "800px",
+            },
           },
-        },
-      }}
-    >
+        }}
+      >
       <DialogTitle sx={{ display: "flex", flexDirection: "column", alignItems: "flex-start", py: 0 }}>
         <IconButton
           sx={{
@@ -177,7 +177,6 @@ const CreateManager: React.FC<CreateManagerProps> = ({
                           labelId="suffix-label"
                           id="suffix"
                           name="suffix"
-
                           onChange={handleManagerChange}
                           label="Suffix"
                         >

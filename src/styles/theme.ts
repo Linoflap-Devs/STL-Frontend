@@ -62,6 +62,8 @@ const darkTheme = createTheme({
       styleOverrides: {
         root: {
           borderRadius: "10px",
+          backgroundColor: "#171717",
+          padding: '5px 12px',
         },
       },
     },
@@ -71,7 +73,6 @@ const darkTheme = createTheme({
           backgroundColor: "#171717",
           borderRadius: 5,
           borderCollapse: "collapse",
-          padding: 1,
         },
       },
     },

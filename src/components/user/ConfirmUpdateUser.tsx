@@ -1,11 +1,12 @@
 import { useState } from "react";
-import { Typography, Box, Tooltip, Dialog, IconButton, DialogContent, Button, TextField } from "@mui/material";
+import { Typography, Box, Tooltip, Dialog, IconButton, DialogContent, Button, TextField, InputLabel, OutlinedInput, FormControl } from "@mui/material";
 import { verifyPass } from "~/utils/api/auth";
 import { updateUser } from "~/utils/api/users";
 import Swal from "sweetalert2";
 import { LoginSectionData } from "../../data/LoginSectionData";
 import ArrowBackIosNewIcon from "@mui/icons-material/ArrowBackIosNew";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
+import { inputStyles } from "~/styles/theme";
 
 interface ConfirmUpdateManagerPageProps {
     open: boolean;
@@ -146,7 +147,29 @@ const ConfirmUpdateManagerPage: React.FC<ConfirmUpdateManagerPageProps> = ({ ope
                             >
                                 {LoginSectionData.ConfirmIdentityDescription}
                             </Typography>
-                            <Box sx={{ paddingX: 5, }}>
+                            <Box sx={{ paddingX: 5, mt: 3.5, }}>
+                                <FormControl
+                                    fullWidth
+                                    variant="outlined"
+                                    sx={inputStyles}
+                                >
+                                    <InputLabel htmlFor="remarks">Remarks</InputLabel>
+                                    <OutlinedInput
+                                        id="remarks"
+                                        name="remarks"
+                                        placeholder="Enter Remarks"
+                                        //value={selectedUser?.remarks || ""}
+                                        //onChange={handleManagerChange}
+                                        multiline
+                                        minRows={3}
+                                        label="Remarks"
+                                        onKeyDown={(e) => {
+                                            if (e.key === "Tab") {
+                                                e.stopPropagation();
+                                            }
+                                        }}
+                                    />
+                                </FormControl>
                                 <TextField
                                     label="Password"
                                     placeholder="Enter your Password"

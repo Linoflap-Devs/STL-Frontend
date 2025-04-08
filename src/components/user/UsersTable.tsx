@@ -190,13 +190,13 @@ const ManagerTable: React.FC<ManagerTableProps> = ({ managers, onCreate, onEdit,
   };
 
   return (
+    <>
     <TableContainer>
-      <Box sx={{ backgroundColor: "#171717", }}>
+      <Box>
         <Box
           sx={{
-            paddingTop: 2.5,
-            paddingBottom: 2,
-            paddingX: 2,
+            py: 2,
+            px: 0.5,
             display: "flex",
             justifyContent: "space-between",
             alignItems: "center",
@@ -298,7 +298,13 @@ const ManagerTable: React.FC<ManagerTableProps> = ({ managers, onCreate, onEdit,
           {sortedFilteredUsers.length === 0 ? (
             <TableRow>
               <TableCell colSpan={9} align="center">
-                <Box sx={{ display: "flex", flexDirection: "column", alignItems: "center", py: 5 }}>
+                <Box 
+                  sx={{
+                    display: "flex",
+                    flexDirection: "column",
+                    alignItems: "center",
+                    py: 5
+                  }}>
                   {managers.length === 0 ? (
                     <>
                       <PersonOffIcon sx={{ fontSize: 50, color: "gray" }} />
@@ -396,13 +402,7 @@ const ManagerTable: React.FC<ManagerTableProps> = ({ managers, onCreate, onEdit,
           )}
         </TableBody>
       </Table>
-      <Box
-        sx={{
-          padding: "12px",
-          boxShadow: "0 2px 8px rgba(0, 0, 0, 0.4)",
-          backgroundColor: "#171717",
-        }}
-      >
+      <Box sx={{ padding: "12px", }}>
         <TablePagination
           rowsPerPageOptions={[10, 25, 50, 100]}
           component="div"
@@ -417,18 +417,19 @@ const ManagerTable: React.FC<ManagerTableProps> = ({ managers, onCreate, onEdit,
           }
         />
       </Box>
-      <Box
+    </TableContainer>
+    <Box
         sx={{
           display: "flex",
           justifyContent: "flex-end",
-          paddingTop: 2.3,
+          paddingTop: 2,
         }}
       >
         <Button variant="contained" sx={buttonStyles}>
           {UserSectionData.exportAsCSVButton}
         </Button>
       </Box>
-    </TableContainer>
+    </>
   );
 };
 
