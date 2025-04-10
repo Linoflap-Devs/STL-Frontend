@@ -92,13 +92,15 @@ const ManagerTable: React.FC<ManagerTableProps> = ({ managers, onCreate, onEdit,
 
       let status = "Active"; // Default status
 
-      if (user.IsActive === 0) {
+      if (user.UserStatusId === 3) {
         status = "Suspended"; // Prioritize Suspended and stop further checks
+      } else if (user.UserStatusId === 2) {
+        status = "Inactive"; // Inactive status
       } else if (
-        (!lastLogin || lastLogin.isBefore(sevenDaysAgo)) &&
-        (!lastTokenRefresh || lastTokenRefresh.isBefore(sevenDaysAgo))
+        user.IsActive === 0 &&
+        user.UserStatusId !== 3 // If IsActive is 0, but not suspended
       ) {
-        status = "Inactive"; // Only mark inactive if NOT suspended
+        status = "Inactive";
       }
 
       return {
@@ -107,7 +109,7 @@ const ManagerTable: React.FC<ManagerTableProps> = ({ managers, onCreate, onEdit,
         formattedDate: user.DateOfRegistration
           ? dayjs(user.DateOfRegistration).format("YYYY/MM/DD")
           : "Invalid Date",
-        Status: status, // Now properly handling Suspended/Inactives
+        Status: status,
       };
     }),
     { ...filters, searchQuery },
@@ -191,234 +193,235 @@ const ManagerTable: React.FC<ManagerTableProps> = ({ managers, onCreate, onEdit,
 
   return (
     <>
-    <TableContainer>
-      <Box>
-        <Box
-          sx={{
-            py: 2,
-            px: 0.5,
-            display: "flex",
-            justifyContent: "space-between",
-            alignItems: "center",
-          }}
-        >
-          <Box sx={{ display: "flex", alignItems: "center" }}>
-            <TextField
-              variant="outlined"
-              placeholder="Search"
-              value={searchQuery}
-              sx={{
-                width: "350px",
-                "& .MuiOutlinedInput-root": {
-                  padding: "9px 14px",
-                  backgroundColor: 'transparent',
-                },
-                "& .MuiOutlinedInput-input": {
-                  padding: "0.5px 0",
-                },
-              }}
-              onChange={handleSearchChange}
-              InputProps={{
-                startAdornment: (
-                  <InputAdornment position="start">
-                    <SearchIcon sx={{ fontSize: 20, color: "#9CA3AF" }} />
-                  </InputAdornment>
-                ),
-              }}
-            />
-            {isFilterActive ? (
-              <FilterListOffIcon
-                onClick={handleFilterToggle}
-                sx={{ marginLeft: 2, color: "#9CA3AF", cursor: "pointer" }}
+      <TableContainer>
+        <Box>
+          <Box
+            sx={{
+              py: 2,
+              px: 0.5,
+              display: "flex",
+              justifyContent: "space-between",
+              alignItems: "center",
+            }}
+          >
+            <Box sx={{ display: "flex", alignItems: "center" }}>
+              <TextField
+                variant="outlined"
+                placeholder="Search"
+                value={searchQuery}
+                sx={{
+                  width: "350px",
+                  "& .MuiOutlinedInput-root": {
+                    padding: "9px 14px",
+                    backgroundColor: 'transparent',
+                  },
+                  "& .MuiOutlinedInput-input": {
+                    padding: "0.5px 0",
+                  },
+                }}
+                onChange={handleSearchChange}
+                InputProps={{
+                  startAdornment: (
+                    <InputAdornment position="start">
+                      <SearchIcon sx={{ fontSize: 20, color: "#9CA3AF" }} />
+                    </InputAdornment>
+                  ),
+                }}
               />
-            ) : (
-              <FilterListIcon
-                onClick={handleFilterToggle}
-                sx={{ marginLeft: 2, color: "#9CA3AF", cursor: "pointer" }}
-              />
-            )}
-          </Box>
-          <Box sx={{ display: "flex", alignItems: "center" }}>
-            <Button variant="contained" onClick={onCreate} sx={buttonStyles}>
-              {pageType === 'manager' ? 'Add Manager' : 'Add Executive'}
-            </Button>
+              {isFilterActive ? (
+                <FilterListOffIcon
+                  onClick={handleFilterToggle}
+                  sx={{ marginLeft: 2, color: "#9CA3AF", cursor: "pointer" }}
+                />
+              ) : (
+                <FilterListIcon
+                  onClick={handleFilterToggle}
+                  sx={{ marginLeft: 2, color: "#9CA3AF", cursor: "pointer" }}
+                />
+              )}
+            </Box>
+            <Box sx={{ display: "flex", alignItems: "center" }}>
+              <Button variant="contained" onClick={onCreate} sx={buttonStyles}>
+                {pageType === 'manager' ? 'Add Manager' : 'Add Executive'}
+              </Button>
+            </Box>
           </Box>
         </Box>
-      </Box>
-      <Table size="small">
-        <TableHead>
-          <TableRow>
-            <>
-              <SortableTableCell
-                label="Full Name"
-                sortKey="fullName"
-                sortConfig={sortConfig}
-                onSort={onSortWrapper}
-                onFilterChange={handleFilterChange("fullName")}
-              />
-              <SortableTableCell
-                label="Company Name"
-                sortKey="companyName"
-                sortConfig={sortConfig}
-                onSort={onSortWrapper}
-                onFilterChange={handleFilterChange("companyName")}
-              />
-              <SortableTableCell
-                label="Creation Date"
-                sortKey="DateOfRegistration"
-                sortConfig={sortConfig}
-                onSort={onSortWrapper}
-                isFilterVisible={isFilterVisible}
-                filterValue={filters.DateOfRegistration}
-                onFilterChange={handleFilterChange("DateOfRegistration")}
-              />
-              <SortableTableCell
-                label="Created By"
-                sortKey="CreatedBy"
-                sortConfig={sortConfig}
-                onSort={onSortWrapper}
-                isFilterVisible={isFilterVisible}
-                filterValue={filters.CreatedBy}
-                onFilterChange={handleFilterChange("CreatedBy")}
-              />
-              <SortableTableCell
-                label="Status"
-                sortKey="Status"
-                sortConfig={sortConfig}
-                onSort={onSortWrapper}
-                isFilterVisible={isFilterVisible}
-                filterValue={filters.Status}
-                onFilterChange={handleFilterChange("Status")}
-              />
-            </>
-            <TableCell>Actions</TableCell>
-          </TableRow>
-        </TableHead>
-        <TableBody>
-          {sortedFilteredUsers.length === 0 ? (
+        <Table size="small">
+          <TableHead>
             <TableRow>
-              <TableCell colSpan={9} align="center">
-                <Box 
-                  sx={{
-                    display: "flex",
-                    flexDirection: "column",
-                    alignItems: "center",
-                    py: 5
-                  }}>
-                  {managers.length === 0 ? (
-                    <>
-                      <PersonOffIcon sx={{ fontSize: 50, color: "gray" }} />
-                      <Typography variant="h6" color="textSecondary" sx={{ mt: 2, fontWeight: 500 }}>
-                        {pageType === "manager" ? "No managers available" : "No executives available"}
-                      </Typography>
-                      <Typography variant="body2" color="textSecondary">
-                        {pageType === "manager" ? "Add a new manager to get started." : "Add a new executive to get started."}
-                      </Typography>
-                    </>
-                  ) : (
-                    <>
-                      <SearchOffIcon sx={{ fontSize: 50, color: "gray" }} />
-                      <Typography variant="h6" color="textSecondary" sx={{ mt: 2, fontWeight: 500 }}>
-                        No results found
-                      </Typography>
-                      <Typography variant="body2" color="textSecondary">Try adjusting your search criteria.</Typography>
-                    </>
-                  )}
-                </Box>
-              </TableCell>
+              <>
+                <SortableTableCell
+                  label="Full Name"
+                  sortKey="fullName"
+                  sortConfig={sortConfig}
+                  onSort={onSortWrapper}
+                  onFilterChange={handleFilterChange("fullName")}
+                />
+                <SortableTableCell
+                  label="Company Name"
+                  sortKey="companyName"
+                  sortConfig={sortConfig}
+                  onSort={onSortWrapper}
+                  onFilterChange={handleFilterChange("companyName")}
+                />
+                <SortableTableCell
+                  label="Creation Date"
+                  sortKey="DateOfRegistration"
+                  sortConfig={sortConfig}
+                  onSort={onSortWrapper}
+                  isFilterVisible={isFilterVisible}
+                  filterValue={filters.DateOfRegistration}
+                  onFilterChange={handleFilterChange("DateOfRegistration")}
+                />
+                <SortableTableCell
+                  label="Created By"
+                  sortKey="CreatedBy"
+                  sortConfig={sortConfig}
+                  onSort={onSortWrapper}
+                  isFilterVisible={isFilterVisible}
+                  filterValue={filters.CreatedBy}
+                  onFilterChange={handleFilterChange("CreatedBy")}
+                />
+                <SortableTableCell
+                  label="Status"
+                  sortKey="Status"
+                  sortConfig={sortConfig}
+                  onSort={onSortWrapper}
+                  isFilterVisible={isFilterVisible}
+                  filterValue={filters.Status}
+                  onFilterChange={handleFilterChange("Status")}
+                />
+              </>
+              <TableCell>Actions</TableCell>
             </TableRow>
-          ) : (
-            sortedFilteredUsers.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((user) => (
-              <TableRow key={user.userId}>
-                <TableCell>{user.userId} {`${user.FirstName} ${user.LastName} ${user.Suffix}`}</TableCell>
-                <TableCell>{user.OperatorDetails.OperatorName}</TableCell>
-                <TableCell>{dayjs(user.DateOfRegistration).format("YYYY/MM/DD HH:mm:ss")}</TableCell>
-                <TableCell>{user?.CreatedBy}</TableCell>
-                <TableCell>
-                  <Button
-                    variant="contained"
+          </TableHead>
+          <TableBody>
+            {sortedFilteredUsers.length === 0 ? (
+              <TableRow>
+                <TableCell colSpan={9} align="center">
+                  <Box
                     sx={{
-                      cursor: "auto",
-                      textTransform: "none",
-                      borderRadius: "12px",
-                      padding: "1px 13.5px",
-                      backgroundColor:
-                        user.Status === "Suspended" ? "#FF7A7A" :
-                          user.Status === "Inactive" ? "#FFA726" :
-                            "#4CAF50",
-                      color: "#171717",
-                      "&:hover": {
-                        backgroundColor:
-                          user.Status === "Suspended" ? "#F05252" :
-                            user.Status === "Inactive" ? "#FFA726" :
-                              "#4CAF50",
-                      },
-                    }}
-                  >
-                    {user.Status}
-                  </Button>
-                </TableCell>
-                <TableCell>
-                  <IconButton onClick={(event) => handleToggleMenu(event, user)}>
-                    <MoreHorizIcon />
-                  </IconButton>
-                  <Menu
-                    anchorEl={anchorEl}
-                    open={Boolean(anchorEl)}
-                    onClose={() => { console.log("Menu closed"); handleToggleMenu(); }}
-                    MenuListProps={{ "aria-labelledby": "basic-button" }} >
-                    <MenuItem
-                      onClick={() => {
-                        if (selectedUser) {
-                          console.log("View clicked for user:", selectedUser);
-                          onEdit(selectedUser);
-                        } else {
-                          console.error("No user selected!");
-                        }
-                      }}
-                    >
-                      View
-                    </MenuItem>
-                    <MenuItem
-                      onClick={() => {
-                        console.log("Delete clicked for user:", user);
-                        handleManagerSuspend(user);
-                      }}
-                    >
-                      Delete
-                    </MenuItem>
-                  </Menu>
-                  <ConfirmSuspendManagerPage
-                    open={isVerifyModalOpen}
-                    onClose={() => setIsVerifyModalOpen(false)}
-                    onVerified={() => setIsVerifyModalOpen(false)}
-                    onSubmit={onSubmit}
-                    selectedUser={user}
-                    setSelectedUser={setSelectedUser}
-                  />
+                      display: "flex",
+                      flexDirection: "column",
+                      alignItems: "center",
+                      py: 5
+                    }}>
+                    {managers.length === 0 ? (
+                      <>
+                        <PersonOffIcon sx={{ fontSize: 50, color: "gray" }} />
+                        <Typography variant="h6" color="textSecondary" sx={{ mt: 2, fontWeight: 500 }}>
+                          {pageType === "manager" ? "No managers available" : "No executives available"}
+                        </Typography>
+                        <Typography variant="body2" color="textSecondary">
+                          {pageType === "manager" ? "Add a new manager to get started." : "Add a new executive to get started."}
+                        </Typography>
+                      </>
+                    ) : (
+                      <>
+                        <SearchOffIcon sx={{ fontSize: 50, color: "gray" }} />
+                        <Typography variant="h6" color="textSecondary" sx={{ mt: 2, fontWeight: 500 }}>
+                          No results found
+                        </Typography>
+                        <Typography variant="body2" color="textSecondary">Try adjusting your search criteria.</Typography>
+                      </>
+                    )}
+                  </Box>
                 </TableCell>
               </TableRow>
-            ))
-          )}
-        </TableBody>
-      </Table>
-      <Box sx={{ padding: "12px", }}>
-        <TablePagination
-          rowsPerPageOptions={[10, 25, 50, 100]}
-          component="div"
-          count={sortedFilteredUsers.length}
-          rowsPerPage={rowsPerPage}
-          page={page}
-          onPageChange={(event, newPage) =>
-            handleChangePage(event, newPage, setPage)
-          }
-          onRowsPerPageChange={(event) =>
-            handleChangeRowsPerPage(event, setRowsPerPage)
-          }
-        />
-      </Box>
-    </TableContainer>
-    <Box
+            ) : (
+              sortedFilteredUsers.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((user) => (
+                <TableRow key={user.userId}>
+                  <TableCell>{user.userId} {`${user.FirstName} ${user.LastName} ${user.Suffix}`}</TableCell>
+                  <TableCell>{user.OperatorDetails.OperatorName}</TableCell>
+                  <TableCell>{dayjs(user.DateOfRegistration).format("YYYY/MM/DD HH:mm:ss")}</TableCell>
+                  <TableCell>{user?.CreatedBy}</TableCell>
+                  <TableCell>
+                    <Button
+                      variant="contained"
+                      sx={{
+                        cursor: "auto",
+                        textTransform: "none",
+                        borderRadius: "12px",
+                        padding: "1px 13px",
+                        fontSize: "12px",
+                        backgroundColor:
+                          user.Status === "Suspended" ? "#FF7A7A" :
+                            user.Status === "Inactive" ? "#FFA726" :
+                              "#4CAF50", // Active color
+                        color: "#171717",
+                        "&:hover": {
+                          backgroundColor:
+                            user.Status === "Suspended" ? "#F05252" :
+                              user.Status === "Inactive" ? "#FFA726" :
+                                "#4CAF50",
+                        },
+                      }}
+                    >
+                      {user.Status}
+                    </Button>
+                  </TableCell>
+                  <TableCell>
+                    <IconButton onClick={(event) => handleToggleMenu(event, user)}>
+                      <MoreHorizIcon />
+                    </IconButton>
+                    <Menu
+                      anchorEl={anchorEl}
+                      open={Boolean(anchorEl)}
+                      onClose={() => { handleToggleMenu(); }}
+                      MenuListProps={{ "aria-labelledby": "basic-button" }} >
+                      <MenuItem
+                        onClick={() => {
+                          if (selectedUser) {
+                            console.log("View clicked for user:", selectedUser);
+                            onEdit(selectedUser);
+                          } else {
+                            console.error("No user selected!");
+                          }
+                        }}
+                      >
+                        View
+                      </MenuItem>
+                      <MenuItem
+                        onClick={() => {
+                          //console.log("Delete clicked for user:", user);
+                          handleManagerSuspend(user);
+                        }}
+                      >
+                        Delete
+                      </MenuItem>
+                    </Menu>
+                    <ConfirmSuspendManagerPage
+                      open={isVerifyModalOpen}
+                      onClose={() => setIsVerifyModalOpen(false)}
+                      onVerified={() => setIsVerifyModalOpen(false)}
+                      onSubmit={onSubmit}
+                      selectedUser={user}
+                      setSelectedUser={setSelectedUser}
+                    />
+                  </TableCell>
+                </TableRow>
+              ))
+            )}
+          </TableBody>
+        </Table>
+        <Box sx={{ padding: "12px", }}>
+          <TablePagination
+            rowsPerPageOptions={[10, 25, 50, 100]}
+            component="div"
+            count={sortedFilteredUsers.length}
+            rowsPerPage={rowsPerPage}
+            page={page}
+            onPageChange={(event, newPage) =>
+              handleChangePage(event, newPage, setPage)
+            }
+            onRowsPerPageChange={(event) =>
+              handleChangeRowsPerPage(event, setRowsPerPage)
+            }
+          />
+        </Box>
+      </TableContainer>
+      <Box
         sx={{
           display: "flex",
           justifyContent: "flex-end",

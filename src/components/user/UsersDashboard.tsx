@@ -40,64 +40,64 @@ const UserDashboardPage: React.FC<UserDashboardPageProps> = ({ roleId }) => {
   const pageType = window.location.pathname.includes("manager") ? "manager" : "executive";
   const [dashboardData, setDashboardData] = useState<Record<string, any>>({});
   const [chartData, setChartData] = useState<number[]>([]);
-  const [chartColors, setChartColors] = useState<string[]>([]); 
+  const [chartColors, setChartColors] = useState<string[]>([]);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
         const response = await fetchUsers({ roleId });
-  
+
         if (response.success) {
           const today = new Date();
           const sevenDaysAgo = new Date();
           sevenDaysAgo.setDate(today.getDate() - 7);
-  
+
           console.log("Seven days ago:", sevenDaysAgo.toISOString());
-  
+
           const totals = response.data.reduce((acc: Record<string, any>, user: any, index: number) => {
             //console.log(`Processing user ${index + 1}:`, user);
-  
+
             if (user.UserTypeId !== roleId) {
               //console.log(`Skipping user ${index + 1}, UserTypeId does not match roleId.`);
               return acc;
             }
-  
+
             acc.totalUsers += 1;
-  
+
             const lastLogin = user.LastLogin ? new Date(user.LastLogin) : null;
             const lastTokenRefresh = user.LastTokenRefresh ? new Date(user.LastTokenRefresh) : null;
             const userStatusId = user.UserStatusId;
-  
+
             // Active Manager
             const isActive = (lastLogin && lastLogin >= sevenDaysAgo) || (lastTokenRefresh && lastTokenRefresh >= sevenDaysAgo);
             if (isActive) {
               acc.activeUsers += 1;
               console.log(`User ${index + 1} marked as active.`);
             }
-  
+
             // Inactive Manager
             const isInactive = (
               (lastLogin && lastLogin < sevenDaysAgo) &&
               (lastTokenRefresh && lastTokenRefresh < sevenDaysAgo)) || userStatusId === 2;
-  
+
             if (isInactive) {
               acc.inactiveUsers += 1;
               console.log(`User ${index + 1} marked as inactive.`);
             }
-  
+
             // Suspended Manager
             if (userStatusId === 3) {
               acc.suspendedUsers += 1;
               console.log(`User ${index + 1} is suspended.`);
             }
-  
+
             // New Manager
             const registrationDate = user.DateOfRegistration ? new Date(user.DateOfRegistration) : null;
             if (registrationDate && registrationDate >= sevenDaysAgo) {
               acc.newUsers += 1;
               console.log(`User ${index + 1} is a new user.`);
             }
-  
+
             return acc;
           }, {
             totalUsers: 0,
@@ -106,7 +106,7 @@ const UserDashboardPage: React.FC<UserDashboardPageProps> = ({ roleId }) => {
             suspendedUsers: 0,
             newUsers: 0,
           });
-  
+
           console.log("Final Processed Totals:", totals);
           setDashboardData(totals);
         } else {
@@ -116,10 +116,10 @@ const UserDashboardPage: React.FC<UserDashboardPageProps> = ({ roleId }) => {
         console.error("Error Fetching Data:", error);
       }
     };
-  
+
     fetchData();
   }, [roleId]);
-  
+
   const getSummaryTotals = () => {
     return {
       totalUsers: dashboardData.totalUsers || 0,
@@ -129,16 +129,15 @@ const UserDashboardPage: React.FC<UserDashboardPageProps> = ({ roleId }) => {
       newUsers: dashboardData.newUsers || 0,
     };
   };
-  
+
   const summaryTotals = getSummaryTotals();
-  
+
   // dashboard charts
   useEffect(() => {
     if (!dashboardData || Object.keys(dashboardData).length === 0) return;
-  
+
     const totals = getSummaryTotals();
-  
-    // Create chart data with totals values
+
     const chartData = [
       totals.totalUsers,
       totals.activeUsers,
@@ -146,19 +145,16 @@ const UserDashboardPage: React.FC<UserDashboardPageProps> = ({ roleId }) => {
       totals.suspendedUsers,
       totals.newUsers,
     ];
-  
+
     // Define corresponding colors for each category
-    const colors = ["#BB86FC", "#5050A5", "#7266C9", "#3B3B81", "#282A68"]; // Color for each bar
-  
+    const colors = ["#BB86FC", "#5050A5", "#7266C9", "#3B3B81", "#282A68"];
+
     // Update state with chart data and colors
     setChartData(chartData);
     setChartColors(colors);
-  
-    console.log('UPDATED DATA!!', chartData);
-    console.log('UPDATED COLORs!!', colors);
 
   }, [dashboardData]);
-  
+
   return (
     <Box sx={{ mb: 3 }}>
       <Box
@@ -224,14 +220,14 @@ const UserDashboardPage: React.FC<UserDashboardPageProps> = ({ roleId }) => {
               </Button>
             </Box>
           </Box>
-        
+
           <Box sx={{ height: 270, width: "100%", minWidth: 0 }}>
             <BarChart
               xAxis={[
                 {
                   label: "USER STATUS",
                   scaleType: "band",
-                  data: ["Total", "Active", "Inactive", "Suspended", "New"],  
+                  data: ["Total", "Active", "Inactive", "Suspended", "New"],
                 },
               ]}
               yAxis={[
@@ -245,7 +241,7 @@ const UserDashboardPage: React.FC<UserDashboardPageProps> = ({ roleId }) => {
                   data: chartData,
                   color: chartColors.length > 0 ? chartColors[0] : "#BB86FC",
                 },
-              ]}         
+              ]}
               slotProps={{
                 legend: { hidden: true },
                 bar: {
