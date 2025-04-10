@@ -160,11 +160,11 @@ const UsersPage = () => {
         </Box>
 
         <Box>
-          <UserDashboardPage 
-          roleId={roleId} 
-          getUserStatus={getUserStatus}
-          managers={users}
-          sevenDaysAgo={sevenDaysAgo}
+          <UserDashboardPage
+            roleId={roleId}
+            getUserStatus={getUserStatus}
+            users={users}
+            sevenDaysAgo={sevenDaysAgo}
           />
         </Box>
         <Box>

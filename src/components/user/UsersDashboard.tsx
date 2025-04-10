@@ -9,7 +9,7 @@ import { User } from "./UsersTable";
 interface UserDashboardPageProps {
   roleId: number;
   getUserStatus: (user: User, sevenDaysAgo: dayjs.Dayjs) => string;
-  managers: User[];
+  users: User[];
   sevenDaysAgo: dayjs.Dayjs;
 }
 
@@ -41,55 +41,42 @@ const CustomLegend = ({ pageType }: { pageType: string }) => (
   </Stack>
 );
 
-const UserDashboardPage: React.FC<UserDashboardPageProps> = ({ roleId, getUserStatus, sevenDaysAgo }) => {
+const UserDashboardPage: React.FC<UserDashboardPageProps> = ({ users, roleId, getUserStatus, sevenDaysAgo }) => {
   const pageType = window.location.pathname.includes("manager") ? "manager" : "executive";
   const [dashboardData, setDashboardData] = useState<Record<string, any>>({});
   const [chartData, setChartData] = useState<number[]>([]);
   const [chartColors, setChartColors] = useState<string[]>([]);
 
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await fetchUsers({ roleId });
-  
-        if (response.success) {
-          const today = new Date();
-  
-          let totals = {
-            totalUsers: 0,
-            activeUsers: 0,
-            inactiveUsers: 0,
-            suspendedUsers: 0,
-            newUsers: 0,
-          };
-  
-          const filteredUsers = response.data.filter((user: any) => user.UserTypeId === roleId);
-  
-          filteredUsers.forEach((user: any) => {
-            const status = getUserStatus(user, sevenDaysAgo);
-  
-            totals.totalUsers += 1;
-  
-            if (status === "Active") totals.activeUsers += 1;
-            if (status === "Inactive") totals.inactiveUsers += 1;
-            if (status === "Suspended") totals.suspendedUsers += 1;
-            if (status === "New") totals.newUsers += 1;
-          });
-  
-          setDashboardData(totals);
-        } else {
-          console.error("API Request Failed:", response.message);
-        }
-      } catch (error) {
-        console.error("Error Fetching Data:", error);
-      }
-    };
-  
-    if (roleId) {
-      fetchData();
+    if (users.length === 0) {
+      return;
     }
-  }, [roleId]);
-  
+
+    const today = new Date();
+
+    // Initialize totals
+    let totals = {
+      totalUsers: 0,
+      activeUsers: 0,
+      inactiveUsers: 0,
+      suspendedUsers: 0,
+      newUsers: 0,
+    };
+
+    users.forEach((user: any) => {
+      const status = getUserStatus(user, sevenDaysAgo);
+
+      totals.totalUsers += 1;
+
+      if (status === "Active") totals.activeUsers += 1;
+      if (status === "Inactive") totals.inactiveUsers += 1;
+      if (status === "Suspended") totals.suspendedUsers += 1;
+      if (status === "New") totals.newUsers += 1;
+    });
+
+    setDashboardData(totals);
+  }, [users, roleId]);
+
   const getSummaryTotals = () => {
     return {
       totalUsers: dashboardData.totalUsers || 0,
