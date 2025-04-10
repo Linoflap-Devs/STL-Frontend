@@ -3,9 +3,14 @@ import { Box, Typography, Stack, Button, Tooltip } from "@mui/material";
 import { cardDashboardStyles } from "../../styles/theme";
 import { fetchUsers } from "../../utils/api/users";
 import { BarChart } from "@mui/x-charts/BarChart";
+import dayjs from "dayjs";
+import { User } from "./UsersTable";
 
 interface UserDashboardPageProps {
   roleId: number;
+  getUserStatus: (user: User, sevenDaysAgo: dayjs.Dayjs) => string;
+  managers: User[];
+  sevenDaysAgo: dayjs.Dayjs;
 }
 
 const getLegendItems = (pageType: string) => [
@@ -36,7 +41,7 @@ const CustomLegend = ({ pageType }: { pageType: string }) => (
   </Stack>
 );
 
-const UserDashboardPage: React.FC<UserDashboardPageProps> = ({ roleId }) => {
+const UserDashboardPage: React.FC<UserDashboardPageProps> = ({ roleId, getUserStatus, sevenDaysAgo }) => {
   const pageType = window.location.pathname.includes("manager") ? "manager" : "executive";
   const [dashboardData, setDashboardData] = useState<Record<string, any>>({});
   const [chartData, setChartData] = useState<number[]>([]);
@@ -46,68 +51,31 @@ const UserDashboardPage: React.FC<UserDashboardPageProps> = ({ roleId }) => {
     const fetchData = async () => {
       try {
         const response = await fetchUsers({ roleId });
-
+  
         if (response.success) {
           const today = new Date();
-          const sevenDaysAgo = new Date();
-          sevenDaysAgo.setDate(today.getDate() - 7);
-
-          console.log("Seven days ago:", sevenDaysAgo.toISOString());
-
-          const totals = response.data.reduce((acc: Record<string, any>, user: any, index: number) => {
-            //console.log(`Processing user ${index + 1}:`, user);
-
-            if (user.UserTypeId !== roleId) {
-              //console.log(`Skipping user ${index + 1}, UserTypeId does not match roleId.`);
-              return acc;
-            }
-
-            acc.totalUsers += 1;
-
-            const lastLogin = user.LastLogin ? new Date(user.LastLogin) : null;
-            const lastTokenRefresh = user.LastTokenRefresh ? new Date(user.LastTokenRefresh) : null;
-            const userStatusId = user.UserStatusId;
-
-            // Active Manager
-            const isActive = (lastLogin && lastLogin >= sevenDaysAgo) || (lastTokenRefresh && lastTokenRefresh >= sevenDaysAgo);
-            if (isActive) {
-              acc.activeUsers += 1;
-              console.log(`User ${index + 1} marked as active.`);
-            }
-
-            // Inactive Manager
-            const isInactive = (
-              (lastLogin && lastLogin < sevenDaysAgo) &&
-              (lastTokenRefresh && lastTokenRefresh < sevenDaysAgo)) || userStatusId === 2;
-
-            if (isInactive) {
-              acc.inactiveUsers += 1;
-              console.log(`User ${index + 1} marked as inactive.`);
-            }
-
-            // Suspended Manager
-            if (userStatusId === 3) {
-              acc.suspendedUsers += 1;
-              console.log(`User ${index + 1} is suspended.`);
-            }
-
-            // New Manager
-            const registrationDate = user.DateOfRegistration ? new Date(user.DateOfRegistration) : null;
-            if (registrationDate && registrationDate >= sevenDaysAgo) {
-              acc.newUsers += 1;
-              console.log(`User ${index + 1} is a new user.`);
-            }
-
-            return acc;
-          }, {
+  
+          let totals = {
             totalUsers: 0,
             activeUsers: 0,
             inactiveUsers: 0,
             suspendedUsers: 0,
             newUsers: 0,
+          };
+  
+          const filteredUsers = response.data.filter((user: any) => user.UserTypeId === roleId);
+  
+          filteredUsers.forEach((user: any) => {
+            const status = getUserStatus(user, sevenDaysAgo);
+  
+            totals.totalUsers += 1;
+  
+            if (status === "Active") totals.activeUsers += 1;
+            if (status === "Inactive") totals.inactiveUsers += 1;
+            if (status === "Suspended") totals.suspendedUsers += 1;
+            if (status === "New") totals.newUsers += 1;
           });
-
-          console.log("Final Processed Totals:", totals);
+  
           setDashboardData(totals);
         } else {
           console.error("API Request Failed:", response.message);
@@ -116,10 +84,12 @@ const UserDashboardPage: React.FC<UserDashboardPageProps> = ({ roleId }) => {
         console.error("Error Fetching Data:", error);
       }
     };
-
-    fetchData();
+  
+    if (roleId) {
+      fetchData();
+    }
   }, [roleId]);
-
+  
   const getSummaryTotals = () => {
     return {
       totalUsers: dashboardData.totalUsers || 0,

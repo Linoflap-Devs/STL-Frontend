@@ -7,6 +7,7 @@ import UpdateManager from '~/components/user/UpdateUser';
 import { fetchUsers } from '~/utils/api/users';
 import { fetchOperators } from '~/utils/api/operators';
 import dynamic from 'next/dynamic';
+import dayjs from 'dayjs';
 
 const UsersSkeletonPage = dynamic(() =>
   import("~/components/user/UsersSkeleton").then(mod => ({ default: mod.UsersSkeletonPage }))
@@ -14,7 +15,6 @@ const UsersSkeletonPage = dynamic(() =>
 
 const UserDashboardPage = React.lazy(() => import('~/components/user/UsersDashboard'));
 
-// Roles config
 const roleMap: Record<string, { label: string; roleId: number }> = {
   managers: { label: 'Small Town Lottery Manager', roleId: 2 },
   executive: { label: 'Small Town Lottery Executive', roleId: 3 },
@@ -23,7 +23,6 @@ const roleMap: Record<string, { label: string; roleId: number }> = {
 const UsersPage = () => {
   const router = useRouter();
   const { role } = router.query;
-
   const [users, setUsers] = useState<User[]>([]);
   const [isModalOpen, setModalOpen] = useState(false);
   const [isUpdateModalOpen, setUpdateModalOpen] = useState(false);
@@ -31,6 +30,7 @@ const UsersPage = () => {
   const [selectedManager, setSelectedManager] = useState<User | null>(null);
   const [refresh, setRefresh] = useState(false);
   const [operators, setOperators] = useState<any[]>([]);
+  const [dashboardData, setDashboardData] = useState(null);
 
   // Determine the configuration for the role based on the `role` string
   const roleConfig = typeof role === 'string' ? roleMap[role.toLowerCase()] : null;
@@ -77,6 +77,26 @@ const UsersPage = () => {
   useEffect(() => {
     if (roleId) loadData();
   }, [roleId, refresh]);
+
+  // status data logic
+  const getUserStatus = (user: any, sevenDaysAgo: dayjs.Dayjs): string => {
+    let status = "Active";
+
+    if (user.IsActive === 0) {
+      status = "Suspended";
+    } else if (
+      (user.LastLogin && dayjs(user.LastLogin).isBefore(sevenDaysAgo)) &&
+      (user.LastTokenRefresh && dayjs(user.LastTokenRefresh).isBefore(sevenDaysAgo))
+    ) {
+      status = "Inactive";
+    } else if (user.DateOfRegistration && dayjs(user.DateOfRegistration).isAfter(sevenDaysAgo)) {
+      status = "New";
+    }
+
+    return status;
+  };
+
+  const sevenDaysAgo = dayjs().subtract(7, 'days');
 
   const handleUserCreate = () => {
     setSelectedUser(null);
@@ -140,7 +160,12 @@ const UsersPage = () => {
         </Box>
 
         <Box>
-          <UserDashboardPage roleId={roleId} />
+          <UserDashboardPage 
+          roleId={roleId} 
+          getUserStatus={getUserStatus}
+          managers={users}
+          sevenDaysAgo={sevenDaysAgo}
+          />
         </Box>
         <Box>
 
@@ -150,6 +175,8 @@ const UsersPage = () => {
             managers={users}
             onDelete={handleDeleteManager}
             onSubmit={handleSubmitUser}
+            getUserStatus={getUserStatus}
+            sevenDaysAgo={sevenDaysAgo}
           />
         </Box>
 
