@@ -8,31 +8,6 @@ interface UserDashboardPageProps {
   roleId: number;
 }
 
-const regionMap: Record<string, string> = {
-  "I": "Region I",
-  "II": "Region II",
-  "III": "Region III",
-  "IV A": "Region IV-A",
-  "IV B": "Region IV-B",
-  "V": "Region V",
-  "VI": "Region VI",
-  "VII": "Region VII",
-  "VIII": "Region VIII",
-  "IX": "Region IX",
-  "X": "Region X",
-  "XI": "Region XI",
-  "XII": "Region XII",
-  "XIII": "Region XIII",
-  "BARMM": "BARMM",
-  "CAR": "CAR",
-  "NCR": "NCR",
-};
-
-const regions: string[] = [
-  "I", "II", "III", "IV A", "IV B", "V", "VI", "VII", "VIII",
-  "IX", "X", "XI", "XII", "XIII", "BARMM", "CAR", "NCR"
-];
-
 const getLegendItems = (pageType: string) => [
   { color: "#BB86FC", label: pageType === "manager" ? "Total Managers" : "Total Executives" },
   { color: "#5050A5", label: pageType === "manager" ? "Total Active Managers" : "Total Active Executives" },
@@ -71,60 +46,67 @@ const UserDashboardPage: React.FC<UserDashboardPageProps> = ({ roleId }) => {
     const fetchData = async () => {
       try {
         const response = await fetchUsers({ roleId });
-
+  
         if (response.success) {
           const today = new Date();
           const sevenDaysAgo = new Date();
           sevenDaysAgo.setDate(today.getDate() - 7);
-
+  
           console.log("Seven days ago:", sevenDaysAgo.toISOString());
-
+  
           const totals = response.data.reduce((acc: Record<string, any>, user: any, index: number) => {
-            console.log(`Processing user ${index + 1}:`, user);
-
+            //console.log(`Processing user ${index + 1}:`, user);
+  
             if (user.UserTypeId !== roleId) {
-              console.log(`Skipping user ${index + 1}, UserTypeId does not match roleId.`);
+              //console.log(`Skipping user ${index + 1}, UserTypeId does not match roleId.`);
               return acc;
             }
-
-            const region = user.Region || "Unknown";
-            if (!acc[region]) {
-              acc[region] = {
-                totalUsers: 0,
-                activeUsers: 0,
-                inactiveUsers: 0,
-                suspendedUsers: 0,
-                newUsers: 0,
-              };
-            }
-
-            acc[region].totalUsers += 1;
-
+  
+            acc.totalUsers += 1;
+  
             const lastLogin = user.LastLogin ? new Date(user.LastLogin) : null;
             const lastTokenRefresh = user.LastTokenRefresh ? new Date(user.LastTokenRefresh) : null;
-
-            if ((lastLogin && lastLogin >= sevenDaysAgo) || (lastTokenRefresh && lastTokenRefresh >= sevenDaysAgo)) {
-              acc[region].activeUsers += 1;
+            const userStatusId = user.UserStatusId;
+  
+            // Active Manager
+            const isActive = (lastLogin && lastLogin >= sevenDaysAgo) || (lastTokenRefresh && lastTokenRefresh >= sevenDaysAgo);
+            if (isActive) {
+              acc.activeUsers += 1;
               console.log(`User ${index + 1} marked as active.`);
-            } else {
-              acc[region].inactiveUsers += 1;
+            }
+  
+            // Inactive Manager
+            const isInactive = (
+              (lastLogin && lastLogin < sevenDaysAgo) &&
+              (lastTokenRefresh && lastTokenRefresh < sevenDaysAgo)) || userStatusId === 2;
+  
+            if (isInactive) {
+              acc.inactiveUsers += 1;
               console.log(`User ${index + 1} marked as inactive.`);
             }
-
-            if (user.IsActive === 0) {
-              acc[region].suspendedUsers += 1;
+  
+            // Suspended Manager
+            if (userStatusId === 3) {
+              acc.suspendedUsers += 1;
               console.log(`User ${index + 1} is suspended.`);
             }
-
+  
+            // New Manager
             const registrationDate = user.DateOfRegistration ? new Date(user.DateOfRegistration) : null;
             if (registrationDate && registrationDate >= sevenDaysAgo) {
-              acc[region].newUsers += 1;
+              acc.newUsers += 1;
               console.log(`User ${index + 1} is a new user.`);
             }
-
+  
             return acc;
-          }, {});
-
+          }, {
+            totalUsers: 0,
+            activeUsers: 0,
+            inactiveUsers: 0,
+            suspendedUsers: 0,
+            newUsers: 0,
+          });
+  
           console.log("Final Processed Totals:", totals);
           setDashboardData(totals);
         } else {
@@ -134,11 +116,23 @@ const UserDashboardPage: React.FC<UserDashboardPageProps> = ({ roleId }) => {
         console.error("Error Fetching Data:", error);
       }
     };
-
+  
     fetchData();
   }, [roleId]);
-
-  // dashboard
+  
+  const getSummaryTotals = () => {
+    return {
+      totalUsers: dashboardData.totalUsers || 0,
+      activeUsers: dashboardData.activeUsers || 0,
+      inactiveUsers: dashboardData.inactiveUsers || 0,
+      suspendedUsers: dashboardData.suspendedUsers || 0,
+      newUsers: dashboardData.newUsers || 0,
+    };
+  };
+  
+  const summaryTotals = getSummaryTotals();
+  
+  // dashboard charts
   useEffect(() => {
     if (!dashboardData || Object.keys(dashboardData).length === 0) return;
   
@@ -164,23 +158,6 @@ const UserDashboardPage: React.FC<UserDashboardPageProps> = ({ roleId }) => {
     console.log('UPDATED COLORs!!', colors);
 
   }, [dashboardData]);
-
-
-  const getSummaryTotals = () => {
-    return Object.values(dashboardData).reduce(
-      (acc, region) => {
-        acc.totalUsers += region.totalUsers || 0;
-        acc.activeUsers += region.activeUsers || 0;
-        acc.inactiveUsers += region.inactiveUsers || 0;
-        acc.suspendedUsers += region.suspendedUsers || 0;
-        acc.newUsers += region.newUsers || 0;
-        return acc;
-      },
-      { totalUsers: 0, activeUsers: 0, inactiveUsers: 0, suspendedUsers: 0, newUsers: 0 }
-    );
-  };
-
-  const summaryTotals = getSummaryTotals();
   
   return (
     <Box sx={{ mb: 3 }}>
@@ -252,20 +229,20 @@ const UserDashboardPage: React.FC<UserDashboardPageProps> = ({ roleId }) => {
             <BarChart
               xAxis={[
                 {
-                  label: "User Status",
+                  label: "USER STATUS",
                   scaleType: "band",
-                  data: ["Total", "Active", "Inactive", "Suspended", "New"], // This should match the data you want to display
+                  data: ["Total", "Active", "Inactive", "Suspended", "New"],  
                 },
               ]}
               yAxis={[
                 {
-                  label: "Count",
+                  label: "COUNT",
                 },
               ]}
               series={[
                 {
                   label: pageType === "manager" ? "Managers" : "Executives",
-                  data: chartData, // This should be an array of numbers, which it is
+                  data: chartData,
                   color: chartColors.length > 0 ? chartColors[0] : "#BB86FC",
                 },
               ]}         
