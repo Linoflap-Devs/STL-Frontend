@@ -64,16 +64,13 @@ const CustomLegend = ({ pageType }: { pageType: string }) => (
 const UserDashboardPage: React.FC<UserDashboardPageProps> = ({ roleId }) => {
   const pageType = window.location.pathname.includes("manager") ? "manager" : "executive";
   const [dashboardData, setDashboardData] = useState<Record<string, any>>({});
-  const [chartData, setChartData] = useState<{ label: string; color: string; data: number[] }[]>([]);
+  const [chartData, setChartData] = useState<number[]>([]);
+  const [chartColors, setChartColors] = useState<string[]>([]); 
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        console.log("Fetching users with roleId:", roleId);
-
         const response = await fetchUsers({ roleId });
-
-        console.log("API Response USER DASHBOARD:", response);
 
         if (response.success) {
           const today = new Date();
@@ -141,64 +138,33 @@ const UserDashboardPage: React.FC<UserDashboardPageProps> = ({ roleId }) => {
     fetchData();
   }, [roleId]);
 
+  // dashboard
   useEffect(() => {
     if (!dashboardData || Object.keys(dashboardData).length === 0) return;
-    const newChartData = [
-      {
-        label: "Total Managers",
-        color: "#BB86FC",
-        data: regions.map((region) => {
-          const mappedRegion = regionMap[region];
-          const value = dashboardData[mappedRegion]?.totalUsers || 0;
-          // /console.log(`Region: ${region} (${mappedRegion}), Total Managers: ${value}`);
-          return value;
-        }),
-      },
-      {
-        label: "Active Managers",
-        color: "#5050A5",
-        data: regions.map((region) => {
-          const mappedRegion = regionMap[region];
-          const value = dashboardData[mappedRegion]?.activeUsers || 0;
-          //console.log(`Region: ${region} (${mappedRegion}), Active Managers: ${value}`);
-          return value;
-        }),
-      },
-      {
-        label: "Inactive Managers",
-        color: "#7266C9",
-        data: regions.map((region) => {
-          const mappedRegion = regionMap[region];
-          const value = dashboardData[mappedRegion]?.inactiveUsers || 0;
-          //console.log(`Region: ${region} (${mappedRegion}), Inactive Managers: ${value}`);
-          return value;
-        }),
-      },
-      {
-        label: "Suspended Managers",
-        color: "#3B3B81",
-        data: regions.map((region) => {
-          const mappedRegion = regionMap[region];
-          const value = dashboardData[mappedRegion]?.suspendedUsers || 0;
-          //console.log(`Region: ${region} (${mappedRegion}), Suspended Managers: ${value}`);
-          return value;
-        }),
-      },
-      {
-        label: "New Managers",
-        color: "#282A68",
-        data: regions.map((region) => {
-          const mappedRegion = regionMap[region];
-          const value = dashboardData[mappedRegion]?.newUsers || 0;
-          //console.log(`Region: ${region} (${mappedRegion}), New Managers: ${value}`);
-          return value;
-        }),
-      },
+  
+    const totals = getSummaryTotals();
+  
+    // Create chart data with totals values
+    const chartData = [
+      totals.totalUsers,
+      totals.activeUsers,
+      totals.inactiveUsers,
+      totals.suspendedUsers,
+      totals.newUsers,
     ];
+  
+    // Define corresponding colors for each category
+    const colors = ["#BB86FC", "#5050A5", "#7266C9", "#3B3B81", "#282A68"]; // Color for each bar
+  
+    // Update state with chart data and colors
+    setChartData(chartData);
+    setChartColors(colors);
+  
+    console.log('UPDATED DATA!!', chartData);
+    console.log('UPDATED COLORs!!', colors);
 
-    console.log("Updated Chart Data:", newChartData);
-    setChartData(newChartData);
   }, [dashboardData]);
+
 
   const getSummaryTotals = () => {
     return Object.values(dashboardData).reduce(
@@ -215,7 +181,7 @@ const UserDashboardPage: React.FC<UserDashboardPageProps> = ({ roleId }) => {
   };
 
   const summaryTotals = getSummaryTotals();
-
+  
   return (
     <Box sx={{ mb: 3 }}>
       <Box
@@ -281,16 +247,28 @@ const UserDashboardPage: React.FC<UserDashboardPageProps> = ({ roleId }) => {
               </Button>
             </Box>
           </Box>
-          
+        
           <Box sx={{ height: 270, width: "100%", minWidth: 0 }}>
             <BarChart
-              xAxis={[{ label: "REGIONS", scaleType: "band", data: regions }]}
-              yAxis={[]}
-              series={chartData.map(({ label, color, data }) => ({
-                data,
-                label,
-                color,
-              }))}
+              xAxis={[
+                {
+                  label: "User Status",
+                  scaleType: "band",
+                  data: ["Total", "Active", "Inactive", "Suspended", "New"], // This should match the data you want to display
+                },
+              ]}
+              yAxis={[
+                {
+                  label: "Count",
+                },
+              ]}
+              series={[
+                {
+                  label: pageType === "manager" ? "Managers" : "Executives",
+                  data: chartData, // This should be an array of numbers, which it is
+                  color: chartColors.length > 0 ? chartColors[0] : "#BB86FC",
+                },
+              ]}         
               slotProps={{
                 legend: { hidden: true },
                 bar: {
