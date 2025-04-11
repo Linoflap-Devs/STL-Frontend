@@ -29,7 +29,7 @@ const TableBettingActivityToday = () => {
   ]);
 
   return (
-    <Box sx={{ backgroundColor: "#171717", padding: 2, borderRadius: "10px", width: "501px", height: "720px" }}>
+    <Box sx={{ backgroundColor: "#171717", padding: 2, borderRadius: "10px", width: "100%", height: "720px" }}>
       <Box sx={{ display: "flex", mb: 1 }}>
         <Box
           sx={{

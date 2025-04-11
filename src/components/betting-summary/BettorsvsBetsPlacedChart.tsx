@@ -136,7 +136,14 @@ const ChartBettorsvsBetsPlacedSummary = () => {
       </Typography>
       <CustomLegend />
 
-      <Box sx={{ height: 270, width: 690 }}>
+      <Box
+          sx={{
+          height: "100%",
+          display: "flex",
+          flexDirection: "column",
+          flexGrow: 1,
+        }}
+      >
         <BarChart
           height={270}
           // width={{100%}}
