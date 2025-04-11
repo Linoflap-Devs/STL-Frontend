@@ -17,7 +17,7 @@ const CustomLegend = () => (
           width: 14,
           height: 14,
           borderRadius: "50%",
-          backgroundColor: "#BB86FC",
+          backgroundColor: "#E5C7FF",
           mr: 1.5,
         }}
       />
@@ -29,7 +29,7 @@ const CustomLegend = () => (
           width: 14,
           height: 14,
           borderRadius: "50%",
-          backgroundColor: "#5050A5",
+          backgroundColor: "#D2A7FF",
           mr: 1.5,
         }}
       />
@@ -111,12 +111,12 @@ const ChartBettorsvsBetsPlacedSummary = () => {
     console.log(`Bettors vs Bets Placed Summary Data: ${data}`);
   }, []);
 
-  const maxX = Math.max(
-    70,
-    ...data.map((item) => item.bettors / 10000),
-    ...data.map((item) => item.bets / 100000)
-  );
-  const xAxisTicks = [0, 10, 20, 30, 40, 50, 60, 70];
+  // const maxX = Math.max(
+  //   100,
+  //   ...data.map((item) => item.bettors / 10000),
+  //   ...data.map((item) => item.bets / 100000)
+  // );
+  const xAxisTicks = [0, 1, 5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 55, 60, 65, 70, 75, 80, 85, 90, 95, 100]
 
   return (
     <Box
@@ -125,42 +125,48 @@ const ChartBettorsvsBetsPlacedSummary = () => {
         padding: "1rem",
         borderRadius: "8px",
         paddingBottom: "2rem",
+        width: "100%",
+        // display: "flex",
+        // justifyContent: "center",
+        // alignItems: "center"
       }}
     >
-      <Typography color="#FFFFFF" sx={{ fontSize: "20px" }}>
-        <strong>Total Summary:</strong> Bettors vs. Bets Placed
+      <Typography color="#FFFFFF" sx={{ fontSize: "16px" }}>
+        Today&apos;s Bettors and Total Bets
       </Typography>
       <CustomLegend />
-      <Box sx={{ height: 270 }}>
+      <Box sx={{ height: 270, width: 690 }}>
         <BarChart
           height={270}
+          // width={{100%}}
           grid={{ vertical: true }}
           layout="horizontal"
+          margin={{ left: 90, right: 20, top: 20, bottom: 40 }}
           series={[
             {
-              data: data.map((item) => item.bettors),
-              color: "#BB86FC",
-              label: "Bettors",
+              data: [10, 20,30],
+              color: "#E5C7FF",
             },
             {
-              data: data.map((item) => item.bets),
-              color: "#5050A5",
-              label: "Bets",
+              data: [40, 50, 60],
+              color: "#D2A7FF",
             },
           ]}
           yAxis={[
             {
               scaleType: "band",
-              data: data.map((item) => item.draw),
+              data: ["First Draw", "Second Draw", "Third Draw"], 
+              // series={[{ data: [4, 3, 5] }, { data: [1, 6, 3] }]},
             } as any,
           ]}
           xAxis={[
             {
               label: "Amount (in 100,000 units)",
-              scaleType: "linear",
+              // scaleType: "linear",
               min: 0,
-              max: maxX,
+              max: 100,
               tickValues: xAxisTicks,
+              tickSpacing:1 ,
             } as any,
           ]}
         />

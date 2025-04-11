@@ -17,21 +17,19 @@ const TableBettingActivityToday = () => {
     { Region: "Cagayan Valley (Region II)", totalBetAmount: 380000, trend: 2 },
     { Region: "Central Luzon (Region III)", totalBetAmount: 920000, trend: 1 },
     { Region: "Calabarzon (Region IV-A)", totalBetAmount: 1150000, trend: 2 },
-    { Region: "Mimaropa (Region IV-B)", totalBetAmount: 280000, trend: 0 },
+    { Region: "Mimaropa (Region IV-B)", totalBetAmount: 280000, trend: 2 },
     { Region: "Bicol Region (Region V)", totalBetAmount: 350000, trend: -1 },
     { Region: "Western Visayas (Region VI)", totalBetAmount: 510000, trend: 1 },
     { Region: "Central Visayas (Region VII)", totalBetAmount: 680000, trend: 3 },
     { Region: "Eastern Visayas (Region VIII)", totalBetAmount: 290000, trend: -2 },
-    { Region: "Zamboanga Peninsula (Region IX)", totalBetAmount: 310000, trend: 0 },
+    { Region: "Zamboanga Peninsula (Region IX)", totalBetAmount: 310000, trend: 2 },
     { Region: "Northern Mindanao (Region X)", totalBetAmount: 390000, trend: 1 },
     { Region: "Davao Region (Region XI)", totalBetAmount: 550000, trend: 2 },
     { Region: "Soccsksargen (Region XII)", totalBetAmount: 330000, trend: -1 },
-    { Region: "Caraga (Region XIII)", totalBetAmount: 270000, trend: 0 },
-    { Region: "Bangsamoro Autonomous Region (BARMM)", totalBetAmount: 210000, trend: 1 },
   ]);
 
   return (
-    <Box sx={{ backgroundColor: "#171717", padding: 2, borderRadius: "10px" }}>
+    <Box sx={{ backgroundColor: "#171717", padding: 2, borderRadius: "10px", width: "501px", height: "720px" }}>
       <Box sx={{ display: "flex", mb: 1 }}>
         <Box
           sx={{
@@ -43,14 +41,14 @@ const TableBettingActivityToday = () => {
           <CasinoIcon sx={{ color: "#67ABEB" }} />
         </Box>
         <Typography
-          sx={{ fontWeight: 300, fontSize: "16px", ml: 1, color: "#fff" }}
+          sx={{ fontSize: "16px", ml: 1, color: "#fff" }}
         >
-          Today's Total Bets Placed by Region
+          Today&apos;s Bettor Count by Game Type
         </Typography>
       </Box>
       <Divider sx={{ backgroundColor: "#303030", mb: "1rem" }} />
 
-      <Box sx={{ mt: 2, width: "100%", maxHeight: "400px", overflowY: "auto" }}>
+      <Box sx={{ mt: 2, width: "100%", maxHeight: "720px", overflowY: "auto" }}>
         {regionData.map((item, index) => (
           <Box
             key={index}

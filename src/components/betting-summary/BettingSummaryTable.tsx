@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { useRouter } from "next/router";
 import { UserSectionData } from "../../data/AdminSectionData";
 import { buttonStyles } from "../../styles/theme";
 import {
@@ -34,9 +35,13 @@ export interface User {
 }
 
 interface TableBettingActivityTodayProps {
-  gameCategory?: string;
+  GameCategory?: string;
 }
-const TableBettingSummary: React.FC<TableBettingActivityTodayProps> = ({gameCategory}) => {
+
+const TableBettingSummary: React.FC<TableBettingActivityTodayProps> = ({GameCategory ='dashboard'}) => {
+  const router = useRouter();
+  
+
   const [data, setData] = React.useState([])
 
   const [transactions, setTransactions] = useState<User[]>([]);

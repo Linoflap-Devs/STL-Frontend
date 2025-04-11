@@ -50,8 +50,8 @@ const BettingSummaryPage: React.FC<BettingSummaryPageProps> = ({ GameCategory = 
       </Box>
       
       <Box sx={{ mt: 2 }}>
-        <Grid container spacing={2} alignItems="stretch">
-          <Grid item xs={12} md={6}>
+        <Grid container spacing={0.5} alignItems="stretch">
+          <Grid item xs={12} md={5}>
             <TableBettingActivityToday 
               // gameCategory={gameCategory === 'dashboard' ? undefined : gameCategory} 
             />
@@ -60,8 +60,8 @@ const BettingSummaryPage: React.FC<BettingSummaryPageProps> = ({ GameCategory = 
             /> */}
           </Grid>
           
-          <Grid item xs={12} md={6}>
-            <Box sx={{ display: "flex", flexDirection: "column", gap: 2, height: "100%" }}>
+          <Grid item xs={12} md={7}>
+            <Box sx={{ display: "flex", flexDirection: "column", gap: 2, height: "100%", width: "100%" }}>
               <ChartBettorsvsBetsPlacedSummary/>
               {/* <ChartBettorsvsBetsPlacedSummary 
                 gameCategory={gameCategory === 'dashboard' ? undefined : gameCategory} 
@@ -106,7 +106,7 @@ const BettingSummaryPage: React.FC<BettingSummaryPageProps> = ({ GameCategory = 
 
       <Box sx={{ width: '100%', mt: 2 }}>
         <TableBettingSummary 
-          gameCategory={GameCategory === 'dashboard' ? undefined : GameCategory} 
+          GameCategory={GameCategory as string } 
         />
       </Box>
     </Box>
