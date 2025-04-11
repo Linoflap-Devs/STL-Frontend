@@ -108,7 +108,7 @@ const BettingSummaryPage: React.FC<BettingSummaryPageProps> = ({ GameCategory = 
 
       <Box sx={{ width: '100%', mt: 2 }}>
         <TableBettingSummary 
-          GameCategory={GameCategory as string } 
+          // GameCategory={GameCategory as string } 
         />
       </Box>
     </Box>

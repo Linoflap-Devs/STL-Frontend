@@ -1,7 +1,4 @@
 import React, { useState, useEffect } from "react";
-import { useRouter } from "next/router";
-import { UserSectionData } from "../../data/AdminSectionData";
-import { buttonStyles } from "../../styles/theme";
 import {
   Typography,
   Box,
@@ -14,13 +11,14 @@ import {
   TableRow,
   TextField,
   InputAdornment,
-  IconButton,
   TablePagination,
+  IconButton,
 } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
-import PersonOffIcon from "@mui/icons-material/PersonOff";
 import FilterListIcon from "@mui/icons-material/FilterList";
-import fetchTransactions from "~/utils/api/transactions/getTransactions";
+import ArrowUpwardIcon from "@mui/icons-material/ArrowUpward";
+import ArrowDownwardIcon from "@mui/icons-material/ArrowDownward";
+import PersonOffIcon from "@mui/icons-material/PersonOff";
 
 export interface User {
   transactionNumber: string;
@@ -31,81 +29,166 @@ export interface User {
   betType: string;
   selectedPair: string;
   status: string;
-  [key: string]: any;
 }
 
-interface TableBettingActivityTodayProps {
-  GameCategory?: string;
-}
-
-const TableBettingSummary: React.FC<TableBettingActivityTodayProps> = ({GameCategory ='dashboard'}) => {
-  const router = useRouter();
-  
-
-  const [data, setData] = React.useState([])
-
-  const [transactions, setTransactions] = useState<User[]>([]);
-  const [filteredTransactions, setFilteredTransactions] = useState<User[]>([]);
-  const [loading, setLoading] = useState<boolean>(true);
-  const [error, setError] = useState<string | null>(null);
-  const [isFilterActive, setIsFilterActive] = useState(false);
+const TableBettingSummary: React.FC = () => {
+  const [transactions, setTransactions] = useState<User[]>([
+    {
+      transactionNumber: "2025040300000001",
+      date: "2025/01/22 13:05:32",
+      drawTime: "First Draw",
+      betAmount: 1000,
+      gameType: "STL Pares",
+      betType: "Straight",
+      selectedPair: "12-34",
+      status: "Active",
+    },
+    {
+      transactionNumber: "2025040300000002",
+      date: "2025/01/22 13:05:32",
+      drawTime: "First Draw",
+      betAmount: 2000,
+      gameType: "STL Swer2",
+      betType: "Rambol",
+      selectedPair: "56-78",
+      status: "Void",
+    },
+    {
+      transactionNumber: "2025040300000003",
+      date: "2025/01/22 13:05:32",
+      drawTime: "First Draw",
+      betAmount: 1500,
+      gameType: "STL Swer3",
+      betType: "Straight",
+      selectedPair: "90-12",
+      status: "Active",
+    },
+    {
+      transactionNumber: "2025040300000004",
+      date: "2025/01/22 13:05:32",
+      drawTime: "First Draw",
+      betAmount: 2500,
+      gameType: "STL Swer4",
+      betType: "Rambol",
+      selectedPair: "34-56",
+      status: "Void",
+    },
+    {
+      transactionNumber: "2025040300000005",
+      date: "2025/01/22 13:05:32",
+      drawTime: "First Draw",
+      betAmount: 2500,
+      gameType: "STL Swer4",
+      betType: "Rambol",
+      selectedPair: "34-56",
+      status: "Void",
+    },
+    {
+      transactionNumber: "2025040300000006",
+      date: "2025/01/22 13:05:32",
+      drawTime: "First Draw",
+      betAmount: 2500,
+      gameType: "STL Swer4",
+      betType: "Rambol",
+      selectedPair: "34-56",
+      status: "Void",
+    },
+    {
+      transactionNumber: "2025040300000007",
+      date: "2025/01/22 13:05:32",
+      drawTime: "First Draw",
+      betAmount: 2500,
+      gameType: "STL Swer4",
+      betType: "Rambol",
+      selectedPair: "34-56",
+      status: "Void",
+    },
+    {
+      transactionNumber: "2025040300000008",
+      date: "2025/01/22 13:05:32",
+      drawTime: "First Draw",
+      betAmount: 2500,
+      gameType: "STL Swer4",
+      betType: "Rambol",
+      selectedPair: "34-56",
+      status: "Void",
+    },
+    {
+      transactionNumber: "2025040300000009",
+      date: "2025/01/22 13:05:32",
+      drawTime: "First Draw",
+      betAmount: 2500,
+      gameType: "STL Swer4",
+      betType: "Rambol",
+      selectedPair: "34-56",
+      status: "Void",
+    },
+    {
+      transactionNumber: "2025040300000010",
+      date: "2025/01/22 13:05:32",
+      drawTime: "First Draw",
+      betAmount: 2500,
+      gameType: "STL Swer4",
+      betType: "Rambol",
+      selectedPair: "34-56",
+      status: "Void",
+    },
+    {
+      transactionNumber: "2025040300000011",
+      date: "2025/01/22 13:05:32",
+      drawTime: "First Draw",
+      betAmount: 2500,
+      gameType: "STL Swer4",
+      betType: "Rambol",
+      selectedPair: "34-56",
+      status: "Void",
+    },
+    {
+      transactionNumber: "2025040300000012",
+      date: "2025/01/22 13:05:32",
+      drawTime: "First Draw",
+      betAmount: 2500,
+      gameType: "STL Swer4",
+      betType: "Rambol",
+      selectedPair: "34-56",
+      status: "Void",
+    },
+    {
+      transactionNumber: "2025040300000013",
+      date: "2025/01/22 13:05:32",
+      drawTime: "First Draw",
+      betAmount: 2500,
+      gameType: "STL Swer4",
+      betType: "Rambol",
+      selectedPair: "34-56",
+      status: "Void",
+    },
+    {
+      transactionNumber: "2025040300000014",
+      date: "2025/01/22 13:05:32",
+      drawTime: "First Draw",
+      betAmount: 2500,
+      gameType: "STL Swer4",
+      betType: "Rambol",
+      selectedPair: "34-56",
+      status: "Void",
+    },
+    {
+      transactionNumber: "2025040300000015",
+      date: "2025/01/22 13:05:32",
+      drawTime: "First Draw",
+      betAmount: 2500,
+      gameType: "STL Swer4",
+      betType: "Rambol",
+      selectedPair: "34-56",
+      status: "Void",
+    },
+  ]);
+  const [filteredTransactions, setFilteredTransactions] = useState<User[]>(transactions);
+  const [searchQuery, setSearchQuery] = useState<string>("");
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
-  const [searchQuery, setSearchQuery] = useState<string>("");
-
-  // Fetch data on component mount
-  useEffect(() => {
-    const fetchData = async () => {
-
-    //   let url = '/api/betting-activity/today';
-    //   if (gameCategory) {
-    //     url += `?category=${gameCategory}`;
-    //   }
-      
-    //   const response = await fetch(url);
-    //   const result = await response.json();
-    //   setData(result);
-    // };
-
-    // fetchData();
-      try {
-        const queryParams = {
-          page: 1,
-          limit: 10,
-        };
-
-        const response = await fetchTransactions(queryParams);
-
-        if (response.success) {
-          // Transform the API data to match the User interface
-          const transformedData = response.data.map((transaction) => ({
-            transactionNumber: transaction.TransactionNumber.replace(/-/g, ""), // Remove hyphens
-            date: new Date(transaction.DateOfTransaction).toLocaleDateString(),
-            drawTime: "WIP", // Placeholder for Draw Time
-            betAmount: transaction.BetAmount,
-            gameType: transaction.GameType,
-            betType: transaction.BetType,
-            selectedPair: `${transaction.CombinationOne}-${transaction.CombinationTwo}`, // Use hyphen instead of ampersand
-            status: "WIP", // Placeholder for Status
-          }));
-
-          setTransactions(transformedData);
-          setFilteredTransactions(transformedData); // Initialize filtered data
-        } else {
-          setError(response.message || "Failed to fetch transactions");
-        }
-      } catch (err) {
-        setError("An error occurred while fetching transactions");
-        console.error(err);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchData();
-
-    // gameCategory as dependency
-  }, []);
+  const [sortConfig, setSortConfig] = useState<{ key: string; direction: "asc" | "desc" } | null>(null);
 
   // Apply search functionality
   useEffect(() => {
@@ -113,9 +196,7 @@ const TableBettingSummary: React.FC<TableBettingActivityTodayProps> = ({GameCate
       const lowercasedQuery = searchQuery.toLowerCase();
       const filtered = transactions.filter(
         (transaction) =>
-          transaction.transactionNumber
-            .toLowerCase()
-            .includes(lowercasedQuery) ||
+          transaction.transactionNumber.toLowerCase().includes(lowercasedQuery) ||
           transaction.gameType.toLowerCase().includes(lowercasedQuery) ||
           transaction.betType.toLowerCase().includes(lowercasedQuery) ||
           transaction.selectedPair.toLowerCase().includes(lowercasedQuery)
@@ -126,15 +207,23 @@ const TableBettingSummary: React.FC<TableBettingActivityTodayProps> = ({GameCate
     }
   }, [searchQuery, transactions]);
 
-  if (loading) {
-    return <div>Loading...</div>;
-  }
+  // Sort functionality
+  const handleSort = (key: string) => {
+    let direction: "asc" | "desc" = "asc";
+    if (sortConfig && sortConfig.key === key && sortConfig.direction === "asc") {
+      direction = "desc";
+    }
+    setSortConfig({ key, direction });
 
-  if (error) {
-    return <div>Error: {error}</div>;
-  }
+    const sortedData = [...filteredTransactions].sort((a, b) => {
+      if (a[key] < b[key]) return direction === "asc" ? -1 : 1;
+      if (a[key] > b[key]) return direction === "asc" ? 1 : -1;
+      return 0;
+    });
+    setFilteredTransactions(sortedData);
+  };
 
-  // Searchable Transaction Number, Game Type, Bet Type, and Selected Pair
+  // Render table
   return (
     <TableContainer>
       <Box sx={{ backgroundColor: "#171717" }}>
@@ -148,7 +237,7 @@ const TableBettingSummary: React.FC<TableBettingActivityTodayProps> = ({GameCate
             alignItems: "center",
           }}
         >
-          <Box sx={{ display: "flex", alignItems: "center" }}>
+          <Box sx={{ display: "flex", alignItems: "center", width: "100%" }}>
             <TextField
               variant="outlined"
               placeholder="Search"
@@ -172,30 +261,35 @@ const TableBettingSummary: React.FC<TableBettingActivityTodayProps> = ({GameCate
                 ),
               }}
             />
-            {isFilterActive ? (
-              <FilterListIcon
-                onClick={() => setIsFilterActive(!isFilterActive)}
-                sx={{ marginLeft: 2, color: "#9CA3AF", cursor: "pointer" }}
-              />
-            ) : (
-              <FilterListIcon
-                onClick={() => setIsFilterActive(!isFilterActive)}
-                sx={{ marginLeft: 2, color: "#9CA3AF", cursor: "pointer" }}
-              />
-            )}
+            <IconButton sx={{ marginLeft: 2 }}>
+              <FilterListIcon sx={{ fontSize: 24, color: "#9CA3AF" }} />
+            </IconButton>
           </Box>
         </Box>
       </Box>
       <Table size="small">
         <TableHead>
           <TableRow>
-            <TableCell>TRANSACTION NUMBER</TableCell>
-            <TableCell>DATE</TableCell>
-            <TableCell>DRAW TIME</TableCell>
-            <TableCell>BET AMOUNT</TableCell>
-            <TableCell>GAME TYPE</TableCell>
+            {[
+              { label: "TRANSACTION NUMBER", key: "transactionNumber" },
+              { label: "DATE", key: "date" },
+              { label: "DRAW TIME", key: "drawTime" },
+              { label: "BET AMOUNT", key: "betAmount" },
+              { label: "GAME TYPE", key: "gameType" },
+            ].map((column) => (
+              <TableCell key={column.key} onClick={() => handleSort(column.key)} sx={{ cursor: "pointer" }}>
+                {column.label}
+                {sortConfig?.key === column.key ? (
+                  sortConfig.direction === "asc" ? (
+                    <ArrowUpwardIcon sx={{ fontSize: 16, marginLeft: 1 }} />
+                  ) : (
+                    <ArrowDownwardIcon sx={{ fontSize: 16, marginLeft: 1 }} />
+                  )
+                ) : null}
+              </TableCell>
+            ))}
             <TableCell>BET TYPE</TableCell>
-            <TableCell>SELECTED PAIR</TableCell>
+            <TableCell>BET PATTERN</TableCell>
             <TableCell>STATUS</TableCell>
           </TableRow>
         </TableHead>
@@ -230,8 +324,7 @@ const TableBettingSummary: React.FC<TableBettingActivityTodayProps> = ({GameCate
                   <TableCell>{transaction.transactionNumber}</TableCell>
                   <TableCell>{transaction.date}</TableCell>
                   <TableCell>{transaction.drawTime}</TableCell>
-                  <TableCell>₱{transaction.betAmount}</TableCell>{" "}
-                  {/* Add peso sign */}
+                  <TableCell>₱{transaction.betAmount}</TableCell>
                   <TableCell>{transaction.gameType}</TableCell>
                   <TableCell>{transaction.betType}</TableCell>
                   <TableCell>{transaction.selectedPair}</TableCell>
@@ -282,17 +375,6 @@ const TableBettingSummary: React.FC<TableBettingActivityTodayProps> = ({GameCate
             setPage(0);
           }}
         />
-      </Box>
-      <Box
-        sx={{
-          display: "flex",
-          justifyContent: "flex-end",
-          paddingTop: 2.3,
-        }}
-      >
-        <Button variant="contained" sx={buttonStyles}>
-          {UserSectionData.exportAsCSVButton}
-        </Button>
       </Box>
     </TableContainer>
   );
