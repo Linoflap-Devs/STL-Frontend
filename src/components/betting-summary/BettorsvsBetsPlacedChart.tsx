@@ -135,7 +135,7 @@ const ChartBettorsvsBetsPlacedSummary = () => {
         Today&apos;s Bettors and Total Bets
       </Typography>
       <CustomLegend />
-      
+
       <Box sx={{ height: 270, width: 690 }}>
         <BarChart
           height={270}
@@ -164,7 +164,7 @@ const ChartBettorsvsBetsPlacedSummary = () => {
             {
               label: "Amount (in 100,000 units)",
               // scaleType: "linear",
-              min: 0,
+              min: 0, 
               max: 100,
               tickValues: xAxisTicks,
               tickSpacing:1 ,
