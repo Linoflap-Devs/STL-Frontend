@@ -43,7 +43,7 @@ const TableBettingActivityToday = () => {
         <Typography
           sx={{ fontSize: "16px", ml: 1, color: "#fff" }}
         >
-          Today&apos;s Bettor Count by Game Type
+          Today&apos;s Total Bets Placed by Region 
         </Typography>
       </Box>
       <Divider sx={{ backgroundColor: "#303030", mb: "1rem" }} />

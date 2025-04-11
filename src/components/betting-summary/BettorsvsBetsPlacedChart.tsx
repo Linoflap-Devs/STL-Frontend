@@ -135,6 +135,7 @@ const ChartBettorsvsBetsPlacedSummary = () => {
         Today&apos;s Bettors and Total Bets
       </Typography>
       <CustomLegend />
+      
       <Box sx={{ height: 270, width: 690 }}>
         <BarChart
           height={270}
