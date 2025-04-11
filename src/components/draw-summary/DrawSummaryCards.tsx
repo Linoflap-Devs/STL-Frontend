@@ -1,9 +1,6 @@
 import React, { Suspense } from 'react';
 import dynamic from 'next/dynamic';
-
-const UsersSkeletonPage = dynamic(() =>
-  import("~/components/user/UsersSkeleton").then(mod => ({ default: mod.UsersSkeletonPage }))
-);
+import DrawSummaryPage from '~/pages/Protected/draw-summary';
 
 const drawData = [
   { id: 1, title: "Ilocos Norte", hasLive: true },
@@ -22,7 +19,7 @@ const drawResults = [
 const DrawCardsPage: React.FC = () => {
   return (
     <>
-      <Suspense fallback={<UsersSkeletonPage />}>
+      <Suspense fallback={<DrawSummaryPage />}>
         <h3 className="text-xl font-bold my-4">Region I - Ilocos Region</h3>
         <div className="flex gap-4 overflow-x-auto no-scrollbar">
           {drawData.map((draw) => (

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Box, Typography, Stack, Button, Tooltip } from "@mui/material";
-import { cardDashboardStyles } from "../../styles/theme";
+import { buttonStyles, cardDashboardStyles } from "../../styles/theme";
 import { fetchUsers } from "../../utils/api/users";
 import { BarChart } from "@mui/x-charts/BarChart";
 import dayjs from "dayjs";
@@ -35,7 +35,7 @@ const CustomLegend = ({ pageType }: { pageType: string }) => (
             fontSize: '10px !important',
           }}
         />
-        <Typography sx={{ fontSize: '14px !important' }} color="white">{item.label}</Typography>
+        <Typography sx={{ fontSize: '14px' }} color="white">{item.label}</Typography>
       </Box>
     ))}
   </Stack>
@@ -142,16 +142,8 @@ const UserDashboardPage: React.FC<UserDashboardPageProps> = ({ users, roleId, ge
             </Box>
             <Box sx={{ display: 'flex', flexDirection: 'column', justifyContent: 'flex-end' }}>
               <Button
-                sx={{
-                  fontSize: "12px",
-                  textTransform: "none",
-                  backgroundColor: "#67ABEB",
-                  paddingX: 4,
-                  paddingY: 0.9,
-                  "&:hover": { backgroundColor: "#559CD1" },
-                }}
-                variant="contained"
-              >
+                sx={buttonStyles}
+                variant="contained" >
                 Export as CSV
               </Button>
             </Box>

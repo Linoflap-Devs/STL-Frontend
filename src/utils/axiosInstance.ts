@@ -17,7 +17,7 @@ axiosInstance.interceptors.request.use((config) => {
 
 // Response interceptor to handle token expiration
 let isRefreshing = false;
-export let refreshSubscribers: (() => void)[] = []; // ✅ Export refreshSubscribers
+export let refreshSubscribers: (() => void)[] = []; // Export refreshSubscribers
 
 axiosInstance.interceptors.response.use(
   (response) => response,

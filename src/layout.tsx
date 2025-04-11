@@ -12,9 +12,17 @@ const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
 
   return (
     <Box sx={{ display: "flex", }}>
-      <Sidebar collapsed={collapsed} />
+      <Sidebar
+        collapsed={collapsed}
+        handleDrawerToggle={handleDrawerToggle}
+        mobileOpen={false}
+      />
       <Box sx={{ flexGrow: 1, display: "flex", flexDirection: "column" }}>
-        <Header handleDrawerToggle={handleDrawerToggle} collapsed={collapsed} />
+        <Header
+          handleDrawerToggle={handleDrawerToggle}
+          collapsed={collapsed}
+          mobileOpen={false}
+        />
         <Box
           component="main"
           sx={{
