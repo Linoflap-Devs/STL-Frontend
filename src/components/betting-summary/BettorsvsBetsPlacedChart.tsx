@@ -145,7 +145,7 @@ const ChartBettorsvsBetsPlacedSummary = () => {
         }}
       >
         <BarChart
-          height={270}
+          height={350}
           // width={{100%}}
           grid={{ vertical: true }}
           layout="horizontal"

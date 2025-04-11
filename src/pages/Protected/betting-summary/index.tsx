@@ -77,28 +77,30 @@ const BettingSummaryPage: React.FC<BettingSummaryPageProps> = ({ GameCategory = 
 
       <Box sx={{ mt: 2 }}>
         <Grid container spacing={2}>
-          <Grid item xs={12} md={6} sx={{ display: "flex", justifyContent: "flex-end" }}>
+          <Grid item xs={12} md={5} sx={{ display: "flex", justifyContent: "flex-end" }}>
             <Button
               variant="contained"
               sx={{
                 backgroundColor: "#67ABEB",
-                borderRadius: "20px",
+                borderRadius: "10px",
                 textTransform: "none",
+                paddingX: 4,
               }}
             >
-              Show Comparison
+              View Comparison
             </Button>
           </Grid>
-          <Grid item xs={12} md={6} sx={{ display: "flex", justifyContent: "flex-end" }}>
+          <Grid item xs={12} md={7} sx={{ display: "flex", justifyContent: "flex-end" }}>
             <Button
               variant="contained"
               sx={{
                 backgroundColor: "#67ABEB",
-                borderRadius: "20px",
+                borderRadius: "10px",
                 textTransform: "none",
+                paddingX: 4,
               }}
             >
-              Show Comparison
+              View Comparison
             </Button>
           </Grid>
         </Grid>
