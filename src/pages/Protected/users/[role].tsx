@@ -38,6 +38,7 @@ const UsersPage = () => {
   // Extract the `roleId` from the `roleConfig` if available
   const roleId = roleConfig?.roleId;
 
+  // fetching of data
   const loadData = async () => {
     if (!roleId) return;
 

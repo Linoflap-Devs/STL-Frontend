@@ -47,69 +47,48 @@ const UserDashboardPage: React.FC<UserDashboardPageProps> = ({ users, roleId, ge
   const [chartData, setChartData] = useState<number[]>([]);
   const [chartColors, setChartColors] = useState<string[]>([]);
 
+  const getEmptyTotals = () => ({
+    totalUsers: 0,
+    activeUsers: 0,
+    inactiveUsers: 0,
+    suspendedUsers: 0,
+    newUsers: 0,
+  });
+
+  // Mounting logic for dashboard data
   useEffect(() => {
-    if (users.length === 0) {
-      return;
-    }
+    if (users.length === 0) return;
 
-    const today = new Date();
-
-    // Initialize totals
-    let totals = {
-      totalUsers: 0,
-      activeUsers: 0,
-      inactiveUsers: 0,
-      suspendedUsers: 0,
-      newUsers: 0,
-    };
+    const totals = getEmptyTotals();
 
     users.forEach((user: any) => {
       const status = getUserStatus(user, sevenDaysAgo);
 
       totals.totalUsers += 1;
-
       if (status === "Active") totals.activeUsers += 1;
-      if (status === "Inactive") totals.inactiveUsers += 1;
-      if (status === "Suspended") totals.suspendedUsers += 1;
-      if (status === "New") totals.newUsers += 1;
+      else if (status === "Inactive") totals.inactiveUsers += 1;
+      else if (status === "Suspended") totals.suspendedUsers += 1;
+      else if (status === "New") totals.newUsers += 1;
     });
 
     setDashboardData(totals);
   }, [users, roleId]);
 
-  const getSummaryTotals = () => {
-    return {
-      totalUsers: dashboardData.totalUsers || 0,
-      activeUsers: dashboardData.activeUsers || 0,
-      inactiveUsers: dashboardData.inactiveUsers || 0,
-      suspendedUsers: dashboardData.suspendedUsers || 0,
-      newUsers: dashboardData.newUsers || 0,
-    };
-  };
-
-  const summaryTotals = getSummaryTotals();
-
-  // dashboard charts
+  // Dashboard chart update
   useEffect(() => {
     if (!dashboardData || Object.keys(dashboardData).length === 0) return;
 
-    const totals = getSummaryTotals();
+    const { totalUsers, activeUsers, inactiveUsers, suspendedUsers, newUsers } = dashboardData;
 
-    const chartData = [
-      totals.totalUsers,
-      totals.activeUsers,
-      totals.inactiveUsers,
-      totals.suspendedUsers,
-      totals.newUsers,
-    ];
+    setChartData([
+      totalUsers,
+      activeUsers,
+      inactiveUsers,
+      suspendedUsers,
+      newUsers,
+    ]);
 
-    // Define corresponding colors for each category
-    const colors = ["#BB86FC", "#5050A5", "#7266C9", "#3B3B81", "#282A68"];
-
-    // Update state with chart data and colors
-    setChartData(chartData);
-    setChartColors(colors);
-
+    setChartColors(["#BB86FC", "#5050A5", "#7266C9", "#3B3B81", "#282A68"]);
   }, [dashboardData]);
 
   return (
@@ -124,11 +103,11 @@ const UserDashboardPage: React.FC<UserDashboardPageProps> = ({ users, roleId, ge
         }}
       >
         {[
-          { label: "Total Managers", value: summaryTotals.totalUsers, color: "#BB86FC" },
-          { label: "Total Active Managers", value: summaryTotals.activeUsers, color: "#5050A5" },
-          { label: "Total of Deleted Managers", value: summaryTotals.inactiveUsers, color: "#7266C9" },
-          { label: "Total of Inactive Managers", value: summaryTotals.inactiveUsers, color: "#7266C9" },
-          { label: "Total of New Managers", value: summaryTotals.newUsers, color: "#282A68" },
+          { label: "Total Managers", value: dashboardData.totalUsers, color: "#BB86FC" },
+          { label: "Total Active Managers", value: dashboardData.activeUsers, color: "#5050A5" },
+          { label: "Total of Deleted Managers", value: dashboardData.inactiveUsers, color: "#7266C9" },
+          { label: "Total Active Managers", value: dashboardData.inactiveUsers, color: "#5050A5" },
+          { label: "Total of New Managers", value: dashboardData.newUsers, color: "#282A68" },
         ].map((item, index) => (
           <Box
             key={index}
@@ -136,14 +115,14 @@ const UserDashboardPage: React.FC<UserDashboardPageProps> = ({ users, roleId, ge
               ...cardDashboardStyles,
               flex: "1 1 200px",
               minWidth: "200px",
-              margin: item.label.includes("New") ? "0" : "0 20px 5px 0",
+              margin: item.label.includes("Total Managers") ? "0px" : "5px 10px",
             }}
           >
             <Typography sx={{ fontSize: "12px", lineHeight: 1.5, color: "#D5D5D5" }}>
               {item.label}
             </Typography>
             <Typography sx={{ fontSize: "30px", fontWeight: 700, lineHeight: 1.1 }}>
-              {item.value.toLocaleString()}
+              {item.value}
             </Typography>
           </Box>
         ))}
