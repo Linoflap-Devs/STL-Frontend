@@ -10,7 +10,7 @@ export default {
   theme: {
     extend: {
       fontFamily: {
-        sans: ['Inter', 'sans-serif'],
+        sans: ['Montserrat', 'sans-serif'], // overrides default "sans"
       },
       colors: {
         background: "var(--background)",

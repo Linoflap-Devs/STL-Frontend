@@ -1,5 +1,4 @@
 import React, { Suspense } from 'react';
-import dynamic from 'next/dynamic';
 import DrawSummaryPage from '~/pages/Protected/draw-summary';
 
 const drawData = [

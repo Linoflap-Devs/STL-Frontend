@@ -179,7 +179,7 @@ const UserDashboardPage: React.FC<UserDashboardPageProps> = ({
               ...cardDashboardStyles,
               flex: "1 1 200px",
               minWidth: "200px",
-              margin: item.label.includes("Total Managers")
+              margin: item.label.includes("Total Managers") || item.label.includes("Total Executives")
                 ? "0px"
                 : "5px 10px",
             }}

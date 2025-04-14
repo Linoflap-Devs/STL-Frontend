@@ -1,8 +1,5 @@
 import { createTheme } from "@mui/material/styles";
-//import { Montserrat } from 'next/font/google';
 
-// Load Montserrat font properly
-//const montserrat = Montserrat({ subsets: ['latin'], weight: ['400', '700'] });
 const darkTheme = createTheme({
   palette: {
     mode: "dark",
@@ -13,6 +10,9 @@ const darkTheme = createTheme({
       primary: "#FFFFFF",
       secondary: "#b0b0b0",
     },
+  },
+  typography: {
+    fontFamily: `'Montserrat', sans-serif`,
   },
   components: {
     MuiButton: {

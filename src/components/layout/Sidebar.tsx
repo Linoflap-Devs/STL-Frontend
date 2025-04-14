@@ -108,7 +108,7 @@ const Sidebar: React.FC<SidebarProps> = ({
           alignItems: "center",
           px: collapsed ? 0 : 1,
           py: 1.5,
-          my: 1,
+          my: .5,
           textDecoration: "none",
           transition: "transform 0.20s ease, opacity 0.30s ease",
           opacity: collapsed ? 0 : 1,
@@ -118,7 +118,7 @@ const Sidebar: React.FC<SidebarProps> = ({
       >
         {!collapsed && icon}
         {!collapsed && (
-          <Typography sx={{ fontSize: "14px" }}>{page}</Typography>
+          <Typography sx={{ fontSize: "13px" }}>{page}</Typography>
         )}
       </Box>
     );
