@@ -30,7 +30,7 @@ const DrawCardsPage: React.FC = () => {
                   </div>
                 )}
                 <div className="absolute inset-0 bg-black opacity-0 group-hover:opacity-80 transition-opacity duration-300"></div>
-                <a href="#" className="absolute inset-0 flex items-center justify-center text-white font-bold opacity-0 group-hover:opacity-100 transition-opacity duration-00">
+                <a href="/draw-selected" className="absolute inset-0 flex items-center justify-center text-white font-bold opacity-0 group-hover:opacity-100 transition-opacity duration-00">
                   View Draw Feed
                 </a>
               </div>

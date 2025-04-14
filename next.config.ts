@@ -43,6 +43,10 @@ const nextConfig: NextConfig = {
         source: '/operators',
         destination: '/Protected/operators',
       },
+      {
+        source: '/draw-selected',
+        destination: '/Protected/draw-selected',
+      },
     ];
   },
 };
