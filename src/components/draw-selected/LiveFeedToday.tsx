@@ -4,7 +4,11 @@ const LiveFeedTodayPage = () => {
   return (
     <>
       <h2 className="text-xl font-semibold">Ilocos Norte Live Feed Today</h2>
-      <div className="bg-[#D5D5D5] rounded-lg text-white p-4 h-80"></div>
+      <div className="relative bg-[#D5D5D5] rounded-lg text-white p-4 h-80">
+        <div className="absolute top-3 right-3 bg-[#FF7A7A] text-[#171717] text-sm font-bold px-5 py-1 rounded-[16px] z-10">
+          Live
+        </div>
+      </div>
     </>
   );
 };
