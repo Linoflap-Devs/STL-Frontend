@@ -18,6 +18,7 @@ import dayjs from "dayjs";
 
 // Components
 import ChartBettorsAndBetsSummary from "~/components/betting-summary/bets-comparison/SummaryBettors&Bets.tsx"
+import ChartBettorsAndBetsRegionalSummary from "~/components/betting-summary/bets-comparison/RegionalSummaryBettors&Bets";
 
 const BettingComparison = () => {
 
@@ -39,7 +40,7 @@ const BettingComparison = () => {
           gap: 2,
           height: "100%",
           width: "100%",
-          mt: 2,
+          mt: 4,
         }}
       >
         <Grid container spacing={2}>
@@ -136,6 +137,7 @@ const BettingComparison = () => {
         {/* Summary of Total Bettors and Bets Barchart */}
         <ChartBettorsAndBetsSummary />                    
         {/* Regional SUmmary of Total Bettors and Bets Barchart */}
+        <ChartBettorsAndBetsRegionalSummary/>
       </Box>
     </Box>
   );
