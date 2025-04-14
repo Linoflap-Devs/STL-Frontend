@@ -37,6 +37,9 @@ const BettingSummaryPage: React.FC<BettingSummaryPageProps> = ({ GameCategory = 
   //     router.replace('/betting-summary/dashboard');
   //   }
   // }, [router.pathname]);
+  const handleViewComparisonClick = ()=> {
+    router.push("/bets-comparison"); // Replace with your desired URL
+  };
 
   return (
     <Box>
@@ -86,6 +89,7 @@ const BettingSummaryPage: React.FC<BettingSummaryPageProps> = ({ GameCategory = 
                 textTransform: "none",
                 paddingX: 4,
               }}
+              onClick={handleViewComparisonClick}
             >
               View Comparison
             </Button>
@@ -99,6 +103,7 @@ const BettingSummaryPage: React.FC<BettingSummaryPageProps> = ({ GameCategory = 
                 textTransform: "none",
                 paddingX: 4,
               }}
+              onClick={handleViewComparisonClick}
             >
               View Comparison
             </Button>
