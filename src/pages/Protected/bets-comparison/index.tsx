@@ -16,6 +16,9 @@ import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import dayjs from "dayjs";
 
+// Components
+import ChartBettorsAndBetsSummary from "~/components/betting-summary/bets-comparison/SummaryBettors&Bets.tsx"
+
 const BettingComparison = () => {
 
   const [categoryFilter, setCategoryFilter] = useState("STL Pares")
@@ -40,7 +43,7 @@ const BettingComparison = () => {
         }}
       >
         <Grid container spacing={2}>
-          {/*Left Side*/}
+          
           <Grid 
             item
             xs={12}
@@ -51,6 +54,7 @@ const BettingComparison = () => {
               flexDirection: "row",
               gap: 2,
             }}>
+                {/*Left Side*/}
                 <Grid 
                   item
                   xs={12}
@@ -89,6 +93,7 @@ const BettingComparison = () => {
                         />
                       </LocalizationProvider>
                 </Grid>
+                {/*Right Side*/}
                 <Grid 
                   item
                   xs={12}
@@ -127,6 +132,10 @@ const BettingComparison = () => {
                 </Grid>
           </Grid>
         </Grid>
+
+        {/* Summary of Total Bettors and Bets Barchart */}
+        <ChartBettorsAndBetsSummary />                    
+        {/* Regional SUmmary of Total Bettors and Bets Barchart */}
       </Box>
     </Box>
   );
