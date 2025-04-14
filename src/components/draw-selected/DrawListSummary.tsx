@@ -5,8 +5,8 @@ const MonthSummaryPage = React.lazy(
 );
 
 const FirstSummaryPage = React.lazy(
-    () => import("~/components/draw-selected/FirstSumarry")
-  );
+  () => import("~/components/draw-selected/FirstSumarry")
+);
 
 const DrawListSummaryPage = () => {
   return (

@@ -27,10 +27,10 @@ const DrawSelectedPage = () => {
     <div className="flex flex-col gap-4">
       <Suspense fallback={<DashboardSkeleton />}>
         <div className="flex flex-row mb-3">
-          <Tooltip title={"Back to Login"}>
+          <Tooltip title={"Back"}>
             <IconButton
               aria-label="close"
-              href="/"
+              href="/draw-summary"
               sx={{
                 color: "#D1D5D8"[300],
                 backgroundColor: "#171717",
