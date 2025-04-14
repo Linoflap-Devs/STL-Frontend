@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
-import { Box, Typography, Stack, Button, Tooltip } from "@mui/material";
+import { Box, Typography, Stack, Button } from "@mui/material";
 import { buttonStyles, cardDashboardStyles } from "../../styles/theme";
-import { fetchUsers } from "../../utils/api/users";
 import { BarChart } from "@mui/x-charts/BarChart";
 import dayjs from "dayjs";
 import { User } from "./UsersTable";
@@ -76,12 +75,20 @@ const UserDashboardPage: React.FC<UserDashboardPageProps> = ({
   getUserStatus,
   sevenDaysAgo,
 }) => {
-  const pageType = window.location.pathname.includes("manager")
-    ? "manager"
-    : "executive";
   const [dashboardData, setDashboardData] = useState<Record<string, any>>({});
   const [chartData, setChartData] = useState<number[]>([]);
   const [chartColors, setChartColors] = useState<string[]>([]);
+  
+  const userType = window.location.pathname.includes("manager") ? "manager" : "executive";
+  const roleLabel = userType === "manager" ? "Managers" : "Executives";
+  
+  const data = [
+    `Total ${roleLabel}`,
+    `Total Active ${roleLabel}`,
+    `Total Deleted ${roleLabel}`,
+    `Total Inactive ${roleLabel}`,
+    `Total New ${roleLabel}`,
+  ];
 
   const getEmptyTotals = () => ({
     totalUsers: 0,
@@ -102,8 +109,8 @@ const UserDashboardPage: React.FC<UserDashboardPageProps> = ({
 
       totals.totalUsers += 1;
       if (status === "Active") totals.activeUsers += 1;
+      else if (status === "Deleted") totals.suspendedUsers += 1;
       else if (status === "Inactive") totals.inactiveUsers += 1;
-      else if (status === "Suspended") totals.suspendedUsers += 1;
       else if (status === "New") totals.newUsers += 1;
     });
 
@@ -127,7 +134,7 @@ const UserDashboardPage: React.FC<UserDashboardPageProps> = ({
 
     setChartColors(["#BB86FC", "#5050A5", "#7266C9", "#3B3B81", "#282A68"]);
   }, [dashboardData]);
-
+  
   return (
     <Box sx={{ mb: 3 }}>
       <Box
@@ -141,27 +148,27 @@ const UserDashboardPage: React.FC<UserDashboardPageProps> = ({
       >
         {[
           {
-            label: "Total Managers",
+            label: `Total ${roleLabel}`,
             value: dashboardData.totalUsers,
             color: "#BB86FC",
           },
           {
-            label: "Total Active Managers",
+            label: `Total Active ${roleLabel}`,
             value: dashboardData.activeUsers,
             color: "#5050A5",
           },
           {
-            label: "Total of Deleted Managers",
-            value: dashboardData.inactiveUsers,
+            label: `Total of Deleted ${roleLabel}`,
+            value: dashboardData.suspendedUsers,
             color: "#7266C9",
           },
           {
-            label: "Total Active Managers",
+            label: `Total Inactive ${roleLabel}`,
             value: dashboardData.inactiveUsers,
             color: "#5050A5",
           },
           {
-            label: "Total of New Managers",
+            label: `Total of New ${roleLabel}`,
             value: dashboardData.newUsers,
             color: "#282A68",
           },
@@ -199,12 +206,12 @@ const UserDashboardPage: React.FC<UserDashboardPageProps> = ({
           <Box sx={{ display: "flex", justifyContent: "space-between" }}>
             <Box>
               <Typography color="#B3B3B3">
-                {pageType === "manager"
+                {userType === "manager"
                   ? "Managers Summary"
                   : "Executive Summary"}
               </Typography>
               <Box>
-                <CustomLegend pageType={pageType} />
+                <CustomLegend pageType={userType} />
               </Box>
             </Box>
             <Box
@@ -225,7 +232,7 @@ const UserDashboardPage: React.FC<UserDashboardPageProps> = ({
                 {
                   label: "USER STATUS",
                   scaleType: "band",
-                  data: ["Total", "Active", "Inactive", "Suspended", "New"],
+                  data: [...data],
                 },
               ]}
               yAxis={[
@@ -235,7 +242,7 @@ const UserDashboardPage: React.FC<UserDashboardPageProps> = ({
               ]}
               series={[
                 {
-                  label: pageType === "manager" ? "Managers" : "Executives",
+                  label: userType === "manager" ? "Managers" : "Executives",
                   data: chartData,
                   color: chartColors.length > 0 ? chartColors[0] : "#BB86FC",
                 },
