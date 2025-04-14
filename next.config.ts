@@ -39,6 +39,10 @@ const nextConfig: NextConfig = {
         source: '/dashboard',
         destination: '/Protected/dashboard',
       },
+      {
+        source: '/operators',
+        destination: '/Protected/operators',
+      },
     ];
   },
 };

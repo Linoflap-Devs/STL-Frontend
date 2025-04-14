@@ -14,11 +14,38 @@ interface UserDashboardPageProps {
 }
 
 const getLegendItems = (pageType: string) => [
-  { color: "#BB86FC", label: pageType === "manager" ? "Total Managers" : "Total Executives" },
-  { color: "#5050A5", label: pageType === "manager" ? "Total Active Managers" : "Total Active Executives" },
-  { color: "#7266C9", label: pageType === "manager" ? "Total of Inactive Managers" : "Total of Inactive Executives" },
-  { color: "#3B3B81", label: pageType === "manager" ? "Total of Deleted Managers" : "Total of Deleted Executives" },
-  { color: "#282A68", label: pageType === "manager" ? "Total of New Managers" : "Total of New Executives" },
+  {
+    color: "#BB86FC",
+    label: pageType === "manager" ? "Total Managers" : "Total Executives",
+  },
+  {
+    color: "#5050A5",
+    label:
+      pageType === "manager"
+        ? "Total Active Managers"
+        : "Total Active Executives",
+  },
+  {
+    color: "#7266C9",
+    label:
+      pageType === "manager"
+        ? "Total of Inactive Managers"
+        : "Total of Inactive Executives",
+  },
+  {
+    color: "#3B3B81",
+    label:
+      pageType === "manager"
+        ? "Total of Deleted Managers"
+        : "Total of Deleted Executives",
+  },
+  {
+    color: "#282A68",
+    label:
+      pageType === "manager"
+        ? "Total of New Managers"
+        : "Total of New Executives",
+  },
 ];
 
 const CustomLegend = ({ pageType }: { pageType: string }) => (
@@ -32,17 +59,26 @@ const CustomLegend = ({ pageType }: { pageType: string }) => (
             borderRadius: "50%",
             backgroundColor: item.color,
             mr: 1,
-            fontSize: '10px !important',
+            fontSize: "10px !important",
           }}
         />
-        <Typography sx={{ fontSize: '14px' }} color="white">{item.label}</Typography>
+        <Typography sx={{ fontSize: "14px" }} color="white">
+          {item.label}
+        </Typography>
       </Box>
     ))}
   </Stack>
 );
 
-const UserDashboardPage: React.FC<UserDashboardPageProps> = ({ users, roleId, getUserStatus, sevenDaysAgo }) => {
-  const pageType = window.location.pathname.includes("manager") ? "manager" : "executive";
+const UserDashboardPage: React.FC<UserDashboardPageProps> = ({
+  users,
+  roleId,
+  getUserStatus,
+  sevenDaysAgo,
+}) => {
+  const pageType = window.location.pathname.includes("manager")
+    ? "manager"
+    : "executive";
   const [dashboardData, setDashboardData] = useState<Record<string, any>>({});
   const [chartData, setChartData] = useState<number[]>([]);
   const [chartColors, setChartColors] = useState<string[]>([]);
@@ -78,7 +114,8 @@ const UserDashboardPage: React.FC<UserDashboardPageProps> = ({ users, roleId, ge
   useEffect(() => {
     if (!dashboardData || Object.keys(dashboardData).length === 0) return;
 
-    const { totalUsers, activeUsers, inactiveUsers, suspendedUsers, newUsers } = dashboardData;
+    const { totalUsers, activeUsers, inactiveUsers, suspendedUsers, newUsers } =
+      dashboardData;
 
     setChartData([
       totalUsers,
@@ -103,11 +140,31 @@ const UserDashboardPage: React.FC<UserDashboardPageProps> = ({ users, roleId, ge
         }}
       >
         {[
-          { label: "Total Managers", value: dashboardData.totalUsers, color: "#BB86FC" },
-          { label: "Total Active Managers", value: dashboardData.activeUsers, color: "#5050A5" },
-          { label: "Total of Deleted Managers", value: dashboardData.inactiveUsers, color: "#7266C9" },
-          { label: "Total Active Managers", value: dashboardData.inactiveUsers, color: "#5050A5" },
-          { label: "Total of New Managers", value: dashboardData.newUsers, color: "#282A68" },
+          {
+            label: "Total Managers",
+            value: dashboardData.totalUsers,
+            color: "#BB86FC",
+          },
+          {
+            label: "Total Active Managers",
+            value: dashboardData.activeUsers,
+            color: "#5050A5",
+          },
+          {
+            label: "Total of Deleted Managers",
+            value: dashboardData.inactiveUsers,
+            color: "#7266C9",
+          },
+          {
+            label: "Total Active Managers",
+            value: dashboardData.inactiveUsers,
+            color: "#5050A5",
+          },
+          {
+            label: "Total of New Managers",
+            value: dashboardData.newUsers,
+            color: "#282A68",
+          },
         ].map((item, index) => (
           <Box
             key={index}
@@ -115,13 +172,19 @@ const UserDashboardPage: React.FC<UserDashboardPageProps> = ({ users, roleId, ge
               ...cardDashboardStyles,
               flex: "1 1 200px",
               minWidth: "200px",
-              margin: item.label.includes("Total Managers") ? "0px" : "5px 10px",
+              margin: item.label.includes("Total Managers")
+                ? "0px"
+                : "5px 10px",
             }}
           >
-            <Typography sx={{ fontSize: "12px", lineHeight: 1.5, color: "#D5D5D5" }}>
+            <Typography
+              sx={{ fontSize: "12px", lineHeight: 1.5, color: "#D5D5D5" }}
+            >
               {item.label}
             </Typography>
-            <Typography sx={{ fontSize: "30px", fontWeight: 700, lineHeight: 1.1 }}>
+            <Typography
+              sx={{ fontSize: "30px", fontWeight: 700, lineHeight: 1.1 }}
+            >
               {item.value}
             </Typography>
           </Box>
@@ -130,25 +193,32 @@ const UserDashboardPage: React.FC<UserDashboardPageProps> = ({ users, roleId, ge
 
       {/* Chart Display */}
       <Box sx={{ mt: 1 }}>
-        <Box sx={{ padding: 2, backgroundColor: "#171717", borderRadius: "10px" }}>
-          <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
+        <Box
+          sx={{ padding: 2, backgroundColor: "#171717", borderRadius: "10px" }}
+        >
+          <Box sx={{ display: "flex", justifyContent: "space-between" }}>
             <Box>
               <Typography color="#B3B3B3">
-                {pageType === "manager" ? "Managers Summary" : "Executive Summary"}
+                {pageType === "manager"
+                  ? "Managers Summary"
+                  : "Executive Summary"}
               </Typography>
               <Box>
                 <CustomLegend pageType={pageType} />
               </Box>
             </Box>
-            <Box sx={{ display: 'flex', flexDirection: 'column', justifyContent: 'flex-end' }}>
-              <Button
-                sx={buttonStyles}
-                variant="contained" >
+            <Box
+              sx={{
+                display: "flex",
+                flexDirection: "column",
+                justifyContent: "flex-end",
+              }}
+            >
+              <Button sx={buttonStyles} variant="contained">
                 Export as CSV
               </Button>
             </Box>
           </Box>
-
           <Box sx={{ height: 270, width: "100%", minWidth: 0 }}>
             <BarChart
               xAxis={[

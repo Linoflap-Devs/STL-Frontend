@@ -12,6 +12,7 @@ import SupervisorAccountIcon from "@mui/icons-material/SupervisorAccount";
 import CasinoIcon from "@mui/icons-material/Casino";
 import FaxIcon from "@mui/icons-material/Fax";
 import PaymentsIcon from "@mui/icons-material/Payments";
+import StoreIcon from '@mui/icons-material/Store';
 import { useTheme } from "@mui/material/styles";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import { useRouter } from "next/router";
@@ -69,9 +70,11 @@ const Sidebar: React.FC<SidebarProps> = ({
             ? "/betting-summary"
             : page === "Draw Summary"
               ? "/draw-summary"
+            : page === "Operators"
+              ? "/operators"
               : page === "Logout"
-                ? "/"
-                : `/${page.toLowerCase()}`;
+                  ? "/"
+                  : `/${page.toLowerCase()}`;
 
     // Define icons for each page.
     const icon =
@@ -87,6 +90,8 @@ const Sidebar: React.FC<SidebarProps> = ({
         <FaxIcon sx={{ mr: collapsed ? 0 : 1 }} />
       ) : page === "Draw Summary" ? (
         <PaymentsIcon sx={{ mr: collapsed ? 0 : 1 }} />
+      ) : page === "Operators" ? (
+        <StoreIcon sx={{ mr: collapsed ? 0 : 1 }} />
       ) : page === "Logout" ? (
         <ExitToAppIcon sx={{ mr: collapsed ? 0 : 1 }} />
       ) : (
