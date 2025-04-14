@@ -1,0 +1,25 @@
+import React from "react";
+
+const MonthSummaryPage = React.lazy(
+  () => import("~/components/draw-selected/MonthSummary")
+);
+
+const FirstSummaryPage = React.lazy(
+    () => import("~/components/draw-selected/FirstSumarry")
+  );
+
+const DrawListSummaryPage = () => {
+  return (
+    <>
+      <h2 className="text-xl font-semibold">Ilocos Norte Draw List Summary</h2>
+      <div className="min-h-screen grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+        <MonthSummaryPage />
+        <FirstSummaryPage />
+        <FirstSummaryPage />
+        <FirstSummaryPage />
+      </div>
+    </>
+  );
+};
+
+export default DrawListSummaryPage;

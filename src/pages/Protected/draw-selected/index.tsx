@@ -8,9 +8,19 @@ import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import dayjs from "dayjs";
+import DrawCardsPage from "~/components/draw-summary/DrawSummaryCards";
 
-const DrawResultsPage = React.lazy(() => import("~/components/dashboard/DrawResults"));
-const SummaryBettorsBetsPlacedPage = React.lazy(() => import("~/components/dashboard/SummaryBettorsBetsPlaced"));
+const LiveFeedTodayPage = React.lazy(
+  () => import("~/components/draw-selected/LiveFeedToday")
+);
+
+const DrawListSummaryPage = React.lazy(
+  () => import("~/components/draw-selected/DrawListSummary")
+);
+
+const DrawCounterPage = React.lazy(
+  () => import("~/components/draw-selected/DrawCounter")
+);
 
 const DrawSelectedPage = () => {
   return (
@@ -46,17 +56,18 @@ const DrawSelectedPage = () => {
           />
         </LocalizationProvider>
 
-        <div className="flex flex-col items-center gap-4">
+        <div className="flex flex-col items-center gap-4m mt-2">
           <div className="flex flex-col w-full gap-4">
             <div className="flex flex-col md:flex-row w-full gap-4">
               {/* Left Column */}
               <div className="flex flex-col gap-4 w-full md:w-1/2">
-                <DrawResultsPage />
+                <LiveFeedTodayPage />
+                <DrawCounterPage />
               </div>
 
               {/* Right Column */}
               <div className="flex flex-col gap-4 w-full md:w-1/2">
-                <SummaryBettorsBetsPlacedPage />
+                <DrawListSummaryPage />
               </div>
             </div>
           </div>
@@ -67,4 +78,3 @@ const DrawSelectedPage = () => {
 };
 
 export default DrawSelectedPage;
-
