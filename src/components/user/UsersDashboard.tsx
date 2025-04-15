@@ -165,10 +165,10 @@ const UserDashboardPage: React.FC<UserDashboardPageProps> = ({
         ].map((item, index) => (
           <div
             key={index}
-            className="px-4 py-5 flex-[1_1_200px] bg-gray-800 rounded-lg"
+            className="px-4 py-[1.4rem] flex-[1_1_200px] bg-gray-800 rounded-lg"
             style={{ ...cardDashboardStyles }}
           >
-            <p className="text-sm leading-6 text-gray-400">{item.label}</p>
+            <p className="text-[12px] leading-4 text-gray-400">{item.label}</p>
             {item.value === undefined || item.value === null ? (
               <div className="w-20 h-6 bg-gray-500 animate-pulse rounded-md mt-3" />
             ) : (

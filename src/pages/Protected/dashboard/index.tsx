@@ -1,6 +1,11 @@
+import dynamic from "next/dynamic";
 import React, { Suspense } from "react";
-import { Typography, Stack } from "@mui/material";
-import DashboardSkeleton from "~/components/dashboard/DashboardSkeleton";
+
+const DashboardSkeletonPage = dynamic(() =>
+  import("~/components/dashboard/DashboardSkeleton").then((mod) => ({
+    default: mod.DashboardSkeletonPage,
+  }))
+);
 
 const DashboardCardsPage = React.lazy(() => import("~/components/dashboard/DashboardCards"));
 const DrawResultsPage = React.lazy(() => import("~/components/dashboard/DrawResults"));
@@ -11,31 +16,30 @@ const SummaryWinnersDrawTimePage = React.lazy(() => import("~/components/dashboa
 
 const DashboardPage = () => {
   return (
-    <Stack spacing={2}>
-      <Suspense fallback={<DashboardSkeleton />}>
-        <Typography sx={{ fontWeight: 700 }} variant="h4">
-          Dashboard
-        </Typography>
+    <div className="space-y-6">
+      <Suspense fallback={<DashboardSkeletonPage />}>
+        <h1 className="text-3xl font-bold">Dashboard</h1>
         <DashboardCardsPage />
-        <Stack spacing={2} alignItems="center">
-          <Stack spacing={2} width="100%">
-            <Stack direction={{ xs: "column", md: "row" }} spacing={2} width="100%">
+        <div className="flex flex-col items-center space-y-6">
+          <div className="w-full space-y-6">
+            <div className="w-full flex flex-col md:flex-row space-y-4 md:space-y-0 md:space-x-4">
               {/* Left Column */}
-              <Stack spacing={2} flex={1}>
+              <div className="flex-1 space-y-6">
                 <DrawResultsPage />
                 <TopBettingRegionPage />
                 <TopWinningRegionPage />
-              </Stack>
+              </div>
+
               {/* Right Column */}
-              <Stack spacing={2} flex={2}>
+              <div className="flex-2 space-y-6">
                 <SummaryBettorsBetsPlacedPage />
                 <SummaryWinnersDrawTimePage />
-              </Stack>
-            </Stack>
-          </Stack>
-        </Stack>
+              </div>
+            </div>
+          </div>
+        </div>
       </Suspense>
-    </Stack>
+    </div>
   );
 };
 

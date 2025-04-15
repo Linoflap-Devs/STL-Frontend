@@ -2,13 +2,18 @@
 
 import { IconButton, Tooltip } from "@mui/material";
 import React, { Suspense } from "react";
-import DashboardSkeleton from "~/components/dashboard/DashboardSkeleton";
 import ArrowBackIosNewIcon from "@mui/icons-material/ArrowBackIosNew";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
-import dayjs from "dayjs";
 import DrawCardsPage from "~/components/draw-summary/DrawSummaryCards";
+import dynamic from "next/dynamic";
+
+const DashboardSkeletonPage = dynamic(() =>
+  import("~/components/dashboard/DashboardSkeleton").then((mod) => ({
+    default: mod.DashboardSkeletonPage,
+  }))
+);
 
 const LiveFeedTodayPage = React.lazy(
 () => import("~/components/draw-selected/LiveFeedToday")
@@ -25,7 +30,7 @@ const DrawCounterPage = React.lazy(
 const DrawSelectedPage = () => {
   return (
     <div className="flex flex-col gap-4">
-      <Suspense fallback={<DashboardSkeleton />}>
+      <Suspense fallback={<DashboardSkeletonPage />}>
         <div className="flex flex-row mb-3">
           <Tooltip title={"Back"}>
             <IconButton

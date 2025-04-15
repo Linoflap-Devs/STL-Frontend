@@ -165,7 +165,6 @@ const UsersPage = () => {
   return (
     <Suspense fallback={<UsersSkeletonPage />}>
       <div className="space-y-4">
-        {/* Header Section */}
         <div className="flex justify-between items-center my-2">
           <h4 className="font-bold text-4xl">{roleConfig?.label}</h4>
         </div>

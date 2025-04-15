@@ -2,59 +2,46 @@ import { Box, Grid } from "@mui/material";
 import { cardDashboardStyles } from "~/styles/theme";
 
 interface SkeletonCardProps {
-    height?: string | number;
+  height?: string | number;
 }
 
 const SkeletonCard: React.FC<SkeletonCardProps> = ({ height = "110px" }) => (
-    <Box
-        sx={{
-            ...cardDashboardStyles,
-            flex: "1 1 200px",
-            height: height,
-            backgroundColor: "#171717",
-            borderRadius: "8px",
-            margin: 0,
-        }}
-    />
+  <div
+    className="flex-[1_1_200px] bg-[#171717] rounded-lg m-0"
+    style={{ height }}
+  />
 );
 
-export default function DashboardSkeleton() {
-    return (
-        <Box className="animate-pulse space-y-4">
-            <Box sx={{ height: "1.2rem", backgroundColor: "#171717", borderRadius: "8px", width: "20%" }}></Box>
-            <Box sx={{ height: "1.2rem", backgroundColor: "#171717", borderRadius: "8px", width: "20%" }}></Box>
-            <Box
-                sx={{
-                    display: "flex",
-                    flexWrap: "wrap",
-                    gap: 2,
-                    justifyContent: "center",
-                    alignItems: "center",
-                    width: "100%",
-                    mt: 2,
-                }}
-            >
-                {[...Array(5)].map((_, index) => (
-                    <SkeletonCard key={index} />
-                ))}
-            </Box>
-            <Box sx={{ display: "flex", justifyContent: "center", mt: 2 }}>
-                <Grid container spacing={2} alignItems="stretch">
-                    <Grid item xs={12} md={4}>
-                        <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
-                            <SkeletonCard height="200px" />
-                            <SkeletonCard height="200px" />
-                            <SkeletonCard height="200px" />
-                        </Box>
-                    </Grid>
-                    <Grid item xs={12} md={8} sx={{ display: "flex", flexDirection: "column", width: "100%" }}>
-                        <Box sx={{ display: "flex", flexDirection: "column", gap: 2, height: "100%" }}>
-                            <SkeletonCard height="305px" />
-                            <SkeletonCard height="305px" />
-                        </Box>
-                    </Grid>
-                </Grid>
-            </Box>
-        </Box>
-    );
-}
+export const DashboardSkeletonPage: React.FC = () => {
+  return (
+    <div className="animate-pulse space-y-4">
+      {/* Top Line Skeletons */}
+      {[...Array(2)].map((_, index) => (
+        <div key={index} className="h-4 w-[15%] bg-[#171717] rounded-lg" />
+      ))}
+
+      {/* Horizontal Skeleton Cards */}
+      <div className="flex flex-wrap gap-4">
+        {[...Array(5)].map((_, index) => (
+          <SkeletonCard key={index} height="99px" />
+        ))}
+      </div>
+
+      {/* Two Column Layout */}
+      <div className="flex flex-col md:flex-row gap-4">
+        {/* Left Column */}
+        <div className="w-full md:w-1/2 flex flex-col space-y-4">
+          <SkeletonCard height="350px" />
+          <SkeletonCard height="350px" />
+          <SkeletonCard height="350px" />
+        </div>
+
+        {/* Right Column */}
+        <div className="w-full md:w-1/2 flex flex-col space-y-4">
+          <SkeletonCard height="350px" />
+          <SkeletonCard height="350px" />
+        </div>
+      </div>
+    </div>
+  );
+};
