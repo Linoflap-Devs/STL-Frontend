@@ -202,7 +202,7 @@ const ManagerTable: React.FC<ManagerTableProps> = ({
                   placeholder="Search"
                   value={searchQuery}
                   onChange={handleSearchChange}
-                  className="w-full pl-9 pr-3 py-[10px] bg-transparent border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:outline-none"
+                  className="w-full pl-9 pr-3 py-[10px] bg-transparent border border-gray-300 rounded-md text-sm focus:outline-none"
                 />
                 <div className="absolute left-2 top-1/2 transform -translate-y-1/2 text-gray-400">
                   <SearchIcon style={{ fontSize: 20 }} />
@@ -325,7 +325,8 @@ const ManagerTable: React.FC<ManagerTableProps> = ({
                 .map((user) => (
                   <TableRow key={user.userId}>
                     <TableCell>
-                      {user.userId}{" "}
+                      {/* for debugging */}
+                      {user.userId}{" "} 
                       {`${user.FirstName} ${user.LastName} ${user.Suffix}`}
                     </TableCell>
                     <TableCell>{user.OperatorDetails.OperatorName}</TableCell>

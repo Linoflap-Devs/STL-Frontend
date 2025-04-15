@@ -95,6 +95,7 @@ const UpdateManager: React.FC<UpdateManagerProps> = React.memo(({
   const [isDisabled, setIsDisabled] = useState(true);
   const [isViewMode, setIsViewMode] = useState(false);
   const [areaOfOperations, setAreaOfOperations] = useState<string>("");
+  const [isLoading, setIsLoading] = useState(false);
 
   // fetching of data
   useEffect(() => {
@@ -388,10 +389,10 @@ const UpdateManager: React.FC<UpdateManagerProps> = React.memo(({
                       id={key}
                       name={key}
                       placeholder={`Enter ${formatKey(key)}`}
-                      value={user[key as keyof typeof user] || ""}
+                      value={user[key as keyof typeof user] || (isLoading ? "Loading..." : "")} 
                       onChange={handleManagerChange}
+                      disabled={alwaysDisabledKeys.includes(key) || isDisabled || isLoading}
                       label={formatKey(key)}
-                      disabled={alwaysDisabledKeys.includes(key) || isDisabled}
                       size="small"
                     />
                     {errors[key] && <FormHelperText error>{errors[key]}</FormHelperText>}

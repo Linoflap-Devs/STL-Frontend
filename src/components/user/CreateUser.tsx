@@ -284,7 +284,7 @@ const CreateManager: React.FC<CreateManagerProps> = ({
                         placeholder={`Enter ${formatKey(key)}`}
                         value={user[key as keyof typeof user]}
                         onChange={handleManagerChange}
-                        label={formatKey(key)}
+                        //label={formatKey(key)}
                       />
                       {errors[key] && <FormHelperText>{errors[key]}</FormHelperText>}
                     </FormControl>

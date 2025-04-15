@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import { Box, Typography, Button, TextField, IconButton } from "@mui/material";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
 import { useRouter } from "next/router";
 import { LoginSectionData } from "../../data/LoginSectionData";
@@ -14,6 +13,7 @@ const LoginPage = () => {
   });
   const [showPassword, setShowPassword] = useState(false);
   const [isLoggingIn, setIsLoggingIn] = useState(false);
+  const [loginError, setLoginError] = useState<string | null>(null);
   const [errors, setErrors] = useState<{
     email?: string;
     password?: string;
@@ -26,164 +26,149 @@ const LoginPage = () => {
 
     setIsLoggingIn(true);
     setErrors({});
+    setLoginError(null);
 
     try {
       const response = await loginUser(credentials, router);
     } catch (error) {
-      setErrors({ general: error instanceof Error ? error.message : "Login failed." });
+      setErrors({
+        general: error instanceof Error ? error.message : "Login failed.",
+      });
       setIsLoggingIn(false);
     }
   };
 
-  const handleTogglePasswordVisibility = () =>
-    setShowPassword((prev) => !prev);
+  const handleTogglePasswordVisibility = () => setShowPassword((prev) => !prev);
 
   return (
-    <Box
-      sx={{
-        display: "flex",
-        height: "100vh",
-        backgroundImage: `url(${LoginSectionData.image2})`,
-        backgroundSize: "cover",
-        backgroundRepeat: "no-repeat",
-        backgroundPosition: "center",
-      }}
+    <div
+      className="flex h-screen bg-cover bg-center bg-no-repeat relative"
+      style={{ backgroundImage: `url(${LoginSectionData.image2})` }}
     >
       {/* Overlay */}
-      <Box
-        sx={{
-          position: "absolute",
-          top: 0,
-          left: 0,
-          width: "100%",
-          height: "100%",
-          backgroundColor: "#242424D9",
-          zIndex: 1,
-        }}
-      />
+      <div className="absolute inset-0 bg-[#242424D9] z-10" />
+
       {/* Content */}
-      <Box
-        sx={{
-          position: "relative",
-          zIndex: 2,
-          display: "flex",
-          width: "100%",
-          justifyContent: "center",
-          alignItems: "center",
-        }}
-      >
-        <Box
-          sx={{
-            width: { xs: "90%", sm: "60%", md: "40%" },
-            maxWidth: 500,
-            p: "2.4rem 0.5rem",
-            display: "flex",
-            flexDirection: "column",
-            justifyContent: "center",
-            alignItems: "center",
-            backgroundColor: "#181A1B",
-            borderRadius: "8px",
-          }}
-        >
-          <Box sx={{ textAlign: "center", marginBottom: "1rem", marginTop: 2, }}>
-            <Box
-              component="img"
+      <div className="relative z-20 flex w-full justify-center items-center">
+        <div className="w-[90%] sm:w-[60%] md:w-[40%] max-w-[500px] p-10 bg-[#181A1B] rounded-lg flex flex-col items-center justify-center">
+          {/* Logo + Title */}
+          <div className="text-center mb-4 mt-2">
+            <img
               src={LoginSectionData.image}
               alt="altLogo"
-              sx={{ maxWidth: "60%", margin: "0 auto 0.7rem", }}
+              className="max-w-[60%] mx-auto mb-3"
               loading="lazy"
             />
-            <Typography variant="h4" sx={{ fontWeight: "bold" }}>
+            <h1 className="text-2xl font-bold text-white">
               {LoginSectionData.cardTitle}
-            </Typography>
-            <Typography sx={{ color: "#9CA3AF", fontSize: "12.5px" }}>
+            </h1>
+            <p className="text-gray-400 text-xs">
               {LoginSectionData.cardDescription}
-            </Typography>
-          </Box>
-          <form onSubmit={handleLogin} style={{ width: "85%" }}>
-            <Box sx={{ display: "flex", flexDirection: "column", width: "100%" }}>
-              <Box sx={{ mb: "1rem" }}>
-                <Typography
-                  sx={{ textAlign: "left", marginBottom: "0.5rem" }}
-                  color={errors.email || errors.general ? "#FF7A7A" : "text.primary"}
+            </p>
+          </div>
+
+          {/* Form */}
+          <form onSubmit={handleLogin} className="w-[85%]">
+            <div className="flex flex-col w-full">
+              {/* Email */}
+              <div className="mb-4">
+                <label
+                  className={`block mb-2 text-sm text-left ${
+                    errors.email ? "text-red-400" : "text-white"
+                  }`}
                 >
                   {LoginSectionData.EmailAddressTitle}
-                </Typography>
-                <TextField
-                  fullWidth
-                  variant="outlined"
+                </label>
+                <input
+                  type="email"
                   placeholder="Email Address"
                   value={credentials.email}
-                  onChange={(e) => setCredentials({ ...credentials, email: e.target.value })}
-                  error={!!errors.email || !!errors.general}
-                  sx={inputStyles}
+                  onChange={(e) =>
+                    setCredentials({ ...credentials, email: e.target.value })
+                  }
+                  className={`w-full px-3 py-2 rounded border text-sm bg-[#1F2123] text-white focus:outline-none ${
+                    errors.email ? "border-red-400" : "border-gray-600"
+                  }`}
                 />
-                {errors.email && <span style={inputErrorStyles}>{errors.email}</span>}
-                {errors.general && <span style={inputErrorStyles}>{errors.general}</span>}
-              </Box>
-              <Box>
-                <Typography
-                  sx={{ textAlign: "left", marginBottom: "0.5rem" }}
-                  color={errors.password || errors.general ? "#FF7A7A" : "text.primary"}
+                {errors.email && (
+                  <span className="text-red-400 text-xs mt-1 block">
+                    {errors.email || errors.general}
+                  </span>
+                )}
+              </div>
+
+              {/* Password */}
+              <div className="mb-2">
+                <label
+                  className={`block mb-2 text-sm text-left ${
+                    errors.password ? "text-red-400" : "text-white"
+                  }`}
                 >
                   {LoginSectionData.PasswordTitle}
-                </Typography>
-                <TextField
-                  fullWidth
-                  variant="outlined"
-                  placeholder="Password"
-                  type={showPassword ? "text" : "password"}
-                  value={credentials.password}
-                  onChange={(e) => setCredentials({ ...credentials, password: e.target.value })}
-                  error={!!errors.password || !!errors.general}
-                  sx={inputStyles}
-                  InputProps={{
-                    endAdornment: (
-                      <IconButton
-                        sx={{ color: "#9CA3AF", fontSize: "1.3rem" }}
-                        onClick={handleTogglePasswordVisibility}
-                        edge="end"
-                      >
-                        {showPassword ? <VisibilityOff /> : <Visibility />}
-                      </IconButton>
-                    ),
-                  }}
-                />
-                {errors.password && <span style={inputErrorStyles}>{errors.password}</span>}
-                {errors.general && <span style={inputErrorStyles}>{errors.general}</span>}
-              </Box>
-            </Box>
-            <Button
+                </label>
+                <div className="relative">
+                  <input
+                    type={showPassword ? "text" : "password"}
+                    placeholder="Password"
+                    value={credentials.password}
+                    onChange={(e) =>
+                      setCredentials({
+                        ...credentials,
+                        password: e.target.value,
+                      })
+                    }
+                    className={`w-full px-3 py-2 pr-10 rounded border text-sm bg-[#1F2123] text-white focus:outline-none ${
+                      errors.password ? "border-red-400" : "border-gray-600"
+                    }`}
+                  />
+                  <button
+                    type="button"
+                    onClick={handleTogglePasswordVisibility}
+                    className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 text-lg focus:outline-none"
+                  >
+                    {showPassword ? <VisibilityOff /> : <Visibility />}
+                  </button>
+                </div>
+                {errors.password && (
+                  <span className="text-red-400 text-xs mt-1 block">
+                    {errors.password || errors.password}
+                  </span>
+                )}
+              </div>
+            </div>
+
+            <button
               type="submit"
-              variant="contained"
-              fullWidth
               disabled={isLoggingIn}
-              sx={{
-                mt: 3,
-                py: 1.1,
-                borderRadius: "8px",
-                textTransform: "none",
-                color: "#181A1B",
-              }}
+              className={`w-full mt-4 py-1.5 text-sm rounded-md transition ${
+                isLoggingIn
+                  ? "bg-[#A5C9ED] text-[#181A1B] cursor-not-allowed opacity-60"
+                  : "bg-[#67ABEB] text-[#181A1B] hover:opacity-90"
+              }`}
             >
               {isLoggingIn ? "Logging in..." : LoginSectionData.buttonText}
-            </Button>
+            </button>
 
             {/* Forgot Password */}
-            <Typography sx={{ textAlign: "center", fontSize: 13, mt: "0.5rem" }}>
-              <a href="/auth/forgot-password" style={{ textDecoration: "none", color: '#67ABEB', }}>
+            <p className="text-center text-xs mt-2">
+              <a
+                href="/auth/forgot-password"
+                className="text-[#67ABEB] hover:underline"
+              >
                 {LoginSectionData.forgotPassword}
               </a>
-            </Typography>
+            </p>
           </form>
 
           {/* Footer */}
-          <Box sx={{ position: "absolute", bottom: 30, textAlign: "center", }}>
-            <Typography sx={{ fontSize: "13px" }}>{LoginSectionData.copyright}</Typography>
-          </Box>
-        </Box>
-      </Box>
-    </Box>
+          <div className="absolute bottom-7 text-center">
+            <p className="text-xs text-gray-300">
+              {LoginSectionData.copyright}
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
   );
 };
 
