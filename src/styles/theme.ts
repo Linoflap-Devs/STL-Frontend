@@ -380,4 +380,12 @@ export const buttonUpdateStyles = {
   color: "#181A1B",
 };
 
+export const legendCircle = {
+  width: 16,
+  height: 16,
+  borderRadius: "50%",
+  mr: 1,
+  fontSize: "10px !important",
+}
+
 export default darkTheme;

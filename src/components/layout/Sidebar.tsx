@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from "react";
 import {
   Drawer as MuiDrawer,
-  IconButton,
   Box,
   Typography,
+  Skeleton
 } from "@mui/material";
 import HomeIcon from "@mui/icons-material/Home";
 import BusinessIcon from "@mui/icons-material/Business";
@@ -46,7 +46,7 @@ const Sidebar: React.FC<SidebarProps> = ({
     return () => clearInterval(interval);
   }, []);
 
-  if (!dateTime) return <p>Loading...</p>;
+  if (!dateTime) return <Skeleton variant="text" width={80} height={40} />;
 
   const formattedDate = dateTime.toLocaleDateString("en-PH", {
     month: "long",

@@ -1,9 +1,7 @@
 import React, { useState } from "react";
 import { UserSectionData } from "../../data/AdminSectionData";
-import { buttonStyles, } from "../../styles/theme";
+import { buttonStyles } from "../../styles/theme";
 import {
-  Typography,
-  Box,
   Button,
   Table,
   TableBody,
@@ -11,8 +9,6 @@ import {
   TableContainer,
   TableHead,
   TableRow,
-  TextField,
-  InputAdornment,
   IconButton,
   TablePagination,
   Menu,
@@ -56,8 +52,17 @@ interface ManagerTableProps {
   sevenDaysAgo: dayjs.Dayjs;
 }
 
-const ManagerTable: React.FC<ManagerTableProps> = ({ managers, onCreate, onEdit, onSubmit, getUserStatus, sevenDaysAgo }) => {
-  const pageType = window.location.pathname.includes('manager') ? 'manager' : 'executive';
+const ManagerTable: React.FC<ManagerTableProps> = ({
+  managers,
+  onCreate,
+  onEdit,
+  onSubmit,
+  getUserStatus,
+  sevenDaysAgo,
+}) => {
+  const pageType = window.location.pathname.includes("manager")
+    ? "manager"
+    : "executive";
   const [user, setUser] = useState<User | null>(null);
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
@@ -89,10 +94,12 @@ const ManagerTable: React.FC<ManagerTableProps> = ({ managers, onCreate, onEdit,
   const filteredUsers = filterData(
     managers.map((user) => {
       const status = getUserStatus(user, sevenDaysAgo);
-      
+
       return {
         ...user,
-        fullName: `${user.FirstName || ""} ${user.LastName || ""}`.trim().toLowerCase(),
+        fullName: `${user.FirstName || ""} ${user.LastName || ""}`
+          .trim()
+          .toLowerCase(),
         formattedDate: user.DateOfRegistration
           ? dayjs(user.DateOfRegistration).format("YYYY/MM/DD")
           : "Invalid Date",
@@ -100,7 +107,7 @@ const ManagerTable: React.FC<ManagerTableProps> = ({ managers, onCreate, onEdit,
       };
     }),
     { ...filters, searchQuery },
-    ["fullName", "UserName", "Region", "Province", "CreatedBy", "Status", "DateOfRegistration"]
+    ["fullName", "UserName", "CreatedBy", "Status", "DateOfRegistration"]
   );
 
   const sortedFilteredUsers: User[] = sortData(filteredUsers, {
@@ -119,23 +126,27 @@ const ManagerTable: React.FC<ManagerTableProps> = ({ managers, onCreate, onEdit,
     setIsFilterVisible((prev) => !prev);
   };
 
-  const handleFilterChange = (key: string) => (value: string | Dayjs | null) => {
-    let filterValue: string;
+  const handleFilterChange =
+    (key: string) => (value: string | Dayjs | null) => {
+      let filterValue: string;
 
-    if (dayjs.isDayjs(value)) {
-      filterValue = value.isValid() ? value.format("YYYY-MM-DD") : "";
-    } else {
-      filterValue = value || "";
-    }
+      if (dayjs.isDayjs(value)) {
+        filterValue = value.isValid() ? value.format("YYYY-MM-DD") : "";
+      } else {
+        filterValue = value || "";
+      }
 
-    setFilters((prevFilters) => ({
-      ...prevFilters,
-      [key]: filterValue,
-    }));
-  };
+      setFilters((prevFilters) => ({
+        ...prevFilters,
+        [key]: filterValue,
+      }));
+    };
 
   // Menu handling
-  const handleToggleMenu = (event?: React.MouseEvent<HTMLButtonElement>, user?: User) => {
+  const handleToggleMenu = (
+    event?: React.MouseEvent<HTMLButtonElement>,
+    user?: User
+  ) => {
     //console.log("Menu opened for user:", user);  // Debug log
     setAnchorEl(event?.currentTarget || null);
     setSelectedUser(user || null);
@@ -180,245 +191,253 @@ const ManagerTable: React.FC<ManagerTableProps> = ({ managers, onCreate, onEdit,
 
   return (
     <>
-    <TableContainer>
-      <Box>
-        <Box
-          sx={{
-            py: 2,
-            px: 0.5,
-            display: "flex",
-            justifyContent: "space-between",
-            alignItems: "center",
-          }}
-        >
-          <Box sx={{ display: "flex", alignItems: "center" }}>
-            <TextField
-              variant="outlined"
-              placeholder="Search"
-              value={searchQuery}
-              sx={{
-                width: "350px",
-                "& .MuiOutlinedInput-root": {
-                  padding: "9px 14px",
-                  backgroundColor: 'transparent',
-                },
-                "& .MuiOutlinedInput-input": {
-                  padding: "0.5px 0",
-                },
-              }}
-              onChange={handleSearchChange}
-              InputProps={{
-                startAdornment: (
-                  <InputAdornment position="start">
-                    <SearchIcon sx={{ fontSize: 20, color: "#9CA3AF" }} />
-                  </InputAdornment>
-                ),
-              }}
-            />
-            {isFilterActive ? (
-              <FilterListOffIcon
-                onClick={handleFilterToggle}
-                sx={{ marginLeft: 2, color: "#9CA3AF", cursor: "pointer" }}
-              />
-            ) : (
-              <FilterListIcon
-                onClick={handleFilterToggle}
-                sx={{ marginLeft: 2, color: "#9CA3AF", cursor: "pointer" }}
-              />
-            )}
-          </Box>
-          <Box sx={{ display: "flex", alignItems: "center" }}>
-            <Button variant="contained" onClick={onCreate} sx={buttonStyles}>
-              {pageType === 'manager' ? 'Add Manager' : 'Add Executive'}
-            </Button>
-          </Box>
-        </Box>
-      </Box>
-      <Table size="small">
-        <TableHead>
-          <TableRow>
-            <>
-              <SortableTableCell
-                label="Full Name"
-                sortKey="fullName"
-                sortConfig={sortConfig}
-                onSort={onSortWrapper}
-                onFilterChange={handleFilterChange("fullName")}
-              />
-              <SortableTableCell
-                label="Company Name"
-                sortKey="companyName"
-                sortConfig={sortConfig}
-                onSort={onSortWrapper}
-                onFilterChange={handleFilterChange("companyName")}
-              />
-              <SortableTableCell
-                label="Creation Date"
-                sortKey="DateOfRegistration"
-                sortConfig={sortConfig}
-                onSort={onSortWrapper}
-                isFilterVisible={isFilterVisible}
-                filterValue={filters.DateOfRegistration}
-                onFilterChange={handleFilterChange("DateOfRegistration")}
-              />
-              <SortableTableCell
-                label="Created By"
-                sortKey="CreatedBy"
-                sortConfig={sortConfig}
-                onSort={onSortWrapper}
-                isFilterVisible={isFilterVisible}
-                filterValue={filters.CreatedBy}
-                onFilterChange={handleFilterChange("CreatedBy")}
-              />
-              <SortableTableCell
-                label="Status"
-                sortKey="Status"
-                sortConfig={sortConfig}
-                onSort={onSortWrapper}
-                isFilterVisible={isFilterVisible}
-                filterValue={filters.Status}
-                onFilterChange={handleFilterChange("Status")}
-              />
-            </>
-            <TableCell>Actions</TableCell>
-          </TableRow>
-        </TableHead>
-        <TableBody>
-          {sortedFilteredUsers.length === 0 ? (
+      <TableContainer>
+        <div>
+          <div className="flex justify-between items-center py-2 px-1">
+            {/* Search + Filter Section */}
+            <div className="flex items-center">
+              <div className="relative w-[350px]">
+                <input
+                  type="text"
+                  placeholder="Search"
+                  value={searchQuery}
+                  onChange={handleSearchChange}
+                  className="w-full pl-9 pr-3 py-[10px] bg-transparent border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                />
+                <div className="absolute left-2 top-1/2 transform -translate-y-1/2 text-gray-400">
+                  <SearchIcon style={{ fontSize: 20 }} />
+                </div>
+              </div>
+
+              {isFilterActive ? (
+                <FilterListOffIcon
+                  onClick={handleFilterToggle}
+                  className="ml-2 text-gray-400 cursor-pointer"
+                />
+              ) : (
+                <FilterListIcon
+                  onClick={handleFilterToggle}
+                  className="ml-2 text-gray-400 cursor-pointer"
+                />
+              )}
+            </div>
+
+            {/* Button Section */}
+            <div className="flex items-center">
+              <Button variant="contained" onClick={onCreate} sx={buttonStyles}>
+                {pageType === "manager" ? "Add Manager" : "Add Executive"}
+              </Button>
+            </div>
+          </div>
+        </div>
+
+        <Table size="small">
+          <TableHead>
             <TableRow>
-              <TableCell colSpan={9} align="center">
-                <Box 
-                  sx={{
-                    display: "flex",
-                    flexDirection: "column",
-                    alignItems: "center",
-                    py: 5
-                  }}>
-                  {managers.length === 0 ? (
-                    <>
-                      <PersonOffIcon sx={{ fontSize: 50, color: "gray" }} />
-                      <Typography variant="h6" color="textSecondary" sx={{ mt: 2, fontWeight: 500 }}>
-                        {pageType === "manager" ? "No managers available" : "No executives available"}
-                      </Typography>
-                      <Typography variant="body2" color="textSecondary">
-                        {pageType === "manager" ? "Add a new manager to get started." : "Add a new executive to get started."}
-                      </Typography>
-                    </>
-                  ) : (
-                    <>
-                      <SearchOffIcon sx={{ fontSize: 50, color: "gray" }} />
-                      <Typography variant="h6" color="textSecondary" sx={{ mt: 2, fontWeight: 500 }}>
-                        No results found
-                      </Typography>
-                      <Typography variant="body2" color="textSecondary">Try adjusting your search criteria.</Typography>
-                    </>
-                  )}
-                </Box>
-              </TableCell>
+              <>
+                <SortableTableCell
+                  label="Full Name"
+                  sortKey="fullName"
+                  sortConfig={sortConfig}
+                  onSort={onSortWrapper}
+                  onFilterChange={handleFilterChange("fullName")}
+                />
+                <SortableTableCell
+                  label="Company Name"
+                  sortKey="companyName"
+                  sortConfig={sortConfig}
+                  onSort={onSortWrapper}
+                  onFilterChange={handleFilterChange("companyName")}
+                />
+                <SortableTableCell
+                  label="Creation Date"
+                  sortKey="DateOfRegistration"
+                  sortConfig={sortConfig}
+                  onSort={onSortWrapper}
+                  isFilterVisible={isFilterVisible}
+                  filterValue={filters.DateOfRegistration}
+                  onFilterChange={handleFilterChange("DateOfRegistration")}
+                />
+                <SortableTableCell
+                  label="Created By"
+                  sortKey="CreatedBy"
+                  sortConfig={sortConfig}
+                  onSort={onSortWrapper}
+                  isFilterVisible={isFilterVisible}
+                  filterValue={filters.CreatedBy}
+                  onFilterChange={handleFilterChange("CreatedBy")}
+                />
+                <SortableTableCell
+                  label="Status"
+                  sortKey="Status"
+                  sortConfig={sortConfig}
+                  onSort={onSortWrapper}
+                  isFilterVisible={isFilterVisible}
+                  filterValue={filters.Status}
+                  onFilterChange={handleFilterChange("Status")}
+                />
+              </>
+              <TableCell>Actions</TableCell>
             </TableRow>
-          ) : (
-            sortedFilteredUsers.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((user) => (
-              <TableRow key={user.userId}>
-                <TableCell>{user.userId} {`${user.FirstName} ${user.LastName} ${user.Suffix}`}</TableCell>
-                <TableCell>{user.OperatorDetails.OperatorName}</TableCell>
-                <TableCell>{dayjs(user.DateOfRegistration).format("YYYY/MM/DD HH:mm:ss")}</TableCell>
-                <TableCell>{user?.CreatedBy}</TableCell>
-                <TableCell>
-                  <Button
-                    variant="contained"
-                    sx={{
-                      cursor: "auto",
-                      textTransform: "none",
-                      borderRadius: "12px",
-                      padding: "1px 13px",
-                      fontSize: "12px",
-                      backgroundColor:
-                        user.Status === "Suspended" ? "#FF7A7A" :
-                          user.Status === "Inactive" ? "#FFA726" :
-                            "#4CAF50",
-                      color: "#171717",
-                      "&:hover": {
-                        backgroundColor:
-                          user.Status === "Suspended" ? "#F05252" :
-                            user.Status === "Inactive" ? "#FFA726" :
-                              "#4CAF50",
-                      },
-                    }}
-                  >
-                    {user.Status}
-                  </Button>
-                </TableCell>
-                <TableCell>
-                  <IconButton onClick={(event) => handleToggleMenu(event, user)}>
-                    <MoreHorizIcon />
-                  </IconButton>
-                  <Menu
-                    anchorEl={anchorEl}
-                    open={Boolean(anchorEl)}
-                    onClose={() => { console.log("Menu closed"); handleToggleMenu(); }}
-                    MenuListProps={{ "aria-labelledby": "basic-button" }} >
-                    <MenuItem
-                      onClick={() => {
-                        if (selectedUser) {
-                          console.log("View clicked for user:", selectedUser);
-                          onEdit(selectedUser);
-                        } else {
-                          console.error("No user selected!");
-                        }
-                      }}
-                    >
-                      View
-                    </MenuItem>
-                    <MenuItem
-                      onClick={() => {
-                        console.log("Delete clicked for user:", user);
-                        handleManagerSuspend(user);
-                      }}
-                    >
-                      Delete
-                    </MenuItem>
-                  </Menu>
-                  <ConfirmSuspendManagerPage
-                    open={isVerifyModalOpen}
-                    onClose={() => setIsVerifyModalOpen(false)}
-                    onVerified={() => setIsVerifyModalOpen(false)}
-                    onSubmit={onSubmit}
-                    selectedUser={user}
-                    setSelectedUser={setSelectedUser}
-                  />
+          </TableHead>
+          <TableBody>
+            {sortedFilteredUsers.length === 0 ? (
+              <TableRow>
+                <TableCell colSpan={9} align="center">
+                  <div className="flex flex-col items-center py-5">
+                    {managers.length === 0 ? (
+                      <>
+                        <PersonOffIcon
+                          className="text-gray-500"
+                          style={{ fontSize: 50 }}
+                        />
+                        <h6 className="mt-2 font-medium text-gray-400 text-lg">
+                          {pageType === "manager"
+                            ? "No managers available"
+                            : "No executives available"}
+                        </h6>
+                        <p className="text-sm text-gray-500">
+                          {pageType === "manager"
+                            ? "Add a new manager to get started."
+                            : "Add a new executive to get started."}
+                        </p>
+                      </>
+                    ) : (
+                      <>
+                        <SearchOffIcon
+                          className="text-gray-500"
+                          style={{ fontSize: 50 }}
+                        />
+                        <h6 className="mt-2 font-medium text-gray-400 text-lg">
+                          No results found
+                        </h6>
+                        <p className="text-sm text-gray-500">
+                          Try adjusting your search criteria.
+                        </p>
+                      </>
+                    )}
+                  </div>
                 </TableCell>
               </TableRow>
-            ))
-          )}
-        </TableBody>
-      </Table>
-      <Box sx={{ padding: "12px", }}>
-        <TablePagination
-          rowsPerPageOptions={[10, 25, 50, 100]}
-          component="div"
-          count={sortedFilteredUsers.length}
-          rowsPerPage={rowsPerPage}
-          page={page}
-          onPageChange={(event, newPage) =>
-            handleChangePage(event, newPage, setPage)
-          }
-          onRowsPerPageChange={(event) =>
-            handleChangeRowsPerPage(event, setRowsPerPage)
-          }
-        />
-      </Box>
-    </TableContainer>
-    <Box
-        sx={{
-          display: "flex",
-          justifyContent: "flex-end",
-          paddingTop: 2,
-        }}
-      >
+            ) : (
+              sortedFilteredUsers
+                .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                .map((user) => (
+                  <TableRow key={user.userId}>
+                    <TableCell>
+                      {user.userId}{" "}
+                      {`${user.FirstName} ${user.LastName} ${user.Suffix}`}
+                    </TableCell>
+                    <TableCell>{user.OperatorDetails.OperatorName}</TableCell>
+                    <TableCell>
+                      {dayjs(user.DateOfRegistration).format(
+                        "YYYY/MM/DD HH:mm:ss"
+                      )}
+                    </TableCell>
+                    <TableCell>{user?.CreatedBy}</TableCell>
+                    <TableCell>
+                      <Button
+                        variant="contained"
+                        sx={{
+                          cursor: "auto",
+                          textTransform: "none",
+                          borderRadius: "12px",
+                          padding: "1px 13px",
+                          fontSize: "12px",
+                          backgroundColor:
+                            user.Status === "Suspended"
+                              ? "#FF7A7A"
+                              : user.Status === "Inactive"
+                                ? "#FFA726"
+                                : "#4CAF50",
+                          color: "#171717",
+                          "&:hover": {
+                            backgroundColor:
+                              user.Status === "Suspended"
+                                ? "#F05252"
+                                : user.Status === "Inactive"
+                                  ? "#FFA726"
+                                  : "#4CAF50",
+                          },
+                        }}
+                      >
+                        {user.Status}
+                      </Button>
+                    </TableCell>
+                    <TableCell>
+                      <IconButton
+                        onClick={(event) => handleToggleMenu(event, user)}
+                      >
+                        <MoreHorizIcon />
+                      </IconButton>
+                      <Menu
+                        anchorEl={anchorEl}
+                        open={Boolean(anchorEl)}
+                        onClose={() => {
+                          console.log("Menu closed");
+                          handleToggleMenu();
+                        }}
+                        MenuListProps={{ "aria-labelledby": "basic-button" }}
+                      >
+                        <MenuItem
+                          onClick={() => {
+                            if (selectedUser) {
+                              console.log(
+                                "View clicked for user:",
+                                selectedUser
+                              );
+                              onEdit(selectedUser);
+                            } else {
+                              console.error("No user selected!");
+                            }
+                          }}
+                        >
+                          View
+                        </MenuItem>
+                        <MenuItem
+                          onClick={() => {
+                            console.log("Delete clicked for user:", user);
+                            handleManagerSuspend(user);
+                          }}
+                        >
+                          Delete
+                        </MenuItem>
+                      </Menu>
+                      <ConfirmSuspendManagerPage
+                        open={isVerifyModalOpen}
+                        onClose={() => setIsVerifyModalOpen(false)}
+                        onVerified={() => setIsVerifyModalOpen(false)}
+                        onSubmit={onSubmit}
+                        selectedUser={user}
+                        setSelectedUser={setSelectedUser}
+                      />
+                    </TableCell>
+                  </TableRow>
+                ))
+            )}
+          </TableBody>
+        </Table>
+        <div className="p-3">
+          <TablePagination
+            rowsPerPageOptions={[10, 25, 50, 100]}
+            component="div"
+            count={sortedFilteredUsers.length}
+            rowsPerPage={rowsPerPage}
+            page={page}
+            onPageChange={(event, newPage) =>
+              handleChangePage(event, newPage, setPage)
+            }
+            onRowsPerPageChange={(event) =>
+              handleChangeRowsPerPage(event, setRowsPerPage)
+            }
+          />
+        </div>
+      </TableContainer>
+      <div className="flex justify-end pt-2">
         <Button variant="contained" sx={buttonStyles}>
           {UserSectionData.exportAsCSVButton}
         </Button>
-      </Box>
+      </div>
     </>
   );
 };

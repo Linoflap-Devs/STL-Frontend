@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { AppBar, Toolbar, IconButton, Typography, Box, Tooltip, useMediaQuery } from "@mui/material";
+import { AppBar, Toolbar, IconButton, Typography, Box, Tooltip, useMediaQuery, Skeleton } from "@mui/material";
 import MenuIcon from "@mui/icons-material/Menu";
 import MenuOpenIcon from '@mui/icons-material/MenuOpen';
 import LogoutIcon from "@mui/icons-material/Logout";
@@ -147,7 +147,7 @@ const Header: React.FC<HeaderProps> = ({ handleDrawerToggle, collapsed, mobileOp
                 lineHeight: "1.1",
               }}
             >
-              {user ? `${user.firstName} ${user.lastName}` : "Loading..."}
+              {user ? `${user.firstName} ${user.lastName}` : <Skeleton variant="text" width={80} height={40} />}
             </Typography>
             <Typography
               noWrap

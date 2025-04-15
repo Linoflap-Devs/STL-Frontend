@@ -1,6 +1,10 @@
 import React, { useState, useEffect } from "react";
 import { Box, Typography, Stack, Button, Skeleton } from "@mui/material";
-import { buttonStyles, cardDashboardStyles } from "../../styles/theme";
+import {
+  buttonStyles,
+  cardDashboardStyles,
+  legendCircle,
+} from "../../styles/theme";
 import { BarChart } from "@mui/x-charts/BarChart";
 import dayjs from "dayjs";
 import { User } from "./UsersTable";
@@ -53,12 +57,8 @@ const CustomLegend = ({ pageType }: { pageType: string }) => (
       <Box key={item.label} sx={{ display: "flex", alignItems: "left" }}>
         <Box
           sx={{
-            width: 16,
-            height: 16,
-            borderRadius: "50%",
+            ...legendCircle,
             backgroundColor: item.color,
-            mr: 1,
-            fontSize: "10px !important",
           }}
         />
         <Typography sx={{ fontSize: "14px" }} color="white">
@@ -78,10 +78,12 @@ const UserDashboardPage: React.FC<UserDashboardPageProps> = ({
   const [dashboardData, setDashboardData] = useState<Record<string, any>>({});
   const [chartData, setChartData] = useState<number[]>([]);
   const [chartColors, setChartColors] = useState<string[]>([]);
-  
-  const userType = window.location.pathname.includes("manager") ? "manager" : "executive";
+
+  const userType = window.location.pathname.includes("manager")
+    ? "manager"
+    : "executive";
   const roleLabel = userType === "manager" ? "Managers" : "Executives";
-  
+
   const data = [
     `Total ${roleLabel}`,
     `Total Active ${roleLabel}`,
@@ -108,6 +110,7 @@ const UserDashboardPage: React.FC<UserDashboardPageProps> = ({
       const status = getUserStatus(user, sevenDaysAgo);
 
       totals.totalUsers += 1;
+
       if (status === "Active") totals.activeUsers += 1;
       else if (status === "Deleted") totals.suspendedUsers += 1;
       else if (status === "Inactive") totals.inactiveUsers += 1;
@@ -134,7 +137,7 @@ const UserDashboardPage: React.FC<UserDashboardPageProps> = ({
 
     setChartColors(["#BB86FC", "#5050A5", "#7266C9", "#3B3B81", "#282A68"]);
   }, [dashboardData]);
-  
+
   return (
     <Box sx={{ mb: 3 }}>
       <Box
@@ -179,25 +182,27 @@ const UserDashboardPage: React.FC<UserDashboardPageProps> = ({
               ...cardDashboardStyles,
               flex: "1 1 200px",
               minWidth: "200px",
-              margin: item.label.includes("Total Managers") || item.label.includes("Total Executives")
-                ? "0px"
-                : "5px 10px",
+              margin:
+                item.label.includes("Total Managers") ||
+                item.label.includes("Total Executives")
+                  ? "0px"
+                  : "5px 10px",
             }}
           >
-          <Typography
-            sx={{ fontSize: "12px", lineHeight: 1.5, color: "#D5D5D5" }}
-          >
-            {item.label}
-          </Typography>
-          {item.value === undefined || item.value === null ? (
-            <Skeleton variant="text" width={80} height={40} />
-          ) : (
             <Typography
-              sx={{ fontSize: "30px", fontWeight: 700, lineHeight: 1.1 }}
+              sx={{ fontSize: "12px", lineHeight: 1.5, color: "#D5D5D5" }}
             >
-              {item.value}
+              {item.label}
             </Typography>
-          )}
+            {item.value === undefined || item.value === null ? (
+              <Skeleton variant="text" width={80} height={40} />
+            ) : (
+              <Typography
+                sx={{ fontSize: "30px", fontWeight: 700, lineHeight: 1.1 }}
+              >
+                {item.value}
+              </Typography>
+            )}
           </Box>
         ))}
       </Box>
