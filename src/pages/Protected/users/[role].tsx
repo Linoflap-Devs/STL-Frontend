@@ -209,6 +209,8 @@ const UsersPage = () => {
             onClose={closeUpdateModal}
             onSubmit={handleSaveUpdatedUser}
             manager={selectedManager}
+            getUserStatus={getUserStatus}
+            sevenDaysAgo={sevenDaysAgo}
           />
         )}
       </div>
