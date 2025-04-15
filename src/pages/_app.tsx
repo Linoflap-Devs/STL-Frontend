@@ -6,7 +6,7 @@ import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import { getCurrentUser } from "../utils/api/auth";
 import "../styles/globals.css";
-import { refreshSubscribers } from "../utils/axiosInstance";
+import axiosInstance, { isRefreshing, refreshSubscribers } from "../utils/axiosInstance";
 
 const excludedPaths = [
   "/",
@@ -21,6 +21,20 @@ const App = ({ Component, pageProps }: AppProps) => {
   const router = useRouter();
   const isExcludedPath = excludedPaths.includes(router.pathname);
   const [loading, setLoading] = useState(true);
+  const [user, setUser] = useState(null);
+
+  // Helper function to wait for the refresh process to finish if it's already in progress
+  const waitUntilNotRefreshing = () =>
+    new Promise<void>((resolve) => {
+      if (!isRefreshing) return resolve();
+
+      const interval = setInterval(() => {
+        if (!isRefreshing) {
+          clearInterval(interval);
+          resolve();
+        }
+      }, 100); // Check every 100ms
+    });
 
   useEffect(() => {
     if (isExcludedPath) {
@@ -28,29 +42,32 @@ const App = ({ Component, pageProps }: AppProps) => {
       return;
     }
 
-    console.log("Checking authentication status...");
-
     const checkAuth = async () => {
       try {
+        await waitUntilNotRefreshing();
+
+        console.log("Checking authentication status...");
         const data = await getCurrentUser({});
         if (data?.success) {
           console.log("Authenticated user:", data);
+          setUser(data.data); // Set user data
           setLoading(false);
           return;
         }
+
         throw new Error("No valid auth found!");
       } catch (error: any) {
         if (error.response?.status === 403 && error.response?.data?.message === "Token expired.") {
           console.log("Token expired, waiting for refresh...");
 
-          // Wait for the interceptor to complete token refresh
+          // Wait until the refresh process is completed
           await new Promise<void>((resolve) => refreshSubscribers.push(() => resolve()));
 
-          // Retry getCurrentUser after refresh
           try {
             const data = await getCurrentUser({});
             if (data?.success) {
               console.log("Authenticated user (after refresh):", data);
+              setUser(data.data);
               setLoading(false);
               return;
             }
@@ -65,7 +82,17 @@ const App = ({ Component, pageProps }: AppProps) => {
       }
     };
 
+    // Initial authentication check
     checkAuth();
+
+    const refreshInterval = setInterval(() => {
+      console.log("Refreshing token...");
+      axiosInstance.post("/auth/tokenRefresh", {}, { withCredentials: true });
+    }, 60000); // 1 minute = 60,000 ms
+
+    // Cleanup interval on unmount or path change
+    return () => clearInterval(refreshInterval);
+
   }, [isExcludedPath, router]);
 
   if (loading) {

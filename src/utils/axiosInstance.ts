@@ -15,10 +15,11 @@ axiosInstance.interceptors.request.use((config) => {
   return config;
 });
 
-// Response interceptor to handle token expiration
-let isRefreshing = false;
-export let refreshSubscribers: (() => void)[] = []; // Export refreshSubscribers
+// Global variables for handling token refresh
+export let isRefreshing = false;
+export let refreshSubscribers: (() => void)[] = [];
 
+// Response interceptor to handle token expiration
 axiosInstance.interceptors.response.use(
   (response) => response,
   async (error) => {
@@ -28,13 +29,15 @@ axiosInstance.interceptors.response.use(
       if (!isRefreshing) {
         isRefreshing = true;
         try {
+          // Attempt to refresh the token
           await axiosInstance.post("/auth/tokenRefresh", {}, { withCredentials: true });
 
+          // Once the token is refreshed, resolve the subscribers
           isRefreshing = false;
           refreshSubscribers.forEach((cb) => cb());
-          refreshSubscribers = [];
+          refreshSubscribers = []; // Clear subscribers
 
-          return axiosInstance(originalRequest);
+          return axiosInstance(originalRequest); // Retry the original request with the new token
         } catch (refreshError) {
           isRefreshing = false;
           refreshSubscribers = [];
@@ -44,7 +47,7 @@ axiosInstance.interceptors.response.use(
         }
       } else {
         return new Promise((resolve) => {
-          refreshSubscribers.push(() => resolve(axiosInstance(originalRequest)));
+          refreshSubscribers.push(() => resolve(axiosInstance(originalRequest))); // Push the request to the refresh queue
         });
       }
     }

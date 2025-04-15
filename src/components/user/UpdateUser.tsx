@@ -144,6 +144,7 @@ const UpdateManager: React.FC<UpdateManagerProps> = React.memo(
           };
 
           setUser(updatedUser);
+          console.log('updated user: ', updatedUser)
         } catch (err) {
           console.error("Error fetching manager details:", err);
         }

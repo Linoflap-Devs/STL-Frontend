@@ -78,7 +78,6 @@ const UsersPage = () => {
 
         setUsers(filteredUsers);
         setOperators(operatorResponse.data);
-        console.log("setUSERS: ", filteredUsers);
       }
     } catch (error) {
       console.error("Error fetching users/operators:", error);

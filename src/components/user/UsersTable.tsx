@@ -97,7 +97,7 @@ const ManagerTable: React.FC<ManagerTableProps> = ({
 
       return {
         ...user,
-        fullName: `${user.FirstName || ""} ${user.LastName || ""}`
+        fullName: `${user.FirstName || ""} ${user.LastName || "" } ${user.Suffix || "" }`
           .trim()
           .toLowerCase(),
         formattedDate: user.DateOfRegistration
