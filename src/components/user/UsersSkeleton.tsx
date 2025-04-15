@@ -15,12 +15,12 @@ export const UsersSkeletonPage: React.FC = () => {
   return (
     <div className="animate-pulse space-y-4">
       {[...Array(2)].map((_, index) => (
-        <div key={index} className="h-5 w-[42%] bg-[#171717] rounded-lg" />
+        <div key={index} className="h-4 w-[35%] bg-[#171717] rounded-lg" />
       ))}
 
       <div className="flex flex-wrap gap-4">
         {[...Array(5)].map((_, index) => (
-          <SkeletonCard key={index} height="110px" />
+          <SkeletonCard key={index} height="99px" />
         ))}
       </div>
 

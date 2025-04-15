@@ -1,9 +1,8 @@
 import React, { useState, useEffect } from "react";
-import { Box, Typography, Stack, Button, Skeleton } from "@mui/material";
+import { Button } from "@mui/material";
 import {
   buttonStyles,
   cardDashboardStyles,
-  legendCircle,
 } from "../../styles/theme";
 import { BarChart } from "@mui/x-charts/BarChart";
 import dayjs from "dayjs";
@@ -52,21 +51,17 @@ const getLegendItems = (pageType: string) => [
 ];
 
 const CustomLegend = ({ pageType }: { pageType: string }) => (
-  <Stack direction="row" spacing={2} justifyContent="flex-start" sx={{ mr: 2 }}>
+  <div className="flex flex-row gap-2 justify-start mr-2">
     {getLegendItems(pageType).map((item) => (
-      <Box key={item.label} sx={{ display: "flex", alignItems: "left" }}>
-        <Box
-          sx={{
-            ...legendCircle,
-            backgroundColor: item.color,
-          }}
+      <div key={item.label} className="flex items-start gap-2">
+        <div
+          className="w-3 h-3 rounded-full mt-1"
+          style={{ backgroundColor: item.color }}
         />
-        <Typography sx={{ fontSize: "14px" }} color="white">
-          {item.label}
-        </Typography>
-      </Box>
+        <span className="text-sm text-white">{item.label}</span>
+      </div>
     ))}
-  </Stack>
+  </div>
 );
 
 const UserDashboardPage: React.FC<UserDashboardPageProps> = ({
@@ -139,16 +134,8 @@ const UserDashboardPage: React.FC<UserDashboardPageProps> = ({
   }, [dashboardData]);
 
   return (
-    <Box sx={{ mb: 3 }}>
-      <Box
-        sx={{
-          mt: 0.5,
-          display: "flex",
-          flexWrap: "wrap",
-          justifyContent: "center",
-          alignItems: "center",
-        }}
-      >
+    <div className="mb-3">
+      <div className="mt-6 flex flex-wrap justify-center items-center gap-4 sm:gap-6 md:gap-3">
         {[
           {
             label: `Total ${roleLabel}`,
@@ -176,79 +163,47 @@ const UserDashboardPage: React.FC<UserDashboardPageProps> = ({
             color: "#282A68",
           },
         ].map((item, index) => (
-          <Box
+          <div
             key={index}
-            sx={{
-              ...cardDashboardStyles,
-              flex: "1 1 200px",
-              minWidth: "200px",
-              margin:
-                item.label.includes("Total Managers") ||
-                item.label.includes("Total Executives")
-                  ? "0px"
-                  : "5px 10px",
-            }}
+            className="px-4 py-5 flex-[1_1_200px] bg-gray-800 rounded-lg"
+            style={{ ...cardDashboardStyles }}
           >
-            <Typography
-              sx={{ fontSize: "12px", lineHeight: 1.5, color: "#D5D5D5" }}
-            >
-              {item.label}
-            </Typography>
+            <p className="text-sm leading-6 text-gray-400">{item.label}</p>
             {item.value === undefined || item.value === null ? (
-              <Skeleton variant="text" width={80} height={40} />
+              <div className="w-20 h-6 bg-gray-500 animate-pulse rounded-md mt-3" />
             ) : (
-              <Typography
-                sx={{ fontSize: "30px", fontWeight: 700, lineHeight: 1.1 }}
-              >
-                {item.value}
-              </Typography>
+              <p className="text-3xl font-bold leading-[1.1]">{item.value}</p>
             )}
-          </Box>
+          </div>
         ))}
-      </Box>
+      </div>
 
       {/* Chart Display */}
-      <Box sx={{ mt: 1 }}>
-        <Box
-          sx={{ padding: 2, backgroundColor: "#171717", borderRadius: "10px" }}
-        >
-          <Box sx={{ display: "flex", justifyContent: "space-between" }}>
-            <Box>
-              <Typography color="#B3B3B3">
+      <div className="mt-4">
+        <div className="p-4 bg-[#171717] rounded-lg">
+          <div className="flex justify-between">
+            <div>
+              <p className="text-gray-300">
                 {userType === "manager"
                   ? "Managers Summary"
                   : "Executive Summary"}
-              </Typography>
-              <Box>
+              </p>
+              <div>
                 <CustomLegend pageType={userType} />
-              </Box>
-            </Box>
-            <Box
-              sx={{
-                display: "flex",
-                flexDirection: "column",
-                justifyContent: "flex-end",
-              }}
-            >
+              </div>
+            </div>
+            <div className="flex flex-col justify-end">
               <Button sx={buttonStyles} variant="contained">
                 Export as CSV
               </Button>
-            </Box>
-          </Box>
-          <Box sx={{ height: 270, width: "100%", minWidth: 0 }}>
+            </div>
+          </div>
+          <div className="h-[270px] w-full min-w-0">
             <BarChart
               xAxis={[
-                {
-                  label: "USER STATUS",
-                  scaleType: "band",
-                  data: [...data],
-                },
+                { label: "USER STATUS", scaleType: "band", data: [...data] },
               ]}
-              yAxis={[
-                {
-                  label: "COUNT",
-                },
-              ]}
+              yAxis={[{ label: "COUNT" }]}
               series={[
                 {
                   label: userType === "manager" ? "Managers" : "Executives",
@@ -261,18 +216,18 @@ const UserDashboardPage: React.FC<UserDashboardPageProps> = ({
                 bar: {
                   style: {
                     fill: "#2F2F2F !important",
-                    borderTopLeftRadius: 5,
-                    borderTopRightRadius: 5,
+                    borderTopLeftRadius: "5px",
+                    borderTopRightRadius: "5px",
                     transition: "fill 0.3s ease-in-out",
                     cursor: "pointer",
                   },
                 },
               }}
             />
-          </Box>
-        </Box>
-      </Box>
-    </Box>
+          </div>
+        </div>
+      </div>
+    </div>
   );
 };
 
