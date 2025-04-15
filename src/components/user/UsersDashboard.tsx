@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Box, Typography, Stack, Button } from "@mui/material";
+import { Box, Typography, Stack, Button, Skeleton } from "@mui/material";
 import { buttonStyles, cardDashboardStyles } from "../../styles/theme";
 import { BarChart } from "@mui/x-charts/BarChart";
 import dayjs from "dayjs";
@@ -184,16 +184,20 @@ const UserDashboardPage: React.FC<UserDashboardPageProps> = ({
                 : "5px 10px",
             }}
           >
-            <Typography
-              sx={{ fontSize: "12px", lineHeight: 1.5, color: "#D5D5D5" }}
-            >
-              {item.label}
-            </Typography>
+          <Typography
+            sx={{ fontSize: "12px", lineHeight: 1.5, color: "#D5D5D5" }}
+          >
+            {item.label}
+          </Typography>
+          {item.value === undefined || item.value === null ? (
+            <Skeleton variant="text" width={80} height={40} />
+          ) : (
             <Typography
               sx={{ fontSize: "30px", fontWeight: 700, lineHeight: 1.1 }}
             >
               {item.value}
             </Typography>
+          )}
           </Box>
         ))}
       </Box>

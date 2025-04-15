@@ -65,10 +65,13 @@ const UsersPage = () => {
             DateOfRegistration: user.DateOfRegistration ?? 'N/A',
             CreatedBy: user.CreatedBy ?? 'N/A',
             OperatorDetails: operatorMap[user.OperatorId] ?? null,
+            LastLogin: user.LastLogin ?? 'N/A',
+            LastTokenRefresh: user.LastTokenRefresh ?? 'N/A',
           }));
 
         setUsers(filteredUsers);
         setOperators(operatorResponse.data);
+        console.log('setUSERS: ', filteredUsers)
       }
     } catch (error) {
       console.error('Error fetching users/operators:', error);
@@ -79,10 +82,9 @@ const UsersPage = () => {
     if (roleId) loadData();
   }, [roleId, refresh]);
 
-  // status data logic
-  const getUserStatus = (user: any, sevenDaysAgo: dayjs.Dayjs): string => {
+  const getUserStatus = (user: any, sevenDaysAgo: dayjs.Dayjs): string => {  
     let status = "Active";
-
+  
     if (user.IsActive === 0) {
       status = "Suspended";
     } else if (
@@ -92,10 +94,12 @@ const UsersPage = () => {
       status = "Inactive";
     } else if (user.DateOfRegistration && dayjs(user.DateOfRegistration).isAfter(sevenDaysAgo)) {
       status = "New";
+    } else {
+      console.log("Status remains Active");
     }
-
+  
     return status;
-  };
+  };  
 
   const sevenDaysAgo = dayjs().subtract(7, 'days');
 

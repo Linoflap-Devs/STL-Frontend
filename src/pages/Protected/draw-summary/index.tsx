@@ -9,7 +9,7 @@ const DrawSummaryPage: React.FC = () => {
   return (
     <>
       <Suspense fallback={<DrawSummaryCardsPage />}>
-        <div className="p-4">
+        <div>
           <div className="flex flex-row justify-between items-center mb-[1.5rem]">
             <h4 className="text-3xl font-bold">STL Pares Draw Summary</h4>
           </div>

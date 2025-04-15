@@ -11,7 +11,7 @@ import dayjs from "dayjs";
 import DrawCardsPage from "~/components/draw-summary/DrawSummaryCards";
 
 const LiveFeedTodayPage = React.lazy(
-  () => import("~/components/draw-selected/LiveFeedToday")
+() => import("~/components/draw-selected/LiveFeedToday")
 );
 
 const DrawListSummaryPage = React.lazy(
@@ -60,13 +60,13 @@ const DrawSelectedPage = () => {
           <div className="flex flex-col w-full gap-4">
             <div className="flex flex-col md:flex-row w-full gap-4">
               {/* Left Column */}
-              <div className="flex flex-col gap-4 w-full md:w-1/2">
+              <div className="flex flex-col gap-4 w-full md:w-2/3">
                 <LiveFeedTodayPage />
                 <DrawCounterPage />
               </div>
 
               {/* Right Column */}
-              <div className="flex flex-col gap-4 w-full md:w-1/2">
+              <div className="flex flex-col gap-4 w-full md:w-1/3">
                 <DrawListSummaryPage />
               </div>
             </div>
