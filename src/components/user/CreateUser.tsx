@@ -31,7 +31,7 @@ interface CreateManagerProps {
   onClose: () => void;
   onSubmit: (userData: User | null) => Promise<void>;
   userData: User | null;
-  managers: User[];
+  //managers: User[];
   operators: any[];
 }
 
@@ -317,6 +317,7 @@ const CreateManager: React.FC<CreateManagerProps> = ({
             onClose={() => setIsVerifyModalOpen(false)}
             onVerified={handleCreateManagerSubmit}
             user={user}
+            setUser={setUser}
             onSubmit={onSubmit}
           />
         )}

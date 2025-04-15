@@ -193,7 +193,7 @@ const ManagerTable: React.FC<ManagerTableProps> = ({
     <>
       <TableContainer>
         <div>
-          <div className="flex justify-between items-center py-2 px-1">
+          <div className="flex justify-between items-center py-3 px-1">
             {/* Search + Filter Section */}
             <div className="flex items-center">
               <div className="relative w-[350px]">
@@ -202,7 +202,7 @@ const ManagerTable: React.FC<ManagerTableProps> = ({
                   placeholder="Search"
                   value={searchQuery}
                   onChange={handleSearchChange}
-                  className="w-full pl-9 pr-3 py-[10px] bg-transparent border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                  className="w-full pl-9 pr-3 py-[10px] bg-transparent border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:outline-none"
                 />
                 <div className="absolute left-2 top-1/2 transform -translate-y-1/2 text-gray-400">
                   <SearchIcon style={{ fontSize: 20 }} />

@@ -73,10 +73,15 @@ const DashboardCardsPage = () => {
   }, []);
 
   return (
-    <div className="mt-3 flex flex-wrap justify-center items-center gap-4 sm:gap-6 md:gap-3">
+    <div className="mt-8 flex flex-wrap justify-center items-center gap-4 sm:gap-6 md:gap-3">
       {[
-        { title: "Total Bettors", value: dashboardData.totalBettors },
-        { title: "Total Winners", value: dashboardData.totalWinners },
+        { 
+          title: "Total Bettors", 
+          value: dashboardData.totalBettors 
+        },
+        { title: "Total Winners", 
+          value: dashboardData.totalWinners 
+        },
         {
           title: "Total Bets Placed",
           value: `${dashboardData.totalBetsPlaced.toLocaleString()}`,

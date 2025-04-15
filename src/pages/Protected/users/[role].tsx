@@ -198,7 +198,7 @@ const UsersPage = () => {
           onClose={() => setModalOpen(false)}
           onSubmit={handleSubmitUser}
           userData={selectedUser}
-          managers={users}
+          //managers={users}
           operators={operators}
         />
 

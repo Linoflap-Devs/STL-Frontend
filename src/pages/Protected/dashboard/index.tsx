@@ -16,12 +16,12 @@ const SummaryWinnersDrawTimePage = React.lazy(() => import("~/components/dashboa
 
 const DashboardPage = () => {
   return (
-    <div className="space-y-6">
+    <div className="space-y-4">
       <Suspense fallback={<DashboardSkeletonPage />}>
         <h1 className="text-3xl font-bold">Dashboard</h1>
         <DashboardCardsPage />
-        <div className="flex flex-col items-center space-y-6">
-          <div className="w-full space-y-6">
+        <div className="flex flex-col items-center space-y-4">
+          <div className="w-full space-y-4">
             <div className="w-full flex flex-col md:flex-row space-y-4 md:space-y-0 md:space-x-4">
               {/* Left Column */}
               <div className="flex-1 space-y-6">
