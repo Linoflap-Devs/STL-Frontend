@@ -31,7 +31,6 @@ export const userSchema = z.object({
     .refine((val) => /\S+@\S+\.\S+/.test(val), {
       message: "Please enter a valid email address e.g. xxx@email.com",
     }),
-  remarks: z.string().nonempty("Remarks is required"),
   password: z
     .string()
     .nonempty("Password is required")

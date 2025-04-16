@@ -1,266 +1,234 @@
 import { useState, useEffect } from "react";
-import { Typography, Box, Tooltip, Dialog, IconButton, DialogContent, Button, TextField, FormControl, OutlinedInput, FormHelperText, InputLabel } from "@mui/material";
+import {
+  IconButton,
+} from "@mui/material";
 import { verifyPass } from "~/utils/api/auth";
 import { addUser } from "~/utils/api/users";
 import Swal from "sweetalert2";
 import { LoginSectionData } from "../../data/LoginSectionData";
 import ArrowBackIosNewIcon from "@mui/icons-material/ArrowBackIosNew";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
-import { inputStyles } from "~/styles/theme";
-import { User } from "./UsersTable";
 import { useRouter } from "next/router";
 
 interface ConfirmCreateUserPageProps {
-    open: boolean;
-    onClose: () => void;
-    onVerified: () => void;
-    user: any;
-    onSubmit: (newUser: any) => void;
-    setUser: React.Dispatch<React.SetStateAction<any>>;
-    setErrors: React.Dispatch<React.SetStateAction<any>>;
-    //selectedUser: User | null; // for remarks
-    //setSelectedUser: React.Dispatch<React.SetStateAction<User | null>>; // for remarks
+  open: boolean;
+  onClose: () => void;
+  onVerified: () => void;
+  user: any;
+  onSubmit: (newUser: any) => void;
+  setUser: React.Dispatch<React.SetStateAction<any>>;
+  setErrors: React.Dispatch<React.SetStateAction<any>>;
+  //selectedUser: User | null; // for remarks
+  //setSelectedUser: React.Dispatch<React.SetStateAction<User | null>>; // for remarks
 }
 
-const ConfirmCreateUserPage: React.FC<ConfirmCreateUserPageProps> = ({ open, onClose, user, setUser, onSubmit, setErrors, }) => {
-    const [password, setPassword] = useState("");
-    const [error, setError] = useState("");
-    const [showPassword, setShowPassword] = useState<boolean>(false);
-    const handleTogglePasswordVisibility = () => setShowPassword((prev) => !prev);
-    const [userType, setUserType] = useState('');
-    const router = useRouter();
+const ConfirmCreateUserPage: React.FC<ConfirmCreateUserPageProps> = ({
+  open,
+  onClose,
+  user,
+  setUser,
+  onSubmit,
+  setErrors,
+}) => {
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
+  const [showPassword, setShowPassword] = useState<boolean>(false);
+  const handleTogglePasswordVisibility = () => setShowPassword((prev) => !prev);
+  const [userType, setUserType] = useState("");
+  const router = useRouter();
 
-    useEffect(() => {
-        const pageType = router.asPath.includes('managers') ? 'manager' : 'executive';
-        setUserType(pageType);
-    }, [router.asPath]);
+  useEffect(() => {
+    const pageType = router.asPath.includes("managers")
+      ? "manager"
+      : "executive";
+    setUserType(pageType);
+  }, [router.asPath]);
 
-    // Dynamically set userTypeId based on userType
-    const userTypeId = userType === 'manager' ? 2 : 3;
+  // Dynamically set userTypeId based on userType
+  const userTypeId = userType === "manager" ? 2 : 3;
 
-    const handleVerifyCreateUser = async () => {
-        if (!password) {
-            setError("Password is required.");
-            return;
-        }
+  const handleVerifyCreateUser = async () => {
+    if (!password) {
+      setError("Password is required.");
+      return;
+    }
 
-        try {
-            const { success: isVerified } = await verifyPass(password);
-            if (!isVerified) {
-                setError("Invalid password. Please try again.");
-                return;
-            }
-            setError("");
+    try {
+      const { success: isVerified } = await verifyPass(password);
+      if (!isVerified) {
+        setError("Invalid password. Please try again.");
+        return;
+      }
+      setError("");
 
-            // Construct the new user object with dynamic userTypeId
-            const newUser = {
-                ...user,
-                userTypeId: userTypeId,
-            };
+      // Construct the new user object with dynamic userTypeId
+      const newUser = {
+        ...user,
+        userTypeId: userTypeId,
+      };
 
-            const response = await addUser(newUser);
-            if (!response.success) {
-                const errorMessage = response.message || "Something went wrong. Please try again.";
-                setError(errorMessage);
-                Swal.fire({
-                    icon: "error",
-                    title: "Error!",
-                    text: errorMessage,
-                    confirmButtonColor: "#D32F2F",
-                });
-                return;
-            }
+      const response = await addUser(newUser);
+      if (!response.success) {
+        const errorMessage =
+          response.message || "Something went wrong. Please try again.";
+        setError(errorMessage);
+        Swal.fire({
+          icon: "error",
+          title: "Error!",
+          text: errorMessage,
+          confirmButtonColor: "#D32F2F",
+        });
+        return;
+      }
 
-            Swal.fire({
-                icon: "success",
-                title: userTypeId === 2 ? "Manager Created!" : "Executive Created!",
-                text: `The ${userTypeId === 2 ? "manager" : "executive"} has been added successfully.`,
-                confirmButtonColor: "#67ABEB",
-            });
+      Swal.fire({
+        icon: "success",
+        title: userTypeId === 2 ? "Manager Created!" : "Executive Created!",
+        text: `The ${userTypeId === 2 ? "manager" : "executive"} has been added successfully.`,
+        confirmButtonColor: "#67ABEB",
+      });
 
-            onSubmit(newUser);
-            onClose();
+      onSubmit(newUser);
+      onClose();
 
-            // make null after submission
-            setUser({
-                firstName: "",
-                lastName: "",
-                suffix:"",
-                email: "",
-                phone: "",
-                password: "",
-            });
+      // make null after submission
+      setUser({
+        firstName: "",
+        lastName: "",
+        suffix: "",
+        email: "",
+        phone: "",
+        password: "",
+      });
 
-            setErrors({});
+      setErrors({});
+    } catch (error) {
+      console.error("Error creating user:", error);
+      setError("An unexpected error occurred. Please try again.");
+      Swal.fire({
+        icon: "error",
+        title: "Unexpected Error!",
+        text: "An unexpected error occurred. Please try again.",
+        confirmButtonColor: "#D32F2F",
+      });
+    }
+  };
 
-        } catch (error) {
-            console.error("Error creating user:", error);
-            setError("An unexpected error occurred. Please try again.");
-            Swal.fire({
-                icon: "error",
-                title: "Unexpected Error!",
-                text: "An unexpected error occurred. Please try again.",
-                confirmButtonColor: "#D32F2F",
-            });
-        }
-    };
+  // const handleManagerChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  //     if (selectedUser) {
+  //         setSelectedUser((prevUser) => prevUser ? { ...prevUser, remarks: e.target.value } : null);
+  //     }
+  // };
 
-    // const handleManagerChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    //     if (selectedUser) {
-    //         setSelectedUser((prevUser) => prevUser ? { ...prevUser, remarks: e.target.value } : null);
-    //     }
-    // };
+  return (
+    <>
+      {open && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-75">
+          <div className="relative z-20 flex w-full justify-center items-center">
+            <div className="w-[90%] sm:w-[60%] md:w-[40%] max-w-[500px] px-6 pt-5 pb-12 bg-[#181A1B] rounded-lg relative">
+              {/* Close Button */}
+              <IconButton
+                onClick={onClose}
+                className="absolute top-2 left-2 text-gray-400 hover:text-white z-30"
+                style={{ backgroundColor: "#171717" }}
+              >
+                <ArrowBackIosNewIcon />
+              </IconButton>
 
-    return (
-        <Dialog open={open} onClose={onClose}>
-            <DialogContent sx={{ paddingX: 0, }}>
-                <Tooltip title={"Close"}>
-                    <IconButton
-                        component="a"
-                        aria-label="close"
-                        onClick={onClose}
-                        sx={{
-                            position: "absolute",
-                            left: 30,
-                            top: 40,
-                            color: "#D1D5D8"[300],
-                            backgroundColor: "#171717",
-                            fontWeight: "bold",
-                            cursor: "pointer",
-                        }}
-                    >
-                        <ArrowBackIosNewIcon
-                            sx={{ fontSize: 23, fontWeight: "bold" }}
-                        />
-                    </IconButton>
-                </Tooltip>
-                <Box
-                    sx={{
-                        position: "relative",
-                        zIndex: 2,
-                        display: "flex",
-                        width: "100%",
-                        justifyContent: "center",
-                        alignItems: "center",
-                        paddingX: 1,
+              {/* Logo + Title */}
+              <div className="text-center mb-4 mt-2">
+                <img
+                  src={LoginSectionData.image}
+                  alt="altLogo"
+                  className="max-w-[50%] mx-auto mb-3"
+                  loading="lazy"
+                />
+                <h1 className="text-3xl font-bold text-white">
+                  {LoginSectionData.ConfirmIdentity}
+                </h1>
+                <p className="text-gray-400 text-xs">
+                  {LoginSectionData.ConfirmIdentityDescription}
+                </p>
+              </div>
+
+              <div className="px-5 mt-7">
+                {/* Remarks Field */}
+                <div className="w-full mb-2">
+                  <label
+                    htmlFor="remarks"
+                    className="block text-sm font-medium text-white mb-1.5"
+                  >
+                    Remarks
+                  </label>
+                  <textarea
+                    id="remarks"
+                    name="remarks"
+                    placeholder="Enter Remarks"
+                    rows={3}
+                    // value={selectedUser?.remarks || ""}
+                    // onChange={handleManagerChange}
+                    onKeyDown={(e) => {
+                      if (e.key === "Tab") {
+                        e.stopPropagation();
+                      }
                     }}
+                    className="w-full px-4 py-3 text-sm rounded-md border border-gray-600 bg-[#1F1F1F] text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-white-200"
+                  />
+                </div>
+
+                {/* Password Field */}
+                <div className="relative w-full mb-2">
+                  <label
+                    htmlFor="password"
+                    className="block text-sm font-medium text-white mb-1.5"
+                  >
+                    Password
+                  </label>
+                  <input
+                    id="password"
+                    type={showPassword ? "text" : "password"}
+                    placeholder="Enter your Password"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    className={`w-full px-4 py-3 pr-10 text-sm rounded-md border ${
+                      error ? "border-red-500" : "border-gray-600"
+                    } bg-[#1F1F1F] text-white placeholder-gray-400 focus:outline-none focus:ring-2 ${
+                      error ? "focus:ring-red-500" : "focus:ring-white-200"
+                    }`}
+                    autoFocus
+                  />
+                  <button
+                    type="button"
+                    onClick={handleTogglePasswordVisibility}
+                    className="absolute top-9 right-3 text-gray-400 hover:text-white focus:outline-none"
+                  >
+                    {showPassword ? (
+                      <VisibilityOff className="text-lg" />
+                    ) : (
+                      <Visibility className="text-lg" />
+                    )}
+                  </button>
+                  {error && (
+                    <p className="text-red-500 text-xs mt-1">{error}</p>
+                  )}
+                </div>
+
+                {/* Confirm Button */}
+                <button
+                  type="submit"
+                  onClick={handleVerifyCreateUser}
+                  className="w-full py-2.5 mt-5 bg-[#67ABEB] hover:bg-[#A5C9ED] text-[#212121] rounded-lg text-sm font-medium disabled:opacity-50"
+                  disabled={false}
                 >
-                    <Box
-                        sx={{
-                            maxWidth: 500,
-                            paddingBottom: "1rem",
-                            display: "flex",
-                            flexDirection: "column",
-                            alignItems: "center",
-                            position: "relative",
-                        }}
-                    >
-                        <Box
-                            sx={{
-                                display: "flex",
-                                flexDirection: "column",
-                                textAlign: "center",
-                                marginTop: "1rem",
-                            }}
-                        >
-                            <Box
-                                component="img"
-                                src={LoginSectionData.image}
-                                alt="altLogo"
-                                sx={{
-                                    maxWidth: {
-                                        xs: "10%",
-                                        sm: "35%",
-                                        md: "32%",
-                                        lg: "32%",
-                                        xl: "32%",
-                                    },
-                                    margin: "0 auto",
-                                    display: "block",
-                                    marginBottom: "0.6rem",
-                                }}
-                                loading="lazy"
-                            />
-                            <Typography variant="h4" sx={{ fontWeight: "bold" }}>
-                                {LoginSectionData.ConfirmIdentity}
-                            </Typography>
-                            <Typography
-                                sx={{ marginTop: 0.4, color: "#9CA3AF", fontSize: "12.5px" }}
-                            >
-                                {LoginSectionData.ConfirmIdentityDescription}
-                            </Typography>
-                            <Box sx={{ paddingX: 5, mt: 3.5, }}>
-                                <FormControl
-                                    fullWidth
-                                    variant="outlined"
-                                    sx={inputStyles}
-                                >
-                                    <InputLabel htmlFor="remarks">Remarks</InputLabel>
-                                    <OutlinedInput
-                                        id="remarks"
-                                        name="remarks"
-                                        placeholder="Enter Remarks"
-                                        //value={selectedUser?.remarks || ""}
-                                        //onChange={handleManagerChange}
-                                        multiline
-                                        minRows={3}
-                                        label="Remarks"
-                                        onKeyDown={(e) => {
-                                            if (e.key === "Tab") {
-                                                e.stopPropagation();
-                                            }
-                                        }}
-                                    />
-                                </FormControl>
-                                <TextField
-                                    label="Password"
-                                    placeholder="Enter your Password"
-                                    type={showPassword ? "text" : "password"}
-                                    fullWidth
-                                    value={password}
-                                    onChange={(e) => setPassword(e.target.value)}
-                                    error={!!error}
-                                    helperText={error}
-                                    autoFocus
-                                    sx={{ marginTop: 2.5, }}
-                                    InputProps={{
-                                        endAdornment: (
-                                            <IconButton
-                                                sx={{ color: "#9CA3AF", fontSize: "1.3rem", }}
-                                                onClick={handleTogglePasswordVisibility}
-                                                edge="end"
-                                            >
-                                                {showPassword ? (
-                                                    <VisibilityOff sx={{ fontSize: "inherit" }} />
-                                                ) : (
-                                                    <Visibility sx={{ fontSize: "inherit" }} />
-                                                )}
-                                            </IconButton>
-                                        ),
-                                    }}
-                                />
-                                <Button
-                                    type="submit"
-                                    onClick={handleVerifyCreateUser}
-                                    variant="contained"
-                                    fullWidth
-                                    sx={{
-                                        py: 1.5,
-                                        borderRadius: "8px",
-                                        textTransform: "none",
-                                        mt: 4,
-                                    }}
-                                    disabled={false}
-                                >
-                                    Confirm
-                                </Button>
-                            </Box>
-                        </Box>
-                    </Box>
-                </Box>
-            </DialogContent>
-        </Dialog>
-    );
+                  Confirm
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+    </>
+  );
 };
 
 export default ConfirmCreateUserPage;

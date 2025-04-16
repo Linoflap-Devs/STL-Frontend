@@ -102,7 +102,9 @@ const LoginPage = () => {
               <div className="mb-4">
                 <label
                   className={`block mb-2 text-sm text-left ${
-                    errors.email || errors.errors || errors.general ? "text-red-400" : "text-white"
+                    errors.email || errors.errors || errors.general
+                      ? "text-red-400"
+                      : "text-white"
                   }`}
                 >
                   {LoginSectionData.EmailAddressTitle}
@@ -115,7 +117,9 @@ const LoginPage = () => {
                     setCredentials({ ...credentials, email: e.target.value })
                   }
                   className={`w-full px-3 py-2 rounded border text-sm bg-[#1F2123] text-white focus:outline-none ${
-                    errors.email || errors.errors || errors.general ? "border-red-400" : "border-gray-600"
+                    errors.email || errors.errors || errors.general
+                      ? "border-red-400"
+                      : "border-gray-600"
                   }`}
                 />
                 {(errors.email || errors.general || errors.errors) && (
@@ -129,7 +133,9 @@ const LoginPage = () => {
               <div className="mb-2">
                 <label
                   className={`block mb-2 text-sm text-left ${
-                    errors.password || errors.errors || errors.general ? "text-red-400" : "text-white"
+                    errors.password || errors.errors || errors.general
+                      ? "text-red-400"
+                      : "text-white"
                   }`}
                 >
                   {LoginSectionData.PasswordTitle}
@@ -146,7 +152,9 @@ const LoginPage = () => {
                       })
                     }
                     className={`w-full px-3 py-2 pr-10 rounded border text-sm bg-[#1F2123] text-white focus:outline-none ${
-                      errors.password || errors.errors || errors.general ? "border-red-400" : "border-gray-600"
+                      errors.password || errors.errors || errors.general
+                        ? "border-red-400"
+                        : "border-gray-600"
                     }`}
                   />
                   <button
@@ -157,7 +165,7 @@ const LoginPage = () => {
                     {showPassword ? <VisibilityOff /> : <Visibility />}
                   </button>
                 </div>
-                {(errors.password || errors.errors || errors.general)  && (
+                {(errors.password || errors.errors || errors.general) && (
                   <span className="text-red-400 text-xs mt-1 block">
                     {errors.password || errors.errors || errors.general}
                   </span>
