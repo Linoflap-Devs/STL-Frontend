@@ -23,24 +23,23 @@ const App = ({ Component, pageProps }: AppProps) => {
   const [loading, setLoading] = useState(true);
   const [user, setUser] = useState(null);
 
-  // Helper function to wait for the refresh process to finish if it's already in progress
-  const waitUntilNotRefreshing = () =>
-    new Promise<void>((resolve) => {
-      if (!isRefreshing) return resolve();
-
-      const interval = setInterval(() => {
-        if (!isRefreshing) {
-          clearInterval(interval);
-          resolve();
-        }
-      }, 100); // Check every 100ms
-    });
+  // Helper function: Wait until token refresh is done
+  const waitUntilNotRefreshing = async () => {
+    while (isRefreshing) {
+      await new Promise((r) => requestAnimationFrame(r)); // Lighter than setInterval
+    }
+  };
 
   useEffect(() => {
     if (isExcludedPath) {
       setLoading(false);
       return;
     }
+
+    const handleAuthFailure = () => {
+      console.log("No valid auth found! Redirecting to login...");
+      router.replace("/auth/login");
+    };
 
     const checkAuth = async () => {
       try {
@@ -50,17 +49,17 @@ const App = ({ Component, pageProps }: AppProps) => {
         const data = await getCurrentUser({});
         if (data?.success) {
           console.log("Authenticated user:", data);
-          setUser(data.data); // Set user data
+          setUser(data.data);
           setLoading(false);
           return;
         }
 
         throw new Error("No valid auth found!");
       } catch (error: any) {
-        if (error.response?.status === 403 && error.response?.data?.message === "Token expired.") {
-          console.log("Token expired, waiting for refresh...");
+        const isTokenExpired = error?.response?.status === 403 && error.response?.data?.message === "Token expired.";
 
-          // Wait until the refresh process is completed
+        if (isTokenExpired) {
+          console.log("Token expired, waiting for refresh...");
           await new Promise<void>((resolve) => refreshSubscribers.push(() => resolve()));
 
           try {
@@ -71,28 +70,23 @@ const App = ({ Component, pageProps }: AppProps) => {
               setLoading(false);
               return;
             }
-          } catch (retryError) {
-            console.log("No valid auth found after refresh! Redirecting to login...");
-            router.replace("/auth/login");
+          } catch {
+            handleAuthFailure();
           }
         } else {
-          console.log("No valid auth found! Redirecting to login...");
-          router.replace("/auth/login");
+          handleAuthFailure();
         }
       }
     };
 
-    // Initial authentication check
     checkAuth();
 
     const refreshInterval = setInterval(() => {
       console.log("Refreshing token...");
       axiosInstance.post("/auth/tokenRefresh", {}, { withCredentials: true });
-    }, 60000); // 1 minute = 60,000 ms
+    }, 60000); // 1 min
 
-    // Cleanup interval on unmount or path change
     return () => clearInterval(refreshInterval);
-
   }, [isExcludedPath, router]);
 
   if (loading) {

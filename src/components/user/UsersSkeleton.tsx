@@ -18,15 +18,15 @@ export const UsersSkeletonPage: React.FC = () => {
         <div key={index} className="h-4 w-[35%] bg-[#171717] rounded-lg" />
       ))}
 
-      <div className="flex flex-wrap gap-4">
+      <div className="flex flex-wrap gap-3">
         {[...Array(5)].map((_, index) => (
           <SkeletonCard key={index} height="99px" />
         ))}
       </div>
 
       {[...Array(2)].map((_, index) => (
-        <div key={index} className="flex flex-wrap gap-4">
-          <SkeletonCard height="350px" />
+        <div key={index} className="flex flex-wrap gap-3">
+          <SkeletonCard height="345px" />
         </div>
       ))}
     </div>

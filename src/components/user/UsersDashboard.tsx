@@ -77,6 +77,7 @@ const UserDashboardPage: React.FC<UserDashboardPageProps> = ({
   const userType = window.location.pathname.includes("manager")
     ? "manager"
     : "executive";
+    
   const roleLabel = userType === "manager" ? "Managers" : "Executives";
 
   const data = [
@@ -146,7 +147,7 @@ const UserDashboardPage: React.FC<UserDashboardPageProps> = ({
             label: `Total Active ${roleLabel}`,
             value: dashboardData.activeUsers,
             color: "#5050A5",
-          },
+          },  
           {
             label: `Total of Deleted ${roleLabel}`,
             value: dashboardData.suspendedUsers,
@@ -168,11 +169,17 @@ const UserDashboardPage: React.FC<UserDashboardPageProps> = ({
             className="px-4 py-[1.4rem] flex-[1_1_200px] bg-gray-800 rounded-lg"
             style={{ ...cardDashboardStyles }}
           >
-            <p className="text-[12px] leading-4 text-gray-400">{item.label}</p>
             {item.value === undefined || item.value === null ? (
-              <div className="w-20 h-6 bg-gray-500 animate-pulse rounded-md mt-3" />
+              <div className="w-20 h-11 bg-[#171717] animate-pulse rounded-md mt-2" />
             ) : (
-              <p className="text-3xl font-bold leading-[1.1]">{item.value}</p>
+              <>
+                <p className="text-[12px] leading-4 text-gray-400">
+                  {item.label}
+                </p>
+                <p className="text-3xl font-bold leading-[1.1] mt-1">
+                  {item.value}
+                </p>
+              </>
             )}
           </div>
         ))}

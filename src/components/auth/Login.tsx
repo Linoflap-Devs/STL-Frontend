@@ -3,7 +3,12 @@ import { Visibility, VisibilityOff } from "@mui/icons-material";
 import { useRouter } from "next/router";
 import { LoginSectionData } from "../../data/LoginSectionData";
 import { loginUser } from "../../utils/api/login";
-import { inputStyles, inputErrorStyles } from "../../styles/theme";
+import { z } from "zod";
+
+const loginSchema = z.object({
+  email: z.string().min(1, "Email is required").email("Invalid email"),
+  password: z.string().min(1, "Password is required"),
+});
 
 const LoginPage = () => {
   const router = useRouter();
@@ -18,6 +23,7 @@ const LoginPage = () => {
     email?: string;
     password?: string;
     general?: string;
+    errors?: string;
   }>({});
 
   const handleLogin = async (e: React.FormEvent) => {
@@ -28,12 +34,34 @@ const LoginPage = () => {
     setErrors({});
     setLoginError(null);
 
-    try {
-      const response = await loginUser(credentials, router);
-    } catch (error) {
-      setErrors({
-        general: error instanceof Error ? error.message : "Login failed.",
+    const validation = loginSchema.safeParse(credentials);
+
+    if (!validation.success) {
+      const fieldErrors: typeof errors = {};
+      validation.error.issues.forEach((issue) => {
+        fieldErrors[issue.path[0] as "email" | "password"] = issue.message;
       });
+
+      setErrors(fieldErrors);
+      setIsLoggingIn(false);
+      return;
+    }
+
+    try {
+      await loginUser(credentials, router);
+    } catch (error: any) {
+      if (error.response?.status === 401) {
+        setErrors({
+          errors: "Incorrect email or password.",
+        });
+      } else {
+        setErrors({
+          general:
+            error instanceof Error
+              ? error.message
+              : "Login failed. Please try again.",
+        });
+      }
       setIsLoggingIn(false);
     }
   };
@@ -74,7 +102,7 @@ const LoginPage = () => {
               <div className="mb-4">
                 <label
                   className={`block mb-2 text-sm text-left ${
-                    errors.email ? "text-red-400" : "text-white"
+                    errors.email || errors.errors || errors.general ? "text-red-400" : "text-white"
                   }`}
                 >
                   {LoginSectionData.EmailAddressTitle}
@@ -87,12 +115,12 @@ const LoginPage = () => {
                     setCredentials({ ...credentials, email: e.target.value })
                   }
                   className={`w-full px-3 py-2 rounded border text-sm bg-[#1F2123] text-white focus:outline-none ${
-                    errors.email ? "border-red-400" : "border-gray-600"
+                    errors.email || errors.errors || errors.general ? "border-red-400" : "border-gray-600"
                   }`}
                 />
-                {errors.email && (
+                {(errors.email || errors.general || errors.errors) && (
                   <span className="text-red-400 text-xs mt-1 block">
-                    {errors.email || errors.general}
+                    {errors.email || errors.errors || errors.general}
                   </span>
                 )}
               </div>
@@ -101,7 +129,7 @@ const LoginPage = () => {
               <div className="mb-2">
                 <label
                   className={`block mb-2 text-sm text-left ${
-                    errors.password ? "text-red-400" : "text-white"
+                    errors.password || errors.errors || errors.general ? "text-red-400" : "text-white"
                   }`}
                 >
                   {LoginSectionData.PasswordTitle}
@@ -118,7 +146,7 @@ const LoginPage = () => {
                       })
                     }
                     className={`w-full px-3 py-2 pr-10 rounded border text-sm bg-[#1F2123] text-white focus:outline-none ${
-                      errors.password ? "border-red-400" : "border-gray-600"
+                      errors.password || errors.errors || errors.general ? "border-red-400" : "border-gray-600"
                     }`}
                   />
                   <button
@@ -129,9 +157,9 @@ const LoginPage = () => {
                     {showPassword ? <VisibilityOff /> : <Visibility />}
                   </button>
                 </div>
-                {errors.password && (
+                {(errors.password || errors.errors || errors.general)  && (
                   <span className="text-red-400 text-xs mt-1 block">
-                    {errors.password || errors.password}
+                    {errors.password || errors.errors || errors.general}
                   </span>
                 )}
               </div>
