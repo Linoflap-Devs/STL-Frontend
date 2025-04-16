@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
 import {
-  Box,
   Dialog,
   DialogContent,
   DialogTitle,
@@ -15,16 +14,17 @@ import {
   Select,
   MenuItem,
   Stack,
+  TextField,
 } from "@mui/material";
 import { User } from "./UsersTable";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
 import { SelectChangeEvent } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
-import { inputErrorStyles } from "../../styles/theme";
-import { formatKey } from "~/utils/format"
-import { validateUser } from "~/utils/validation"
+import { formatKey } from "~/utils/format";
+import { userSchema } from "~/utils/validation";
 import Swal from "sweetalert2";
 import ConfirmCreateUserPage from "./ConfirmCreateUser";
+import { zodToJsonErrors } from "~/utils/zodToJsonErrors";
 
 interface CreateManagerProps {
   open: boolean;
@@ -40,7 +40,7 @@ const CreateManager: React.FC<CreateManagerProps> = ({
   onClose,
   onSubmit,
   userData,
-  operators
+  operators,
 }) => {
   const [user, setUser] = useState({
     firstName: userData?.firstName ?? "",
@@ -52,19 +52,25 @@ const CreateManager: React.FC<CreateManagerProps> = ({
     email: userData?.email ?? "",
     password: "",
   });
-  const pageType = window.location.pathname.includes('manager') ? 'manager' : 'executive';
+  const pageType = window.location.pathname.includes("manager")
+    ? "manager"
+    : "executive";
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
   const [showPassword, setShowPassword] = useState(false);
   const [isVerifyModalOpen, setIsVerifyModalOpen] = useState(false);
-  
+
   const handleManagerChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement> | SelectChangeEvent<string>
+    e:
+      | React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+      | SelectChangeEvent<string>
   ) => {
     const { name, value } = e.target;
 
     // If the name is operatorName, find the selected operator and update both operatorName and operatorId
     if (name === "operatorName") {
-      const selectedOperator = operators.find(operator => operator.OperatorId === parseInt(value, 10));
+      const selectedOperator = operators.find(
+        (operator) => operator.OperatorId === parseInt(value, 10)
+      );
 
       if (selectedOperator) {
         setUser((prevUser) => ({
@@ -80,11 +86,12 @@ const CreateManager: React.FC<CreateManagerProps> = ({
   };
 
   const handleCreateManagerSubmit = async () => {
-    const validationErrors = validateUser(user);
-    console.log("Validation Errors:", validationErrors);
-
-    if (Object.keys(validationErrors).length > 0) {
-      setErrors(validationErrors);
+    try {
+      userSchema.parse(user);
+    } catch (err) {
+      const formattedErrors = zodToJsonErrors(err);
+      console.log("Zod Validation Errors:", formattedErrors);
+      setErrors(formattedErrors);
       return;
     }
 
@@ -121,19 +128,26 @@ const CreateManager: React.FC<CreateManagerProps> = ({
       onClose={onClose}
       fullWidth
       PaperProps={{
-          sx: {
-            width: "100%",
-            maxWidth: {
-              xs: "90%",
-              sm: "80%",
-              md: "600px",
-              lg: "650px",
-              xl: "800px",
-            },
+        sx: {
+          width: "100%",
+          maxWidth: {
+            xs: "90%",
+            sm: "80%",
+            md: "600px",
+            lg: "650px",
+            xl: "800px",
           },
+        },
+      }}
+    >
+      <DialogTitle
+        sx={{
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "flex-start",
+          py: 0,
         }}
       >
-      <DialogTitle sx={{ display: "flex", flexDirection: "column", alignItems: "flex-start", py: 0 }}>
         <IconButton
           sx={{
             backgroundColor: "#171717",
@@ -156,9 +170,16 @@ const CreateManager: React.FC<CreateManagerProps> = ({
               {["firstName", "lastName", "phoneNumber"].map((key) => (
                 <Stack key={key} spacing={1}>
                   {key === "lastName" ? (
-                    <Stack direction="row" spacing={1.5} alignItems="flex-start">
+                    <Stack
+                      direction="row"
+                      spacing={1.5}
+                      alignItems="flex-start"
+                    >
                       <FormControl fullWidth error={!!errors.lastName}>
-                        <InputLabel sx={{ fontSize: "14px" }} htmlFor="lastName">
+                        <InputLabel
+                          sx={{ fontSize: "14px" }}
+                          htmlFor="lastName"
+                        >
                           Last Name
                         </InputLabel>
                         <OutlinedInput
@@ -169,7 +190,9 @@ const CreateManager: React.FC<CreateManagerProps> = ({
                           onChange={handleManagerChange}
                           label="Last Name"
                         />
-                        {errors.lastName && <FormHelperText>{errors.lastName}</FormHelperText>}
+                        {errors.lastName && (
+                          <FormHelperText>{errors.lastName}</FormHelperText>
+                        )}
                       </FormControl>
                       <FormControl fullWidth error={!!errors.suffix}>
                         <InputLabel id="suffix-label">Suffix</InputLabel>
@@ -187,7 +210,9 @@ const CreateManager: React.FC<CreateManagerProps> = ({
                           <MenuItem value="III">III</MenuItem>
                           <MenuItem value="IV">IV</MenuItem>
                         </Select>
-                        {errors.suffix && <FormHelperText>{errors.suffix}</FormHelperText>}
+                        {errors.suffix && (
+                          <FormHelperText>{errors.suffix}</FormHelperText>
+                        )}
                       </FormControl>
                     </Stack>
                   ) : (
@@ -201,7 +226,9 @@ const CreateManager: React.FC<CreateManagerProps> = ({
                         onChange={handleManagerChange}
                         label={formatKey(key)}
                       />
-                      {errors[key] && <FormHelperText>{errors[key]}</FormHelperText>}
+                      {errors[key] && (
+                        <FormHelperText>{errors[key]}</FormHelperText>
+                      )}
                     </FormControl>
                   )}
                 </Stack>
@@ -214,31 +241,47 @@ const CreateManager: React.FC<CreateManagerProps> = ({
                 <Stack key={key} spacing={1}>
                   {key === "operatorName" ? (
                     <FormControl fullWidth error={!!errors.operatorId}>
-                      <InputLabel id="operatorName-label">Operator Name</InputLabel>
+                      <InputLabel id="operatorName-label">
+                        Assigned Company
+                      </InputLabel>
                       <Select
                         labelId="operatorName-label"
                         id="operatorName"
                         name="operatorName"
                         value={user.operatorId || ""}
                         onChange={handleManagerChange}
-                        label="Operator Name"
+                        label="Assigned Company"
                       >
                         <MenuItem value="">Select an operator</MenuItem>
                         {operators && operators.length > 0 ? (
-                          operators.map((operator: { OperatorName: string; OperatorId: number }) => (
-                            <MenuItem key={operator.OperatorId} value={operator.OperatorId}>
-                              {operator.OperatorName}
-                            </MenuItem>
-                          ))
+                          operators.map(
+                            (operator: {
+                              OperatorName: string;
+                              OperatorId: number;
+                            }) => (
+                              <MenuItem
+                                key={operator.OperatorId}
+                                value={operator.OperatorId}
+                              >
+                                {operator.OperatorName}
+                              </MenuItem>
+                            )
+                          )
                         ) : (
                           <MenuItem value="">No operators available</MenuItem>
                         )}
                       </Select>
-                      {errors.operatorId && <FormHelperText>{errors.operatorId}</FormHelperText>}
+                      {errors.operatorId && (
+                        <FormHelperText>{errors.operatorId}</FormHelperText>
+                      )}
                     </FormControl>
                   ) : key === "password" ? (
                     <Stack direction="row" spacing={1} alignItems="center">
-                      <FormControl fullWidth error={!!errors.password} variant="outlined">
+                      <FormControl
+                        fullWidth
+                        error={!!errors.password}
+                        variant="outlined"
+                      >
                         <InputLabel htmlFor="password">Password</InputLabel>
                         <OutlinedInput
                           id="password"
@@ -254,11 +297,18 @@ const CreateManager: React.FC<CreateManagerProps> = ({
                                 onClick={() => setShowPassword((prev) => !prev)}
                                 edge="end"
                               >
-                                {showPassword ? <VisibilityOff /> : <Visibility />}
+                                {showPassword ? (
+                                  <VisibilityOff />
+                                ) : (
+                                  <Visibility />
+                                )}
                               </IconButton>
                             </InputAdornment>
                           }
                         />
+                        {errors.password && (
+                          <FormHelperText>{errors.password}</FormHelperText>
+                        )}
                       </FormControl>
                       <Button
                         variant="contained"
@@ -286,7 +336,9 @@ const CreateManager: React.FC<CreateManagerProps> = ({
                         onChange={handleManagerChange}
                         //label={formatKey(key)}
                       />
-                      {errors[key] && <FormHelperText>{errors[key]}</FormHelperText>}
+                      {errors[key] && (
+                        <FormHelperText>{errors[key]}</FormHelperText>
+                      )}
                     </FormControl>
                   )}
                 </Stack>
@@ -305,11 +357,11 @@ const CreateManager: React.FC<CreateManagerProps> = ({
             fontSize: "12px",
             padding: "0.6rem",
             borderRadius: "8px",
-            color: '#181A1B',
+            color: "#181A1B",
           }}
           variant="contained"
         >
-          {pageType === 'manager' ? 'Add Manager' : 'Add Executive'}
+          {pageType === "manager" ? "Add Manager" : "Add Executive"}
         </Button>
         {isVerifyModalOpen && (
           <ConfirmCreateUserPage
@@ -319,6 +371,7 @@ const CreateManager: React.FC<CreateManagerProps> = ({
             user={user}
             setUser={setUser}
             onSubmit={onSubmit}
+            setErrors={setErrors}
           />
         )}
       </DialogContent>

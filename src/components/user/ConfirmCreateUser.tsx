@@ -17,11 +17,12 @@ interface ConfirmCreateUserPageProps {
     user: any;
     onSubmit: (newUser: any) => void;
     setUser: React.Dispatch<React.SetStateAction<any>>;
+    setErrors: React.Dispatch<React.SetStateAction<any>>;
     //selectedUser: User | null; // for remarks
     //setSelectedUser: React.Dispatch<React.SetStateAction<User | null>>; // for remarks
 }
 
-const ConfirmCreateUserPage: React.FC<ConfirmCreateUserPageProps> = ({ open, onClose, user, setUser, onSubmit, }) => {
+const ConfirmCreateUserPage: React.FC<ConfirmCreateUserPageProps> = ({ open, onClose, user, setUser, onSubmit, setErrors, }) => {
     const [password, setPassword] = useState("");
     const [error, setError] = useState("");
     const [showPassword, setShowPassword] = useState<boolean>(false);
@@ -89,6 +90,8 @@ const ConfirmCreateUserPage: React.FC<ConfirmCreateUserPageProps> = ({ open, onC
                 phone: "",
                 password: "",
             });
+
+            setErrors({});
 
         } catch (error) {
             console.error("Error creating user:", error);

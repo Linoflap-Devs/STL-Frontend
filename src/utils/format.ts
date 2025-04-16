@@ -4,7 +4,7 @@ export const formatKey = (key: string) => {
     firstName: "Given Name",
     lastName: "Last Name",
     suffix: "Suffix",
-    operatorName: "Operator Name",
+    operatorName: "Assigned Company",
     phoneNumber: "Phone Number",
     email: "Email",
     userName: "Username",

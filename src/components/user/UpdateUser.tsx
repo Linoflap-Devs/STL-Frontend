@@ -22,7 +22,7 @@ import CloseIcon from "@mui/icons-material/Close";
 import { buttonUpdateStyles, selectStyles } from "../../styles/theme";
 import { fetchUserById } from "~/utils/api/users";
 import EditLogModalPage from "./EditLogModal";
-import { validateUser } from "~/utils/validation";
+import { userSchema } from "~/utils/validation";
 import ConfirmUpdateManagerPage from "./ConfirmUpdateUser";
 import Swal from "sweetalert2";
 import { fetchOperator } from "~/utils/api/operators";

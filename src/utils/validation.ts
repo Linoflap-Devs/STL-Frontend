@@ -1,60 +1,61 @@
-import ManagerTable, { User } from "~/components/user/UsersTable";
-import { formatKey } from "../utils/format";
+import z from 'zod';
 
 // forms validation
-export const validateUser = (user: User) => {
-  const newErrors: { [key: string]: string } = {};
-  const nameRegex = /^[A-Za-z\s]+$/;
-  //const phoneRegex = /^09\d{2} \d{3} \d{4}$/;
-  const phoneRegex = /^09\d{2}[\s-]?\d{3}[\s-]?\d{4}$/;
-  const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
-  const mergedUser = { ...user};
+export const userSchema = z.object({
+  firstName: z
+    .string()
+    .nonempty("First Name is required")
+    .refine((val) => val.trim() === "" || /^[A-Za-z\s]+$/.test(val), {
+      message: "First Name can only contain letters and spaces.",
+    }),
+  lastName: z
+    .string()
+    .nonempty("Last Name is required")
+    .refine((val) => val.trim() === "" || /^[A-Za-z\s]+$/.test(val), {
+      message: "Last Name can only contain letters and spaces.",
+    }),
+  phoneNumber: z
+    .string()
+    .nonempty("Phone Number is required")
+    .refine((val) => val.trim() === "" || /^09\d{2}[\s-]?\d{3}[\s-]?\d{4}$/.test(val), {
+      message: "Please enter a valid phone number. e.g. 09xx xxx xxxx",
+    }),
+    email: z
+    .string()
+    .refine((val) => val.trim() !== "", {
+      message: "Email is required",
+    })
+    .refine((val) => /\S+@\S+\.\S+/.test(val), {
+      message: "Please enter a valid email address e.g. xxx@email.com",
+    }),  
+  operatorId: z
+    .string()
+    .nonempty("Assigned Company is required"),
+  password: z
+    .string()
+    .nonempty("Password is required")
+    .refine((val) => val.trim() === "" || val.length >= 8, {
+      message: "Password must be at least 8 characters long.",
+    })
+    .refine((val) => val.trim() === "" || /[A-Z]/.test(val), {
+      message: "Password must include at least one uppercase letter.",
+    })
+    .refine((val) => val.trim() === "" || /[a-z]/.test(val), {
+      message: "Password must include at least one lowercase letter.",
+    })
+    .refine((val) => val.trim() === "" || /\d/.test(val), {
+      message: "Password must include at least one number.",
+    })
+    .refine((val) => val.trim() === "" || /[!@#$%^&*]/.test(val), {
+      message: "Password must include at least one special character (!@#$%^&*).",
+    })
+    .optional(),
 
-  Object.entries(mergedUser).forEach(([key, value]) => {
-    if (value === null || value === undefined || value === "") {
-      if (key !== "suffix" && key !== "password" && key !== "street" && key !== "remarks" && key !== "CreatedBy") {
-        newErrors[key] = `${formatKey(key)} is required`;
-      }
-      return;
-    }
+  middleName: z.string().optional(),
+  suffix: z.string().optional(),
+  street: z.string().optional(),
+  remarks: z.string().optional(),
+  CreatedBy: z.number().optional(),
+});
 
-    switch (key) {
-      case "firstName":
-      case "lastName":
-        if (!nameRegex.test(value.trim())) {
-          newErrors[key] = `${formatKey(key)} can only contain letters and spaces.`;
-        }
-        break;
-      case "phoneNumber":
-        if (!phoneRegex.test(value.trim())) {
-          newErrors[key] = "Please enter a valid phone number. e.g. 09xx xxx xxxx";
-        }
-        break;
-      case "email":
-        if (!emailRegex.test(value.trim())) {
-          newErrors[key] = "Please enter a valid email address.";
-        }
-        break;
-      case "password":
-        if (value.length < 8) {
-          newErrors[key] = "Password must be at least 8 characters long.";
-        }
-        if (!/[A-Z]/.test(value)) {
-          newErrors[key] = "Password must include at least one uppercase letter.";
-        }
-        if (!/[a-z]/.test(value)) {
-          newErrors[key] = "Password must include at least one lowercase letter.";
-        }
-        if (!/\d/.test(value)) {
-          newErrors[key] = "Password must include at least one number.";
-        }
-        if (!/[!@#$%^&*]/.test(value)) {
-          newErrors[key] = "Password must include at least one special character (!@#$%^&*).";
-        }
-        break;
-    }
-  });
-
-  return newErrors;
-};
 
