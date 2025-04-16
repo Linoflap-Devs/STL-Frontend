@@ -28,6 +28,7 @@ import Swal from "sweetalert2";
 import { fetchOperator } from "~/utils/api/operators";
 import dynamic from "next/dynamic";
 import dayjs from "dayjs";
+import { zodToJsonErrors } from "~/utils/zodToJsonErrors";
 
 const UsersUpateModalSkeleton = dynamic(() =>
   import("~/components/user/UsersSkeleton").then((mod) => ({
@@ -134,7 +135,7 @@ const UpdateManager: React.FC<UpdateManagerProps> = React.memo(
             CreatedBy: user.CreatedBy ?? "N/A",
             DateOfRegistration: user.DateOfRegistration ?? "N/A",
             Status: userStatus,
-            remarks: user.remarks ?? "N/A",
+            remarks: user.remarks ?? "",
             OperatorName: operator.OperatorName ?? "N/A",
             DateOfOperation: operator.DateOfOperation ?? "N/A",
             OperatorId: operator.OperatorId ?? null,
@@ -212,20 +213,15 @@ const UpdateManager: React.FC<UpdateManagerProps> = React.memo(
 
     // form submitter
     const handleUpdateManagerSubmit = async () => {
-      const validationErrors = validateUser(user);
-
-      // Separate validation for remarks
-      if (!user.remarks || user.remarks.trim() === "") {
-        validationErrors.remarks = "Remarks is required";
-      }
-
-      console.log("Validation Errors:", validationErrors);
-
-      if (Object.keys(validationErrors).length > 0) {
-        setErrors(validationErrors);
+      try {
+        userSchema.parse(user);
+      } catch (err) {
+        const formattedErrors = zodToJsonErrors(err);
+        console.log("Zod Validation Errors:", formattedErrors);
+        setErrors(formattedErrors);
         return;
       }
-
+      
       const confirmation = await Swal.fire({
         title: "Update Confirmation",
         text: "Did you enter the correct details?",
@@ -544,18 +540,20 @@ const UpdateManager: React.FC<UpdateManagerProps> = React.memo(
 
               {/* Remarks Field */}
               {!isDisabled && (
-                <FormControl fullWidth error={Boolean(errors.remarks)}>
-                  <TextField
+                <FormControl fullWidth error={!!errors.remarks}>
+                  <InputLabel htmlFor="remarks">Remarks</InputLabel>
+                  <OutlinedInput
                     id="remarks"
                     name="remarks"
                     label="Remarks"
+                    value={user.remarks || ''}
                     onChange={handleManagerChange}
                     multiline
                     minRows={3}
-                    variant="outlined"
                     size="small"
-                    sx={{ my: 1 }}
                   />
+                  {/* Show error message */}
+                  {errors.remarks && <FormHelperText>{errors.remarks}</FormHelperText>}
                 </FormControl>
               )}
 

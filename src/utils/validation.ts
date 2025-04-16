@@ -1,4 +1,4 @@
-import z from 'zod';
+import z from "zod";
 
 // forms validation
 export const userSchema = z.object({
@@ -17,20 +17,19 @@ export const userSchema = z.object({
   phoneNumber: z
     .string()
     .nonempty("Phone Number is required")
-    .refine((val) => val.trim() === "" || /^09\d{2}[\s-]?\d{3}[\s-]?\d{4}$/.test(val), {
-      message: "Please enter a valid phone number. e.g. 09xx xxx xxxx",
+    .refine((val) => /^09\d{9}$/.test(val), {
+      message:
+        "Please enter a valid phone number starting with 09 and 11 digits long (e.g. 09XXXXXXXXX).",
     }),
-    email: z
+  email: z
     .string()
     .refine((val) => val.trim() !== "", {
       message: "Email is required",
     })
     .refine((val) => /\S+@\S+\.\S+/.test(val), {
       message: "Please enter a valid email address e.g. xxx@email.com",
-    }),  
-  operatorId: z
-    .string()
-    .nonempty("Assigned Company is required"),
+    }),
+  remarks: z.string().nonempty("Remarks is required"),
   password: z
     .string()
     .nonempty("Password is required")
@@ -47,15 +46,13 @@ export const userSchema = z.object({
       message: "Password must include at least one number.",
     })
     .refine((val) => val.trim() === "" || /[!@#$%^&*]/.test(val), {
-      message: "Password must include at least one special character (!@#$%^&*).",
+      message:
+        "Password must include at least one special character (!@#$%^&*).",
     })
     .optional(),
 
   middleName: z.string().optional(),
   suffix: z.string().optional(),
   street: z.string().optional(),
-  remarks: z.string().optional(),
-  CreatedBy: z.number().optional(),
+  CreatedBy: z.string().optional(),
 });
-
-

@@ -86,6 +86,16 @@ const CreateManager: React.FC<CreateManagerProps> = ({
   };
 
   const handleCreateManagerSubmit = async () => {
+    // Separate validation for operatorId
+    if (!user.operatorId || user.operatorId.trim() === "") {
+      setErrors((prevErrors) => ({
+        ...prevErrors,
+        operatorId: "Assigned Company is required",
+      }));
+      return;
+    }
+
+    // Proceed with Zod validation for other fields
     try {
       userSchema.parse(user);
     } catch (err) {
