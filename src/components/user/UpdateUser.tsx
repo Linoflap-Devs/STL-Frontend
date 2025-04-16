@@ -145,7 +145,7 @@ const UpdateManager: React.FC<UpdateManagerProps> = React.memo(
           };
 
           setUser(updatedUser);
-          console.log('updated user: ', updatedUser)
+          console.log("updated user: ", updatedUser);
         } catch (err) {
           console.error("Error fetching manager details:", err);
         }
@@ -221,7 +221,7 @@ const UpdateManager: React.FC<UpdateManagerProps> = React.memo(
         setErrors(formattedErrors);
         return;
       }
-      
+
       const confirmation = await Swal.fire({
         title: "Update Confirmation",
         text: "Did you enter the correct details?",
@@ -546,14 +546,16 @@ const UpdateManager: React.FC<UpdateManagerProps> = React.memo(
                     id="remarks"
                     name="remarks"
                     label="Remarks"
-                    value={user.remarks || ''}
+                    placeholder={`Enter Remarks`}
+                    value={user.remarks || ""}
                     onChange={handleManagerChange}
+                    size="small"
                     multiline
                     minRows={3}
-                    size="small"
                   />
-                  {/* Show error message */}
-                  {errors.remarks && <FormHelperText>{errors.remarks}</FormHelperText>}
+                  {errors.remarks && (
+                    <FormHelperText>{errors.remarks}</FormHelperText>
+                  )}
                 </FormControl>
               )}
 
@@ -562,7 +564,6 @@ const UpdateManager: React.FC<UpdateManagerProps> = React.memo(
                   onClick={handleUpdateManagerSubmit}
                   sx={{
                     ...buttonUpdateStyles,
-                    mt: 3,
                     padding: "0.8rem",
                     fontSize: "12px",
                     width: "100%",

@@ -16,7 +16,9 @@ export const userSchema = z.object({
     }),
   phoneNumber: z
     .string()
-    .nonempty("Phone Number is required")
+    .refine((val) => val.trim() !== "", {
+      message: "Phone Number is required",
+    })
     .refine((val) => /^09\d{9}$/.test(val), {
       message:
         "Please enter a valid phone number starting with 09 and 11 digits long (e.g. 09XXXXXXXXX).",

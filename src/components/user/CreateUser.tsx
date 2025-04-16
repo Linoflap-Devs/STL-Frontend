@@ -25,6 +25,8 @@ import { userSchema } from "~/utils/validation";
 import Swal from "sweetalert2";
 import ConfirmCreateUserPage from "./ConfirmCreateUser";
 import { zodToJsonErrors } from "~/utils/zodToJsonErrors";
+import { ZodError } from "zod";
+import generatePassword from 'generate-password';
 
 interface CreateManagerProps {
   open: boolean;
@@ -86,25 +88,31 @@ const CreateManager: React.FC<CreateManagerProps> = ({
   };
 
   const handleCreateManagerSubmit = async () => {
-    // Separate validation for operatorId
+    const newErrors: Record<string, string> = {};
+  
+    // Manual validation for operatorId
     if (!user.operatorId || user.operatorId.trim() === "") {
-      setErrors((prevErrors) => ({
-        ...prevErrors,
-        operatorId: "Assigned Company is required",
-      }));
-      return;
+      newErrors.operatorId = "Assigned Company is required";
     }
-
-    // Proceed with Zod validation for other fields
+  
     try {
       userSchema.parse(user);
     } catch (err) {
-      const formattedErrors = zodToJsonErrors(err);
-      console.log("Zod Validation Errors:", formattedErrors);
-      setErrors(formattedErrors);
+      if (err instanceof ZodError) {
+        const formattedErrors = zodToJsonErrors(err);
+        console.log("Zod Validation Errors:", formattedErrors);
+        Object.assign(newErrors, formattedErrors);
+      } else {
+        console.error("Unexpected error during validation:", err);
+      }
+    }
+  
+    // If there are any errors, set them and exit
+    if (Object.keys(newErrors).length > 0) {
+      setErrors(newErrors);
       return;
     }
-
+  
     const confirmation = await Swal.fire({
       title: "Add Confirmation",
       text: "Did you enter the correct details?",
@@ -118,18 +126,13 @@ const CreateManager: React.FC<CreateManagerProps> = ({
         cancelButton: "no-hover",
       },
     });
-
+  
     if (!confirmation.isConfirmed) {
       return;
     }
-
+  
     // Open the password verification modal
     setIsVerifyModalOpen(true);
-  };
-
-  const handleGeneratePassword = () => {
-    const generatedPassword = "0912Gg33*12";
-    setUser((prevUser) => ({ ...prevUser, password: generatedPassword }));
   };
 
   return (
@@ -330,7 +333,21 @@ const CreateManager: React.FC<CreateManagerProps> = ({
                           color: "#282828",
                           minWidth: "120px",
                         }}
-                        onClick={handleGeneratePassword}
+                        onClick={() => {
+                          const newPassword = generatePassword.generate({
+                            length: 12,
+                            numbers: true,
+                            symbols: true,
+                            uppercase: true,
+                            lowercase: true,
+                            strict: true, // ensures at least one of each selected type
+                          });
+
+                          setUser((prev) => ({
+                            ...prev,
+                            password: newPassword,
+                          }));
+                        }}
                       >
                         Generate
                       </Button>
@@ -344,7 +361,7 @@ const CreateManager: React.FC<CreateManagerProps> = ({
                         placeholder={`Enter ${formatKey(key)}`}
                         value={user[key as keyof typeof user]}
                         onChange={handleManagerChange}
-                        //label={formatKey(key)}
+                        label={formatKey(key)}
                       />
                       {errors[key] && (
                         <FormHelperText>{errors[key]}</FormHelperText>
