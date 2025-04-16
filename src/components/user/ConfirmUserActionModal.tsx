@@ -3,14 +3,14 @@ import {
   IconButton,
 } from "@mui/material";
 import { verifyPass } from "~/utils/api/auth";
-import { addUser } from "~/utils/api/users";
+import { addUser, updateUser } from "~/utils/api/users";
 import Swal from "sweetalert2";
 import { LoginSectionData } from "../../data/LoginSectionData";
 import ArrowBackIosNewIcon from "@mui/icons-material/ArrowBackIosNew";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
 import { useRouter } from "next/router";
 
-interface ConfirmCreateUserPageProps {
+interface ConfirmUserActionModalProps {
   open: boolean;
   onClose: () => void;
   onVerified: () => void;
@@ -20,15 +20,17 @@ interface ConfirmCreateUserPageProps {
   setErrors: React.Dispatch<React.SetStateAction<any>>;
   //selectedUser: User | null; // for remarks
   //setSelectedUser: React.Dispatch<React.SetStateAction<User | null>>; // for remarks
+  actionType: "create" | "update" | "suspend";
 }
 
-const ConfirmCreateUserPage: React.FC<ConfirmCreateUserPageProps> = ({
+const ConfirmUserActionModalPage: React.FC<ConfirmUserActionModalProps > = ({
   open,
   onClose,
   user,
   setUser,
   onSubmit,
   setErrors,
+  actionType
 }) => {
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
@@ -47,72 +49,91 @@ const ConfirmCreateUserPage: React.FC<ConfirmCreateUserPageProps> = ({
   // Dynamically set userTypeId based on userType
   const userTypeId = userType === "manager" ? 2 : 3;
 
-  const handleVerifyCreateUser = async () => {
+  const handleVerifyUserAction = async () => {
     if (!password) {
       setError("Password is required.");
       return;
     }
-
+  
     try {
       const { success: isVerified } = await verifyPass(password);
       if (!isVerified) {
         setError("Invalid password. Please try again.");
         return;
       }
+  
       setError("");
-
-      // Construct the new user object with dynamic userTypeId
-      const newUser = {
+  
+      let updatedUser = {
         ...user,
-        userTypeId: userTypeId,
+        ...(userTypeId && { userTypeId }), // Only for create
       };
-
-      const response = await addUser(newUser);
-      if (!response.success) {
-        const errorMessage =
-          response.message || "Something went wrong. Please try again.";
+  
+      let response;
+  
+      if (actionType === "create") {
+        response = await addUser(updatedUser);
+      } else if (actionType === "update") {
+        if (!user?.UserId) {
+          console.error("UserId is null");
+          return;
+        }
+  
+        response = await updateUser(user.UserId, { ...user });
+  
+        // refetch latest user with updated remarks (if any)
+        const updatedResponse = await updateUser(user.UserId, { ...user });
+        if (updatedResponse.success && setUser) {
+          setUser((prevUser: { remarks: any }) => ({
+            ...prevUser,
+            ...updatedResponse.data,
+            remarks: updatedResponse.data.remarks ?? prevUser.remarks ?? "",
+          }));
+        } else {
+          console.warn("Failed to fetch updated user data:", updatedResponse?.message);
+        }
+      } else if (actionType === "suspend") {
+        // TODO: implement suspend logic if needed
+      }
+  
+      if (!response?.success) {
+        const errorMessage = response?.message || "Something went wrong.";
         setError(errorMessage);
-        Swal.fire({
-          icon: "error",
-          title: "Error!",
-          text: errorMessage,
-          confirmButtonColor: "#D32F2F",
-        });
+        Swal.fire({ icon: "error", title: "Error!", text: errorMessage });
         return;
       }
-
+  
       Swal.fire({
         icon: "success",
-        title: userTypeId === 2 ? "Manager Created!" : "Executive Created!",
-        text: `The ${userTypeId === 2 ? "manager" : "executive"} has been added successfully.`,
+        title:
+          actionType === "create"
+            ? `${userTypeId === 2 ? "Manager" : "Executive"} Created!`
+            : actionType === "update"
+            ? `${userTypeId === 2 ? "Manager" : "Executive"} Updated!`
+            : "User Suspended!",
+        text:
+          actionType === "create"
+            ? `The ${userTypeId === 2 ? "manager" : "executive"} has been added successfully.`
+            : actionType === "update"
+            ? `The ${userTypeId === 2 ? "manager" : "executive"} details have been updated successfully.`
+            : `User suspended successfully.`,
         confirmButtonColor: "#67ABEB",
       });
-
-      onSubmit(newUser);
+  
+      onSubmit(updatedUser);
       onClose();
-
-      // make null after submission
-      setUser({
-        firstName: "",
-        lastName: "",
-        suffix: "",
-        email: "",
-        phone: "",
-        password: "",
-      });
-
+      setUser({});
       setErrors({});
     } catch (error) {
-      console.error("Error creating user:", error);
-      setError("An unexpected error occurred. Please try again.");
+      console.error(`Error during ${actionType}:`, error);
       Swal.fire({
         icon: "error",
         title: "Unexpected Error!",
-        text: "An unexpected error occurred. Please try again.",
-        confirmButtonColor: "#D32F2F",
+        text: `An error occurred while trying to ${actionType} user.`,
       });
     }
   };
+  
 
   // const handleManagerChange = (e: React.ChangeEvent<HTMLInputElement>) => {
   //     if (selectedUser) {
@@ -140,7 +161,7 @@ const ConfirmCreateUserPage: React.FC<ConfirmCreateUserPageProps> = ({
                 <img
                   src={LoginSectionData.image}
                   alt="altLogo"
-                  className="max-w-[50%] mx-auto mb-3"
+                  className="max-w-[35%] mx-auto mb-3"
                   loading="lazy"
                 />
                 <h1 className="text-3xl font-bold text-white">
@@ -216,7 +237,7 @@ const ConfirmCreateUserPage: React.FC<ConfirmCreateUserPageProps> = ({
                 {/* Confirm Button */}
                 <button
                   type="submit"
-                  onClick={handleVerifyCreateUser}
+                  onClick={handleVerifyUserAction}
                   className="w-full py-2.5 mt-5 bg-[#67ABEB] hover:bg-[#A5C9ED] text-[#212121] rounded-lg text-sm font-medium disabled:opacity-50"
                   disabled={false}
                 >
@@ -231,4 +252,4 @@ const ConfirmCreateUserPage: React.FC<ConfirmCreateUserPageProps> = ({
   );
 };
 
-export default ConfirmCreateUserPage;
+export default ConfirmUserActionModalPage;

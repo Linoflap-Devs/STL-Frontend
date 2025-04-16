@@ -23,12 +23,12 @@ import { buttonUpdateStyles, selectStyles } from "../../styles/theme";
 import { fetchUserById } from "~/utils/api/users";
 import EditLogModalPage from "./EditLogModal";
 import { userSchema } from "~/utils/validation";
-import ConfirmUpdateManagerPage from "./ConfirmUpdateUser";
 import Swal from "sweetalert2";
 import { fetchOperator } from "~/utils/api/operators";
 import dynamic from "next/dynamic";
 import dayjs from "dayjs";
 import { zodToJsonErrors } from "~/utils/zodToJsonErrors";
+import ConfirmUserActionModalPage from "./ConfirmUserActionModal";
 
 const UsersUpateModalSkeleton = dynamic(() =>
   import("~/components/user/UsersSkeleton").then((mod) => ({
@@ -575,13 +575,17 @@ const UpdateManager: React.FC<UpdateManagerProps> = React.memo(
               )}
 
               {isVerifyModalOpen && (
-                <ConfirmUpdateManagerPage
+                <ConfirmUserActionModalPage
                   open={isVerifyModalOpen}
                   onClose={() => setIsVerifyModalOpen(false)}
-                  onVerified={handleUpdateManagerSubmit}
-                  user={user}
+                  onVerified={() => setIsVerifyModalOpen(false)}
                   onSubmit={onSubmit}
+                  //selectedUser={user}
+                  //setSelectedUser={setSelectedUser}
+                  actionType="update" 
+                  user={user}
                   setUser={setUser}
+                  setErrors={setErrors}  
                 />
               )}
             </Stack>

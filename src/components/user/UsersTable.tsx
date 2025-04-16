@@ -31,7 +31,7 @@ import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
 import dayjs, { Dayjs } from "dayjs";
 import { EditLogFields } from "./EditLogModal";
 import Swal from "sweetalert2";
-import ConfirmSuspendManagerPage from "./ConfirmSuspendUser";
+import ConfirmUserActionModalPage from "./ConfirmUserActionModal";
 
 export interface User {
   firstName: string;
@@ -72,6 +72,9 @@ const ManagerTable: React.FC<ManagerTableProps> = ({
   const [rowsPerPage, setRowsPerPage] = useState(10);
   const [searchQuery, setSearchQuery] = useState<string>("");
   const [isVerifyModalOpen, setIsVerifyModalOpen] = useState(false);
+  const [errors, setErrors] = useState<{ [key: string]: string }>({});
+
+
   const onSortWrapper = (sortKey: keyof (User & EditLogFields)) => {
     handleSort(sortKey, sortConfig, setSortConfig);
   };
@@ -404,14 +407,18 @@ const ManagerTable: React.FC<ManagerTableProps> = ({
                           Delete
                         </MenuItem>
                       </Menu>
-                      <ConfirmSuspendManagerPage
+                      <ConfirmUserActionModalPage
                         open={isVerifyModalOpen}
                         onClose={() => setIsVerifyModalOpen(false)}
                         onVerified={() => setIsVerifyModalOpen(false)}
                         onSubmit={onSubmit}
-                        selectedUser={user}
-                        setSelectedUser={setSelectedUser}
-                      />
+                        //selectedUser={user}
+                        //setSelectedUser={setSelectedUser}
+                        actionType="suspend" 
+                        user={user}
+                        setUser={setUser}
+                        setErrors={setErrors}                 
+                        />
                     </TableCell>
                   </TableRow>
                 ))

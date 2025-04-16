@@ -23,10 +23,10 @@ import CloseIcon from "@mui/icons-material/Close";
 import { formatKey } from "~/utils/format";
 import { userSchema } from "~/utils/validation";
 import Swal from "sweetalert2";
-import ConfirmCreateUserPage from "./ConfirmCreateUser";
 import { zodToJsonErrors } from "~/utils/zodToJsonErrors";
 import { ZodError } from "zod";
 import generatePassword from 'generate-password';
+import ConfirmUserActionModalPage from "./ConfirmUserActionModal";
 
 interface CreateManagerProps {
   open: boolean;
@@ -391,7 +391,7 @@ const CreateManager: React.FC<CreateManagerProps> = ({
           {pageType === "manager" ? "Add Manager" : "Add Executive"}
         </Button>
         {isVerifyModalOpen && (
-          <ConfirmCreateUserPage
+          <ConfirmUserActionModalPage
             open={isVerifyModalOpen}
             onClose={() => setIsVerifyModalOpen(false)}
             onVerified={handleCreateManagerSubmit}
@@ -399,6 +399,7 @@ const CreateManager: React.FC<CreateManagerProps> = ({
             setUser={setUser}
             onSubmit={onSubmit}
             setErrors={setErrors}
+            actionType="create"
           />
         )}
       </DialogContent>
