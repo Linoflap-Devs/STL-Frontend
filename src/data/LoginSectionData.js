@@ -59,8 +59,8 @@ export const LoginSectionData = {
   ConfirmIdentity: "Confirm Your Identity",
   ConfirmIdentityDescription: (
     <>
-      For security reasons, please enter your password to confirm <br />
-      the deletion of this item. This action cannot be undone.
+      For security reasons, please verify your identity <br />
+      by entering your password. This action cannot be undone.
     </>
   ),
 };

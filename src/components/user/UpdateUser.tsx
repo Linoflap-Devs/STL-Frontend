@@ -17,18 +17,18 @@ import {
   Stack,
 } from "@mui/material";
 import { formatKey } from "../../utils/format";
-import { User } from "./UsersTable";
+import { User } from "~/pages/Protected/users/[role]";
+import { fetchUserById } from "~/utils/api/users";
+import { fetchOperator } from "~/utils/api/operators";
+import EditLogModalPage from "./EditLogModal";
+import ConfirmUserActionModalPage from "./ConfirmUserActionModal";
+import { userSchema } from "~/utils/validation";
 import CloseIcon from "@mui/icons-material/Close";
 import { buttonUpdateStyles, selectStyles } from "../../styles/theme";
-import { fetchUserById } from "~/utils/api/users";
-import EditLogModalPage from "./EditLogModal";
-import { userSchema } from "~/utils/validation";
+import { zodToJsonErrors } from "~/utils/zodToJsonErrors";
 import Swal from "sweetalert2";
-import { fetchOperator } from "~/utils/api/operators";
 import dynamic from "next/dynamic";
 import dayjs from "dayjs";
-import { zodToJsonErrors } from "~/utils/zodToJsonErrors";
-import ConfirmUserActionModalPage from "./ConfirmUserActionModal";
 
 const UsersUpateModalSkeleton = dynamic(() =>
   import("~/components/user/UsersSkeleton").then((mod) => ({
@@ -44,37 +44,17 @@ type LogType = {
 
 interface UpdateManagerProps {
   open: boolean;
-  manager: User | null;
+  users: User | null;
   onClose: () => void;
-  onSubmit: (userData: {
-    UserId: number | null;
-    firstName: string;
-    lastName: string;
-    phoneNumber: string;
-    email: string;
-    suffix: string;
-    Status: any;
-    remarks: string;
-    OperatorId: number | null;
-  }) => void;
+  onSubmit: (userData: User) => void;
   getUserStatus: (user: User, sevenDaysAgo: dayjs.Dayjs) => string;
   sevenDaysAgo: dayjs.Dayjs;
+  fallback: <T>(value: T | null | undefined, defaultValue: T) => T;
 }
 
 const UpdateManager: React.FC<UpdateManagerProps> = React.memo(
-  ({ open, onClose, onSubmit, manager, getUserStatus, sevenDaysAgo }) => {
-    const [user, setUser] = useState<{
-      UserId: number | null;
-      firstName: string;
-      lastName: string;
-      phoneNumber: string;
-      email: string;
-      suffix: string;
-      Status: any;
-      remarks: string;
-      OperatorId: number | null;
-      LastUpdatedDate: string | null;
-    }>({
+  ({ open, onClose, onSubmit, users, getUserStatus, sevenDaysAgo, fallback }) => {
+    const [user, setUser] = useState<User>({
       UserId: null,
       firstName: "",
       lastName: "",
@@ -99,61 +79,67 @@ const UpdateManager: React.FC<UpdateManagerProps> = React.memo(
     const [isDisabled, setIsDisabled] = useState(true);
     const [isViewMode, setIsViewMode] = useState(false);
     const [areaOfOperations, setAreaOfOperations] = useState<string>("");
-    const [isLoading, setIsLoading] = useState(false);
+    const [isLoading, setLoading] = useState(false);
 
-    // fetching of data
+    const fetchUserDetails = async () => {
+      if (!users?.userId) return;
+      setLoading(true); // Start loading
+      
+      try {
+        const [userRes, operatorRes] = await Promise.all([
+          fetchUserById(users.userId),
+          users.OperatorDetails?.OperatorId
+            ? fetchOperator(users.OperatorDetails.OperatorId).then(res => res?.data ?? {})
+            : Promise.resolve({}), // fallback if no OperatorId
+        ]);
+
+        const user = userRes?.data ?? {};
+        const operator = operatorRes ?? {};
+    
+        const cities = operator.Cities?.length
+          ? operator.Cities.map((c: any) => c.CityName).join(", ")
+          : "No cities available";
+    
+        const userStatus = getUserStatus(user, sevenDaysAgo);
+    
+        setStatus(userStatus);
+        setAreaOfOperations(cities);
+    
+        const updatedUser = {
+          UserId: fallback(user.UserId, null),
+          firstName: fallback(user.FirstName, "N/A"),
+          lastName: fallback(user.LastName, "N/A"),
+          phoneNumber: fallback(user.PhoneNumber, "N/A"),
+          email: fallback(user.Email, "N/A"),
+          suffix: fallback(user.Suffix, "N/A"),
+          CreatedBy: fallback(user.CreatedBy, "N/A"),
+          DateOfRegistration: fallback(user.DateOfRegistration, "N/A"),
+          Status: userStatus,
+          remarks: fallback(user.remarks, ""),
+          OperatorName: fallback(operator.OperatorName, "N/A"),
+          DateOfOperation: fallback(operator.DateOfOperation, "N/A"),
+          OperatorId: fallback(operator.OperatorId, null),
+          AreaOfOperations: cities,
+          LastUpdatedBy: fallback(user.LastUpdatedBy, "N/A"),
+          LastUpdatedDate: fallback(user.LastUpdatedDate, "N/A"),
+        };
+    
+        setUser(updatedUser);
+        console.log("Updated user:", updatedUser);
+      } catch (err) {
+        console.error("Error fetching manager details:", err);
+      } finally {
+        setLoading(false); // Finish loading regardless of success/failure
+      }
+    };
+    
+    // Fetching of data using useEffect
     useEffect(() => {
-      if (!open || !manager?.userId) return;
-
-      const fetchManagerDetails = async () => {
-        try {
-          const [userRes, operatorRes] = await Promise.all([
-            fetchUserById(manager.userId),
-            fetchOperator(manager.OperatorDetails?.OperatorId),
-          ]);
-
-          const user = userRes?.data ?? {};
-          const operator = operatorRes?.data ?? {};
-
-          const cities =
-            operator.Cities?.length > 0
-              ? operator.Cities.map((c: any) => c.CityName).join(", ")
-              : "No cities available";
-
-          const userStatus = getUserStatus(user, sevenDaysAgo);
-
-          setStatus(userStatus);
-          setAreaOfOperations(cities);
-
-          const updatedUser = {
-            UserId: user.UserId ?? null,
-            firstName: user.FirstName ?? "N/A",
-            lastName: user.LastName ?? "N/A",
-            phoneNumber: user.PhoneNumber ?? "N/A",
-            email: user.Email ?? "N/A",
-            suffix: user.Suffix ?? "N/A",
-            CreatedBy: user.CreatedBy ?? "N/A",
-            DateOfRegistration: user.DateOfRegistration ?? "N/A",
-            Status: userStatus,
-            remarks: user.remarks ?? "",
-            OperatorName: operator.OperatorName ?? "N/A",
-            DateOfOperation: operator.DateOfOperation ?? "N/A",
-            OperatorId: operator.OperatorId ?? null,
-            AreaOfOperations: cities,
-            LastUpdatedBy: user.LastUpdatedBy ?? "N/A",
-            LastUpdatedDate: user.LastUpdatedDate ?? "N/A",
-          };
-
-          setUser(updatedUser);
-          console.log("updated user: ", updatedUser);
-        } catch (err) {
-          console.error("Error fetching manager details:", err);
-        }
-      };
-
-      fetchManagerDetails();
-    }, [open, manager?.userId, sevenDaysAgo, getUserStatus]);
-
+      if (!open || !users?.userId) return;  // Early exit if the conditions aren't met
+    
+      fetchUserDetails();
+    }, [open, users?.userId, sevenDaysAgo, getUserStatus]);
+    
     // disable functions
     const handleDisable = () => {
       setIsViewMode((prev) => !prev);
@@ -582,10 +568,10 @@ const UpdateManager: React.FC<UpdateManagerProps> = React.memo(
                   onSubmit={onSubmit}
                   //selectedUser={user}
                   //setSelectedUser={setSelectedUser}
-                  actionType="update" 
+                  actionType="update"
                   user={user}
                   setUser={setUser}
-                  setErrors={setErrors}  
+                  setErrors={setErrors}
                 />
               )}
             </Stack>

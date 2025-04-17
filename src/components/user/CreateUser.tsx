@@ -14,26 +14,24 @@ import {
   Select,
   MenuItem,
   Stack,
-  TextField,
 } from "@mui/material";
-import { User } from "./UsersTable";
-import { Visibility, VisibilityOff } from "@mui/icons-material";
+import { User } from "~/pages/Protected/users/[role]";
 import { SelectChangeEvent } from "@mui/material";
-import CloseIcon from "@mui/icons-material/Close";
-import { formatKey } from "~/utils/format";
+import ConfirmUserActionModalPage from "./ConfirmUserActionModal";
 import { userSchema } from "~/utils/validation";
+import { formatKey } from "~/utils/format";
+import { Visibility, VisibilityOff } from "@mui/icons-material";
+import CloseIcon from "@mui/icons-material/Close";
 import Swal from "sweetalert2";
 import { zodToJsonErrors } from "~/utils/zodToJsonErrors";
 import { ZodError } from "zod";
-import generatePassword from 'generate-password';
-import ConfirmUserActionModalPage from "./ConfirmUserActionModal";
+import generatePassword from "generate-password";
 
 interface CreateManagerProps {
   open: boolean;
   onClose: () => void;
   onSubmit: (userData: User | null) => Promise<void>;
   userData: User | null;
-  //managers: User[];
   operators: any[];
 }
 
@@ -89,12 +87,12 @@ const CreateManager: React.FC<CreateManagerProps> = ({
 
   const handleCreateManagerSubmit = async () => {
     const newErrors: Record<string, string> = {};
-  
+
     // Manual validation for operatorId
     if (!user.operatorId || user.operatorId.trim() === "") {
       newErrors.operatorId = "Assigned Company is required";
     }
-  
+
     try {
       userSchema.parse(user);
     } catch (err) {
@@ -106,13 +104,13 @@ const CreateManager: React.FC<CreateManagerProps> = ({
         console.error("Unexpected error during validation:", err);
       }
     }
-  
+
     // If there are any errors, set them and exit
     if (Object.keys(newErrors).length > 0) {
       setErrors(newErrors);
       return;
     }
-  
+
     const confirmation = await Swal.fire({
       title: "Add Confirmation",
       text: "Did you enter the correct details?",
@@ -126,11 +124,11 @@ const CreateManager: React.FC<CreateManagerProps> = ({
         cancelButton: "no-hover",
       },
     });
-  
+
     if (!confirmation.isConfirmed) {
       return;
     }
-  
+
     // Open the password verification modal
     setIsVerifyModalOpen(true);
   };

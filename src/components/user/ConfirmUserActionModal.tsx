@@ -1,7 +1,6 @@
+import React from "react";
 import { useState, useEffect } from "react";
-import {
-  IconButton,
-} from "@mui/material";
+import { IconButton } from "@mui/material";
 import { verifyPass } from "~/utils/api/auth";
 import { addUser, updateUser } from "~/utils/api/users";
 import Swal from "sweetalert2";
@@ -23,14 +22,14 @@ interface ConfirmUserActionModalProps {
   actionType: "create" | "update" | "suspend";
 }
 
-const ConfirmUserActionModalPage: React.FC<ConfirmUserActionModalProps > = ({
+const ConfirmUserActionModalPage: React.FC<ConfirmUserActionModalProps> = ({
   open,
   onClose,
   user,
   setUser,
   onSubmit,
   setErrors,
-  actionType
+  actionType,
 }) => {
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
@@ -49,28 +48,34 @@ const ConfirmUserActionModalPage: React.FC<ConfirmUserActionModalProps > = ({
   // Dynamically set userTypeId based on userType
   const userTypeId = userType === "manager" ? 2 : 3;
 
+  // const handleManagerChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  //     if (selectedUser) {
+  //         setSelectedUser((prevUser) => prevUser ? { ...prevUser, remarks: e.target.value } : null);
+  //     }
+  // };
+
   const handleVerifyUserAction = async () => {
     if (!password) {
       setError("Password is required.");
       return;
     }
-  
+
     try {
       const { success: isVerified } = await verifyPass(password);
       if (!isVerified) {
         setError("Invalid password. Please try again.");
         return;
       }
-  
+
       setError("");
-  
+
       let updatedUser = {
         ...user,
         ...(userTypeId && { userTypeId }), // Only for create
       };
-  
+
       let response;
-  
+
       if (actionType === "create") {
         response = await addUser(updatedUser);
       } else if (actionType === "update") {
@@ -78,9 +83,9 @@ const ConfirmUserActionModalPage: React.FC<ConfirmUserActionModalProps > = ({
           console.error("UserId is null");
           return;
         }
-  
+
         response = await updateUser(user.UserId, { ...user });
-  
+
         // refetch latest user with updated remarks (if any)
         const updatedResponse = await updateUser(user.UserId, { ...user });
         if (updatedResponse.success && setUser) {
@@ -90,36 +95,39 @@ const ConfirmUserActionModalPage: React.FC<ConfirmUserActionModalProps > = ({
             remarks: updatedResponse.data.remarks ?? prevUser.remarks ?? "",
           }));
         } else {
-          console.warn("Failed to fetch updated user data:", updatedResponse?.message);
+          console.warn(
+            "Failed to fetch updated user data:",
+            updatedResponse?.message
+          );
         }
       } else if (actionType === "suspend") {
         // TODO: implement suspend logic if needed
       }
-  
+
       if (!response?.success) {
         const errorMessage = response?.message || "Something went wrong.";
         setError(errorMessage);
         Swal.fire({ icon: "error", title: "Error!", text: errorMessage });
         return;
       }
-  
+
       Swal.fire({
         icon: "success",
         title:
           actionType === "create"
             ? `${userTypeId === 2 ? "Manager" : "Executive"} Created!`
             : actionType === "update"
-            ? `${userTypeId === 2 ? "Manager" : "Executive"} Updated!`
-            : "User Suspended!",
+              ? `${userTypeId === 2 ? "Manager" : "Executive"} Updated!`
+              : "User Suspended!",
         text:
           actionType === "create"
             ? `The ${userTypeId === 2 ? "manager" : "executive"} has been added successfully.`
             : actionType === "update"
-            ? `The ${userTypeId === 2 ? "manager" : "executive"} details have been updated successfully.`
-            : `User suspended successfully.`,
+              ? `The ${userTypeId === 2 ? "manager" : "executive"} details have been updated successfully.`
+              : `User suspended successfully.`,
         confirmButtonColor: "#67ABEB",
       });
-  
+
       onSubmit(updatedUser);
       onClose();
       setUser({});
@@ -133,16 +141,9 @@ const ConfirmUserActionModalPage: React.FC<ConfirmUserActionModalProps > = ({
       });
     }
   };
-  
-
-  // const handleManagerChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-  //     if (selectedUser) {
-  //         setSelectedUser((prevUser) => prevUser ? { ...prevUser, remarks: e.target.value } : null);
-  //     }
-  // };
 
   return (
-    <>
+    <React.Fragment>
       {open && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-75">
           <div className="relative z-20 flex w-full justify-center items-center">
@@ -248,7 +249,7 @@ const ConfirmUserActionModalPage: React.FC<ConfirmUserActionModalProps > = ({
           </div>
         </div>
       )}
-    </>
+    </React.Fragment>
   );
 };
 

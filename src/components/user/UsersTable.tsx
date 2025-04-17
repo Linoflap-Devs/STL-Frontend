@@ -32,18 +32,10 @@ import dayjs, { Dayjs } from "dayjs";
 import { EditLogFields } from "./EditLogModal";
 import Swal from "sweetalert2";
 import ConfirmUserActionModalPage from "./ConfirmUserActionModal";
+import { User } from "~/pages/Protected/users/[role]";
 
-export interface User {
-  firstName: string;
-  lastName: string;
-  suffix?: string;
-  phoneNumber: string;
-  email: string;
-  [key: string]: any;
-}
-
-interface ManagerTableProps {
-  managers: User[];
+interface UsersTableProps {
+  users: User[];
   onCreate: () => void;
   onEdit: (user: User, action?: "view" | "update") => void;
   onDelete: (ids: number[]) => void;
@@ -52,8 +44,8 @@ interface ManagerTableProps {
   sevenDaysAgo: dayjs.Dayjs;
 }
 
-const ManagerTable: React.FC<ManagerTableProps> = ({
-  managers,
+const UsersTablePage: React.FC<UsersTableProps> = ({
+  users,
   onCreate,
   onEdit,
   onSubmit,
@@ -74,10 +66,10 @@ const ManagerTable: React.FC<ManagerTableProps> = ({
   const [isVerifyModalOpen, setIsVerifyModalOpen] = useState(false);
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
 
-
   const onSortWrapper = (sortKey: keyof (User & EditLogFields)) => {
     handleSort(sortKey, sortConfig, setSortConfig);
   };
+
   const [sortConfig, setSortConfig] = useState<{
     key: keyof User;
     direction: "asc" | "desc";
@@ -95,14 +87,15 @@ const ManagerTable: React.FC<ManagerTableProps> = ({
   });
 
   const filteredUsers = filterData(
-    managers.map((user) => {
+    users.map((user) => {
       const status = getUserStatus(user, sevenDaysAgo);
 
       return {
         ...user,
-        fullName: `${user.FirstName || ""} ${user.LastName || "" } ${user.Suffix || "" }`
-          .trim()
-          .toLowerCase(),
+        fullName:
+          `${user.FirstName || ""} ${user.LastName || ""} ${user.Suffix || ""}`
+            .trim()
+            .toLowerCase(),
         formattedDate: user.DateOfRegistration
           ? dayjs(user.DateOfRegistration).format("YYYY/MM/DD")
           : "Invalid Date",
@@ -110,7 +103,8 @@ const ManagerTable: React.FC<ManagerTableProps> = ({
       };
     }),
     { ...filters, searchQuery },
-    ["fullName", "UserName", "CreatedBy", "Status", "DateOfRegistration"]
+
+    ["fullName", "CreatedBy", "Status", "DateOfRegistration"]
   );
 
   const sortedFilteredUsers: User[] = sortData(filteredUsers, {
@@ -139,6 +133,14 @@ const ManagerTable: React.FC<ManagerTableProps> = ({
         filterValue = value || "";
       }
 
+      // Log the nested property for OperatorDetails.OperatorName
+      if (key === "OperatorName") {
+        console.log(
+          "Filtered value for OperatorDetails.OperatorName:",
+          filterValue
+        );
+      }
+
       setFilters((prevFilters) => ({
         ...prevFilters,
         [key]: filterValue,
@@ -150,7 +152,6 @@ const ManagerTable: React.FC<ManagerTableProps> = ({
     event?: React.MouseEvent<HTMLButtonElement>,
     user?: User
   ) => {
-    //console.log("Menu opened for user:", user);  // Debug log
     setAnchorEl(event?.currentTarget || null);
     setSelectedUser(user || null);
   };
@@ -193,7 +194,7 @@ const ManagerTable: React.FC<ManagerTableProps> = ({
   };
 
   return (
-    <>
+    <React.Fragment>
       <TableContainer>
         <div>
           <div className="flex justify-between items-center py-3 px-1">
@@ -237,7 +238,7 @@ const ManagerTable: React.FC<ManagerTableProps> = ({
         <Table size="small">
           <TableHead>
             <TableRow>
-              <>
+              <React.Fragment>
                 <SortableTableCell
                   label="Full Name"
                   sortKey="fullName"
@@ -247,10 +248,12 @@ const ManagerTable: React.FC<ManagerTableProps> = ({
                 />
                 <SortableTableCell
                   label="Company Name"
-                  sortKey="companyName"
+                  sortKey="OperatorDetails.OperatorName" // nested from operatordetails
                   sortConfig={sortConfig}
                   onSort={onSortWrapper}
-                  onFilterChange={handleFilterChange("companyName")}
+                  onFilterChange={handleFilterChange(
+                    "OperatorDetails.OperatorName"
+                  )}
                 />
                 <SortableTableCell
                   label="Creation Date"
@@ -279,7 +282,7 @@ const ManagerTable: React.FC<ManagerTableProps> = ({
                   filterValue={filters.Status}
                   onFilterChange={handleFilterChange("Status")}
                 />
-              </>
+              </React.Fragment>
               <TableCell>Actions</TableCell>
             </TableRow>
           </TableHead>
@@ -288,7 +291,7 @@ const ManagerTable: React.FC<ManagerTableProps> = ({
               <TableRow>
                 <TableCell colSpan={9} align="center">
                   <div className="flex flex-col items-center py-5">
-                    {managers.length === 0 ? (
+                    {users.length === 0 ? (
                       <>
                         <PersonOffIcon
                           className="text-gray-500"
@@ -329,7 +332,7 @@ const ManagerTable: React.FC<ManagerTableProps> = ({
                   <TableRow key={user.userId}>
                     <TableCell>
                       {/* for debugging */}
-                      {user.userId}{" "} 
+                      {user.userId}{" "}
                       {`${user.FirstName} ${user.LastName} ${user.Suffix}`}
                     </TableCell>
                     <TableCell>{user.OperatorDetails.OperatorName}</TableCell>
@@ -414,11 +417,11 @@ const ManagerTable: React.FC<ManagerTableProps> = ({
                         onSubmit={onSubmit}
                         //selectedUser={user}
                         //setSelectedUser={setSelectedUser}
-                        actionType="suspend" 
+                        actionType="suspend"
                         user={user}
                         setUser={setUser}
-                        setErrors={setErrors}                 
-                        />
+                        setErrors={setErrors}
+                      />
                     </TableCell>
                   </TableRow>
                 ))
@@ -446,8 +449,8 @@ const ManagerTable: React.FC<ManagerTableProps> = ({
           {UserSectionData.exportAsCSVButton}
         </Button>
       </div>
-    </>
+    </React.Fragment>
   );
 };
 
-export default ManagerTable;
+export default UsersTablePage;

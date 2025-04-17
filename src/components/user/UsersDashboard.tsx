@@ -1,12 +1,9 @@
 import React, { useState, useEffect } from "react";
 import { Button } from "@mui/material";
-import {
-  buttonStyles,
-  cardDashboardStyles,
-} from "../../styles/theme";
+import { buttonStyles, cardDashboardStyles } from "../../styles/theme";
 import { BarChart } from "@mui/x-charts/BarChart";
 import dayjs from "dayjs";
-import { User } from "./UsersTable";
+import { User } from "~/pages/Protected/users/[role]";
 
 interface UserDashboardPageProps {
   roleId: number;
@@ -77,7 +74,7 @@ const UserDashboardPage: React.FC<UserDashboardPageProps> = ({
   const userType = window.location.pathname.includes("manager")
     ? "manager"
     : "executive";
-    
+
   const roleLabel = userType === "manager" ? "Managers" : "Executives";
 
   const data = [
@@ -135,106 +132,102 @@ const UserDashboardPage: React.FC<UserDashboardPageProps> = ({
   }, [dashboardData]);
 
   return (
-    <div className="mb-3">
-      <div className="mt-6 flex flex-wrap justify-center items-center gap-4 sm:gap-6 md:gap-3">
-        {[
-          {
-            label: `Total ${roleLabel}`,
-            value: dashboardData.totalUsers,
-            color: "#BB86FC",
-          },
-          {
-            label: `Total Active ${roleLabel}`,
-            value: dashboardData.activeUsers,
-            color: "#5050A5",
-          },  
-          {
-            label: `Total of Deleted ${roleLabel}`,
-            value: dashboardData.suspendedUsers,
-            color: "#7266C9",
-          },
-          {
-            label: `Total Inactive ${roleLabel}`,
-            value: dashboardData.inactiveUsers,
-            color: "#5050A5",
-          },
-          {
-            label: `Total of New ${roleLabel}`,
-            value: dashboardData.newUsers,
-            color: "#282A68",
-          },
-        ].map((item, index) => (
-          <div
-            key={index}
-            className="px-4 py-[1.4rem] flex-[1_1_200px] bg-gray-800 rounded-lg"
-            style={{ ...cardDashboardStyles }}
-          >
-            {item.value === undefined || item.value === null ? (
-              <div className="w-20 h-11 bg-[#171717] animate-pulse rounded-md mt-2" />
-            ) : (
-              <>
+    <React.Fragment>
+      <div className="mb-3">
+        <div className="mt-6 flex flex-wrap justify-center items-center gap-4 sm:gap-6 md:gap-3">
+          {[
+            {
+              label: `Total ${roleLabel}`,
+              value: dashboardData.totalUsers,
+              color: "#BB86FC",
+            },
+            {
+              label: `Total Active ${roleLabel}`,
+              value: dashboardData.activeUsers,
+              color: "#5050A5",
+            },
+            {
+              label: `Total of Deleted ${roleLabel}`,
+              value: dashboardData.suspendedUsers,
+              color: "#7266C9",
+            },
+            {
+              label: `Total Inactive ${roleLabel}`,
+              value: dashboardData.inactiveUsers,
+              color: "#5050A5",
+            },
+            {
+              label: `Total of New ${roleLabel}`,
+              value: dashboardData.newUsers,
+              color: "#282A68",
+            },
+          ].map((item, index) => (
+            <div
+              key={index}
+              className="px-4 py-[1.4rem] flex-[1_1_200px] bg-gray-800 rounded-lg"
+              style={{ ...cardDashboardStyles }}
+            >
                 <p className="text-[12px] leading-4 text-gray-400">
                   {item.label}
                 </p>
-                <p className="text-3xl font-bold leading-[1.1] mt-1">
+                <p className="text-3xl font-bold leading-[1.1] mt-0.5">
                   {item.value}
                 </p>
-              </>
-            )}
-          </div>
-        ))}
-      </div>
+            </div>
+          ))}
+        </div>
 
-      {/* Chart Display */}
-      <div className="mt-4">
-        <div className="p-4 bg-[#171717] rounded-lg">
-          <div className="flex justify-between">
-            <div>
-              <p className="text-gray-300">
-                {userType === "manager"
-                  ? "Managers Summary"
-                  : "Executive Summary"}
-              </p>
+        {/* Chart Display */}
+        <div className="mt-4">
+          <div className="p-4 bg-[#171717] rounded-lg">
+            <div className="flex justify-between">
               <div>
-                <CustomLegend pageType={userType} />
+                <p className="text-gray-300">
+                  {userType === "manager"
+                    ? "Managers Summary"
+                    : "Executive Summary"}
+                </p>
+                <div>
+                  <CustomLegend pageType={userType} />
+                </div>
+              </div>
+              <div className="flex flex-col justify-end">
+                <Button sx={buttonStyles} variant="contained">
+                  Export as CSV
+                </Button>
               </div>
             </div>
-            <div className="flex flex-col justify-end">
-              <Button sx={buttonStyles} variant="contained">
-                Export as CSV
-              </Button>
-            </div>
-          </div>
-          <div className="h-[270px] w-full min-w-0">
-            <BarChart
-              xAxis={[
-                { label: "USER STATUS", scaleType: "band", data: [...data] },
-              ]}
-              yAxis={[{ label: "COUNT" }]}
-              series={[
-                {
-                  label: userType === "manager" ? "Managers" : "Executives",
-                  data: chartData,
-                  color: chartColors.length > 0 ? chartColors[0] : "#BB86FC",
-                },
-              ]}
-              slotProps={{
-                legend: { hidden: true },
-                bar: {
-                  style: {
-                    fill: "#2F2F2F !important",
-                    borderTopLeftRadius: "5px",
-                    borderTopRightRadius: "5px",
-                    transition: "fill 0.3s ease-in-out",
-                    cursor: "pointer",
+            <div className="h-[270px] w-full min-w-0">
+              <BarChart
+                xAxis={[
+                  { label: "USER STATUS", scaleType: "band", data: [...data] },
+                ]}
+                yAxis={[{ label: "COUNT" }]}
+                series={[
+                  {
+                    label: userType === "manager" ? "Managers" : "Executives",
+                    data: chartData,
+                    color: chartColors.length > 0 ? chartColors[0] : "#BB86FC",
                   },
-                },
-              }}
-            />
+                ]}
+                slotProps={{
+                  legend: { hidden: true },
+                  bar: {
+                    style: {
+                      fill: "#2F2F2F !important",
+                      borderTopLeftRadius: "5px",
+                      borderTopRightRadius: "5px",
+                      transition: "fill 0.3s ease-in-out",
+                      cursor: "pointer",
+                    },
+                  },
+                }}
+              />
+            </div>
           </div>
         </div>
       </div>
-    </div>
+    </React.Fragment>
   );
 };
 

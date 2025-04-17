@@ -6,7 +6,6 @@ import ArrowBackIosNewIcon from "@mui/icons-material/ArrowBackIosNew";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
-import DrawCardsPage from "~/components/draw-summary/DrawSummaryCards";
 import dynamic from "next/dynamic";
 
 const DashboardSkeletonPage = dynamic(() =>

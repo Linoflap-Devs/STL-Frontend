@@ -17,7 +17,7 @@ const drawResults = [
 
 const DrawCardsPage: React.FC = () => {
   return (
-    <>
+    <React.Fragment>
       <Suspense fallback={<DrawSummaryPage />}>
         <h3 className="text-xl font-bold my-4">Region I - Ilocos Region</h3>
         <div className="flex gap-4 overflow-x-auto no-scrollbar">
@@ -67,7 +67,7 @@ const DrawCardsPage: React.FC = () => {
           ))}
         </div>
       </Suspense>
-    </>
+    </React.Fragment>
   );
 };
 

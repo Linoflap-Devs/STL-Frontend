@@ -1,13 +1,13 @@
 import React, { Suspense, useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import { Box, Typography } from "@mui/material";
-import ManagerTable, { User } from "~/components/user/UsersTable";
 import CreateManager from "~/components/user/CreateUser";
 import UpdateManager from "~/components/user/UpdateUser";
 import { fetchUsers } from "~/utils/api/users";
 import { fetchOperators } from "~/utils/api/operators";
 import dynamic from "next/dynamic";
 import dayjs from "dayjs";
+import UsersTablePage from "~/components/user/UsersTable";
 
 const UsersSkeletonPage = dynamic(() =>
   import("~/components/user/UsersSkeleton").then((mod) => ({
@@ -18,6 +18,21 @@ const UsersSkeletonPage = dynamic(() =>
 const UserDashboardPage = React.lazy(
   () => import("~/components/user/UsersDashboard")
 );
+
+export interface User {
+  UserId: number | null;
+  firstName: string;
+  lastName: string;
+  phoneNumber: string;
+  email: string;
+  suffix: string;
+  Status?: any;
+  remarks?: string;
+  OperatorId?: number | null;
+  OperatorName?: any;
+  LastUpdatedDate?: string | null;
+  [key: string]: any;
+}
 
 const roleMap: Record<string, { label: string; roleId: number }> = {
   managers: { label: "Small Town Lottery Manager", roleId: 2 },
@@ -34,6 +49,7 @@ const UsersPage = () => {
   const [selectedManager, setSelectedManager] = useState<User | null>(null);
   const [refresh, setRefresh] = useState(false);
   const [operators, setOperators] = useState<any[]>([]);
+  const [loading, setLoading] = useState(false);
 
   // Determine the configuration for the role based on the `role` string
   const roleConfig =
@@ -42,9 +58,15 @@ const UsersPage = () => {
   // Extract the `roleId` from the `roleConfig` if available
   const roleId = roleConfig?.roleId;
 
+  const fallback = (value: any, defaultValue: string | null) => {
+    return value !== null && value !== undefined ? value : defaultValue;
+  };
+
   // fetching of data
   const loadData = async () => {
     if (!roleId) return;
+
+    setLoading(true); // Start loading
 
     try {
       const [userResponse, operatorResponse] = await Promise.all([
@@ -64,16 +86,16 @@ const UsersPage = () => {
         const filteredUsers = userResponse.data
           .filter((user: any) => user.UserTypeId === roleId)
           .map((user: any) => ({
-            userId: user.UserId,
-            FirstName: user.FirstName ?? "N/A",
-            LastName: user.LastName ?? "N/A",
-            Suffix: user.Suffix ?? "",
-            Email: user.Email ?? "N/A",
-            DateOfRegistration: user.DateOfRegistration ?? "N/A",
-            CreatedBy: user.CreatedBy ?? "N/A",
-            OperatorDetails: operatorMap[user.OperatorId] ?? null,
-            LastLogin: user.LastLogin ?? "N/A",
-            LastTokenRefresh: user.LastTokenRefresh ?? "N/A",
+            userId: fallback(user.UserId, null),
+            FirstName: fallback(user.FirstName, "N/A"),
+            LastName: fallback(user.LastName, "N/A"),
+            Suffix: fallback(user.Suffix, ""),
+            Email: fallback(user.Email, "N/A"),
+            DateOfRegistration: fallback(user.DateOfRegistration, "N/A"),
+            CreatedBy: fallback(user.CreatedBy, "N/A"),
+            OperatorDetails: fallback(operatorMap[user.OperatorId], null),
+            LastLogin: fallback(user.LastLogin, "N/A"),
+            LastTokenRefresh: fallback(user.LastTokenRefresh, "N/A"),
           }));
 
         setUsers(filteredUsers);
@@ -81,6 +103,8 @@ const UsersPage = () => {
       }
     } catch (error) {
       console.error("Error fetching users/operators:", error);
+    } finally {
+      setLoading(false); // Finish loading regardless of success/failure
     }
   };
 
@@ -161,58 +185,66 @@ const UsersPage = () => {
     );
   }
 
+  if (loading) {
+    return <UsersSkeletonPage />;
+  }
+
   return (
     <Suspense fallback={<UsersSkeletonPage />}>
-      <div className="space-y-4">
-        <div className="flex justify-between items-center my-2">
-          <h4 className="font-bold text-4xl">{roleConfig?.label}</h4>
-        </div>
+      <React.Fragment>
+        <div className="space-y-4">
+          <div className="flex justify-between items-center my-2">
+            <h4 className="font-bold text-4xl">{roleConfig?.label}</h4>
+          </div>
 
-        {/* User Dashboard Page */}
-        <div>
-          <UserDashboardPage
-            roleId={roleId}
-            getUserStatus={getUserStatus}
-            users={users}
-            sevenDaysAgo={sevenDaysAgo}
-          />
-        </div>
+          {/* User Dashboard Page */}
+          <div>
+            <UserDashboardPage
+              roleId={roleId}
+              getUserStatus={getUserStatus}
+              users={users}
+              sevenDaysAgo={sevenDaysAgo}
+            />
+          </div>
 
-        {/* Manager Table Section */}
-        <div>
-          <ManagerTable
-            onCreate={handleUserCreate}
-            onEdit={handleUserEdit}
-            managers={users}
-            onDelete={handleDeleteManager}
+          {/* Manager Table Section */}
+          <div>
+            <UsersTablePage
+              onCreate={handleUserCreate}
+              onEdit={handleUserEdit}
+              users={users}
+              onDelete={handleDeleteManager}
+              onSubmit={handleSubmitUser}
+              getUserStatus={getUserStatus}
+              sevenDaysAgo={sevenDaysAgo}
+            />
+          </div>
+
+          {/* Create Manager Modal */}
+          <CreateManager
+            open={isModalOpen}
+            onClose={() => setModalOpen(false)}
             onSubmit={handleSubmitUser}
-            getUserStatus={getUserStatus}
-            sevenDaysAgo={sevenDaysAgo}
+            userData={selectedUser}
+            operators={operators}
           />
+
+          {/* Update Manager Modal */}
+          {isUpdateModalOpen && (
+            <UpdateManager
+              open={isUpdateModalOpen}
+              onClose={closeUpdateModal}
+              onSubmit={handleSaveUpdatedUser}
+              users={selectedManager}
+              getUserStatus={getUserStatus}
+              sevenDaysAgo={sevenDaysAgo}
+              fallback={(value, defaultValue) =>
+                value != null ? value : defaultValue
+              }
+            />
+          )}
         </div>
-
-        {/* Create Manager Modal */}
-        <CreateManager
-          open={isModalOpen}
-          onClose={() => setModalOpen(false)}
-          onSubmit={handleSubmitUser}
-          userData={selectedUser}
-          //managers={users}
-          operators={operators}
-        />
-
-        {/* Update Manager Modal */}
-        {isUpdateModalOpen && (
-          <UpdateManager
-            open={isUpdateModalOpen}
-            onClose={closeUpdateModal}
-            onSubmit={handleSaveUpdatedUser}
-            manager={selectedManager}
-            getUserStatus={getUserStatus}
-            sevenDaysAgo={sevenDaysAgo}
-          />
-        )}
-      </div>
+      </React.Fragment>
     </Suspense>
   );
 };

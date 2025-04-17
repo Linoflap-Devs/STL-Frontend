@@ -1,33 +1,28 @@
-import axiosInstance from '../axiosInstance';
-import axios from 'axios';
+import axiosInstance from "../axiosInstance";
+import axios from "axios";
 
-export const loginUser = async (payload: { email: string; password: string }, router: any) => {
+export const loginUser = async (
+  payload: { email: string; password: string },
+  router: any
+) => {
   try {
-    const response = await axiosInstance.post('/auth/login', payload, { withCredentials: true });
+    await axiosInstance.post("/auth/login", payload, {
+      withCredentials: true, // cookies ONLY.
+    });
 
-    const apiData = response.data.data;
-    const token = apiData?.token;
-
-    if (!token) {
-      throw new Error("Access token is missing from response!");
-    }
     router.push("/dashboard");
-
-    return {
-      token,
-      refreshToken: apiData.refresh,
-    };
   } catch (error: unknown) {
     if (axios.isAxiosError(error) && error.response) {
-      const errorMessage = error.response?.data?.message || "Login failed. Please check your credentials.";
+      const errorMessage =
+        error.response?.data?.message ||
+        "Login failed. Please check your credentials.";
       throw new Error(errorMessage);
     } else if (error instanceof Error) {
-      throw new Error(error.message || "An unexpected error occurred during login.");
+      throw new Error(
+        error.message || "An unexpected error occurred during login."
+      );
     } else {
       throw new Error("An unexpected error occurred.");
     }
   }
 };
-
-
-

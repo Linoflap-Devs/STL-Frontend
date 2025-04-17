@@ -1,15 +1,7 @@
 import React, { Key, useEffect, useState } from "react";
 import {
-  Box,
-  TextField,
-  Dialog,
-  InputAdornment,
-  DialogTitle,
-  DialogContent,
   IconButton,
-  Typography,
   Table,
-  TableContainer,
   TableHead,
   TableCell,
   TableRow,
@@ -25,8 +17,8 @@ import {
   handleChangeRowsPerPage,
 } from "../../utils/sortPaginationSearch";
 import CloseIcon from "@mui/icons-material/Close";
-import SearchIcon from "@mui/icons-material/Search";
 import { editLogUser } from "~/utils/api/users";
+import { Search } from "@mui/icons-material";
 
 export interface EditLogFields {
   EditLogDetailsId: Key | null | undefined;
@@ -55,6 +47,7 @@ const EditLogModalPage: React.FC<EditLogModalProps> = ({
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
   const [searchQuery, setSearchQuery] = useState<string>("");
+
   const [sortConfig, setSortConfig] = useState<{
     key: keyof EditLogFields;
     direction: "asc" | "desc";
@@ -62,7 +55,9 @@ const EditLogModalPage: React.FC<EditLogModalProps> = ({
     key: "CreatedAt",
     direction: "asc",
   });
+
   const sortedData = sortData(logData, sortConfig);
+
   const filteredData = sortedData.filter((item) => {
     const searchLower = searchQuery?.toLowerCase() || "";
     return (
@@ -110,180 +105,156 @@ const EditLogModalPage: React.FC<EditLogModalProps> = ({
   };
 
   return (
-    <Dialog
-      open={open}
-      onClose={onClose}
-      fullWidth
-      PaperProps={{
-        sx: {
-          width: "100%",
-          maxWidth: {
-            xs: "90%",
-            sm: "80%",
-            md: "600px",
-            lg: "650px",
-            xl: "1080px",
-          },
-        },
-      }}
-    >
-      <DialogTitle>
-        {userId ? (
-          <>
-            <Typography sx={{ fontSize: "32px", fontWeight: "bold" }}>
-              {logData.length > 0 && logData[0].User
-                ? logData[0].User
-                : "Unknown User"}
-            </Typography>
-            <Typography variant="subtitle2" color="textSecondary">
-              Manager
-            </Typography>
-          </>
-        ) : (
-          "No User Information"
-        )}
-        <IconButton
-          aria-label="close"
-          onClick={onClose}
-          sx={{
-            backgroundColor: "#171717",
-            position: "absolute",
-            right: 30,
-            top: 30,
-          }}
-        >
-          <CloseIcon />
-        </IconButton>
-      </DialogTitle>
+    <React.Fragment>
+      {open && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-75 backdrop-blur-sm">
+          <div className="bg-[#1f1f1f] text-white w-full max-w-4xl mx-auto rounded-lg shadow-lg p-7 pt-9 relative overflow-hidden max-h-[90vh]">
+            <div className="mb-4">
+              {userId ? (
+                <>
+                  <h2 className="text-3xl font-bold">
+                    {logData?.[0]?.User ?? "Unknown User"}
+                  </h2>
+                  <p className="text-sm text-gray-400">Manager</p>
+                </>
+              ) : (
+                <p className="text-xl">No User Information</p>
+              )}
 
-      <DialogContent>
-        <div className="bg-[#171717] rounded-lg p-4">
-          {loading ? (
-            <p className="text-white">Loading...</p>
-          ) : error ? (
-            <p className="text-red-500">{error}</p>
-          ) : (
-            <TableContainer>
-              <div className="flex items-center pt-2 mb-4">
-                <TextField
-                  variant="outlined"
-                  placeholder="Search"
-                  value={searchQuery}
-                  onChange={handleSearchChange}
-                  sx={{
-                    width: "350px",
-                    "& .MuiOutlinedInput-root": {
-                      padding: "9px 14px",
-                      backgroundColor: "transparent",
-                    },
-                    "& .MuiOutlinedInput-input": {
-                      padding: "0.5px 0",
-                    },
-                  }}
-                  InputProps={{
-                    startAdornment: (
-                      <InputAdornment position="start">
-                        <SearchIcon />
-                      </InputAdornment>
-                    ),
-                  }}
-                />
-              </div>
+              <IconButton
+                aria-label="close"
+                onClick={onClose}
+                sx={{
+                  backgroundColor: "#171717",
+                  position: "absolute",
+                  right: 30,
+                  top: 30,
+                }}
+              >
+                <CloseIcon />
+              </IconButton>
+            </div>
 
-              <Table size="small">
-                <TableHead>
-                  <TableRow>
-                    <SortableTableCell
-                      label="Edited By"
-                      sortKey="EditedBy"
-                      sortConfig={sortConfig}
-                      onSort={() =>
-                        handleSort("EditedBy", sortConfig, setSortConfig)
-                      }
-                    />
-                    <SortableTableCell
-                      label="Date"
-                      sortKey="CreatedAt"
-                      sortConfig={sortConfig}
-                      onSort={() =>
-                        handleSort("CreatedAt", sortConfig, setSortConfig)
-                      }
-                    />
-                    <SortableTableCell
-                      label="Old Value"
-                      sortKey="OldValue"
-                      sortConfig={sortConfig}
-                      onSort={() =>
-                        handleSort("OldValue", sortConfig, setSortConfig)
-                      }
-                    />
-                    <SortableTableCell
-                      label="New Value"
-                      sortKey="NewValue"
-                      sortConfig={sortConfig}
-                      onSort={() =>
-                        handleSort("NewValue", sortConfig, setSortConfig)
-                      }
-                    />
-                    <SortableTableCell
-                      label="Remarks"
-                      sortKey="Remarks"
-                      sortConfig={sortConfig}
-                      onSort={() =>
-                        handleSort("Remarks", sortConfig, setSortConfig)
-                      }
-                    />
-                  </TableRow>
-                </TableHead>
+            {/* Content */}
+            <div className="bg-[#171717] rounded-lg p-4 overflow-y-auto max-h-[65vh]">
+              {loading ? (
+                <p className="text-white">Loading...</p>
+              ) : error ? (
+                <p className="text-red-500">{error}</p>
+              ) : (
+                <>
+                  {/* Search */}
+                  <div className="flex items-center gap-2 mb-4">
+                    <div className="relative w-full max-w-sm">
+                      <Search className="absolute left-3 top-2.5 text-gray-400 w-5 h-5" />
+                      <input
+                        type="text"
+                        value={searchQuery}
+                        onChange={handleSearchChange}
+                        placeholder="Search"
+                        className="w-full bg-transparent border border-gray-600 pl-10 pr-4 py-2 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-gray-400"
+                      />
+                    </div>
+                  </div>
 
-                <TableBody>
-                  {filteredData.length === 0 ? (
-                    <TableRow>
-                      <TableCell colSpan={5} align="center">
-                        <div className="flex flex-col items-center py-5">
-                          <EditIcon sx={{ fontSize: 50, color: "gray" }} />
-                          <p className="text-gray-400 mt-4 text-lg font-medium">
-                            No Edit Log found
-                          </p>
-                        </div>
-                      </TableCell>
-                    </TableRow>
-                  ) : (
-                    paginatedData.map((log) => (
-                      <TableRow key={log.EditLogDetailsId}>
-                        <TableCell>{log.EditedBy}</TableCell>
-                        <TableCell>
-                          {new Date(log.CreatedAt).toLocaleString()}
-                        </TableCell>
-                        <TableCell>{log.OldValue || "N/A"}</TableCell>
-                        <TableCell>{log.NewValue || "N/A"}</TableCell>
-                        <TableCell>{log.Remarks || "No remarks"}</TableCell>
+                  {/* Table */}
+                  <Table size="small">
+                    <TableHead>
+                      <TableRow>
+                        <SortableTableCell
+                          label="Edited By"
+                          sortKey="EditedBy"
+                          sortConfig={sortConfig}
+                          onSort={() =>
+                            handleSort("EditedBy", sortConfig, setSortConfig)
+                          }
+                        />
+                        <SortableTableCell
+                          label="Date"
+                          sortKey="CreatedAt"
+                          sortConfig={sortConfig}
+                          onSort={() =>
+                            handleSort("CreatedAt", sortConfig, setSortConfig)
+                          }
+                        />
+                        <SortableTableCell
+                          label="Old Value"
+                          sortKey="OldValue"
+                          sortConfig={sortConfig}
+                          onSort={() =>
+                            handleSort("OldValue", sortConfig, setSortConfig)
+                          }
+                        />
+                        <SortableTableCell
+                          label="New Value"
+                          sortKey="NewValue"
+                          sortConfig={sortConfig}
+                          onSort={() =>
+                            handleSort("NewValue", sortConfig, setSortConfig)
+                          }
+                        />
+                        <SortableTableCell
+                          label="Remarks"
+                          sortKey="Remarks"
+                          sortConfig={sortConfig}
+                          onSort={() =>
+                            handleSort("Remarks", sortConfig, setSortConfig)
+                          }
+                        />
                       </TableRow>
-                    ))
-                  )}
-                </TableBody>
-              </Table>
+                    </TableHead>
 
-              <div>
-                <TablePagination
-                  rowsPerPageOptions={[10, 25, 50, 100]}
-                  component="div"
-                  count={filteredData.length}
-                  rowsPerPage={rowsPerPage}
-                  page={page}
-                  onPageChange={(event, newPage) =>
-                    handleChangePage(event, newPage, setPage)
-                  }
-                  onRowsPerPageChange={(event) =>
-                    handleChangeRowsPerPage(event, setRowsPerPage)
-                  }
-                />
-              </div>
-            </TableContainer>
-          )}
+                    <TableBody>
+                      {filteredData.length === 0 ? (
+                        <TableRow>
+                          <TableCell colSpan={5} align="center">
+                            <div className="flex flex-col items-center py-5">
+                              <EditIcon sx={{ fontSize: 50, color: "gray" }} />
+                              <p className="text-gray-400 mt-4 text-lg font-medium">
+                                No Edit Log found
+                              </p>
+                            </div>
+                          </TableCell>
+                        </TableRow>
+                      ) : (
+                        paginatedData.map((log) => (
+                          <TableRow key={log.EditLogDetailsId}>
+                            <TableCell>{log.EditedBy}</TableCell>
+                            <TableCell>
+                              {new Date(log.CreatedAt).toLocaleString()}
+                            </TableCell>
+                            <TableCell>{log.OldValue || "N/A"}</TableCell>
+                            <TableCell>{log.NewValue || "N/A"}</TableCell>
+                            <TableCell>{log.Remarks || "No remarks"}</TableCell>
+                          </TableRow>
+                        ))
+                      )}
+                    </TableBody>
+                  </Table>
+
+                  {/* Pagination */}
+                  <div>
+                    <TablePagination
+                      rowsPerPageOptions={[10, 25, 50, 100]}
+                      component="div"
+                      count={filteredData.length}
+                      rowsPerPage={rowsPerPage}
+                      page={page}
+                      onPageChange={(event, newPage) =>
+                        handleChangePage(event, newPage, setPage)
+                      }
+                      onRowsPerPageChange={(event) =>
+                        handleChangeRowsPerPage(event, setRowsPerPage)
+                      }
+                    />
+                  </div>
+                </>
+              )}
+            </div>
+          </div>
         </div>
-      </DialogContent>
-    </Dialog>
+      )}
+    </React.Fragment>
   );
 };
 

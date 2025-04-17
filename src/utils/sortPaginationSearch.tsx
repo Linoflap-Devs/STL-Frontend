@@ -2,15 +2,16 @@ import React, { useState } from "react";
 import TableCell from "@mui/material/TableCell";
 import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
-import ManagerTable, { User } from "~/components/user/UsersTable";
-import EditLogModalPage, { EditLogFields } from "~/components/user/EditLogModal";
 import TextField from "@mui/material/TextField";
-import { filterStyles } from "../styles/theme";
 import { Tooltip } from "@mui/material";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import dayjs, { Dayjs } from "dayjs";
+import { User } from "~/pages/Protected/users/[role]";
+import { filterStyles } from "~/styles/theme";
+import { EditLogFields } from "~/components/user/EditLogModal";
+import { userAgent } from "next/server";
 
 interface SortableTableCellProps {
   label: string;
@@ -22,7 +23,7 @@ interface SortableTableCellProps {
   onFilterChange?: (value: string | Dayjs | null) => void;
 }
 
-// Component
+// Component for sortable table cell
 export const SortableTableCell: React.FC<SortableTableCellProps> = ({
   label,
   sortKey,
@@ -36,19 +37,18 @@ export const SortableTableCell: React.FC<SortableTableCellProps> = ({
     onSort(sortKey);
   };
 
-  // Text input handler
   const handleTextChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    if (onFilterChange) {
-      onFilterChange(event.target.value);
-    }
+    onFilterChange && onFilterChange(event.target.value);
   };
 
-  // DatePicker handler (Format: "YYYY/MM/DD")
   const handleDateChange = (date: Dayjs | null) => {
-    if (onFilterChange) {
-      onFilterChange(date ? date.format("YYYY-MM-DD") : ""); // Match filtering format
-    }
-  };  
+    onFilterChange && onFilterChange(date ? date.format("YYYY-MM-DD") : "");
+  };
+
+  // Log values before rendering the JSX
+  console.log('Sorting Key:', sortConfig.key);  // Log the current sorting key
+  console.log('Sort Key from Props:', sortKey);  // Log the sortKey passed to the component
+  console.log('Current Sort Direction:', sortConfig.direction);  // Log the current sorting direction
 
   return (
     <LocalizationProvider dateAdapter={AdapterDayjs}>
@@ -73,7 +73,7 @@ export const SortableTableCell: React.FC<SortableTableCellProps> = ({
               <DatePicker
                 value={filterValue ? dayjs(filterValue, "YYYY/MM/DD") : null}
                 onChange={handleDateChange}
-                format="YYYY/MM/DD" // Set display format
+                format="YYYY/MM/DD"
                 slotProps={{
                   textField: {
                     variant: "filled",
@@ -103,31 +103,41 @@ export const SortableTableCell: React.FC<SortableTableCellProps> = ({
   );
 };
 
-// Sorting function
+// Function to get the nested value
+const getNestedValue = (obj: any, path: string): any => {
+  return path.split('.').reduce((acc, part) => acc && acc[part], obj);
+};
+
 export function sortData<T extends User | EditLogFields>(
   data: T[],
   sortConfig: { key: keyof T; direction: "asc" | "desc" }
 ): T[] {
+  console.log("Sorting data with config:", sortConfig);
+
   return [...data].sort((a, b) => {
-    const valueA = a[sortConfig.key];
-    const valueB = b[sortConfig.key];
+    const valueA = getNestedValue(a, sortConfig.key as string);
+    const valueB = getNestedValue(b, sortConfig.key as string);
 
-    // Ensure DateOfRegistration or CreatedAt is parsed correctly
-    if (sortConfig.key === "DateOfRegistration" || sortConfig.key === "CreatedAt") {
-      const dateA = dayjs(valueA as string).valueOf(); // Convert to timestamp
-      const dateB = dayjs(valueB as string).valueOf(); // Convert to timestamp
+    console.log("Comparing values:", valueA, valueB);
 
-      return sortConfig.direction === "asc" ? dateA - dateB : dateB - dateA;
+    const isValidDate = (value: any): value is string => {
+      return typeof value === "string" || value instanceof Date || dayjs(value).isValid();
+    };
+
+    if (["DateOfRegistration", "CreatedAt"].includes(sortConfig.key as string)) {
+      if (isValidDate(valueA) && isValidDate(valueB)) {
+        const dateA = dayjs(valueA).valueOf();
+        const dateB = dayjs(valueB).valueOf();
+        return sortConfig.direction === "asc" ? dateA - dateB : dateB - dateA;
+      }
     }
 
-    // If both are strings, compare lexicographically
     if (typeof valueA === "string" && typeof valueB === "string") {
       return sortConfig.direction === "asc"
         ? valueA.localeCompare(valueB)
         : valueB.localeCompare(valueA);
     }
 
-    // If both are numbers, compare numerically
     if (typeof valueA === "number" && typeof valueB === "number") {
       return sortConfig.direction === "asc" ? valueA - valueB : valueB - valueA;
     }
@@ -136,19 +146,55 @@ export function sortData<T extends User | EditLogFields>(
   });
 }
 
-// Handle sorting
+// handle sort function
 export const handleSort = <T extends keyof (User & EditLogFields)>(
   sortKey: T,
   sortConfig: { key: T; direction: "asc" | "desc" },
   setSortConfig: React.Dispatch<React.SetStateAction<{ key: T; direction: "asc" | "desc" }>>
 ) => {
-  let direction: "asc" | "desc" = "asc";
-
-  if (sortConfig.key === sortKey && sortConfig.direction === "asc") {
-      direction = "desc";
-  }
-
+  const direction = sortConfig.key === sortKey && sortConfig.direction === "asc" ? "desc" : "asc";
   setSortConfig({ key: sortKey, direction });
+};
+
+// filtering logic
+export const filterData = (
+  data: User[],
+  filters: { [key: string]: string },
+  filterKeys: string[]
+) => {
+  return data.filter((item) => {
+    const searchValue = filters.searchQuery?.toLowerCase() || "";
+    const filterItem = (key: string, value: string | undefined) => {
+      return value && value.toLowerCase().includes(searchValue);
+    };
+
+    if (searchValue && !Object.values(item).some((val) => filterItem("", String(val)))) {
+      const fullName = `${item.FirstName || ""} ${item.LastName || ""}`.toLowerCase();
+      const createdByFullName = `${item.CreatedByFirstName || ""} ${item.CreatedByLastName || ""}`.toLowerCase();
+      const operatorName = item.OperatorDetails?.OperatorName?.toLowerCase() || "";
+
+      if (![fullName, createdByFullName, operatorName].some((val) => val.includes(searchValue))) {
+        return false;
+      }
+    }
+
+    return filterKeys.every((key) => {
+      const filterValue = filters[key] || "";
+      const itemValue = item[key as keyof User] || "";
+
+      if (key === "DateOfRegistration") {
+        const itemDate = dayjs(item[key]).format("YYYY-MM-DD");
+        const filterDate = dayjs(filters[key]).format("YYYY-MM-DD");
+        return filterValue ? itemDate === filterDate : true;
+      }
+
+      if (key === "CreatedBy") {
+        return item.CreatedBy?.toLowerCase().includes(filterValue.toLowerCase());
+      }
+
+      return filterValue ? itemValue.toString().toLowerCase().includes(filterValue.toLowerCase()) : true;
+    });
+  });
 };
 
 // Handle page change
@@ -169,68 +215,3 @@ export const handleChangeRowsPerPage = (
   setRowsPerPage(newValue);
 };
 
-// Search and Filter Function
-export const filterData = (
-  data: User[], // Accept only User[]
-  filters: { [key: string]: string },
-  filterKeys: string[]
-) => {
-  return data.filter((item) => {
-    const searchValue = filters.searchQuery?.toLowerCase() || "";
-    if (searchValue) {
-      const fullName = `${item.FirstName || ""} ${item.LastName || ""}`.toLowerCase();
-      const createdByFullName = `${item.CreatedByFirstName || ""} ${item.CreatedByLastName || ""}`.toLowerCase();
-      const operatorName = item.OperatorDetails?.OperatorName?.toLowerCase() || "";
-      const matches =
-        Object.values(item).some(
-          (val) => typeof val === "string" && val.toLowerCase().includes(searchValue)
-        ) ||
-        fullName.includes(searchValue) ||
-        createdByFullName.includes(searchValue) ||
-        operatorName.includes(searchValue);
-
-      if (!matches) {
-        return false;
-      }
-    }
-
-    // Handle individual filters
-    return filterKeys.every((key) => {
-      const filterValue = filters[key] || "";
-
-      if (key === "DateOfRegistration" && item[key]) {
-        const itemDate = dayjs(item[key]).format("YYYY-MM-DD");
-        const filterDate = dayjs(filters[key]).format("YYYY-MM-DD");
-
-        if (filters[key]) {
-          return itemDate === filterDate;
-        }
-      }
-
-      // Handle Status filtering (Active/Inactive)
-      if (key === "Status" && filterValue) {
-        const normalizedFilter = filterValue.toLowerCase();
-        if (normalizedFilter === "active") {
-          return item.IsDeleted === 0;
-        } else if (normalizedFilter === "inactive") {
-          return item.IsDeleted !== 0;
-        }
-      }
-
-      // Handle CreatedBy filtering
-      if (key === "CreatedBy") {
-        return item.CreatedBy?.toLowerCase().includes(filterValue.toLowerCase());
-      }
-
-      // Default filtering for other fields
-      const itemValue = item[key];
-      if (filterValue) {
-        if (!itemValue || !String(itemValue).toLowerCase().includes(filterValue.toLowerCase())) {
-          return false;
-        }
-      }
-
-      return true;
-    });
-  });
-};

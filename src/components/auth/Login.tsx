@@ -73,10 +73,7 @@ const LoginPage = () => {
       className="flex h-screen bg-cover bg-center bg-no-repeat relative"
       style={{ backgroundImage: `url(${LoginSectionData.image2})` }}
     >
-      {/* Overlay */}
       <div className="absolute inset-0 bg-[#242424D9] z-10" />
-
-      {/* Content */}
       <div className="relative z-20 flex w-full justify-center items-center">
         <div className="w-[90%] sm:w-[60%] md:w-[40%] max-w-[500px] p-10 bg-[#181A1B] rounded-lg flex flex-col items-center justify-center">
           {/* Logo + Title */}
@@ -116,7 +113,7 @@ const LoginPage = () => {
                   onChange={(e) =>
                     setCredentials({ ...credentials, email: e.target.value })
                   }
-                  className={`w-full px-3 py-2 rounded border text-sm bg-[#1F2123] text-white focus:outline-none ${
+                  className={`w-full px-3 py-2 rounded border text-sm bg-[#1F2123] text-white focus:ring-2 focus:ring-gray-100 ${
                     errors.email || errors.errors || errors.general
                       ? "border-red-400"
                       : "border-gray-600"
@@ -151,7 +148,7 @@ const LoginPage = () => {
                         password: e.target.value,
                       })
                     }
-                    className={`w-full px-3 py-2 pr-10 rounded border text-sm bg-[#1F2123] text-white focus:outline-none ${
+                    className={`w-full px-3 py-2 pr-10 rounded border text-sm bg-[#1F2123] text-white focus:ring-gray-100 ${
                       errors.password || errors.errors || errors.general
                         ? "border-red-400"
                         : "border-gray-600"
@@ -160,7 +157,7 @@ const LoginPage = () => {
                   <button
                     type="button"
                     onClick={handleTogglePasswordVisibility}
-                    className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 text-lg focus:outline-none"
+                    className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 text-lg focus:ring-gray-100"
                   >
                     {showPassword ? <VisibilityOff /> : <Visibility />}
                   </button>
