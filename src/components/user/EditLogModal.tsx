@@ -232,7 +232,7 @@ const EditLogModalPage: React.FC<EditLogModalProps> = ({
                     </TableBody>
                   </Table>
 
-                  {/* Pagination */}
+                  {/* MUI Pagination */}
                   <div>
                     <TablePagination
                       rowsPerPageOptions={[10, 25, 50, 100]}

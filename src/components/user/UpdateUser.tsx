@@ -84,7 +84,7 @@ const UpdateManager: React.FC<UpdateManagerProps> = React.memo(
     const fetchUserDetails = async () => {
       if (!users?.userId) return;
       setLoading(true); // Start loading
-      
+
       try {
         const [userRes, operatorRes] = await Promise.all([
           fetchUserById(users.userId),
@@ -95,16 +95,16 @@ const UpdateManager: React.FC<UpdateManagerProps> = React.memo(
 
         const user = userRes?.data ?? {};
         const operator = operatorRes ?? {};
-    
+
         const cities = operator.Cities?.length
           ? operator.Cities.map((c: any) => c.CityName).join(", ")
           : "No cities available";
-    
+
         const userStatus = getUserStatus(user, sevenDaysAgo);
-    
+
         setStatus(userStatus);
         setAreaOfOperations(cities);
-    
+
         const updatedUser = {
           UserId: fallback(user.UserId, null),
           firstName: fallback(user.FirstName, "N/A"),
@@ -123,7 +123,7 @@ const UpdateManager: React.FC<UpdateManagerProps> = React.memo(
           LastUpdatedBy: fallback(user.LastUpdatedBy, "N/A"),
           LastUpdatedDate: fallback(user.LastUpdatedDate, "N/A"),
         };
-    
+
         setUser(updatedUser);
         console.log("Updated user:", updatedUser);
       } catch (err) {
@@ -132,14 +132,14 @@ const UpdateManager: React.FC<UpdateManagerProps> = React.memo(
         setLoading(false); // Finish loading regardless of success/failure
       }
     };
-    
+
     // Fetching of data using useEffect
     useEffect(() => {
-      if (!open || !users?.userId) return;  // Early exit if the conditions aren't met
-    
+      if (!open || !users?.userId) return;
+
       fetchUserDetails();
     }, [open, users?.userId, sevenDaysAgo, getUserStatus]);
-    
+
     // disable functions
     const handleDisable = () => {
       setIsViewMode((prev) => !prev);
@@ -291,7 +291,8 @@ const UpdateManager: React.FC<UpdateManagerProps> = React.memo(
                     <Select
                       labelId="status-label"
                       id="status"
-                      defaultValue={status}
+                      value={status 
+                        || (isLoading ? "Loading..." : "")}
                       onChange={(e) => setStatus(e.target.value)}
                       label="Status"
                       disabled={isDisabled}
@@ -343,7 +344,8 @@ const UpdateManager: React.FC<UpdateManagerProps> = React.memo(
                                 id="lastName"
                                 name="lastName"
                                 placeholder="Enter Last Name"
-                                value={user?.lastName || ""}
+                                value={user?.lastName 
+                                  || (isLoading ? "Loading..." : "")}
                                 onChange={handleManagerChange}
                                 label="Last Name"
                                 disabled
@@ -361,7 +363,7 @@ const UpdateManager: React.FC<UpdateManagerProps> = React.memo(
                                 id="suffix"
                                 name="suffix"
                                 placeholder="Enter Suffix"
-                                value={user.suffix || "N/A"}
+                                value={user?.suffix || (isLoading ? "Loading..." : "")}
                                 onChange={handleManagerChange}
                                 label="Suffix"
                                 disabled
@@ -381,7 +383,8 @@ const UpdateManager: React.FC<UpdateManagerProps> = React.memo(
                               id={key}
                               name={key}
                               placeholder={`Enter ${formatKey(key)}`}
-                              value={user[key as keyof typeof user] || ""}
+                              value={user[key as keyof typeof user] || 
+                                (isLoading ? "Loading..." : "")}
                               onChange={handleManagerChange}
                               label={formatKey(key)}
                               disabled={
@@ -480,15 +483,16 @@ const UpdateManager: React.FC<UpdateManagerProps> = React.memo(
                           name={key}
                           placeholder={`Enter ${formatKey(key)}`}
                           value={
-                            key === "DateOfOperation"
-                              ? user.LastUpdatedDate &&
-                                !isNaN(new Date(user.LastUpdatedDate).getTime())
-                                ? new Date(user.LastUpdatedDate)
+                            isLoading ? "Loading..."
+                              : key === "DateOfOperation"
+                                ? user.LastUpdatedDate &&
+                                  !isNaN(new Date(user.LastUpdatedDate).getTime())
+                                  ? new Date(user.LastUpdatedDate)
                                     .toISOString()
                                     .split("T")[0]
                                     .replace(/-/g, "/")
+                                  : user[key as keyof typeof user] || ""
                                 : user[key as keyof typeof user] || ""
-                              : user[key as keyof typeof user] || ""
                           }
                           onChange={handleManagerChange}
                           label={formatKey(key)}
@@ -515,7 +519,7 @@ const UpdateManager: React.FC<UpdateManagerProps> = React.memo(
                       label="Area of Operations"
                       multiline
                       minRows={4}
-                      value={areaOfOperations}
+                      value={areaOfOperations || (isLoading ? "Loading..." : "")}
                       variant="outlined"
                       disabled
                       size="small"
