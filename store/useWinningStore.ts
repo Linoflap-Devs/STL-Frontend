@@ -11,8 +11,8 @@ export type categoryType =
 
   type dateType = 'Specific Date' | 'Date Duration';
 
-interface BettingStore {
-  loading: boolean,
+interface WinningStore {
+  loading: boolean;
   // For Submenus, Date type extracted from URL params
   activeGameType: string;
   categoryFilter: categoryType;
@@ -23,7 +23,6 @@ interface BettingStore {
   // If Filtered by Date Duration
   firstDateDuration: Date | null;
   secondDateDuration: Date | null;
-
   // For Submenus, Date type extracted from URL params
   setGameType: (gameType: string) => void;
   setCategoryFilter: (category: categoryType) => void;
@@ -38,7 +37,7 @@ interface BettingStore {
   resetFilters: () => void;
 }
 
-export const useBettingStore = create<BettingStore>((set) => ({
+export const useWinningStore = create<WinningStore>((set) => ({
   loading: false,
   activeGameType: '',
   categoryFilter: 'Total Bettors and Bet',
@@ -48,8 +47,10 @@ export const useBettingStore = create<BettingStore>((set) => ({
   firstDateDuration: null,
   secondDateDuration: null,
   
-  setLoading: () => set((state)=> ({loading: !state.loading})),
+
+  setLoading: ()=> set((state)=> ({loading: !state.loading})),
   setGameType: (gameType) => set({ activeGameType: gameType }),
+
   setCategoryFilter: (category:categoryType) => set({ categoryFilter: category }),
   setDateFilter: (type:dateType) => set({ dateFilter: type }),
   setFirstDateSpecific: (date) => set({ firstDateSpecific: date }),
