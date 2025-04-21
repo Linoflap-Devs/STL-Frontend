@@ -126,12 +126,13 @@ const ChartBettorsvsBetsPlacedSummary = () => {
         borderRadius: "8px",
         paddingBottom: "2rem",
         width: "100%",
-        // display: "flex",
-        // justifyContent: "center",
-        // alignItems: "center"
       }}
     >
-      <Typography color="#FFFFFF" sx={{ fontSize: "16px" }}>
+      <Typography 
+      color="#FFFFFF"
+      sx={{ 
+        fontSize: "16px" 
+      }}>
         Today&apos;s Bettors and Total Bets
       </Typography>
       <CustomLegend />
@@ -142,11 +143,10 @@ const ChartBettorsvsBetsPlacedSummary = () => {
           display: "flex",
           flexDirection: "column",
           flexGrow: 1,
-        }}
+          }}
       >
         <BarChart
           height={300}
-          // width={{100%}}
           grid={{ vertical: true }}
           layout="horizontal"
           margin={{ left: 90, right: 20, top: 20, bottom: 40 }}

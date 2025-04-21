@@ -4,10 +4,10 @@ import { useRouter } from 'next/router';
 
 import DashboardCardsPage from "~/components/dashboard/DashboardCards";
 
-import WinningActivityToday from "~/components/winning-summary/WinningActivityTodayTable";
-import WinnersvsWinningsSummary from "~/components/winning-summary/WinnersvsWinningsChart";
+import TableWinningActivityToday from "~/components/winning-summary/WinningActivityTodayTable";
+import ChartWinnersvsWinningsSummary from "~/components/winning-summary/WinnersvsWinningsChart";
 import TableWinningSummary from "~/components/winning-summary/WinningSummaryTable";
-import WinnersSummary from "~/components/winning-summary/WinnersSummaryChart";
+import ChartWinnersSummary from "~/components/winning-summary/WinnerCountChart";
 
 interface WinningSummaryPageProps {
   GameCategory?: string;
@@ -31,13 +31,18 @@ const WinningSummaryPage: React.FC<WinningSummaryPageProps> = ({GameCategory = '
           <DashboardCardsPage />
         </Box>
         
-        <Box sx={{ display: "flex", justifyContent: "center", mt: 2 }}>
+        <Box 
+          sx={{ 
+            display: "flex", 
+            justifyContent: "center", 
+            mt: 2 
+            }}>
           <Grid container spacing={2} alignItems="stretch">
             {/* Column 1 (3 Cards) */}
             <Grid item xs={12} md={6}>
               <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
                 <Box sx={{ flex: 1 }}>
-                  <WinningActivityToday />
+                  <TableWinningActivityToday />
                 </Box>
               </Box>
             </Grid>
@@ -46,10 +51,10 @@ const WinningSummaryPage: React.FC<WinningSummaryPageProps> = ({GameCategory = '
             <Grid item xs={12} md={6}>
               <Box sx={{ display: "flex", flexDirection: "column", gap: 2, height: "100%" }}>
                 <Box sx={{ flex: 1 }}>
-                  <WinnersvsWinningsSummary />
+                  <ChartWinnersvsWinningsSummary />
                 </Box>
                 <Box sx={{ flex: 1 }}>
-                  <WinnersSummary />
+                  <ChartWinnersSummary />
                 </Box>
               </Box>
             </Grid>

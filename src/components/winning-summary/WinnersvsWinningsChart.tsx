@@ -17,11 +17,11 @@ const CustomLegend = () => (
           width: 14,
           height: 14,
           borderRadius: "50%",
-          backgroundColor: "#BB86FC",
+          backgroundColor: "#E5C7FF",
           mr: 1.5,
         }}
       />
-      <Typography color="white">Bettors</Typography>
+      <Typography color="white">Winners</Typography>
     </Box>
     <Box sx={{ display: "flex", alignItems: "center" }}>
       <Box
@@ -29,24 +29,24 @@ const CustomLegend = () => (
           width: 14,
           height: 14,
           borderRadius: "50%",
-          backgroundColor: "#5050A5",
+          backgroundColor: "#D2A7FF",
           mr: 1.5,
         }}
       />
-      <Typography color="white">Bets</Typography>
+      <Typography color="white">Winnings</Typography>
     </Box>
   </Stack>
 );
 
-const WinnersvsWinningsSummary = () => {
+const ChartWinnersvsWinningsSummary = () => {
   const [data, setData] = useState<
     { draw: string; bettors: number; bets: number }[]
   >([]);
-  const [loading, setLoading] = useState(false);
+  // const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     const fetchData = async () => {
-      setLoading(true);
+      // setLoading(true);
       try {
         const res = await fetchHistoricalSummary({}); // Add query params if needed
 
@@ -97,7 +97,7 @@ const WinnersvsWinningsSummary = () => {
           ];
 
           setData(formattedData);
-          setLoading(false);
+          // setLoading(false);
         }
       } catch (error) {
         console.log(
@@ -111,12 +111,12 @@ const WinnersvsWinningsSummary = () => {
     console.log(`Bettors vs Bets Placed Summary Data: ${data}`);
   }, []);
 
-  const maxX = Math.max(
-    70,
-    ...data.map((item) => item.bettors / 10000),
-    ...data.map((item) => item.bets / 100000)
-  );
-  const xAxisTicks = [0, 10, 20, 30, 40, 50, 60, 70];
+  // const maxX = Math.max(
+  //   70,
+  //   ...data.map((item) => item.bettors / 10000),
+  //   ...data.map((item) => item.bets / 100000)
+  // );
+  const xAxisTicks = [0, 1, 5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 55, 60, 65, 70, 75, 80, 85, 90, 95, 100]
 
   return (
     <Box
@@ -125,42 +125,56 @@ const WinnersvsWinningsSummary = () => {
         padding: "1rem",
         borderRadius: "8px",
         paddingBottom: "2rem",
+        width: "100%"
       }}
     >
-      <Typography color="#FFFFFF" sx={{ fontSize: "20px" }}>
-        <strong>Total Summary:</strong> Winners vs. Winnings
+      <Typography 
+        color="#FFFFFF" 
+        sx={{ 
+          fontSize: "16px" 
+        }}>
+        Today&apos;s Winners and Winnings
       </Typography>
       <CustomLegend />
-      <Box sx={{ height: 270 }}>
+
+      <Box 
+          sx={{
+            height: "100%",
+            display: "flex",
+            flexDirection: "column",
+            flexGrow: 1,
+            }}
+      >
         <BarChart
-          height={270}
+          height={300}
           grid={{ vertical: true }}
           layout="horizontal"
+          margin={{ left: 90, right: 20, top: 20, bottom: 40 }}
           series={[
             {
-              data: data.map((item) => item.bettors),
-              color: "#BB86FC",
-              label: "Bettors",
+              data: [10, 20,30],
+              color: "#E5C7FF",
             },
             {
-              data: data.map((item) => item.bets),
-              color: "#5050A5",
-              label: "Bets",
+              data: [40, 50, 60],
+              color: "#D2A7FF",
             },
           ]}
           yAxis={[
             {
               scaleType: "band",
-              data: data.map((item) => item.draw),
+              data: ["First Draw", "Second Draw", "Third Draw"], 
+              // series={[{ data: [4, 3, 5] }, { data: [1, 6, 3] }]},
             } as any,
           ]}
           xAxis={[
             {
               label: "Amount (in 100,000 units)",
-              scaleType: "linear",
-              min: 0,
-              max: maxX,
+              // scaleType: "linear",
+              min: 0, 
+              max: 100,
               tickValues: xAxisTicks,
+              tickSpacing:1 ,
             } as any,
           ]}
         />
@@ -169,4 +183,4 @@ const WinnersvsWinningsSummary = () => {
   );
 };
 
-export default WinnersvsWinningsSummary;
+export default ChartWinnersvsWinningsSummary;

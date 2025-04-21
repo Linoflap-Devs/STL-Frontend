@@ -6,7 +6,7 @@ import { useRouter } from 'next/router';
 import DashboardCardsPage from "~/components/dashboard/DashboardCards";
 import TableBettingActivityToday from '~/components/betting-summary/BettingActivityTodayTable'
 import ChartBettorsvsBetsPlacedSummary from "~/components/betting-summary/BettorsvsBetsPlacedChart";
-import ChartBetTypeSummary from "~/components/betting-summary/BetTypeChart";
+import ChartBettorsSummary from "~/components/betting-summary/BettorCountChart";
 import TableBettingSummary from "~/components/betting-summary/BettingSummaryTable";
 
 
@@ -32,7 +32,10 @@ const BettingSummaryPage: React.FC<BettingSummaryPageProps> = ({ GameCategory = 
         <DashboardCardsPage />
       </Box>
       
-      <Box sx={{ mt: 2 }}>
+      <Box 
+        sx={{
+          mt: 2 
+        }}>
         <Grid container spacing={0.5} alignItems="stretch">
           <Grid item xs={12} md={5}>
             <TableBettingActivityToday/>
@@ -41,7 +44,7 @@ const BettingSummaryPage: React.FC<BettingSummaryPageProps> = ({ GameCategory = 
           <Grid item xs={12} md={7}>
             <Box sx={{ display: "flex", flexDirection: "column", gap: 2, height: "100%", width: "100%" }}>
               <ChartBettorsvsBetsPlacedSummary/>
-              <ChartBetTypeSummary/>
+              <ChartBettorsSummary/>
             </Box>
           </Grid>
         </Grid>
