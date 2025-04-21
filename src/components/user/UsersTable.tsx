@@ -135,10 +135,7 @@ const UsersTablePage: React.FC<UsersTableProps> = ({
 
       // Log the nested property for OperatorDetails.OperatorName
       if (key === "OperatorName") {
-        console.log(
-          "Filtered value for OperatorDetails.OperatorName:",
           filterValue
-        );
       }
 
       setFilters((prevFilters) => ({
@@ -189,7 +186,7 @@ const UsersTablePage: React.FC<UsersTableProps> = ({
 
     if (!confirmation.isConfirmed) return;
 
-    setUser(selectedUser);
+    //setUser(selectedUser);
     setIsVerifyModalOpen(true);
   };
 
@@ -212,7 +209,6 @@ const UsersTablePage: React.FC<UsersTableProps> = ({
                   <SearchIcon style={{ fontSize: 20 }} />
                 </div>
               </div>
-
               {isFilterActive ? (
                 <FilterListOffIcon
                   onClick={handleFilterToggle}
@@ -225,7 +221,6 @@ const UsersTablePage: React.FC<UsersTableProps> = ({
                 />
               )}
             </div>
-
             {/* Button Section */}
             <div className="flex items-center">
               <Button variant="contained" onClick={onCreate} sx={buttonStyles}>
@@ -234,7 +229,6 @@ const UsersTablePage: React.FC<UsersTableProps> = ({
             </div>
           </div>
         </div>
-
         <Table size="small">
           <TableHead>
             <TableRow>
@@ -331,8 +325,6 @@ const UsersTablePage: React.FC<UsersTableProps> = ({
                 .map((user) => (
                   <TableRow key={user.userId}>
                     <TableCell>
-                      {/* for debugging */}
-                      {user.userId}{" "}
                       {`${user.FirstName} ${user.LastName} ${user.Suffix}`}
                     </TableCell>
                     <TableCell>{user.OperatorDetails.OperatorName}</TableCell>
@@ -381,21 +373,13 @@ const UsersTablePage: React.FC<UsersTableProps> = ({
                         anchorEl={anchorEl}
                         open={Boolean(anchorEl)}
                         onClose={() => {
-                          console.log("Menu closed");
                           handleToggleMenu();
                         }}
-                        MenuListProps={{ "aria-labelledby": "basic-button" }}
                       >
                         <MenuItem
                           onClick={() => {
                             if (selectedUser) {
-                              console.log(
-                                "View clicked for user:",
-                                selectedUser
-                              );
                               onEdit(selectedUser);
-                            } else {
-                              console.error("No user selected!");
                             }
                           }}
                         >
@@ -403,25 +387,14 @@ const UsersTablePage: React.FC<UsersTableProps> = ({
                         </MenuItem>
                         <MenuItem
                           onClick={() => {
-                            console.log("Delete clicked for user:", user);
-                            handleManagerSuspend(user);
+                            if (selectedUser) {
+                              handleManagerSuspend(selectedUser);
+                            }
                           }}
                         >
                           Delete
                         </MenuItem>
                       </Menu>
-                      <ConfirmUserActionModalPage
-                        open={isVerifyModalOpen}
-                        onClose={() => setIsVerifyModalOpen(false)}
-                        onVerified={() => setIsVerifyModalOpen(false)}
-                        onSubmit={onSubmit}
-                        //selectedUser={user}
-                        //setSelectedUser={setSelectedUser}
-                        actionType="suspend"
-                        user={user}
-                        setUser={setUser}
-                        setErrors={setErrors}
-                      />
                     </TableCell>
                   </TableRow>
                 ))
@@ -449,6 +422,20 @@ const UsersTablePage: React.FC<UsersTableProps> = ({
           {UserSectionData.exportAsCSVButton}
         </Button>
       </div>
+      {isVerifyModalOpen && (
+        <ConfirmUserActionModalPage
+          open={isVerifyModalOpen}
+          onClose={() => setIsVerifyModalOpen(false)}
+          onVerified={() => setIsVerifyModalOpen(false)}
+          onSubmit={onSubmit}
+          selectedUser={user}
+          setSelectedUser={setSelectedUser}
+          actionType="suspend"
+          user={user}
+          setUser={setUser}
+          setErrors={setErrors}
+        />
+      )}
     </React.Fragment>
   );
 };

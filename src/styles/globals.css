@@ -33,3 +33,7 @@ input:-webkit-autofill {
 .MuiFormLabel-root.MuiInputLabel-root.Mui-error {
   color: #FF7A7A !important;
 }
+
+.MuiBackdrop-root {
+  display: none !important;
+}

@@ -35,7 +35,6 @@ const Sidebar: React.FC<SidebarProps> = ({
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("md"));
   const [dateTime, setDateTime] = useState<Date | null>(null);
-
   const router = useRouter();
   const currentPath = router.asPath;
 

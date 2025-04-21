@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import TableCell from "@mui/material/TableCell";
 import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
@@ -11,7 +11,6 @@ import dayjs, { Dayjs } from "dayjs";
 import { User } from "~/pages/Protected/users/[role]";
 import { filterStyles } from "~/styles/theme";
 import { EditLogFields } from "~/components/user/EditLogModal";
-import { userAgent } from "next/server";
 
 interface SortableTableCellProps {
   label: string;
@@ -44,11 +43,6 @@ export const SortableTableCell: React.FC<SortableTableCellProps> = ({
   const handleDateChange = (date: Dayjs | null) => {
     onFilterChange && onFilterChange(date ? date.format("YYYY-MM-DD") : "");
   };
-
-  // Log values before rendering the JSX
-  console.log('Sorting Key:', sortConfig.key);  // Log the current sorting key
-  console.log('Sort Key from Props:', sortKey);  // Log the sortKey passed to the component
-  console.log('Current Sort Direction:', sortConfig.direction);  // Log the current sorting direction
 
   return (
     <LocalizationProvider dateAdapter={AdapterDayjs}>
@@ -117,8 +111,6 @@ export function sortData<T extends User | EditLogFields>(
   return [...data].sort((a, b) => {
     const valueA = getNestedValue(a, sortConfig.key as string);
     const valueB = getNestedValue(b, sortConfig.key as string);
-
-    console.log("Comparing values:", valueA, valueB);
 
     const isValidDate = (value: any): value is string => {
       return typeof value === "string" || value instanceof Date || dayjs(value).isValid();

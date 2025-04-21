@@ -8,6 +8,7 @@ import { LoginSectionData } from "../../data/LoginSectionData";
 import ArrowBackIosNewIcon from "@mui/icons-material/ArrowBackIosNew";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
 import { useRouter } from "next/router";
+import { User } from "~/pages/Protected/users/[role]";
 
 interface ConfirmUserActionModalProps {
   open: boolean;
@@ -17,8 +18,8 @@ interface ConfirmUserActionModalProps {
   onSubmit: (newUser: any) => void;
   setUser: React.Dispatch<React.SetStateAction<any>>;
   setErrors: React.Dispatch<React.SetStateAction<any>>;
-  //selectedUser: User | null; // for remarks
-  //setSelectedUser: React.Dispatch<React.SetStateAction<User | null>>; // for remarks
+  selectedUser: User | null; // for remarks
+  setSelectedUser: React.Dispatch<React.SetStateAction<User | null>>; // for remarks
   actionType: "create" | "update" | "suspend";
 }
 
@@ -30,6 +31,8 @@ const ConfirmUserActionModalPage: React.FC<ConfirmUserActionModalProps> = ({
   onSubmit,
   setErrors,
   actionType,
+  selectedUser,
+  setSelectedUser,
 }) => {
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
@@ -48,11 +51,11 @@ const ConfirmUserActionModalPage: React.FC<ConfirmUserActionModalProps> = ({
   // Dynamically set userTypeId based on userType
   const userTypeId = userType === "manager" ? 2 : 3;
 
-  // const handleManagerChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-  //     if (selectedUser) {
-  //         setSelectedUser((prevUser) => prevUser ? { ...prevUser, remarks: e.target.value } : null);
-  //     }
-  // };
+  const handleManagerChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    if (selectedUser) {
+      setSelectedUser((prevUser) => prevUser ? { ...prevUser, remarks: e.target.value } : null);
+    }
+  };
 
   const handleVerifyUserAction = async () => {
     if (!password) {
@@ -71,47 +74,73 @@ const ConfirmUserActionModalPage: React.FC<ConfirmUserActionModalProps> = ({
 
       let updatedUser = {
         ...user,
-        ...(userTypeId && { userTypeId }), // Only for create
+        ...(userTypeId && { userTypeId }), // Only needed for create
       };
 
-      let response;
+      let response: { success: boolean; data: User | null; message: string };
 
       if (actionType === "create") {
         response = await addUser(updatedUser);
-      } else if (actionType === "update") {
+        if (!response.success) throw new Error(response.message);
+      }
+      else if (actionType === "update") {
         if (!user?.UserId) {
           console.error("UserId is null");
           return;
         }
 
-        response = await updateUser(user.UserId, { ...user });
+        response = await updateUser(user.UserId, user);
+        if (!response.success) throw new Error(response.message);
 
-        // refetch latest user with updated remarks (if any)
-        const updatedResponse = await updateUser(user.UserId, { ...user });
-        if (updatedResponse.success && setUser) {
-          setUser((prevUser: { remarks: any }) => ({
+        if (setUser && response.data) {
+          setUser((prevUser: any) => ({
             ...prevUser,
-            ...updatedResponse.data,
-            remarks: updatedResponse.data.remarks ?? prevUser.remarks ?? "",
+            ...response.data,
+            remarks: response.data?.remarks ?? prevUser.remarks ?? "",
           }));
-        } else {
-          console.warn(
-            "Failed to fetch updated user data:",
-            updatedResponse?.message
+        }
+      }
+      else if (actionType === "suspend") {
+        if (!user?.userId) {
+          console.error("UserId is null");
+          return;
+        }
+
+        const suspendPayload = {
+          isActive: 0,
+          remarks: user.remarks || "",
+        };
+
+        response = await updateUser(user.userId, suspendPayload);
+        if (!response.success) {
+          const errMsg = response.message || "Failed to suspend user.";
+          setError(errMsg);
+          await Swal.fire({
+            icon: "error",
+            title: "Error!",
+            text: errMsg,
+            confirmButtonColor: "#D32F2F",
+          });
+          return;
+        }
+
+        if (setSelectedUser && response.data) {
+          setSelectedUser((prevUser) =>
+            prevUser
+              ? {
+                ...prevUser,
+                ...response.data,
+                remarks: response.data?.remarks ?? prevUser.remarks ?? "",
+              }
+              : null
           );
         }
-      } else if (actionType === "suspend") {
-        // TODO: implement suspend logic if needed
       }
 
-      if (!response?.success) {
-        const errorMessage = response?.message || "Something went wrong.";
-        setError(errorMessage);
-        Swal.fire({ icon: "error", title: "Error!", text: errorMessage });
-        return;
-      }
+      onClose();
 
-      Swal.fire({
+      // Show success modal
+      await Swal.fire({
         icon: "success",
         title:
           actionType === "create"
@@ -129,10 +158,9 @@ const ConfirmUserActionModalPage: React.FC<ConfirmUserActionModalProps> = ({
       });
 
       onSubmit(updatedUser);
-      onClose();
       setUser({});
       setErrors({});
-    } catch (error) {
+    } catch (error: any) {
       console.error(`Error during ${actionType}:`, error);
       Swal.fire({
         icon: "error",
@@ -145,7 +173,7 @@ const ConfirmUserActionModalPage: React.FC<ConfirmUserActionModalProps> = ({
   return (
     <React.Fragment>
       {open && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-75">
+        <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-black bg-opacity-75">
           <div className="relative z-20 flex w-full justify-center items-center">
             <div className="w-[90%] sm:w-[60%] md:w-[40%] max-w-[500px] px-6 pt-5 pb-12 bg-[#181A1B] rounded-lg relative">
               {/* Close Button */}
@@ -187,8 +215,8 @@ const ConfirmUserActionModalPage: React.FC<ConfirmUserActionModalProps> = ({
                     name="remarks"
                     placeholder="Enter Remarks"
                     rows={3}
-                    // value={selectedUser?.remarks || ""}
-                    // onChange={handleManagerChange}
+                    value={selectedUser?.remarks || ""}
+                    onChange={handleManagerChange}
                     onKeyDown={(e) => {
                       if (e.key === "Tab") {
                         e.stopPropagation();
@@ -212,11 +240,9 @@ const ConfirmUserActionModalPage: React.FC<ConfirmUserActionModalProps> = ({
                     placeholder="Enter your Password"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
-                    className={`w-full px-4 py-3 pr-10 text-sm rounded-md border ${
-                      error ? "border-red-500" : "border-gray-600"
-                    } bg-[#1F1F1F] text-white placeholder-gray-400 focus:outline-none focus:ring-2 ${
-                      error ? "focus:ring-red-500" : "focus:ring-white-200"
-                    }`}
+                    className={`w-full px-4 py-3 pr-10 text-sm rounded-md border ${error ? "border-red-500" : "border-gray-600"
+                      } bg-[#1F1F1F] text-white placeholder-gray-400 focus:outline-none focus:ring-2 ${error ? "focus:ring-red-500" : "focus:ring-white-200"
+                      }`}
                     autoFocus
                   />
                   <button

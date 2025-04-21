@@ -80,6 +80,7 @@ const UpdateManager: React.FC<UpdateManagerProps> = React.memo(
     const [isViewMode, setIsViewMode] = useState(false);
     const [areaOfOperations, setAreaOfOperations] = useState<string>("");
     const [isLoading, setLoading] = useState(false);
+    const [selectedUser, setSelectedUser] = useState<User | null>(null);
 
     const fetchUserDetails = async () => {
       if (!users?.userId) return;
@@ -563,15 +564,14 @@ const UpdateManager: React.FC<UpdateManagerProps> = React.memo(
                   Update Manager
                 </Button>
               )}
-
               {isVerifyModalOpen && (
                 <ConfirmUserActionModalPage
                   open={isVerifyModalOpen}
                   onClose={() => setIsVerifyModalOpen(false)}
                   onVerified={() => setIsVerifyModalOpen(false)}
                   onSubmit={onSubmit}
-                  //selectedUser={user}
-                  //setSelectedUser={setSelectedUser}
+                  selectedUser={user}
+                  setSelectedUser={setSelectedUser}
                   actionType="update"
                   user={user}
                   setUser={setUser}
