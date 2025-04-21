@@ -23,79 +23,73 @@ const WinningSummaryPage: React.FC<WinningSummaryPageProps> = ({GameCategory = '
   return (
     <>
       <Box>
-        <Typography sx={{ fontWeight: 700 }} variant="h4">
-          Small Town Lottery Winning Summary
-        </Typography>
+          <Typography sx={{ fontWeight: 700 }} variant="h4">
+            Small Town Lottery Winning Summary
+          </Typography>
 
-        <Box>
-          <DashboardCardsPage />
-        </Box>
+          <Box>
+            <DashboardCardsPage />
+          </Box>
         
         <Box 
-          sx={{ 
-            display: "flex", 
-            justifyContent: "center", 
-            mt: 2 
-            }}>
-          <Grid container spacing={2} alignItems="stretch">
-            {/* Column 1 (3 Cards) */}
-            <Grid item xs={12} md={6}>
-              <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
-                <Box sx={{ flex: 1 }}>
-                  <TableWinningActivityToday />
-                </Box>
+        sx={{
+          mt: 2 
+        }}>
+          <Grid container spacing={0.5} alignItems="stretch">
+            <Grid item xs={12} md={5}>
+              <TableWinningActivityToday/>
+            </Grid>
+            
+            <Grid item xs={12} md={7}>
+              <Box sx={{ display: "flex", flexDirection: "column", gap: 2, height: "100%", width: "100%" }}>
+                <ChartWinnersvsWinningsSummary/>
+                <ChartWinnersSummary/>
               </Box>
             </Grid>
+          </Grid>
+        </Box>
+      </Box>
 
-            {/* Column 2 (2 Cards) */}
-            <Grid item xs={12} md={6}>
-              <Box sx={{ display: "flex", flexDirection: "column", gap: 2, height: "100%" }}>
-                <Box sx={{ flex: 1 }}>
-                  <ChartWinnersvsWinningsSummary />
-                </Box>
-                <Box sx={{ flex: 1 }}>
-                  <ChartWinnersSummary />
-                </Box>
-              </Box>
-            </Grid>
+      <Box sx={{ mt: 2 }}>
+        <Grid container spacing={2}>
+          <Grid item xs={12} md={5} sx={{ display: "flex", justifyContent: "flex-end" }}>
+            <Button
+              variant="contained"
+              sx={{
+                backgroundColor: "#67ABEB",
+                borderRadius: "10px",
+                textTransform: "none",
+                paddingX: 4,
+              }}
+              onClick={handleViewComparisonClick}
+            >
+              View Comparison
+            </Button>
           </Grid>
-        </Box>
-        {/* New Grid container for buttons */}
-        <Box sx={{ display: "flex", justifyContent: "center", mt: 2 }}>
-          <Grid container spacing={2} alignItems="stretch">
-            <Grid item xs={12} md={6} sx={{ display: "flex", justifyContent: "flex-end" }}>
-              <Button
-                variant="contained"
-                sx={{
-                  backgroundColor: "#67ABEB",
-                  borderRadius: "20px",
-                  textTransform: "none",
-                }}
-              >
-                Show Comparison
-              </Button>
-            </Grid>
-            <Grid item xs={12} md={6} sx={{ display: "flex", justifyContent: "flex-end" }}>
-              <Button
-                variant="contained"
-                sx={{
-                  backgroundColor: "#67ABEB",
-                  borderRadius: "20px",
-                  textTransform: "none",
-                }}
-              >
-                Show Comparison
-              </Button>
-            </Grid>
+          <Grid item xs={12} md={7} sx={{ display: "flex", justifyContent: "flex-end" }}>
+            <Button
+              variant="contained"
+              sx={{
+                backgroundColor: "#67ABEB",
+                borderRadius: "10px",
+                textTransform: "none",
+                paddingX: 4,
+              }}
+              onClick={handleViewComparisonClick}
+            >
+              View Comparison
+            </Button>
           </Grid>
-        </Box>
+        </Grid>
+      </Box>
+      <Box>
         {/* TableBettingSummary component */}
         <Box sx={{ width: '100%', mt: 2 }}>
           <TableWinningSummary/>
         </Box>
       </Box>
     </>
-  )
+  );
 };
 
 export default WinningSummaryPage;
