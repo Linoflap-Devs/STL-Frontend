@@ -107,7 +107,7 @@ const EditLogModalPage: React.FC<EditLogModalProps> = ({
   return (
     <React.Fragment>
       {open && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-75 backdrop-blur-sm">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-55 backdrop-blur-sm">
           <div className="bg-[#1f1f1f] text-white w-full max-w-5xl mx-auto rounded-lg shadow-lg p-7 pt-9 relative overflow-hidden max-h-[90vh]">
             <div className="mb-4">
               {userId ? (

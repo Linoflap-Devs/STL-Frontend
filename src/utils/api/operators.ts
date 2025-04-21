@@ -11,7 +11,6 @@ export const fetchOperators = async () => {
     try {
         const url = validateRelativeUrl("/operators/getOperators");
         const response = await axiosInstance.get(url, {
-            withCredentials: true,
         });
 
         return response.data;
@@ -26,8 +25,7 @@ export const fetchOperator = async (operatorId: string | number) => {
       // Ensure the URL is valid using the validateRelativeUrl function
       const url = validateRelativeUrl("/operators/getOperator");
       const response = await axiosInstance.get(url, {
-        params: { operatorId },
-        withCredentials: true,
+        params: { operatorId }
       });
   
       return response.data;

@@ -14,7 +14,6 @@ const fetchUsers = async (queryParams: Record<string, any>) => {
         const url = validateRelativeUrl("/users/getUsers");
         const response = await axiosInstance.get(url, {
             params: queryParams,
-            withCredentials: true,
         });
 
         return response.data;
@@ -29,7 +28,6 @@ const addUser = async (userData: Record<string, any>) => {
     try {
         const url = validateRelativeUrl("/users/addUser");
         const response = await axiosInstance.post(url, userData, {
-            withCredentials: true,
         });
 
         return response.data;
@@ -45,7 +43,6 @@ const fetchUserById = async (userId: string | number, ) => {
         const url = validateRelativeUrl("/users/getUsers");
         const response = await axiosInstance.get(url, {
             params: { userId },
-            withCredentials: true,
         });
 
         if (Array.isArray(response.data.data)) {
@@ -81,7 +78,6 @@ const updateUser = async (userId: number, userData: Record<string, any>) => {
         const response = await axiosInstance.patch(
             url,
             { userId, ...userData },
-            { withCredentials: true }
         );
 
         return response.data;
@@ -97,7 +93,6 @@ const editLogUser = async (userId: number, p0: {}) => {
         const url = validateRelativeUrl("/users/getEditLog");
         const response = await axiosInstance.get(url, {
             params: { userId },
-            withCredentials: true,
         });
 
         return response.data;

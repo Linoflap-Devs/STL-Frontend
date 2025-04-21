@@ -11,7 +11,6 @@ const getTodaysWinningCombination = async () => {
     try {
         const url = validateRelativeUrl("/winningcombinations/getTodayWinningCombinations");
         const response = await axiosInstance.get(url, {
-            withCredentials: true,
         });
 
         return response.data;

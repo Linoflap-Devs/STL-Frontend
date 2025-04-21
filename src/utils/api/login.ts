@@ -7,7 +7,6 @@ export const loginUser = async (
 ) => {
   try {
     await axiosInstance.post("/auth/login", payload, {
-      withCredentials: true, // cookies ONLY.
     });
 
     router.push("/dashboard");

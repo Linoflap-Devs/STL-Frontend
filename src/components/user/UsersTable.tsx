@@ -374,7 +374,7 @@ const UsersTablePage: React.FC<UsersTableProps> = ({
                       >
                         <MenuItem
                           onClick={() => {
-                            handleToggleMenu(); // Close the menu first
+                            handleToggleMenu();
                             if (selectedUser) {
                               onEdit(selectedUser);
                             }
@@ -384,7 +384,7 @@ const UsersTablePage: React.FC<UsersTableProps> = ({
                         </MenuItem>
                         <MenuItem
                           onClick={() => {
-                            handleToggleMenu(); // Close the menu first
+                            handleToggleMenu();
                             if (selectedUser) {
                               handleManagerSuspend(selectedUser);
                             }

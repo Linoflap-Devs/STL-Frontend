@@ -11,7 +11,6 @@ export const fetchHistoricalSummary = async () => {
     try {
         const url = validateRelativeUrl("/transactions/getHistorical");
         const response = await axiosInstance.get(url, {
-            withCredentials: true,
         });
 
         return response.data;
@@ -25,7 +24,6 @@ export const fetchHistoricalRegion = async (p0?: { date: string; }) => {
     try {
         const url = validateRelativeUrl("/transactions/getHistoricalRegion");
         const response = await axiosInstance.get(url, {
-            withCredentials: true,
         });
 
         return response.data;

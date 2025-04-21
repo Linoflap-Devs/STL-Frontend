@@ -12,10 +12,8 @@ const getCurrentUser = async (queryParams: Record<string, any>) => {
     try {
         const url = validateRelativeUrl("/users/getCurrentUser");
         const response = await axiosInstance.get(url, {
-            params: queryParams,
-            withCredentials: true,
+            params: queryParams
         });
-
         return response.data;
     } catch (error) {
         console.error("Error fetching users:", (error as Error).message);
@@ -27,8 +25,7 @@ const logoutUser = async (queryParams: Record<string, any> = {}) => {
     try {
         const url = validateRelativeUrl("/auth/logout");
         const response = await axiosInstance.delete(url, {
-            params: queryParams,
-            withCredentials: true,
+            params: queryParams
         });
 
         return { success: true, message: "Logout successful", data: response.data };
@@ -41,7 +38,7 @@ const logoutUser = async (queryParams: Record<string, any> = {}) => {
 const verifyPass = async (password: string) => {
     try {
         const url = validateRelativeUrl("/auth/verifyPass");
-        const response = await axiosInstance.post(url, { password }, { withCredentials: true });
+        const response = await axiosInstance.post(url, { password });
 
         return response.data;
     } catch (error) {

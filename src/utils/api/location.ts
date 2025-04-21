@@ -8,7 +8,6 @@ const fetchRegions = async (queryParams: Record<string, any>) => {
   try {
       const response = await axiosInstance.get("/location/getRegions/ ", {
           params: queryParams,
-          withCredentials: true,
       });
 
       return response.data;
@@ -22,7 +21,6 @@ const fetchProvinces = async (queryParams: Record<string, any>) => {
   try {
       const response = await axiosInstance.get("/location/getProvinces/ ", {
           params: queryParams,
-          withCredentials: true,
       });
 
       return response.data;
