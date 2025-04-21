@@ -1,14 +1,16 @@
 import { useState } from "react";
 import { Box, Typography, Divider } from "@mui/material";
-import CasinoIcon from '@mui/icons-material/Casino';
+import MoneyIcon from "@mui/icons-material/AttachMoney";
+// import fetchHistoricalRegion from "~/utils/api/getHistoricalRegion";
 
+// Define types
 interface RegionData {
   Region: string;
   totalBetAmount: number;
-  trend?: number | undefined;
+  trend?: number;
 }
 
-const TableBettingActivityToday = () => {
+const TableWinningActivityToday = () => {
   // Hardcoded data for all Philippine regions
   const [regionData] = useState<RegionData[]>([
     { Region: "National Capital Region (NCR)", totalBetAmount: 1850000, trend: 3 },
@@ -26,15 +28,16 @@ const TableBettingActivityToday = () => {
     { Region: "Northern Mindanao (Region X)", totalBetAmount: 390000, trend: 1 },
     { Region: "Davao Region (Region XI)", totalBetAmount: 550000, trend: 2 },
     { Region: "Soccsksargen (Region XII)", totalBetAmount: 330000, trend: -1 },
-  ]);
+  ]);  
 
   return (
     <Box 
       sx={{ 
-        backgroundColor: "#171717", padding: 2, 
-        borderRadius: "10px", 
-        width: "100%", 
-        height: "720px" 
+        backgroundColor: "#171717", 
+        padding: 2, 
+        borderRadius: "10px",
+        width: "100%",
+        height: "720px"
       }}>
       <Box sx={{ display: "flex", mb: 1 }}>
         <Box
@@ -44,33 +47,32 @@ const TableBettingActivityToday = () => {
             borderRadius: "5px",
           }}
         >
-          <CasinoIcon 
+          <MoneyIcon 
           sx={{ color: "#67ABEB" }} />
         </Box>
         <Typography
           sx={{ 
-            fontWeight: 300,
+            fontWeight: 300, 
             fontSize: "16px", 
             ml: 1, 
             color: "#fff" 
           }}
         >
-          Today&apos;s Total Bets Placed by Region 
+          Today&apos;s Total Winnings by Region
         </Typography>
       </Box>
       <Divider 
-      sx={{ 
-        backgroundColor: "#303030", 
-        mb: "1rem" 
-        }} 
+        sx={{ 
+          backgroundColor: "#303030",
+          mb: "1rem" 
+          }} 
       />
-
       <Box 
         sx={{ 
-          mt: 2,
+          mt: 2, 
           width: "100%", 
-          maxHeight: "720px", 
-          overflowY: "auto" 
+          maxHeight: "720px",
+          overflowY: "auto"
           }}
       >
         {regionData.map((item, index) => (
@@ -88,7 +90,9 @@ const TableBettingActivityToday = () => {
           >
             <Box 
               sx={{ 
-                display: "flex", alignItems: "center", width: "15%" 
+                display: "flex", 
+                alignItems: "center", 
+                width: "15%" 
                 }}
             >
               <Typography
@@ -141,4 +145,4 @@ const TableBettingActivityToday = () => {
   );
 };
 
-export default TableBettingActivityToday;
+export default TableWinningActivityToday;

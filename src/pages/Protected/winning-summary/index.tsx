@@ -1,43 +1,36 @@
-import React, { useState } from "react";
+import React from "react";
 import { Box, Typography, Grid, Button } from "@mui/material";
+import { useRouter } from 'next/router';
 
 import DashboardCardsPage from "~/components/dashboard/DashboardCards";
 
-import WinningActivityToday from "~/components/winning-summary/WinningActivityToday";
+import WinningActivityToday from "~/components/winning-summary/WinningActivityTodayTable";
 import WinnersvsWinningsSummary from "~/components/winning-summary/WinnersvsWinningsChart";
 import TableWinningSummary from "~/components/winning-summary/WinningSummaryTable";
 import WinnersSummary from "~/components/winning-summary/WinnersSummaryChart";
 
+interface WinningSummaryPageProps {
+  GameCategory?: string;
+}
 
-// import ChartBettorsvsBetsPlacedSummary from "~/components/betting-summary/BettorsvsBetsPlacedChart";
-// import ChartBetTypeSummary from "~/components/betting-summary/BetTypeChart";
+const WinningSummaryPage: React.FC<WinningSummaryPageProps> = ({GameCategory = 'dashboard'}) => {
 
-// import TableBettingSummary from "~/components/betting-summary/BettingSummaryTable";
+  const router = useRouter();
 
-const BettingSummaryPage = () => {
-  // const [managers, setManagers] = useState([]); // Example state for managers
-
-  // const handleCreate = () => {
-  //   // Handle create action
-  // };
-
-  // const handleEdit = (user, action) => {
-  //   // Handle edit action
-  // };
-
-  // const handleDelete = (ids) => {
-  //   // Handle delete action
-  // };
-
+  const handleViewComparisonClick = () => {
+    router.push("/comparisons")
+  }
   return (
     <>
       <Box>
         <Typography sx={{ fontWeight: 700 }} variant="h4">
           Small Town Lottery Winning Summary
         </Typography>
+
         <Box>
           <DashboardCardsPage />
         </Box>
+        
         <Box sx={{ display: "flex", justifyContent: "center", mt: 2 }}>
           <Grid container spacing={2} alignItems="stretch">
             {/* Column 1 (3 Cards) */}
@@ -100,4 +93,4 @@ const BettingSummaryPage = () => {
   )
 };
 
-export default BettingSummaryPage;
+export default WinningSummaryPage;

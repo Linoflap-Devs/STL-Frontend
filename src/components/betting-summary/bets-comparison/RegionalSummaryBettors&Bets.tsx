@@ -6,86 +6,86 @@ import {
 import { BarChart } from '@mui/x-charts/BarChart';
 
 const CustomLegend = () => (
-    <Stack
-      direction="row"
-      spacing={2}
-      justifyContent="left"
-      sx={{ mt: 0.5, mr: 4 }}
-    >
-      <Box sx={{ display: "flex", alignItems: "center" }}>
-        <Box
-          sx={{
-            width: 14,
-            height: 14,
-            borderRadius: "50%",
-            backgroundColor: "#E5C7FF",
-            mr: 1.5,
-          }}
-        />
+  <Stack
+    direction="row"
+    spacing={2}
+    justifyContent="left"
+    sx={{ mt: 0.5, mr: 4 }}
+  >
+    <Box sx={{ display: "flex", alignItems: "center" }}>
+      <Box
+        sx={{
+          width: 14,
+          height: 14,
+          borderRadius: "50%",
+          backgroundColor: "#E5C7FF",
+          mr: 1.5,
+        }}
+      />
+        <Typography color="white" sx={{
+          fontSize: "12x",
+          fontWeight: 400,
+          lineHeight: "14px",
+        }}>
+          Bettors - 02/07/2025
+        </Typography>
+    </Box>
+    <Box sx={{ display: "flex", alignItems: "center" }}>
+      <Box
+        sx={{
+          width: 14,
+          height: 14,
+          borderRadius: "50%",
+          backgroundColor: "#D2A7FF",
+          mr: 1.5,
+        }}
+      />
+        <Typography color="white" sx={{
+          fontSize: "12x",
+          fontWeight: 400,
+          lineHeight: "14px",
+        }}>
+          Bettors - 02/08/2025
+        </Typography>
+    </Box>
+    <Box sx={{ display: "flex", alignItems: "center" }}>
+      <Box
+        sx={{
+          width: 14,
+          height: 14,
+          borderRadius: "50%",
+          backgroundColor: "#BB86FC",
+          mr: 1.5,
+        }}
+      />
           <Typography color="white" sx={{
             fontSize: "12x",
             fontWeight: 400,
             lineHeight: "14px",
           }}>
-            Bettors - 02/07/2025
+            Bets - 02/07/2025
           </Typography>
-      </Box>
-      <Box sx={{ display: "flex", alignItems: "center" }}>
-        <Box
-          sx={{
-            width: 14,
-            height: 14,
-            borderRadius: "50%",
-            backgroundColor: "#D2A7FF",
-            mr: 1.5,
-          }}
-        />
-          <Typography color="white" sx={{
+    </Box>
+    <Box sx={{ display: "flex", alignItems: "center" }}>
+      <Box
+        sx={{
+          width: 14,
+          height: 14,
+          borderRadius: "50%",
+          backgroundColor: "#A06FE6",
+          mr: 1.5,
+        }}
+      />
+        <Typography color="white" sx={{
             fontSize: "12x",
             fontWeight: 400,
             lineHeight: "14px",
           }}>
-            Bettors - 02/08/2025
-          </Typography>
-      </Box>
-      <Box sx={{ display: "flex", alignItems: "center" }}>
-        <Box
-          sx={{
-            width: 14,
-            height: 14,
-            borderRadius: "50%",
-            backgroundColor: "#BB86FC",
-            mr: 1.5,
-          }}
-        />
-            <Typography color="white" sx={{
-              fontSize: "12x",
-              fontWeight: 400,
-              lineHeight: "14px",
-            }}>
-              Bets - 02/07/2025
-            </Typography>
-      </Box>
-      <Box sx={{ display: "flex", alignItems: "center" }}>
-        <Box
-          sx={{
-            width: 14,
-            height: 14,
-            borderRadius: "50%",
-            backgroundColor: "#A06FE6",
-            mr: 1.5,
-          }}
-        />
-          <Typography color="white" sx={{
-              fontSize: "12x",
-              fontWeight: 400,
-              lineHeight: "14px",
-            }}>
-              Bets - 02/08/2025
-          </Typography>
-      </Box>
-    </Stack>
-  );
+            Bets - 02/08/2025
+        </Typography>
+    </Box>
+  </Stack>
+);
 const ChartBettorsAndBetsRegionalSummary = () => {
     const philippineRegions = [
         "I",

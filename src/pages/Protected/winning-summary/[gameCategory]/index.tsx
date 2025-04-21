@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react';
 import BettingSummaryPage from '../index';
 import getTransactionsData from '~/utils/api/transactions/get.TransactionsData.service';
 
-const DynamicBettingSummary = () => {
+const DynamicWinningSummary = () => {
   const router = useRouter();
   // Extract Dynamic param
   const { gameCategory } = router.query;
@@ -118,4 +118,4 @@ const DynamicBettingSummary = () => {
   return <BettingSummaryPage GameCategory={gameCategory as string} />;
 };
 
-export default DynamicBettingSummary;
+export default DynamicWinningSummary;

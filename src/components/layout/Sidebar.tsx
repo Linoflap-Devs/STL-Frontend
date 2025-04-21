@@ -27,13 +27,15 @@ import FaxIcon from "@mui/icons-material/Fax";
 import PaymentsIcon from "@mui/icons-material/Payments";
 import LogoutIcon from "@mui/icons-material/Logout";
 import { useTheme } from "@mui/material/styles";
-import useMediaQuery from "@mui/material/useMediaQuery";
 import { useRouter } from "next/router";
 import axiosInstance from "../../utils/axiosInstance";
 import { UserSectionData } from "../../data/AdminSectionData";
-
+// Detect and Respond to changes in browser's viewport size based on CSS Media Query.
+import useMediaQuery from "@mui/material/useMediaQuery";
 const drawerWidth = 240;
 const collapsedWidth = 0; // Fully collapsed sidebar will be 0px wide
+
+import { useSideBarStore, gameType } from "../../../store/useSideBarStore";
 
 interface SubmenuItem {
   name: string;
@@ -45,6 +47,13 @@ const BETTING_SUBMENUS: SubmenuItem[] = [
   { name: "STL Swer2", path: "/betting-summary/stl-swer2" },
   { name: "STL Swer3", path: "/betting-summary/stl-swer3" },
   { name: "STL Swer4", path: "/betting-summary/stl-swer4" },
+];
+const WINNING_SUBMENUS: SubmenuItem[] = [
+  { name: "Dashboard", path: "/winning-summary/dashboard" },
+  { name: "STL Pares", path: "/winning-summary/stl-pares" },
+  { name: "STL Swer2", path: "/winning-summary/stl-swer2" },
+  { name: "STL Swer3", path: "/winning-summary/stl-swer3" },
+  { name: "STL Swer4", path: "/winning-summary/stl-swer4" },
 ];
 
 const Sidebar: React.FC = () => {
@@ -82,6 +91,16 @@ const Sidebar: React.FC = () => {
     }
   };
 
+  // Zustand store
+  const { 
+    SideBarActiveGameType, setSideBarActiveGameType 
+  } = useSideBarStore();
+
+  const handleListItemClick = (subItem: SubmenuItem) => {
+    setSideBarActiveGameType(subItem.name as gameType); // Update activeGameType in Zustand store
+    router.push(subItem.path); // Navigate to the selected path
+  };
+
   // Update Date and Time
   useEffect(() => {
     const updateDateTime = () => setDateTime(new Date());
@@ -107,14 +126,14 @@ const Sidebar: React.FC = () => {
       })
     : "N/A";
 
-  // Set default submenu based on path
   useEffect(() => {
     if (router.pathname.startsWith("/betting-summary")) {
       setOpenSubmenu("Betting Summary");
       console.log("Navigating to:", router.pathname)
+      setSideBarActiveGameType("Dashboard");
       router.push("/betting-summary/dashboard");
     }
-  }, [router.pathname]);
+  }, [router.pathname, setSideBarActiveGameType]);
 
   if (!dateTime) return <p>Loading...</p>;
 
@@ -129,46 +148,134 @@ const Sidebar: React.FC = () => {
   // Render a single menu item based on mode (collapsed/full)
   // 'page' was from UserSectionData.pages.map
   const renderMenuItem = (page: string) => {
-    // Map pages to routes as per your logic.
-    const formattedPage =
-      page === "Managers"
-        ? "/managers"
-        : page === "Executive"
-          ? "/executives"
-          : page === "Winning Summary"
-            ? "/winning-summary"
-            : page === "Betting Summary"
-              ? "/betting-summary"
-              : page === "fDraw Summary"
-                ? "/draw-summary"
-                : page === "Logout"
-                  ? "/"
-                  : `/${page.toLowerCase()}`;
+      // Map pages to routes as per your logic.
+      const formattedPage =
+        page === "Managers"
+          ? "/managers"
+          : page === "Executive"
+            ? "/executives"
+            : page === "Winning Summary"
+              ? "/winning-summary"
+              : page === "Betting Summary"
+                ? "/betting-summary"
+                : page === "Draw Summary"
+                  ? "/draw-summary"
+                  : page === "Logout"
+                    ? "/"
+                    : `/${page.toLowerCase()}`;
 
-    // Define icons for each page.
-    const icon =
-      page === "Dashboard" ? (
-        <HomeIcon sx={{ mr: collapsed ? 0 : 1, fontSize: "1.2rem" }} />
-      ) : page === "Managers" ? (
-        <SupervisorAccountIcon
-          sx={{ mr: collapsed ? 0 : 1, fontSize: "1.2rem" }}
-        />
-      ) : page === "Executive" ? (
-        <BusinessIcon sx={{ mr: collapsed ? 0 : 1, fontSize: "1.2rem" }} />
-      ) : page === "Betting Summary" ? (
-        <CasinoIcon sx={{ mr: collapsed ? 0 : 1, fontSize: "1.2rem" }} />
-      ) : page === "Winning Summary" ? (
-        <FaxIcon sx={{ mr: collapsed ? 0 : 1, fontSize: "1.2rem" }} />
-      ) : page === "Draw Summary" ? (
-        <PaymentsIcon sx={{ mr: collapsed ? 0 : 1, fontSize: "1.2rem" }} />
-      ) : page === "Logout" ? (
-        <ExitToAppIcon sx={{ mr: collapsed ? 0 : 1, fontSize: "1.2rem" }} />
-      ) : (
-        <HomeIcon sx={{ mr: collapsed ? 0 : 1, fontSize: "1.2rem" }} />
+      // Define icons for each page.
+      const icon =
+            page === "Dashboard" ? (
+          <HomeIcon sx={{ mr: collapsed ? 0 : 1, fontSize: "1.2rem" }} />
+        ) : page === "Managers" ? (
+          <SupervisorAccountIcon
+            sx={{ mr: collapsed ? 0 : 1, fontSize: "1.2rem" }}
+          />
+        ) : page === "Executive" ? (
+          <BusinessIcon sx={{ mr: collapsed ? 0 : 1, fontSize: "1.2rem" }} />
+        ) : page === "Betting Summary" ? (
+          <CasinoIcon sx={{ mr: collapsed ? 0 : 1, fontSize: "1.2rem" }} />
+        ) : page === "Winning Summary" ? (
+          <FaxIcon sx={{ mr: collapsed ? 0 : 1, fontSize: "1.2rem" }} />
+        ) : page === "Draw Summary" ? (
+          <PaymentsIcon sx={{ mr: collapsed ? 0 : 1, fontSize: "1.2rem" }} />
+        ) : page === "Logout" ? (
+          <ExitToAppIcon sx={{ mr: collapsed ? 0 : 1, fontSize: "1.2rem" }} />
+        ) : (
+          <HomeIcon sx={{ mr: collapsed ? 0 : 1, fontSize: "1.2rem" }} />
+        );
+
+      // Special handling for Betting Summary with submenu
+      if (page === "Betting Summary") {
+        return (
+          <Box key={page}>
+            <ListItemButton
+              onClick={() => {
+                if (collapsed) setCollapsed(false);
+                // OpenSubmenu === Betting Summary
+                setOpenSubmenu(openSubmenu === page ? null : page);
+                if (!currentPath.startsWith("/betting-summary")) {
+                  console.log("Navigating to: dashboard" )
+                  router.push("/betting-summary/dashboard");
+                }
+              }}
+              sx={{
+                px: collapsed ? 0 : 1,
+                py: 1.5,
+                borderRadius: "6px",
+                my: 1,
+                color: currentPath.startsWith("/betting-summary")
+                  ? "#BB86FC"
+                  : "inherit",
+              }}
+            >
+              <CasinoIcon
+                sx={{
+                  fontSize: collapsed ? "1.4rem" : "1.3rem",
+                  mr: collapsed ? 0 : 1,
+                  ml: collapsed ? 0.5 : 0,
+                }}
+              />
+              {!collapsed && (
+                <>
+                  <Typography
+                    sx={{
+                      flexGrow: 1,
+                      fontSize: 14,
+                      fontWeight: currentPath.startsWith("/betting-summary")
+                        ? "700"
+                        : "300",
+                    }}
+                  >
+                    {page}
+                  </Typography>
+                  {openSubmenu === page ? <ExpandLess /> : <ExpandMore />}
+                </>
+              )}
+            </ListItemButton>
+
+            <Collapse
+              in={!collapsed && openSubmenu === page}
+              timeout="auto"
+              unmountOnExit
+            >
+              <List component="div" disablePadding>
+                {BETTING_SUBMENUS.map((subItem) => (
+                  <ListItem key={subItem.path} disablePadding sx={{ pl: 4 }}>
+                    <ListItemButton
+                      component="a"
+                      href={subItem.path}
+                      selected={SideBarActiveGameType === subItem.name}
+                      onClick={() => handleListItemClick(subItem)}
+                      sx={{
+                        py: 1,
+                        borderRadius: "6px",
+                        "&.Mui-selected": {
+                          backgroundColor: "rgba(187, 134, 252, 0.16)",
+                          color: "#BB86FC",
+                        },
+                      }}
+                    >
+                      <ListItemText
+                        primary={subItem.name}
+                        primaryTypographyProps={{
+                          fontSize: 14,
+                          fontWeight:
+                            currentPath === `/betting-summary/${subItem.path}`
+                              ? "700"
+                              : "300",
+                        }}
+                      />
+                    </ListItemButton>
+                  </ListItem>
+                ))}
+              </List>
+            </Collapse>
+          </Box>
       );
-
-    // Special handling for Betting Summary with submenu
-    if (page === "Betting Summary") {
+    }
+    if (page === "Winning Summary") {
       return (
         <Box key={page}>
           <ListItemButton
@@ -178,7 +285,7 @@ const Sidebar: React.FC = () => {
               setOpenSubmenu(openSubmenu === page ? null : page);
               if (!currentPath.startsWith("/betting-summary")) {
                 console.log("Navigating to: dashboard" )
-                router.push("/betting-summary/dashboard");
+                router.push("/winning-summary/dashboard");
               }
             }}
             sx={{
@@ -186,7 +293,7 @@ const Sidebar: React.FC = () => {
               py: 1.5,
               borderRadius: "6px",
               my: 1,
-              color: currentPath.startsWith("/betting-summary")
+              color: currentPath.startsWith("/winning-summary")
                 ? "#BB86FC"
                 : "inherit",
             }}
@@ -222,12 +329,13 @@ const Sidebar: React.FC = () => {
             unmountOnExit
           >
             <List component="div" disablePadding>
-              {BETTING_SUBMENUS.map((subItem) => (
+              {WINNING_SUBMENUS.map((subItem) => (
                 <ListItem key={subItem.path} disablePadding sx={{ pl: 4 }}>
                   <ListItemButton
                     component="a"
                     href={subItem.path}
-                    selected={currentPath === subItem.path}
+                    selected={SideBarActiveGameType === subItem.name}
+                    onClick={() => handleListItemClick(subItem)}
                     sx={{
                       py: 1,
                       borderRadius: "6px",
@@ -344,113 +452,116 @@ const Sidebar: React.FC = () => {
             position: "relative",
           }}
         >
-          {/* Top Section: Logo, User Info & Divider */}
-          {!collapsed && (
-            <Box>
-              <Box sx={{ display: "flex", alignItems: "center" }}>
-                <Box
-                  sx={{
-                    textAlign: "center",
-                    my: 2,
-                    display: "flex",
-                    justifyContent: "center",
-                  }}
-                >
-                  <img
-                    src={UserSectionData.image}
-                    alt="Logo"
-                    style={{ maxWidth: "60px", width: "80%" }}
-                  />
-                </Box>
-                <Box sx={{ ml: 1 }}>
-                  <Typography
+            {/* Top Section: Logo, User Info & Divider */}
+            {!collapsed && (
+              <Box>
+                  {/* Logo */}
+                  <Box sx={{ display: "flex", alignItems: "center" }}>
+                    <Box
+                      sx={{
+                        textAlign: "center",
+                        my: 2,
+                        display: "flex",
+                        justifyContent: "center",
+                      }}
+                    >
+                      <img
+                        src={UserSectionData.image}
+                        alt="Logo"
+                        style={{ maxWidth: "60px", width: "80%" }}
+                      />
+                    </Box>
+                    <Box sx={{ ml: 1 }}>
+                      <Typography
+                        sx={{
+                          mb: 0,
+                          color: "#C493FD",
+                          fontWeight: "700",
+                          lineHeight: "24.2px",
+                          fontSize: 16,
+                          transition: "opacity 0.3s ease",
+                        }}
+                      >
+                        {UserSectionData.titleHeader}
+                      </Typography>
+                      <Typography
+                        sx={{
+                          color: "white",
+                          fontWeight: "200",
+                          lineHeight: "15px",
+                          fontSize: 12.5,
+                          transition: "opacity 0.3s ease",
+                        }}
+                      >
+                        {UserSectionData.userRole}
+                      </Typography>
+                    </Box>
+                  </Box>
+
+                  <Divider sx={{ backgroundColor: "#D1D5D8", mb: "1rem" }} />
+
+                  <Box
                     sx={{
-                      mb: 0,
-                      color: "#C493FD",
-                      fontWeight: "700",
-                      lineHeight: "24.2px",
-                      fontSize: 16,
+                      backgroundColor: "#252526",
+                      borderRadius: "8px",
+                      px: "1rem",
+                      py: "0.6rem",
+                      display: "flex",
+                      flexDirection: "column",
+                      mb: "1rem",
                       transition: "opacity 0.3s ease",
                     }}
                   >
-                    {UserSectionData.titleHeader}
-                  </Typography>
-                  <Typography
-                    sx={{
-                      color: "white",
-                      fontWeight: "200",
-                      lineHeight: "15px",
-                      fontSize: 12.5,
-                      transition: "opacity 0.3s ease",
-                    }}
-                  >
-                    {UserSectionData.userRole}
-                  </Typography>
-                </Box>
+                    {/* Date */}
+                    <Typography
+                      sx={{ color: "white", fontWeight: "400", fontSize: 12.4 }}
+                    >
+                      {formattedDate}
+                    </Typography>
+                    {/* Time */}
+                    <Typography
+                      sx={{ color: "white", fontWeight: "700", fontSize: 25 }}
+                    >
+                      {formattedTime}
+                    </Typography>
+                  </Box>
               </Box>
+            )}
 
-              <Divider sx={{ backgroundColor: "#D1D5D8", mb: "1rem" }} />
-
-              <Box
-                sx={{
-                  backgroundColor: "#252526",
-                  borderRadius: "8px",
-                  px: "1rem",
-                  py: "0.6rem",
-                  display: "flex",
-                  flexDirection: "column",
-                  mb: "1rem",
-                  transition: "opacity 0.3s ease",
-                }}
-              >
-                <Typography
-                  sx={{ color: "white", fontWeight: "400", fontSize: 12.4 }}
-                >
-                  {formattedDate}
-                </Typography>
-                <Typography
-                  sx={{ color: "white", fontWeight: "700", fontSize: 25 }}
-                >
-                  {formattedTime}
-                </Typography>
-              </Box>
+            {/* Menu Items */}
+            <Box sx={{ flex: 1 }}>
+              {UserSectionData.pages.map((page) => renderMenuItem(page))}
             </Box>
-          )}
 
-          {/* Menu Items */}
-          <Box sx={{ flex: 1 }}>
-            {UserSectionData.pages.map((page) => renderMenuItem(page))}
-          </Box>
-
-          {/* Logout Button */}
-          <Box
-            sx={{
-              display: "flex",
-              alignItems: "center",
-              textTransform: "capitalize",
-              px: collapsed ? 0 : 2,
-              py: 1,
-              borderRadius: "6px",
-              textDecoration: "none",
-              mb: 1,
-            }}
-          >
+            {/* Logout Button */}
             <Box
-              sx={{ cursor: "pointer", display: "flex" }}
-              component="a"
-              onClick={(e) => {
-                e.preventDefault();
-                handleLogout();
+              sx={{
+                display: "flex",
+                alignItems: "center",
+                textTransform: "capitalize",
+                px: collapsed ? 0 : 2,
+                py: 1,
+                borderRadius: "6px",
+                textDecoration: "none",
+                mb: 1,
               }}
             >
-              <LogoutIcon sx={{ fontSize: "1.2rem" }} />
-              {!collapsed && (
-                <Typography sx={{ ml: 1, fontSize: 14, fontWeight: 700 }}>
-                  Logout
-                </Typography>
-              )}
+              <Box
+                sx={{ cursor: "pointer", display: "flex" }}
+                component="a"
+                onClick={(e) => {
+                  e.preventDefault();
+                  handleLogout();
+                }}
+              >
+                <LogoutIcon sx={{ fontSize: "1.2rem" }} />
+                {!collapsed && (
+                  <Typography sx={{ ml: 1, fontSize: 14, fontWeight: 700 }}>
+                    Logout
+                  </Typography>
+                )}
+              </Box>
             </Box>
-          </Box>
         </Box>
       </MuiDrawer>
 

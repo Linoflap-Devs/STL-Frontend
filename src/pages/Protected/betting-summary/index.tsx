@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React from "react";
 import { Box, Typography, Grid, Button } from "@mui/material";
 import { useRouter } from 'next/router';
 
@@ -16,63 +16,32 @@ interface BettingSummaryPageProps {
 
 const BettingSummaryPage: React.FC<BettingSummaryPageProps> = ({ GameCategory = 'dashboard' }) => {
 
-  
   const router = useRouter();
 
-  // Map game categories to display names
-  // const getPageTitle = () => {
-  //   const categoryNames: Record<string, string> = {
-  //     'dashboard': 'Small Town Lottery Betting Summary',
-  //     'stl-pares': 'STL Pares Betting Summary',
-  //     'stl-swer2': 'STL Swer2 Betting Summary',
-  //     'stl-swer3': 'STL Swer3 Betting Summary',
-  //     'stl-swer4': 'STL Swer4 Betting Summary',
-  //   };
-  //   return categoryNames[gameCategory] || categoryNames.dashboard;
-  // };
-
-  // Redirect to dashboard if no category specified
-  // useEffect(() => {
-  //   if (router.pathname.startsWith("/betting-summary")) {
-  //     router.replace('/betting-summary/dashboard');
-  //   }
-  // }, [router.pathname]);
   const handleViewComparisonClick = ()=> {
-    router.push("/bets-comparison"); // Replace with your desired URL
+    router.push("/comparisons"); 
   };
 
   return (
     <Box>
       <Typography sx={{ fontWeight: 700 }} variant="h4">
-        {/* {getPageTitle()} */}
+        Small Town Lottery Betting Summary
       </Typography>
       
       <Box>
         <DashboardCardsPage />
-        {/* <DashboardCardsPage gameCategory={gameCategory === 'dashboard' ? undefined : gameCategory} /> */}
       </Box>
       
       <Box sx={{ mt: 2 }}>
         <Grid container spacing={0.5} alignItems="stretch">
           <Grid item xs={12} md={5}>
-            <TableBettingActivityToday 
-              // gameCategory={gameCategory === 'dashboard' ? undefined : gameCategory} 
-            />
-            {/* <TableBettingActivityToday 
-              gameCategory={gameCategory === 'dashboard' ? undefined : gameCategory} 
-            /> */}
+            <TableBettingActivityToday/>
           </Grid>
           
           <Grid item xs={12} md={7}>
             <Box sx={{ display: "flex", flexDirection: "column", gap: 2, height: "100%", width: "100%" }}>
               <ChartBettorsvsBetsPlacedSummary/>
-              {/* <ChartBettorsvsBetsPlacedSummary 
-                gameCategory={gameCategory === 'dashboard' ? undefined : gameCategory} 
-              /> */}
               <ChartBetTypeSummary/>
-              {/* <ChartBetTypeSummary 
-                gameCategory={gameCategory === 'dashboard' ? undefined : gameCategory} 
-              /> */}
             </Box>
           </Grid>
         </Grid>
