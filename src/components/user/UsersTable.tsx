@@ -135,7 +135,7 @@ const UsersTablePage: React.FC<UsersTableProps> = ({
 
       // Log the nested property for OperatorDetails.OperatorName
       if (key === "OperatorName") {
-          filterValue
+        filterValue
       }
 
       setFilters((prevFilters) => ({
@@ -364,20 +364,17 @@ const UsersTablePage: React.FC<UsersTableProps> = ({
                       </Button>
                     </TableCell>
                     <TableCell>
-                      <IconButton
-                        onClick={(event) => handleToggleMenu(event, user)}
-                      >
+                      <IconButton onClick={(event) => handleToggleMenu(event, user)}>
                         <MoreHorizIcon />
                       </IconButton>
                       <Menu
                         anchorEl={anchorEl}
                         open={Boolean(anchorEl)}
-                        onClose={() => {
-                          handleToggleMenu();
-                        }}
+                        onClose={() => handleToggleMenu()}
                       >
                         <MenuItem
                           onClick={() => {
+                            handleToggleMenu(); // Close the menu first
                             if (selectedUser) {
                               onEdit(selectedUser);
                             }
@@ -387,6 +384,7 @@ const UsersTablePage: React.FC<UsersTableProps> = ({
                         </MenuItem>
                         <MenuItem
                           onClick={() => {
+                            handleToggleMenu(); // Close the menu first
                             if (selectedUser) {
                               handleManagerSuspend(selectedUser);
                             }
@@ -396,6 +394,7 @@ const UsersTablePage: React.FC<UsersTableProps> = ({
                         </MenuItem>
                       </Menu>
                     </TableCell>
+
                   </TableRow>
                 ))
             )}

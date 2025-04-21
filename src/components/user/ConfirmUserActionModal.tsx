@@ -216,7 +216,7 @@ const ConfirmUserActionModalPage: React.FC<ConfirmUserActionModalProps> = ({
                     placeholder="Enter Remarks"
                     rows={3}
                     value={selectedUser?.remarks || ""}
-                    onChange={handleManagerChange}
+                    //onChange={handleManagerChange}
                     onKeyDown={(e) => {
                       if (e.key === "Tab") {
                         e.stopPropagation();

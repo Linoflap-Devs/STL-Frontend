@@ -292,7 +292,7 @@ const UpdateManager: React.FC<UpdateManagerProps> = React.memo(
                     <Select
                       labelId="status-label"
                       id="status"
-                      value={status 
+                      value={status
                         || (isLoading ? "Loading..." : "")}
                       onChange={(e) => setStatus(e.target.value)}
                       label="Status"
@@ -345,7 +345,7 @@ const UpdateManager: React.FC<UpdateManagerProps> = React.memo(
                                 id="lastName"
                                 name="lastName"
                                 placeholder="Enter Last Name"
-                                value={user?.lastName 
+                                value={user?.lastName
                                   || (isLoading ? "Loading..." : "")}
                                 onChange={handleManagerChange}
                                 label="Last Name"
@@ -384,7 +384,7 @@ const UpdateManager: React.FC<UpdateManagerProps> = React.memo(
                               id={key}
                               name={key}
                               placeholder={`Enter ${formatKey(key)}`}
-                              value={user[key as keyof typeof user] || 
+                              value={user[key as keyof typeof user] ||
                                 (isLoading ? "Loading..." : "")}
                               onChange={handleManagerChange}
                               label={formatKey(key)}
