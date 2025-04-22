@@ -19,7 +19,7 @@ const BettingSummaryPage: React.FC<BettingSummaryPageProps> = ({ GameCategory = 
   const router = useRouter();
 
   const handleViewComparisonClick = ()=> {
-    router.push("/comparisons"); 
+    router.push("/bets-comparisons"); 
   };
 
   return (

@@ -62,7 +62,6 @@ const BettingComparison = () => {
     // Debugging: Log all states whenever they change
     useEffect(() => {
       console.log("Active Sidebar State:", activeGameType)
-      console.log("State values:");
       console.log("categoryFilter:", categoryFilter);
       console.log("dateFilter:", dateFilter);
       console.log("firstDateSpecific:", firstDateSpecific);

@@ -30,7 +30,7 @@ const CustomLegend = () => (
           fontWeight: 400,
           lineHeight: "14px",
         }}>
-          Bettors - 02/07/2025
+          Winners - 02/07/2025
         </Typography>
     </Box>
     <Box sx={{ display: "flex", alignItems: "center" }}>
@@ -48,7 +48,7 @@ const CustomLegend = () => (
           fontWeight: 400,
           lineHeight: "14px",
         }}>
-          Bettors - 02/08/2025
+          Winners - 02/08/2025
         </Typography>
     </Box>
     <Box sx={{ display: "flex", alignItems: "center" }}>
@@ -66,7 +66,7 @@ const CustomLegend = () => (
             fontWeight: 400,
             lineHeight: "14px",
           }}>
-            Bets - 02/07/2025
+            Winnings - 02/07/2025
           </Typography>
     </Box>
     <Box sx={{ display: "flex", alignItems: "center" }}>
@@ -84,13 +84,13 @@ const CustomLegend = () => (
             fontWeight: 400,
             lineHeight: "14px",
           }}>
-            Bets - 02/08/2025
+            Winnings - 02/08/2025
         </Typography>
     </Box>
   </Stack>
 );
 
-const ChartBettorsAndBetsSummary = () => {
+const ChartWinnersandWinningsSummary = () => {
   // const xAxisTicks = [0, 1, 5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 55, 60, 65, 70, 75, 80, 85, 90, 95, 100];
 
   return (
@@ -114,7 +114,7 @@ const ChartBettorsAndBetsSummary = () => {
               lineHeight: "18px",
               mb: "10px"
             }}>
-              Summary of Total Bettors and Bets
+              Summary of Total Winners and and Winnings
           </Typography>
           <CustomLegend />
   
@@ -173,4 +173,4 @@ const ChartBettorsAndBetsSummary = () => {
     );
 }
 
-export default ChartBettorsAndBetsSummary;
+export default ChartWinnersandWinningsSummary;

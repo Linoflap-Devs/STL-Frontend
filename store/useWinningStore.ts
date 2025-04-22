@@ -1,13 +1,13 @@
 import { create } from 'zustand';
 
 export type categoryType = 
-  'Total Bettors and Bet' |
-  'Total Bets by Bet Type' |
-  'Total Bettor by Bet Type' |
-  'Total Bets by Game Type' |
-  'Total Bettors by Game Type' |
-  'Top Betting Region by Bets Comparison' |
-  'Top Betting Region by Bettors Comparison';
+  'Total Winners and Winnings' |
+  'Total Winnings by Bet Type' |
+  'Total Winners by Bet Type' |
+  'Total Winnings by Game Type' |
+  'Total Winners by Game Type' |
+  'Top Winning Region by Winnings Comparison' |
+  'Top Winner Region by Winners Comparison';
 
   type dateType = 'Specific Date' | 'Date Duration';
 
@@ -40,7 +40,7 @@ interface WinningStore {
 export const useWinningStore = create<WinningStore>((set) => ({
   loading: false,
   activeGameType: '',
-  categoryFilter: 'Total Bettors and Bet',
+  categoryFilter: 'Total Winners and Winnings',
   dateFilter: 'Specific Date',
   firstDateSpecific: null,
   secondDateSpecific: null,
@@ -59,7 +59,7 @@ export const useWinningStore = create<WinningStore>((set) => ({
   setSecondDateDuration: (date) => set({ secondDateDuration: date }),
   resetFilters: () =>
     set({
-      categoryFilter: 'Total Bettors and Bet',
+      categoryFilter: 'Total Winners and Winnings',
       dateFilter: 'Specific Date',
       firstDateSpecific: null,
       secondDateSpecific: null,

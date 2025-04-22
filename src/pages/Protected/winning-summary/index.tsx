@@ -18,7 +18,7 @@ const WinningSummaryPage: React.FC<WinningSummaryPageProps> = ({GameCategory = '
   const router = useRouter();
 
   const handleViewComparisonClick = () => {
-    router.push("/comparisons")
+    router.push("/wins-comparisons")
   }
   return (
     <>

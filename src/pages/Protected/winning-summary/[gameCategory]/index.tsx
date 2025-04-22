@@ -1,6 +1,6 @@
 import { useRouter } from 'next/router';
 import React, { useEffect, useState } from 'react';
-import BettingSummaryPage from '../index';
+import WinningSummaryPage from '..';
 import getTransactionsData from '~/utils/api/transactions/get.TransactionsData.service';
 
 const DynamicWinningSummary = () => {
@@ -115,7 +115,7 @@ const DynamicWinningSummary = () => {
 
   if (loading) return <p>Loading...</p>;
 
-  return <BettingSummaryPage GameCategory={gameCategory as string} />;
+  return <WinningSummaryPage GameCategory={gameCategory as string} />;
 };
 
 export default DynamicWinningSummary;

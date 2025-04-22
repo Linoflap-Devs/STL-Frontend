@@ -15,14 +15,15 @@ import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import dayjs, { Dayjs } from "dayjs";
 // Components
-import ChartBettorsAndBetsSummary from "~/components/betting-summary/bets-comparison/SummaryBettors&Bets";
-import ChartBettorsAndBetsRegionalSummary from "~/components/betting-summary/bets-comparison/RegionalSummaryBettors&Bets";
+import ChartWinnersandWinningsSummary from "~/components/wins-comparison/SummaryWinners&Winnings";
+import ChartWinnersandWinningsRegionalSummary from "~/components/wins-comparison/RegionalSummaryWinners&Winnings";
 
 import { useWinningStore, categoryType } from "../../../../store/useWinningStore";
 import { useSideBarStore } from "../../../../store/useSideBarStore";
 
 const WinningComparison = () => {
   const {
+    loading,
     activeGameType,
     categoryFilter,
     dateFilter,
@@ -30,6 +31,7 @@ const WinningComparison = () => {
     secondDateSpecific,
     firstDateDuration,
     secondDateDuration,
+    setLoading,
     setGameType,
     setCategoryFilter,
     setDateFilter,
@@ -45,18 +47,18 @@ const WinningComparison = () => {
 
   useEffect(() => {
     if (SideBarActiveGameType !== activeGameType) {
-      setGameType(SideBarActiveGameType); // Update useBettingStore's activeGameType
+      setGameType(SideBarActiveGameType); // Update useWinningStore's activeGameType
     }
   }, [SideBarActiveGameType, activeGameType, setGameType]);
 
   const categoryTypes: categoryType[] = [
-    "Total Bettors and Bet",
-    "Total Bets by Bet Type",
-    "Total Bettor by Bet Type",
-    "Total Bets by Game Type",
-    "Total Bettors by Game Type",
-    "Top Betting Region by Bets Comparison",
-    "Top Betting Region by Bettors Comparison",
+    "Total Winners and Winnings",
+    "Total Winnings by Bet Type",
+    "Total Winners by Bet Type",
+    "Total Winnings by Game Type",
+    "Total Winners by Game Type",
+    "Top Winning Region by Winnings Comparison",
+    "Top Winner Region by Winners Comparison",
   ];
 
     // Debugging: Log all states whenever they change
@@ -82,7 +84,7 @@ const WinningComparison = () => {
   return (
     <Box>
       <Typography sx={{ fontWeight: 700 }} variant="h4">
-        STL Betting Summary Overview
+        STL Winning Summary Overview
       </Typography>
       <Box
         sx={{
@@ -356,9 +358,9 @@ const WinningComparison = () => {
         </Grid>
 
         {/* Summary of Total Bettors and Bets Barchart */}
-        <ChartBettorsAndBetsSummary />
+        <ChartWinnersandWinningsSummary />
         {/* Regional Summary of Total Bettors and Bets Barchart */}
-        <ChartBettorsAndBetsRegionalSummary />
+        <ChartWinnersandWinningsRegionalSummary />
       </Box>
     </Box>
   );
