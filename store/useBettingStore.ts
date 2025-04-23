@@ -1,15 +1,15 @@
 import { create } from 'zustand';
 
 export type categoryType = 
-  'Total Bettors and Bet' |
+  'Total Bettors and Bets' |
   'Total Bets by Bet Type' |
-  'Total Bettor by Bet Type' |
+  'Total Bettors by Bet Type' |
   'Total Bets by Game Type' |
   'Total Bettors by Game Type' |
-  'Top Betting Region by Bets Comparison' |
-  'Top Betting Region by Bettors Comparison';
+  'Top Betting Region by Total Bets' |
+  'Top Betting Region by Total Bettors';
 
-  type dateType = 'Specific Date' | 'Date Duration';
+type dateType = 'Specific Date' | 'Date Duration';
 
 interface BettingStore {
   loading: boolean,
@@ -41,7 +41,7 @@ interface BettingStore {
 export const useBettingStore = create<BettingStore>((set) => ({
   loading: false,
   activeGameType: '',
-  categoryFilter: 'Total Bettors and Bet',
+  categoryFilter: 'Total Bettors and Bets',
   dateFilter: 'Specific Date',
   firstDateSpecific: null,
   secondDateSpecific: null,
@@ -58,7 +58,7 @@ export const useBettingStore = create<BettingStore>((set) => ({
   setSecondDateDuration: (date) => set({ secondDateDuration: date }),
   resetFilters: () =>
     set({
-      categoryFilter: 'Total Bettors and Bet',
+      categoryFilter: 'Total Bettors and Bets',
       dateFilter: 'Specific Date',
       firstDateSpecific: null,
       secondDateSpecific: null,

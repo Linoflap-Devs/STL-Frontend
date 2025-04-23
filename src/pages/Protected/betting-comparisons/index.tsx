@@ -39,6 +39,23 @@ const BettingComparison = () => {
     setSecondDateDuration
   } = useBettingStore();
 
+  // Format dates to MM/DD/YYYY
+  const formattedFirstDateSpecific = firstDateSpecific
+  ? dayjs(firstDateSpecific).format("MM/DD/YYYY")
+  : null;
+
+const formattedSecondDateSpecific = secondDateSpecific
+  ? dayjs(secondDateSpecific).format("MM/DD/YYYY")
+  : null;
+
+const formattedFirstDateDuration = firstDateDuration
+  ? dayjs(firstDateDuration).format("MM/DD/YYYY")
+  : null;
+
+const formattedSecondDateDuration = secondDateDuration
+  ? dayjs(secondDateDuration).format("MM/DD/YYYY")
+  : null;
+
   const { 
     SideBarActiveGameType,
   } = useSideBarStore();
@@ -50,13 +67,13 @@ const BettingComparison = () => {
   }, [SideBarActiveGameType, activeGameType, setGameType]);
 
   const categoryTypes: categoryType[] = [
-    "Total Bettors and Bet",
+    "Total Bettors and Bets",
     "Total Bets by Bet Type",
-    "Total Bettor by Bet Type",
+    "Total Bettors by Bet Type",
     "Total Bets by Game Type",
     "Total Bettors by Game Type",
-    "Top Betting Region by Bets Comparison",
-    "Top Betting Region by Bettors Comparison",
+    "Top Betting Region by Total Bets",
+    "Top Betting Region by Total Bettors",
   ];
 
     // Debugging: Log all states whenever they change
@@ -355,7 +372,14 @@ const BettingComparison = () => {
         </Grid>
 
         {/* Summary of Total Bettors and Bets Barchart */}
-        <ChartBettorsAndBetsSummary />
+        <ChartBettorsAndBetsSummary
+          categoryFilter = { categoryFilter }
+          dateFilter = { dateFilter }
+          firstDateSpecific={ formattedFirstDateSpecific }
+          secondDateSpecific={ formattedSecondDateSpecific }
+          firstDateDuration={ formattedFirstDateDuration }
+          secondDateDuration = { formattedSecondDateDuration }
+        />
         {/* Regional Summary of Total Bettors and Bets Barchart */}
         <ChartBettorsAndBetsRegionalSummary />
       </Box>

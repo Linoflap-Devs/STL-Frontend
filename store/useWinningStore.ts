@@ -9,7 +9,7 @@ export type categoryType =
   'Top Winning Region by Winnings Comparison' |
   'Top Winner Region by Winners Comparison';
 
-  type dateType = 'Specific Date' | 'Date Duration';
+type dateType = 'Specific Date' | 'Date Duration';
 
 interface WinningStore {
   loading: boolean;

@@ -23,7 +23,7 @@ import { useSideBarStore } from "../../../../store/useSideBarStore";
 
 const WinningComparison = () => {
   const {
-    loading,
+    // loading,
     activeGameType,
     categoryFilter,
     dateFilter,
@@ -31,7 +31,7 @@ const WinningComparison = () => {
     secondDateSpecific,
     firstDateDuration,
     secondDateDuration,
-    setLoading,
+    // setLoading,
     setGameType,
     setCategoryFilter,
     setDateFilter,
@@ -40,6 +40,23 @@ const WinningComparison = () => {
     setFirstDateDuration,
     setSecondDateDuration
   } = useWinningStore();
+
+  // Format dates to MM/DD/YYYY
+  const formattedFirstDateSpecific = firstDateSpecific
+  ? dayjs(firstDateSpecific).format("MM/DD/YYYY")
+  : null;
+
+const formattedSecondDateSpecific = secondDateSpecific
+  ? dayjs(secondDateSpecific).format("MM/DD/YYYY")
+  : null;
+
+const formattedFirstDateDuration = firstDateDuration
+  ? dayjs(firstDateDuration).format("MM/DD/YYYY")
+  : null;
+
+const formattedSecondDateDuration = secondDateDuration
+  ? dayjs(secondDateDuration).format("MM/DD/YYYY")
+  : null;
 
   const { 
     SideBarActiveGameType,
@@ -315,7 +332,7 @@ const WinningComparison = () => {
               />
               <LocalizationProvider dateAdapter={AdapterDayjs}>
                 <DatePicker
-                  label="Second Date"
+                  label="First Date"
                   value={firstDateDuration ? dayjs(firstDateDuration) : null}
                   onChange={(newValue) =>
                     setFirstDateDuration(newValue.toDate())
@@ -358,7 +375,14 @@ const WinningComparison = () => {
         </Grid>
 
         {/* Summary of Total Bettors and Bets Barchart */}
-        <ChartWinnersandWinningsSummary />
+        <ChartWinnersandWinningsSummary 
+          categoryFilter = { categoryFilter }
+          dateFilter = { dateFilter }
+          firstDateSpecific={ formattedFirstDateSpecific }
+          secondDateSpecific={ formattedSecondDateSpecific }
+          firstDateDuration={ formattedFirstDateDuration }
+          secondDateDuration = { formattedSecondDateDuration }
+        />
         {/* Regional Summary of Total Bettors and Bets Barchart */}
         <ChartWinnersandWinningsRegionalSummary />
       </Box>
