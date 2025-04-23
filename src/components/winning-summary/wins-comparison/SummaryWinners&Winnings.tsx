@@ -313,13 +313,13 @@ interface WinnersandWinningsSummaryProps {
 }
 
 const CustomLegend: React.FC<WinnersandWinningsSummaryProps> = ({
-  categoryFilter,
-  dateFilter,
-  firstDateSpecific,
-  secondDateSpecific,
-  firstDateDuration,
-  secondDateDuration,
-}) => {
+    categoryFilter,
+    dateFilter,
+    firstDateSpecific,
+    secondDateSpecific,
+    firstDateDuration,
+    secondDateDuration,
+  }) => {
   // Determine which legend items map to use based on the dateFilter
   const legendItems =
     dateFilter === "Specific Date"
@@ -379,9 +379,7 @@ const CustomLegend: React.FC<WinnersandWinningsSummaryProps> = ({
   );
 };
 
-const ChartWinnersandWinningsSummary: React.FC<
-  WinnersandWinningsSummaryProps
-> = ({
+const ChartWinnersandWinningsSummary: React.FC<WinnersandWinningsSummaryProps> = ({
   categoryFilter,
   dateFilter,
   firstDateSpecific,

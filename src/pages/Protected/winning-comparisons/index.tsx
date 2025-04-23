@@ -13,7 +13,7 @@ import FilterListIcon from "@mui/icons-material/FilterList";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
-import dayjs, { Dayjs } from "dayjs";
+import dayjs from "dayjs";
 // Components
 import ChartWinnersandWinningsSummary from "~/components/winning-summary/wins-comparison/SummaryWinners&Winnings";
 import ChartWinnersandWinningsRegionalSummary from "~/components/winning-summary/wins-comparison/RegionalSummaryWinners&Winnings";
@@ -384,7 +384,14 @@ const formattedSecondDateDuration = secondDateDuration
           secondDateDuration = { formattedSecondDateDuration }
         />
         {/* Regional Summary of Total Bettors and Bets Barchart */}
-        <ChartWinnersandWinningsRegionalSummary />
+        <ChartWinnersandWinningsRegionalSummary 
+          categoryFilter = { categoryFilter }
+          dateFilter = { dateFilter }
+          firstDateSpecific={ formattedFirstDateSpecific }
+          secondDateSpecific={ formattedSecondDateSpecific }
+          firstDateDuration={ formattedFirstDateDuration }
+          secondDateDuration = { formattedSecondDateDuration }
+        />
       </Box>
     </Box>
   );

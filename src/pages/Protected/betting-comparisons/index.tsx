@@ -13,7 +13,7 @@ import FilterListIcon from "@mui/icons-material/FilterList";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
-import dayjs, { Dayjs } from "dayjs";
+import dayjs from "dayjs";
 // Components
 import ChartBettorsAndBetsSummary from "~/components/betting-summary/bets-comparison/SummaryBettors&Bets";
 import ChartBettorsAndBetsRegionalSummary from "~/components/betting-summary/bets-comparison/RegionalSummaryBettors&Bets";
@@ -329,7 +329,7 @@ const formattedSecondDateDuration = secondDateDuration
               />
               <LocalizationProvider dateAdapter={AdapterDayjs}>
                 <DatePicker
-                  label="Second Date"
+                  label="F Date"
                   value={firstDateDuration ? dayjs(firstDateDuration) : null}
                   onChange={(newValue) =>
                     setFirstDateDuration(newValue as Date)
@@ -381,7 +381,14 @@ const formattedSecondDateDuration = secondDateDuration
           secondDateDuration = { formattedSecondDateDuration }
         />
         {/* Regional Summary of Total Bettors and Bets Barchart */}
-        <ChartBettorsAndBetsRegionalSummary />
+        <ChartBettorsAndBetsRegionalSummary 
+          categoryFilter = { categoryFilter }
+          dateFilter = { dateFilter }
+          firstDateSpecific={ formattedFirstDateSpecific }
+          secondDateSpecific={ formattedSecondDateSpecific }
+          firstDateDuration={ formattedFirstDateDuration }
+          secondDateDuration = { formattedSecondDateDuration }
+        />
       </Box>
     </Box>
   );
