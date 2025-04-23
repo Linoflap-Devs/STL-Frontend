@@ -15,8 +15,8 @@ import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import dayjs, { Dayjs } from "dayjs";
 // Components
-import ChartWinnersandWinningsSummary from "~/components/wins-comparison/SummaryWinners&Winnings";
-import ChartWinnersandWinningsRegionalSummary from "~/components/wins-comparison/RegionalSummaryWinners&Winnings";
+import ChartWinnersandWinningsSummary from "~/components/winning-summary/wins-comparison/SummaryWinners&Winnings";
+import ChartWinnersandWinningsRegionalSummary from "~/components/winning-summary/wins-comparison/RegionalSummaryWinners&Winnings";
 
 import { useWinningStore, categoryType } from "../../../../store/useWinningStore";
 import { useSideBarStore } from "../../../../store/useSideBarStore";
