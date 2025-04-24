@@ -21,6 +21,8 @@ import ChartBettorsAndBetsRegionalSummary from "~/components/betting-summary/bet
 import { useBettingStore, categoryType } from "../../../../store/useBettingStore";
 import { useSideBarStore } from "../../../../store/useSideBarStore";
 
+import ChartTopRegionByBets from "~/components/betting-summary/bets-comparison/RegionByBets";
+
 const BettingComparison = () => {
   const {
     activeGameType,
@@ -143,9 +145,13 @@ const formattedSecondDateDuration = secondDateDuration
                   id="category"
                   value={categoryFilter}
                   label="Filter by Category"
-                  onChange={(e) =>
-                    setCategoryFilter(e.target.value as categoryType)
-                  } // Cast value to categoryType
+                  onChange={(e) => {
+                    console.log("Selected value:", e.target.value);
+                    const value = e.target.value;
+                    if (categoryTypes.includes(value as categoryType)) {
+                      setCategoryFilter(value as categoryType);
+                    }
+                  }} // Cast value to categoryType
                   IconComponent={() => (
                     <FilterListIcon style={{ pointerEvents: "none" }} /> // Prevent flipping
                   )}
@@ -371,24 +377,39 @@ const formattedSecondDateDuration = secondDateDuration
           }
         </Grid>
 
-        {/* Summary of Total Bettors and Bets Barchart */}
-        <ChartBettorsAndBetsSummary
-          categoryFilter = { categoryFilter }
-          dateFilter = { dateFilter }
-          firstDateSpecific={ formattedFirstDateSpecific }
-          secondDateSpecific={ formattedSecondDateSpecific }
-          firstDateDuration={ formattedFirstDateDuration }
-          secondDateDuration = { formattedSecondDateDuration }
-        />
-        {/* Regional Summary of Total Bettors and Bets Barchart */}
-        <ChartBettorsAndBetsRegionalSummary 
-          categoryFilter = { categoryFilter }
-          dateFilter = { dateFilter }
-          firstDateSpecific={ formattedFirstDateSpecific }
-          secondDateSpecific={ formattedSecondDateSpecific }
-          firstDateDuration={ formattedFirstDateDuration }
-          secondDateDuration = { formattedSecondDateDuration }
-        />
+          
+        {/* Conditionally Render Components Based on categoryFilter */}
+        {categoryFilter === "Top Betting Region by Total Bets" ? (
+          <ChartTopRegionByBets 
+            categoryFilter={categoryFilter}
+            dateFilter={dateFilter}
+            firstDateSpecific={formattedFirstDateSpecific}
+            secondDateSpecific={formattedSecondDateSpecific}
+            firstDateDuration={formattedFirstDateDuration}
+            secondDateDuration={formattedSecondDateDuration}         
+          />
+        ) : (
+          <>
+            {/* Summary of Total Bettors and Bets Barchart */}
+            <ChartBettorsAndBetsSummary
+              categoryFilter={categoryFilter}
+              dateFilter={dateFilter}
+              firstDateSpecific={formattedFirstDateSpecific}
+              secondDateSpecific={formattedSecondDateSpecific}
+              firstDateDuration={formattedFirstDateDuration}
+              secondDateDuration={formattedSecondDateDuration}
+            />
+            {/* Regional Summary of Total Bettors and Bets Barchart */}
+            <ChartBettorsAndBetsRegionalSummary
+              categoryFilter={categoryFilter}
+              dateFilter={dateFilter}
+              firstDateSpecific={formattedFirstDateSpecific}
+              secondDateSpecific={formattedSecondDateSpecific}
+              firstDateDuration={formattedFirstDateDuration}
+              secondDateDuration={formattedSecondDateDuration}
+            />
+          </>
+        )}
       </Box>
     </Box>
   );

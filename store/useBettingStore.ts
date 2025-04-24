@@ -95,6 +95,7 @@ export const getLegendItemsMap_Specific = (
   firstDateSpecific: string | null,
   secondDateSpecific: string | null
 ): { label: string; color: string }[] => {
+  console.log("categoryFilter:", categoryFilter);
   const legendItemsMap: Record<categoryType, { label: string; color: string }[]> = {
   "Total Bettors and Bets": [
     {
@@ -220,22 +221,22 @@ export const getLegendItemsMap_Specific = (
   ],
   "Top Betting Region by Total Bets": [
     {
-      label: "Ranking",
+      label:  `Ranking - ${firstDateSpecific ? firstDateSpecific : "N/A"}`,
       color: "#E5C7FF",
     },
     {
-      label: "Ranking",
-      color: "##3E2466",
+      label: `Ranking - ${secondDateSpecific ? secondDateSpecific : "N/A"}`,
+      color: "#3E2466",
     },
   ],
   "Top Betting Region by Total Bettors": [
     {
-      label: "Ranking",
+      label:  `Ranking - ${firstDateSpecific ? firstDateSpecific : "N/A"}`,
       color: "#E5C7FF",
     },
     {
-      label: "Ranking",
-      color: "##3E2466",
+      label: `Ranking - ${secondDateSpecific ? firstDateSpecific : "N/A"}`,
+      color: "#3E2466",
     },
   ],
   }
@@ -249,6 +250,7 @@ export const getLegendItemsMap_Duration = (
   firstDateDuration: string | null,
   secondDateDuration: string | null
 ): { label: string; color: string }[] => {
+  console.log("categoryFilter:", categoryFilter);
   const legendItemsMap: Record<categoryType, { label: string; color: string }[]> = {
   "Total Bettors and Bets": [
     {
@@ -374,12 +376,12 @@ export const getLegendItemsMap_Duration = (
   ],
   "Top Betting Region by Total Bets": [
     {
-      label: "Ranking",
+      label: `Ranking - ${firstDateSpecific ? firstDateSpecific : "N/A"} - ${secondDateSpecific ? secondDateSpecific : "N/A"}`,
       color: "#E5C7FF",
     },
     {
-      label: "Ranking",
-      color: "##3E2466",
+      label: `Ranking - ${firstDateSpecific ? firstDateSpecific : "N/A"} - ${secondDateSpecific ? secondDateSpecific : "N/A"}`,
+      color: "#3E2466",
     },
   ],
   "Top Betting Region by Total Bettors": [
