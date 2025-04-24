@@ -329,7 +329,7 @@ const formattedSecondDateDuration = secondDateDuration
               />
               <LocalizationProvider dateAdapter={AdapterDayjs}>
                 <DatePicker
-                  label="F Date"
+                  label="First Date"
                   value={firstDateDuration ? dayjs(firstDateDuration) : null}
                   onChange={(newValue) =>
                     setFirstDateDuration(newValue as Date)

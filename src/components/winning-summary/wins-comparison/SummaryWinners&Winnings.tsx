@@ -1,337 +1,32 @@
 // import {useState, useEffect} from 'react';
 
-import { Box, Typography, Stack,  } from "@mui/material";
+import { Box, Typography, Stack } from "@mui/material";
 import { BarChart } from "@mui/x-charts/BarChart";
-import { categoryType } from "../../../../store/useWinningStore";
-
-// Map here, for Custom Legend if the Selected Date Type (Specific)
-const getLegendItemsMap_Specific = (
-  firstDateSpecific: string | null,
-  secondDateSpecific: string | null
-): Record<categoryType, { label: string; color: string }[]> => ({
-  "Total Winners and Winnings": [
-    {
-      label: `Bettors - ${firstDateSpecific ? firstDateSpecific : "N/A"}`,
-      color: "#E5C7FF",
-    },
-    {
-      label: `Bettors - ${secondDateSpecific ? secondDateSpecific : "N/A"}`,
-      color: "#D2A7FF",
-    },
-    {
-      label: `Bets - ${firstDateSpecific ? firstDateSpecific : "N/A"}`,
-      color: "#D2A7FF",
-    },
-    {
-      label: `Bets - ${secondDateSpecific ? secondDateSpecific : "N/A"}`,
-      color: "#D2A7FF",
-    },
-  ],
-  "Total Winnings by Bet Type": [
-    {
-      label: `Tumbok - ${firstDateSpecific ? firstDateSpecific : "N/A"}`,
-      color: "#E5C7FF",
-    },
-    {
-      label: `Tumbok - ${secondDateSpecific ? secondDateSpecific : "N/A"}`,
-      color: "#D2A7FF",
-    },
-    {
-      label: `Sahod - ${firstDateSpecific ? firstDateSpecific : "N/A"}`,
-      color: "#D2A7FF",
-    },
-    {
-      label: `Sahod - ${secondDateSpecific ? secondDateSpecific : "N/A"}`,
-      color: "#D2A7FF",
-    },
-  ],
-  "Total Winners by Bet Type": [
-    {
-      label: `Tumbok - ${firstDateSpecific ? firstDateSpecific : "N/A"}`,
-      color: "#E5C7FF",
-    },
-    {
-      label: `Tumbok - ${secondDateSpecific ? secondDateSpecific : "N/A"}`,
-      color: "#D2A7FF",
-    },
-    {
-      label: `Sahod - ${firstDateSpecific ? firstDateSpecific : "N/A"}`,
-      color: "#D2A7FF",
-    },
-    {
-      label: `Sahod - ${secondDateSpecific ? secondDateSpecific : "N/A"}`,
-      color: "#D2A7FF",
-    },
-  ],
-  "Total Winnings by Game Type": [
-    {
-      label: `STL Pares - ${firstDateSpecific ? firstDateSpecific : "N/A"}`,
-      color: "#E5C7FF",
-    },
-    {
-      label: `STL Pares - ${secondDateSpecific ? secondDateSpecific : "N/A"}`,
-      color: "#E5C7FF",
-    },
-    {
-      label: `STL Swer2 - ${firstDateSpecific ? firstDateSpecific : "N/A"}`,
-      color: "#BB86FC",
-    },
-    {
-      label: `STL Swer2 - ${secondDateSpecific ? secondDateSpecific : "N/A"}`,
-      color: "#BB86FC",
-    },
-    {
-      label: `STL Swer3 - ${firstDateSpecific ? firstDateSpecific : "N/A"}`,
-      color: "#6F58C9",
-    },
-    {
-      label: `STL Swer3 - ${secondDateSpecific ? secondDateSpecific : "N/A"}`,
-      color: "#6F58C9",
-    },
-    {
-      label: `STL Swer4 - ${firstDateSpecific ? firstDateSpecific : "N/A"}`,
-      color: "#3E2466",
-    },
-    {
-      label: `STL Swer4 - ${secondDateSpecific ? secondDateSpecific : "N/A"}`,
-      color: "#3E2466",
-    },
-  ],
-  "Total Winners by Game Type": [
-    {
-      label: `STL Pares - ${firstDateSpecific ? firstDateSpecific : "N/A"}`,
-      color: "#E5C7FF",
-    },
-    {
-      label: `STL Pares - ${secondDateSpecific ? secondDateSpecific : "N/A"}`,
-      color: "#E5C7FF",
-    },
-    {
-      label: `STL Swer2 - ${firstDateSpecific ? firstDateSpecific : "N/A"}`,
-      color: "#BB86FC",
-    },
-    {
-      label: `STL Swer2 - ${secondDateSpecific ? secondDateSpecific : "N/A"}`,
-      color: "#BB86FC",
-    },
-    {
-      label: `STL Swer3 - ${firstDateSpecific ? firstDateSpecific : "N/A"}`,
-      color: "#6F58C9",
-    },
-    {
-      label: `STL Swer3 - ${secondDateSpecific ? secondDateSpecific : "N/A"}`,
-      color: "#6F58C9",
-    },
-    {
-      label: `STL Swer4 - ${firstDateSpecific ? firstDateSpecific : "N/A"}`,
-      color: "#3E2466",
-    },
-    {
-      label: `STL Swer4 - ${secondDateSpecific ? secondDateSpecific : "N/A"}`,
-      color: "#3E2466",
-    },
-  ],
-  "Top Winning Region by Winnings Comparison": [
-    {
-      label: "Ranking",
-      color: "#E5C7FF",
-    },
-    {
-      label: "Ranking",
-      color: "##3E2466",
-    },
-  ],
-  "Top Winner Region by Winners Comparison": [
-    {
-      label: "Ranking",
-      color: "#E5C7FF",
-    },
-    {
-      label: "Ranking",
-      color: "##3E2466",
-    },
-  ],
-});
-// Map here, for Custom Legend if the Selected Date Type (Specific)
-const getLegendItemsMap_Duration = (
-  firstDateSpecific: string | null,
-  secondDateSpecific: string | null,
-  firstDateDuration: string | null,
-  secondDateDuration: string | null
-): Record<categoryType, { label: string; color: string }[]> => ({
-  "Total Winners and Winnings": [
-    {
-      label: `Bettors - ${firstDateSpecific ? firstDateSpecific : "N/A"} - ${secondDateSpecific ? secondDateSpecific : "N/A"}`,
-      color: "#E5C7FF",
-    },
-    {
-      label: `Bettors - ${firstDateDuration ? firstDateDuration : "N/A"} - ${secondDateDuration ? secondDateDuration : "N/A"}`,
-      color: "#D2A7FF",
-    },
-    {
-      label: `Bets - ${firstDateSpecific ? firstDateSpecific : "N/A"} - ${secondDateSpecific ? secondDateSpecific : "N/A"}`,
-      color: "#D2A7FF",
-    },
-    {
-      label: `Bets - ${firstDateDuration ? firstDateDuration : "N/A"} - ${secondDateDuration ? secondDateDuration : "N/A"}`,
-      color: "#D2A7FF",
-    },
-  ],
-  "Total Winnings by Bet Type": [
-    {
-      label: `Tumbok - ${firstDateSpecific ? firstDateSpecific : "N/A"} - ${secondDateSpecific ? secondDateSpecific : "N/A"}`,
-      color: "#E5C7FF",
-    },
-    {
-      label: `Tumbok - ${firstDateDuration ? firstDateDuration : "N/A"} - ${secondDateDuration ? secondDateDuration : "N/A"}`,
-      color: "#D2A7FF",
-    },
-    {
-      label: `Sahod - ${firstDateSpecific ? firstDateSpecific : "N/A"} - ${secondDateSpecific ? secondDateSpecific : "N/A"}`,
-      color: "#D2A7FF",
-    },
-    {
-      label: `Sahod - ${firstDateDuration ? firstDateDuration : "N/A"} - ${secondDateDuration ? secondDateDuration : "N/A"}`,
-      color: "#D2A7FF",
-    },
-  ],
-  "Total Winners by Bet Type": [
-    {
-      label: `Tumbok - ${firstDateSpecific ? firstDateSpecific : "N/A"} - ${secondDateSpecific ? secondDateSpecific : "N/A"}`,
-      color: "#E5C7FF",
-    },
-    {
-      label: `Tumbok - ${firstDateDuration ? firstDateDuration : "N/A"} - ${secondDateDuration ? secondDateDuration : "N/A"}`,
-      color: "#D2A7FF",
-    },
-    {
-      label: `Sahod - ${firstDateSpecific ? firstDateSpecific : "N/A"} - ${secondDateSpecific ? secondDateSpecific : "N/A"}`,
-      color: "#D2A7FF",
-    },
-    {
-      label: `Sahod - ${firstDateDuration ? firstDateDuration : "N/A"} - ${secondDateDuration ? secondDateDuration : "N/A"}`,
-      color: "#D2A7FF",
-    },
-  ],
-  "Total Winnings by Game Type": [
-    {
-      label: `STL Pares - ${firstDateSpecific ? firstDateSpecific : "N/A"} - ${secondDateSpecific ? secondDateSpecific : "N/A"}`,
-      color: "#E5C7FF",
-    },
-    {
-      label: `STL Pares - ${firstDateDuration ? firstDateDuration : "N/A"} - ${secondDateDuration ? secondDateDuration : "N/A"}`,
-      color: "#E5C7FF",
-    },
-    {
-      label: `STL Swer2 - ${firstDateSpecific ? firstDateSpecific : "N/A"} - ${secondDateSpecific ? secondDateSpecific : "N/A"}`,
-      color: "#E5C7FF",
-    },
-    {
-      label: `STL Swer2 - ${firstDateDuration ? firstDateDuration : "N/A"} - ${secondDateDuration ? secondDateDuration : "N/A"}`,
-      color: "#E5C7FF",
-    },
-    {
-      label: `STL Swer3 - ${firstDateSpecific ? firstDateSpecific : "N/A"} - ${secondDateSpecific ? secondDateSpecific : "N/A"}`,
-      color: "#6F58C9",
-    },
-    {
-      label: `STL Swer3 - ${firstDateDuration ? firstDateDuration : "N/A"} - ${secondDateDuration ? secondDateDuration : "N/A"}`,
-      color: "#6F58C9",
-    },
-    {
-      label: `STL Swer4 - ${firstDateSpecific ? firstDateSpecific : "N/A"} - ${secondDateSpecific ? secondDateSpecific : "N/A"}`,
-      color: "#6F58C9",
-    },
-    {
-      label: `STL Swer4 - ${firstDateDuration ? firstDateDuration : "N/A"} - ${secondDateDuration ? secondDateDuration : "N/A"}`,
-      color: "#6F58C9",
-    },
-  ],
-  "Total Winners by Game Type": [
-    {
-      label: `STL Pares - ${firstDateSpecific ? firstDateSpecific : "N/A"} - ${secondDateSpecific ? secondDateSpecific : "N/A"}`,
-      color: "#E5C7FF",
-    },
-    {
-      label: `STL Pares - ${firstDateDuration ? firstDateDuration : "N/A"} - ${secondDateDuration ? secondDateDuration : "N/A"}`,
-      color: "#E5C7FF",
-    },
-    {
-      label: `STL Swer2 - ${firstDateSpecific ? firstDateSpecific : "N/A"} - ${secondDateSpecific ? secondDateSpecific : "N/A"}`,
-      color: "#E5C7FF",
-    },
-    {
-      label: `STL Swer2 - ${firstDateDuration ? firstDateDuration : "N/A"} - ${secondDateDuration ? secondDateDuration : "N/A"}`,
-      color: "#E5C7FF",
-    },
-    {
-      label: `STL Swer3 - ${firstDateSpecific ? firstDateSpecific : "N/A"} - ${secondDateSpecific ? secondDateSpecific : "N/A"}`,
-      color: "#6F58C9",
-    },
-    {
-      label: `STL Swer3 - ${firstDateDuration ? firstDateDuration : "N/A"} - ${secondDateDuration ? secondDateDuration : "N/A"}`,
-      color: "#6F58C9",
-    },
-    {
-      label: `STL Swer4 - ${firstDateSpecific ? firstDateSpecific : "N/A"} - ${secondDateSpecific ? secondDateSpecific : "N/A"}`,
-      color: "#6F58C9",
-    },
-    {
-      label: `STL Swer4 - ${firstDateDuration ? firstDateDuration : "N/A"} - ${secondDateDuration ? secondDateDuration : "N/A"}`,
-      color: "#6F58C9",
-    },
-  ],
-  "Top Winning Region by Winnings Comparison": [
-    {
-      label: "Ranking",
-      color: "#E5C7FF",
-    },
-    {
-      label: "Ranking",
-      color: "##3E2466",
-    },
-  ],
-  "Top Winner Region by Winners Comparison": [
-    {
-      label: "Ranking",
-      color: "#E5C7FF",
-    },
-    {
-      label: "Ranking",
-      color: "##3E2466",
-    },
-  ],
-});
-
-interface WinnersandWinningsSummaryProps {
-  categoryFilter: categoryType;
-  dateFilter: string;
-  firstDateSpecific: string | null;
-  secondDateSpecific: string | null;
-  firstDateDuration: string | null;
-  secondDateDuration: string | null;
-}
+import {
+  WinnersandWinningsSummaryProps,
+  getLegendItemsMap_Specific,
+  getLegendItemsMap_Duration,
+} from "../../../../store/useWinningStore";
 
 const CustomLegend: React.FC<WinnersandWinningsSummaryProps> = ({
-    categoryFilter,
-    dateFilter,
-    firstDateSpecific,
-    secondDateSpecific,
-    firstDateDuration,
-    secondDateDuration,
-  }) => {
+  categoryFilter,
+  dateFilter,
+  firstDateSpecific,
+  secondDateSpecific,
+  firstDateDuration,
+  secondDateDuration,
+}) => {
   // Determine which legend items map to use based on the dateFilter
   const legendItems =
     dateFilter === "Specific Date"
-      ? getLegendItemsMap_Specific(firstDateSpecific, secondDateSpecific)[
-          categoryFilter
-        ] || []
+      ? getLegendItemsMap_Specific(categoryFilter,firstDateSpecific, secondDateSpecific)
       : getLegendItemsMap_Duration(
+          categoryFilter,
           firstDateSpecific,
           secondDateSpecific,
           firstDateDuration,
           secondDateDuration
-        )[categoryFilter] || [];
+        )
 
   // Group legend items into rows of 4 for a 4x2 grid layout
   const chunkedLegendItems = legendItems.reduce(
@@ -379,7 +74,9 @@ const CustomLegend: React.FC<WinnersandWinningsSummaryProps> = ({
   );
 };
 
-const ChartWinnersandWinningsSummary: React.FC<WinnersandWinningsSummaryProps> = ({
+const ChartWinnersandWinningsSummary: React.FC<
+  WinnersandWinningsSummaryProps
+> = ({
   categoryFilter,
   dateFilter,
   firstDateSpecific,
