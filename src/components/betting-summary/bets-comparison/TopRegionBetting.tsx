@@ -56,7 +56,8 @@ const CustomLegend: React.FC<BettorsandBetsSummaryProps> = ({
   );
 };
 
-const ChartTopRegionByBets: React.FC<BettorsandBetsSummaryProps> = ({
+const ChartTopRegionByBetsandBettors
+: React.FC<BettorsandBetsSummaryProps> = ({
   categoryFilter,
   dateFilter,
   firstDateSpecific,
@@ -172,4 +173,5 @@ const ChartTopRegionByBets: React.FC<BettorsandBetsSummaryProps> = ({
   );
 };
 
-export default ChartTopRegionByBets;
+export default ChartTopRegionByBetsandBettors
+;

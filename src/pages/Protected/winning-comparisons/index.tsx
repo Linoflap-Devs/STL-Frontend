@@ -21,6 +21,7 @@ import ChartWinnersandWinningsRegionalSummary from "~/components/winning-summary
 import { useWinningStore, categoryType } from "../../../../store/useWinningStore";
 import { useSideBarStore } from "../../../../store/useSideBarStore";
 
+import ChartTopRegionByWinsandWinners from "~/components/winning-summary/wins-comparison/TopRegionWinning";
 const WinningComparison = () => {
   const {
     // loading,
@@ -373,25 +374,37 @@ const formattedSecondDateDuration = secondDateDuration
           </Grid>       
           }
         </Grid>
+        
 
-        {/* Summary of Total Bettors and Bets Barchart */}
-        <ChartWinnersandWinningsSummary 
-          categoryFilter = { categoryFilter }
-          dateFilter = { dateFilter }
-          firstDateSpecific={ formattedFirstDateSpecific }
-          secondDateSpecific={ formattedSecondDateSpecific }
-          firstDateDuration={ formattedFirstDateDuration }
-          secondDateDuration = { formattedSecondDateDuration }
-        />
-        {/* Regional Summary of Total Bettors and Bets Barchart */}
-        <ChartWinnersandWinningsRegionalSummary 
-          categoryFilter = { categoryFilter }
-          dateFilter = { dateFilter }
-          firstDateSpecific={ formattedFirstDateSpecific }
-          secondDateSpecific={ formattedSecondDateSpecific }
-          firstDateDuration={ formattedFirstDateDuration }
-          secondDateDuration = { formattedSecondDateDuration }
-        />
+        {categoryFilter === "Top Winning Region by Winnings Comparison" || categoryFilter === "Top Winner Region by Winners Comparison" ? (
+          <ChartTopRegionByWinsandWinners 
+            categoryFilter={categoryFilter}
+            dateFilter={dateFilter}
+            firstDateSpecific={formattedFirstDateSpecific}
+            secondDateSpecific={formattedSecondDateSpecific}
+            firstDateDuration={formattedFirstDateDuration}
+            secondDateDuration={formattedSecondDateDuration}         
+          />
+          ) : (
+          <>
+            <ChartWinnersandWinningsSummary 
+              categoryFilter={categoryFilter}
+              dateFilter={dateFilter}
+              firstDateSpecific={formattedFirstDateSpecific}
+              secondDateSpecific={formattedSecondDateSpecific}
+              firstDateDuration={formattedFirstDateDuration}
+              secondDateDuration={formattedSecondDateDuration}
+            />
+            <ChartWinnersandWinningsRegionalSummary 
+              categoryFilter={categoryFilter}
+              dateFilter={dateFilter}
+              firstDateSpecific={formattedFirstDateSpecific}
+              secondDateSpecific={formattedSecondDateSpecific}
+              firstDateDuration={formattedFirstDateDuration}
+              secondDateDuration={formattedSecondDateDuration}
+            />
+          </>
+        )}
       </Box>
     </Box>
   );

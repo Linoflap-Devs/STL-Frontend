@@ -21,7 +21,7 @@ import ChartBettorsAndBetsRegionalSummary from "~/components/betting-summary/bet
 import { useBettingStore, categoryType } from "../../../../store/useBettingStore";
 import { useSideBarStore } from "../../../../store/useSideBarStore";
 
-import ChartTopRegionByBets from "~/components/betting-summary/bets-comparison/RegionByBets";
+import ChartTopRegionByBetsandBettors from "~/components/betting-summary/bets-comparison/TopRegionBetting";
 
 const BettingComparison = () => {
   const {
@@ -377,10 +377,10 @@ const formattedSecondDateDuration = secondDateDuration
           }
         </Grid>
 
-          
+        
         {/* Conditionally Render Components Based on categoryFilter */}
-        {categoryFilter === "Top Betting Region by Total Bets" ? (
-          <ChartTopRegionByBets 
+        {categoryFilter === "Top Betting Region by Total Bets" || categoryFilter === "Top Betting Region by Total Bettors"  ? (
+          <ChartTopRegionByBetsandBettors 
             categoryFilter={categoryFilter}
             dateFilter={dateFilter}
             firstDateSpecific={formattedFirstDateSpecific}
