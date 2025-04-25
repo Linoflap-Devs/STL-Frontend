@@ -30,11 +30,7 @@ import { AxiosError } from 'axios';
 const getTransactionsData = async <T = unknown>(
     endpoint: string,
     queryParams: Record<string, unknown> = {}
-): Promise <{
-    success: boolean;
-    message?: string;
-    data: T | null; // Changed from empty array to null for more flexibility
-}> => {
+): Promise <T | null> => {
     // const token = localStorage.getItem('authToken');
 
     // if(!token) {
@@ -44,7 +40,11 @@ const getTransactionsData = async <T = unknown>(
     // }
 
     try {
-        const response = await axiosInstance.get<T>(endpoint, {
+        const response = await axiosInstance.get<{
+            success: boolean;
+            message: string;
+            data: T;
+        }>(endpoint, {
             params: queryParams,
             headers: {
                 // Authorization: `Bearer ${token}`,
@@ -53,10 +53,11 @@ const getTransactionsData = async <T = unknown>(
             withCredentials: true,
         })
 
-        return {
-            success: true,
-            message: "GET Request on Transactions Data Succeeded",
-            data: response.data
+        if(response.data.success) {
+            return response.data.data;
+        } else {
+            console.error(`API Error (${endpoint}):`, response.data.message);
+            return null;
         }
     } catch (error) {
         let errorMessage = "An unexpected error occured";
@@ -69,11 +70,7 @@ const getTransactionsData = async <T = unknown>(
             console.error("Unexpected error:", error);
         }
 
-        return {
-            success: false,
-            message: errorMessage,
-            data: null, // More flexible than always returning an empty array
-        }
+        return null
     }
 };
 

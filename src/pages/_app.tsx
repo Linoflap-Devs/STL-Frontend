@@ -21,34 +21,39 @@ const App = ({ Component, pageProps }: AppProps) => {
   const isExcludedPath = excludedPaths.includes(router.pathname);
   const [loading, setLoading] = useState(true);
 
-  // useEffect(() => {
-  //   if (isExcludedPath) {
-  //     setLoading(false);
-  //     return;
-  //   }
-  //   console.log("Checking authentication status...");
-  //   axiosInstance
-  //     .get("/users/getCurrentUser", { withCredentials: true })
-  //     .then((response) => {
-  //       console.log("Authenticated user:", response.data);
-  //       setLoading(false);
-  //     })
-  //     .catch(() => {
-  //       console.log("No valid auth found! Redirecting to login...");
-  //       router.replace("/auth/login");
-  //     });
-  // }, [router.pathname]);
+  useEffect(() => {
+    if (isExcludedPath) {
+      setLoading(false);
+      return;
+    }
+    console.log("Checking authentication status...");
+    axiosInstance
+      .get("/users/getCurrentUser", { withCredentials: true })
+      .then((response) => {
+        console.log("Authenticated user:", response.data);
+        setLoading(false);
+      })
+      .catch(() => {
+        console.log("No valid auth found! Redirecting to login...");
+       // Only redirect if NOT already on /auth/login
+        if (router.pathname !== "/auth/login") {
+        router.replace("/auth/login");
+      } else {
+        setLoading(false); // Avoid infinite loop
+      }
+      });
+  }, [router.pathname]);
 
-  // if (loading) {
-  //   return (
-  //     <ThemeProvider theme={darkTheme}>
-  //       <CssBaseline />
-  //       <Box display="flex" justifyContent="center" alignItems="center" height="100vh">
-  //         <CircularProgress />
-  //       </Box>
-  //     </ThemeProvider>
-  //   );
-  // }
+  if (loading) {
+    return (
+      <ThemeProvider theme={darkTheme}>
+        <CssBaseline />
+        <Box display="flex" justifyContent="center" alignItems="center" height="100vh">
+          <CircularProgress />
+        </Box>
+      </ThemeProvider>
+    );
+  }
 
   return (
     <ThemeProvider theme={darkTheme}>

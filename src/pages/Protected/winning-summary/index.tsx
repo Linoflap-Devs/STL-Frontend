@@ -2,18 +2,15 @@ import React from "react";
 import { Box, Typography, Grid, Button } from "@mui/material";
 import { useRouter } from 'next/router';
 
+// Components
 import DashboardCardsPage from "~/components/dashboard/DashboardCards";
-
 import TableWinningActivityToday from "~/components/winning-summary/WinningActivityTodayTable";
 import ChartWinnersvsWinningsSummary from "~/components/winning-summary/WinnersvsWinningsChart";
 import TableWinningSummary from "~/components/winning-summary/WinningSummaryTable";
 import ChartWinnersSummary from "~/components/winning-summary/WinnerCountChart";
 
-interface WinningSummaryPageProps {
-  GameCategory?: string;
-}
 
-const WinningSummaryPage: React.FC<WinningSummaryPageProps> = ({GameCategory = 'dashboard'}) => {
+const WinningSummaryPage = () => {
 
   const router = useRouter();
 

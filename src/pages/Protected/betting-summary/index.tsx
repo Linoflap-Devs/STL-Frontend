@@ -10,11 +10,7 @@ import ChartBettorsSummary from "~/components/betting-summary/BettorCountChart";
 import TableBettingSummary from "~/components/betting-summary/BettingSummaryTable";
 
 
-interface BettingSummaryPageProps {
-  GameCategory?: string;
-}
-
-const BettingSummaryPage: React.FC<BettingSummaryPageProps> = ({ GameCategory = 'dashboard' }) => {
+const BettingSummaryPage = () => {
 
   const router = useRouter();
 

@@ -1,59 +1,17 @@
-import React, { useState } from "react";
 import { Box, Typography } from "@mui/material";
 import { cardDashboardStyles } from "../../styles/theme";
 import { useEffect } from "react";
 
-import fetchHistoricalSummary from "~/utils/api/transactions/getHistoricalSummary";
+import { useBettingStore } from "../../../store/useBettingStore";
+
 
 const DashboardCardsPage = () => {
-  const [summary, setSummary] = useState({
-    totalBettors: 0,
-    totalWinners: 0,
-    totalBets: 0,
-    totalPayout: 0,
-    totalRevenue: 0,
-  });
+const { cardsAggregatedData, fetchAndAggregateData } = useBettingStore();
 
   useEffect(() => {
-    const getData = async () => {
-      const response = await fetchHistoricalSummary({}); // Pass necessary query params
-      if (response.success) {
-        const data = response.data;
+    fetchAndAggregateData();
+  }, [fetchAndAggregateData]);
 
-        // Aggregate data
-        const totalBettors = data.reduce(
-          (acc: any, item: any) => acc + item.TotalBettors,
-          0
-        );
-        const totalWinners = data.reduce(
-          (acc: any, item: any) => acc + item.TotalWinners,
-          0
-        );
-        const totalBets = data.reduce(
-          (acc: any, item: any) => acc + item.TotalBetAmount,
-          0
-        );
-        const totalPayout = data.reduce(
-          (acc: any, item: any) => acc + item.TotalPayout,
-          0
-        );
-        const totalRevenue = data.reduce(
-          (acc: any, item: any) => acc + item.TotalEarnings,
-          0
-        );
-
-        setSummary({
-          totalBettors,
-          totalWinners,
-          totalBets,
-          totalPayout,
-          totalRevenue,
-        });
-      }
-    };
-
-    getData();
-  }, []);
   return (
     <Box
       sx={{
@@ -67,19 +25,19 @@ const DashboardCardsPage = () => {
       }}
     >
       {[
-        { title: "Total Bettors", value: summary.totalBettors },
-        { title: "Total Winners", value: summary.totalWinners },
+        { title: "Total Bettors", value: cardsAggregatedData.totalBettors },
+        { title: "Total Winners", value: cardsAggregatedData.totalWinners },
         {
           title: "Total Bets Placed",
-          value: `₱${summary.totalBets.toLocaleString()}`,
+          value: `₱${cardsAggregatedData.totalBets.toLocaleString()}`,
         },
         {
           title: "Total Payout",
-          value: `₱${summary.totalPayout.toLocaleString()}`,
+          value: `₱${cardsAggregatedData.totalPayout.toLocaleString()}`,
         },
         {
           title: "Total Revenue",
-          value: `₱${summary.totalRevenue.toLocaleString()}`,
+          value: `₱${cardsAggregatedData.totalRevenue.toLocaleString()}`,
         },
       ].map((item, index) => (
         <Box

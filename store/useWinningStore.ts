@@ -1,4 +1,5 @@
 import { create } from 'zustand';
+import getTransactionsData from '~/utils/api/transactions/get.TransactionsData.service';
 
 export type categoryType = 
   'Total Winners and Winnings' |
@@ -32,6 +33,15 @@ interface WinningStore {
   // If Filtered by Date Duration
   firstDateDuration: Date | null;
   secondDateDuration: Date | null;
+  cardsAggregatedData: {
+    totalBettors: number;
+    totalWinners: number;
+    totalBets: number;
+    totalPayout: number;
+    totalRevenue: number;
+  };
+  
+
   // For Submenus, Date type extracted from URL params
   setGameType: (gameType: string) => void;
   setCategoryFilter: (category: categoryType) => void;
@@ -42,7 +52,7 @@ interface WinningStore {
   // If Filtered by Date Duration
   setFirstDateDuration: (date: Date) => void;
   setSecondDateDuration: (date: Date) => void;
-
+  fetchAndAggregateDate: () => Promise<void>;
   resetFilters: () => void;
 }
 
@@ -55,16 +65,72 @@ export const useWinningStore = create<WinningStore>((set) => ({
   secondDateSpecific: null,
   firstDateDuration: null,
   secondDateDuration: null,
-  
+  cardsAggregatedData: {
+    totalBettors: 0,
+    totalWinners: 0,
+    totalBets: 0,
+    totalPayout: 0,
+    totalRevenue: 0,
+  },
 
-  setLoading: ()=> set((state)=> ({loading: !state.loading})),
+  setLoading: () => set((state) => ({ loading: !state.loading })),
   setGameType: (gameType) => set({ activeGameType: gameType }),
-  setCategoryFilter: (category:categoryType) => set({ categoryFilter: category }),
-  setDateFilter: (type:dateType) => set({ dateFilter: type }),
+  setCategoryFilter: (category: categoryType) => set({ categoryFilter: category }),
+  setDateFilter: (type: dateType) => set({ dateFilter: type }),
   setFirstDateSpecific: (date) => set({ firstDateSpecific: date }),
   setSecondDateSpecific: (date) => set({ secondDateSpecific: date }),
   setFirstDateDuration: (date) => set({ firstDateDuration: date }),
   setSecondDateDuration: (date) => set({ secondDateDuration: date }),
+
+  fetchAndAggregateDate: async () => {
+    try {
+      // Fetch the data using the getTransactionsData function
+      const data = await getTransactionsData<{
+        TransactionDate: string;
+        RegionId: number;
+        Region: string;
+        RegionFull: string;
+        TotalBets: number;
+        TotalBettors: number;
+        TotalWinners: number;
+        TotalBetAmount: number;
+        TotalPayout: number;
+        TotalEarnings: number;
+      }[]>("/transactions/getHistoricalRegion", {});
+
+      console.log(`Winning Dashboard Cards Data:`, JSON.stringify(data, null, 2));
+
+      // Check if data is valid and is an array
+      if (data && Array.isArray(data)) {
+        // Aggregate the totals
+        const totals = data.reduce(
+          (acc, item) => {
+            acc.totalBettors += item.TotalBettors;
+            acc.totalWinners += item.TotalWinners;
+            acc.totalBets += item.TotalBets;
+            acc.totalPayout += item.TotalPayout;
+            acc.totalRevenue += item.TotalEarnings;
+            return acc;
+          },
+          {
+            totalBettors: 0,
+            totalWinners: 0,
+            totalBets: 0,
+            totalPayout: 0,
+            totalRevenue: 0,
+          }
+        );
+
+        // Update the store with the aggregated data
+        set({ cardsAggregatedData: totals });
+      } else {
+        console.error("Unexpected data format or no data returned:", data);
+      }
+    } catch (error) {
+      console.error("Error fetching and aggregating data:", error);
+    }
+  },
+
   resetFilters: () =>
     set({
       categoryFilter: 'Total Winners and Winnings',
@@ -72,7 +138,7 @@ export const useWinningStore = create<WinningStore>((set) => ({
       firstDateSpecific: null,
       secondDateSpecific: null,
       firstDateDuration: null,
-      secondDateDuration: null
+      secondDateDuration: null,
     }),
 }));
 
