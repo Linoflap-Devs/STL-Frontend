@@ -28,6 +28,7 @@ const excludedPaths = [
 const App = ({ Component, pageProps }: AppProps) => {
   const router = useRouter();
   const isExcludedPath = excludedPaths.includes(router.pathname);
+  console.log(router.pathname)
   const [loading, setLoading] = useState(true);
 
   // Helper function: Wait until token refresh is done
@@ -44,8 +45,9 @@ const App = ({ Component, pageProps }: AppProps) => {
     }
 
     const handleAuthFailure = () => {
+      console.log(router.pathname)
       console.log("No valid auth found! Redirecting to login...");
-      router.replace("/auth/login");
+      router.replace("/Auth/login");
     };
 
     const checkAuth = async () => {

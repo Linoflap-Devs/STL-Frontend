@@ -1,7 +1,7 @@
 // src\pages\auth\login\page.tsx
 
 import React from "react";
-import LoginPage from "~/components/Auth/Login";
+import LoginPage from "~/components/auth/Login";
 
 const Login = () => {
   return (
