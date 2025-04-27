@@ -20,17 +20,23 @@ import SearchIcon from "@mui/icons-material/Search";
 import PersonOffIcon from "@mui/icons-material/PersonOff";
 import FilterListIcon from "@mui/icons-material/FilterList";
 import fetchTransactions from "~/utils/api/transactions/getTransactions";
+import { fetchWinners } from "~/utils/api/winners";
 
 export interface User {
   transactionNumber: string;
   date: string;
   drawTime: string;
+  region: string,
+  province: string,
   betAmount: number;
+  tumbok: number,
+  sahod: number,
+  ramble: number,
+  winType: string,
   gameType: string;
-  betType: string;
   selectedPair: string;
   status: string;
-  [key: string]: any;
+  payoutAmount: number
 }
 
 const TableWinningSummary: React.FC = () => {
@@ -52,19 +58,25 @@ const TableWinningSummary: React.FC = () => {
           limit: 10,
         };
 
-        const response = await fetchTransactions(queryParams);
+        const response = await fetchWinners();
+        console.log(response)
 
         if (response.success) {
           // Transform the API data to match the User interface
-          const transformedData = response.data.map((transaction) => ({
-            transactionNumber: transaction.TransactionNumber.replace(/-/g, ""), // Remove hyphens
+          const transformedData = response.data.map((transaction: any) => ({
+            transactionNumber: transaction.TransactionNumber, // Remove hyphens
             date: new Date(transaction.DateOfTransaction).toLocaleDateString(),
-            drawTime: "WIP", // Placeholder for Draw Time
+            drawTime:  transaction.DrawOrder == 1 ? "First Draw" : transaction.DrawOrder == 2 ? "Second Draw" : "Third Draw", // Placeholder for Draw Time
             betAmount: transaction.BetAmount,
-            gameType: transaction.GameType,
-            betType: transaction.BetType,
-            selectedPair: `${transaction.CombinationOne}-${transaction.CombinationTwo}`, // Use hyphen instead of ampersand
-            status: "WIP", // Placeholder for Status
+            region: transaction.Region,
+            province: transaction.Province,
+            tumbok: transaction.Tumbok,
+            sahod: transaction.Sahod,
+            ramble: transaction.Ramble,
+            payoutAmount: transaction.PayoutAmount,
+            gameType: transaction.GameCategory,
+            selectedPair: `${transaction.WinningCombinationOne}-${transaction.WinningCombinationTwo}${ transaction.WinningCombinationThree > 0 ? `-${transaction.WinningCombinationThree}` : ""}${transaction.WinningCombinationFour > 0 ? `-${transaction.WinningCombinationFour}` : ""}`, // Use hyphen instead of ampersand
+            status: transaction.TransactionStatus, // Placeholder for Status
           }));
 
           setTransactions(transformedData);
@@ -93,7 +105,6 @@ const TableWinningSummary: React.FC = () => {
             .toLowerCase()
             .includes(lowercasedQuery) ||
           transaction.gameType.toLowerCase().includes(lowercasedQuery) ||
-          transaction.betType.toLowerCase().includes(lowercasedQuery) ||
           transaction.selectedPair.toLowerCase().includes(lowercasedQuery)
       );
       setFilteredTransactions(filtered);
@@ -167,12 +178,16 @@ const TableWinningSummary: React.FC = () => {
           <TableRow>
             <TableCell>TRANSACTION NUMBER</TableCell>
             <TableCell>DATE</TableCell>
+            <TableCell>REGION</TableCell>
+            <TableCell>PROVINCE</TableCell>
             <TableCell>DRAW TIME</TableCell>
-            <TableCell>BET AMOUNT</TableCell>
             <TableCell>GAME TYPE</TableCell>
-            <TableCell>BET TYPE</TableCell>
-            <TableCell>SELECTED PAIR</TableCell>
-            <TableCell>STATUS</TableCell>
+            <TableCell>BET AMOUNT</TableCell>
+            <TableCell>TUMBOK</TableCell>
+            <TableCell>SAHOD</TableCell>
+            <TableCell>RAMBLE</TableCell>
+            <TableCell>SELECTED NUMBERS</TableCell>
+            <TableCell>WIN</TableCell>
           </TableRow>
         </TableHead>
         <TableBody>
@@ -205,35 +220,16 @@ const TableWinningSummary: React.FC = () => {
                 <TableRow key={transaction.transactionNumber}>
                   <TableCell>{transaction.transactionNumber}</TableCell>
                   <TableCell>{transaction.date}</TableCell>
+                  <TableCell>{transaction.region}</TableCell>
+                  <TableCell>{transaction.province}</TableCell>
                   <TableCell>{transaction.drawTime}</TableCell>
-                  <TableCell>₱{transaction.betAmount}</TableCell>{" "}
-                  {/* Add peso sign */}
                   <TableCell>{transaction.gameType}</TableCell>
-                  <TableCell>{transaction.betType}</TableCell>
+                  <TableCell>₱{transaction.betAmount}</TableCell>
+                  <TableCell>₱{transaction.tumbok}</TableCell>
+                  <TableCell>₱{transaction.sahod}</TableCell>
+                  <TableCell>₱{transaction.ramble}</TableCell>
                   <TableCell>{transaction.selectedPair}</TableCell>
-                  <TableCell>
-                    <Button
-                      variant="contained"
-                      sx={{
-                        cursor: "auto",
-                        textTransform: "none",
-                        borderRadius: "12px",
-                        padding: "1.2px 13.5px",
-                        fontSize: "14px",
-                        backgroundColor:
-                          transaction.status === "Void" ? "#FF7A7A" : "#4CAF50",
-                        color: "#171717",
-                        "&:hover": {
-                          backgroundColor:
-                            transaction.status === "Void"
-                              ? "#F05252"
-                              : "#4CAF50",
-                        },
-                      }}
-                    >
-                      {transaction.status}
-                    </Button>
-                  </TableCell>
+                  <TableCell>{transaction.payoutAmount}</TableCell>
                 </TableRow>
               ))
           )}

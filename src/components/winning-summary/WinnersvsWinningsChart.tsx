@@ -1,8 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Box, Typography, Stack } from "@mui/material";
 import { BarChart } from "@mui/x-charts/BarChart";
-
-import fetchHistoricalSummary from "~/utils/api/transactions/getHistoricalSummary";
+import { fetchHistoricalSummary } from "~/utils/api/transactions";
 
 const CustomLegend = () => (
   <Stack
@@ -40,7 +39,7 @@ const CustomLegend = () => (
 
 const ChartWinnersvsWinningsSummary = () => {
   const [data, setData] = useState<
-    { draw: string; bettors: number; bets: number }[]
+    { draw: string; winners: number; winnings: number }[]
   >([]);
   // const [loading, setLoading] = useState(false);
 
@@ -48,32 +47,35 @@ const ChartWinnersvsWinningsSummary = () => {
     const fetchData = async () => {
       // setLoading(true);
       try {
-        const res = await fetchHistoricalSummary({}); // Add query params if needed
+        const response = await fetchHistoricalSummary(); // Add query params if needed
 
-        console.log(
-          "Result Data from BettorsvsBetsPlacedChart: " +
-            JSON.stringify(res.data, null, 2)
-        );
+        const today = new Date().toISOString().split("T")[0];
+          console.log(today); // Output: "2025-03-25T00:00:00.000Z"
 
-        if (res.success && Array.isArray(res.data)) {
+          // Filter Data for Today's Date
+          const res = response.data.filter((item: { TransactionDate: string }) =>
+            item.TransactionDate.startsWith(today)
+          );
+
+        if (response.success && Array.isArray(res)) {
           // Aggregate data by GameTypeId
           const aggregatedData: Record<
             number,
-            { bettors: number; bets: number }
+            { winners: number; winnings: number }
           > = {};
 
-          res.data.forEach(
+          res.forEach(
             (item: {
-              GameTypeId: number;
-              TotalBettors: number;
-              TotalBetsPlaced: number;
+              DrawOrder: number;
+              TotalWinners: number;
+              TotalPayout: number;
             }) => {
-              if (!aggregatedData[item.GameTypeId]) {
-                aggregatedData[item.GameTypeId] = { bettors: 0, bets: 0 };
+              if (!aggregatedData[item.DrawOrder]) {
+                aggregatedData[item.DrawOrder] = { winners: 0, winnings: 0 };
               }
 
-              aggregatedData[item.GameTypeId].bettors += item.TotalBettors;
-              aggregatedData[item.GameTypeId].bets += item.TotalBetsPlaced;
+              aggregatedData[item.DrawOrder].winners += item.TotalWinners;
+              aggregatedData[item.DrawOrder].winnings += item.TotalPayout;
             }
           );
 
@@ -81,18 +83,18 @@ const ChartWinnersvsWinningsSummary = () => {
           const formattedData = [
             {
               draw: "First Draw",
-              bettors: aggregatedData[1]?.bettors || 0,
-              bets: aggregatedData[1]?.bets || 0,
+              winners: aggregatedData[1]?.winners || 0,
+              winnings: aggregatedData[1]?.winnings || 0,
             },
             {
               draw: "Second Draw",
-              bettors: aggregatedData[2]?.bettors || 0,
-              bets: aggregatedData[2]?.bets || 0,
+              winners: aggregatedData[2]?.winners || 0,
+              winnings: aggregatedData[2]?.winnings || 0,
             },
             {
               draw: "Third Draw",
-              bettors: aggregatedData[3]?.bettors || 0,
-              bets: aggregatedData[3]?.bets || 0,
+              winners: aggregatedData[3]?.winners || 0,
+              winnings: aggregatedData[3]?.winnings || 0,
             },
           ];
 
@@ -152,11 +154,11 @@ const ChartWinnersvsWinningsSummary = () => {
           margin={{ left: 90, right: 20, top: 20, bottom: 40 }}
           series={[
             {
-              data: [10, 20,30],
+              data: data.map((item) => item.winners),
               color: "#E5C7FF",
             },
             {
-              data: [40, 50, 60],
+              data: data.map((item) => item.winnings),
               color: "#D2A7FF",
             },
           ]}
