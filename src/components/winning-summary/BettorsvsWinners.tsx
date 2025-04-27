@@ -11,21 +11,21 @@ const CustomLegend = () => (
         </Box>
         <Box sx={{ display: "flex", alignItems: "center" }}>
             <Box sx={{ width: 14, height: 14, borderRadius: "50%", backgroundColor: "#5050A5", mr: 1.5 }} />
-            <Typography color="white">Bets Placed</Typography>
+            <Typography color="white">Winners</Typography>
         </Box>
     </Stack>
 );
 
-interface BettorsvsBetsPlacedPageProps {
+interface BettorsvsWinnersProps {
     data: any[]; // Filtered data passed from parent
 }
 
-const BettorsvsBetsPlacedPage: React.FC<BettorsvsBetsPlacedPageProps> = ({ data }) => {
-    console.log('Fetched Data from BettorsvsBetsPlaced:', JSON.stringify(data, null, 2));
+const BettorsvsWinnersPage: React.FC<BettorsvsWinnersProps> = ({ data }) => {
+    console.log('Fetched Data from BettorsvsWinners:', JSON.stringify(data, null, 2));
 
     const [regions, setRegions] = useState<string[]>([]);
     const [bettorsData, setBettorsData] = useState<number[]>([]);
-    const [betsPlacedData, setBetsPlacedData] = useState<number[]>([]);
+    const [winnersData, setWinnersData] = useState<number[]>([]);
 
     // List of Philippine Regions
     const allRegions = [
@@ -36,14 +36,12 @@ const BettorsvsBetsPlacedPage: React.FC<BettorsvsBetsPlacedPageProps> = ({ data 
 
     // Process Data from Props
     useEffect(() => {
-
-        // Aggregates Data per Region
         const processData = () => {
-            const regionMap: Record<string, { bettors: number; bets: number }> = {};
+            const regionMap: Record<string, { bettors: number; winners: number }> = {};
 
             // Initialize all regions with 0 values
             allRegions.forEach(region => {
-                regionMap[region] = { bettors: 0, bets: 0 };
+                regionMap[region] = { bettors: 0, winners: 0 };
             });
 
             // Aggregate data based on region
@@ -53,28 +51,27 @@ const BettorsvsBetsPlacedPage: React.FC<BettorsvsBetsPlacedPageProps> = ({ data 
 
                 if (regionMap[region]) {
                     regionMap[region].bettors += entry.TotalBettors;
-                    regionMap[region].bets += entry.TotalBets;
+                    regionMap[region].winners += entry.TotalWinners;
                 }
             });
 
             // Update state for chart rendering
             setRegions(allRegions);
             setBettorsData(allRegions.map(region => regionMap[region]?.bettors || 0));
-            setBetsPlacedData(allRegions.map(region => regionMap[region]?.bets || 0));
+            setWinnersData(allRegions.map(region => regionMap[region]?.winners || 0));
         };
 
         if (data && data.length > 0) {
             processData();
         } else {
-            // Clear chart if no data
             setRegions([]);
             setBettorsData([]);
-            setBetsPlacedData([]);
+            setWinnersData([]);
         }
-    }, [data]); // Re-run when `data` changes
+    }, [data]);
 
     return (
-        <Box sx={{ paddingTop: 7, paddingBottom: 4, paddingLeft: 2, backgroundColor: "#282828" }}>
+        <Box sx={{ paddingTop: 7, paddingBottom: 4, paddingLeft: 2, backgroundColor: "#282828", marginBottom: 5}}>
             <Box sx={{ paddingX: 3 }}>
                 <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", mb: 2 }}>
                     <Box>
@@ -82,7 +79,7 @@ const BettorsvsBetsPlacedPage: React.FC<BettorsvsBetsPlacedPageProps> = ({ data 
                             Side by Side Comparison of
                         </Typography>
                         <Typography color="#FFFFFF" sx={{ fontSize: "21px", lineHeight: 1.3, fontWeight: "700" }}>
-                            Regional Report of Bettors and Bets Placed
+                            Regional Report on Bettors and Winners
                         </Typography>
                     </Box>
                     <CustomLegend />
@@ -90,21 +87,20 @@ const BettorsvsBetsPlacedPage: React.FC<BettorsvsBetsPlacedPageProps> = ({ data 
                 <Divider sx={{ backgroundColor: "#B3B3B3", opacity: 1, height: "2px", mt: 1 }} />
             </Box>
 
-            {/* Chart Rendering */}
             <Box sx={{ height: 270, width: "100%", flexGrow: 0, minWidth: 0 }}>
                 <BarChart
                     borderRadius={20}
                     grid={{ horizontal: true }}
                     xAxis={[{ scaleType: "band", data: regions, label: "PHILIPPINE REGIONS" }]}
-                    yAxis={[{ label: "AMOUNT" }]}
+                    yAxis={[{ label: "COUNT" }]}
                     series={[
-                        { data: bettorsData, label: "Bettors", color: "#BB86FC" },
-                        { data: betsPlacedData, label: "Bets Placed", color: "#5050A5" },
+                        { data: bettorsData, label: "Total Bettors", color: "#BB86FC" },
+                        { data: winnersData, label: "Total Winners", color: "#5050A5" },
                     ]}
                     slotProps={{
                         legend: { hidden: true },
                         bar: {
-                            className: "bar-hover-effect", // Add custom class here
+                            className: "bar-hover-effect",
                             style: {
                                 borderTopLeftRadius: 5,
                                 borderTopRightRadius: 5,
@@ -138,7 +134,6 @@ const BettorsvsBetsPlacedPage: React.FC<BettorsvsBetsPlacedPageProps> = ({ data 
                 />
             </Box>
 
-
             <Box sx={{ display: "flex", justifyContent: "flex-end", pr: 3, mt: 2 }}>
                 <Button
                     sx={{
@@ -165,4 +160,4 @@ const BettorsvsBetsPlacedPage: React.FC<BettorsvsBetsPlacedPageProps> = ({ data 
     );
 };
 
-export default BettorsvsBetsPlacedPage;
+export default BettorsvsWinnersPage;

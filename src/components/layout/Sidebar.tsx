@@ -36,8 +36,40 @@ const Sidebar: React.FC<SidebarProps> = ({
   const isMobile = useMediaQuery(theme.breakpoints.down("md"));
   const [dateTime, setDateTime] = useState<Date | null>(null);
   const router = useRouter();
+  // asPath - current URL path(pathname&query/search params)
   const currentPath = router.asPath;
 
+  // Handle Logout
+  const handleLogout = async () => {
+    try {
+      await axiosInstance.delete("/auth/logout", {
+        withCredentials: true, // Ensures auth cookie is sent to invalidate session
+      });
+      window.location.href = "/auth/login";
+    } catch (error: any) {
+      if (error.response) {
+        console.error(
+          "Logout Failed: ",
+          error.response.data.message || "Unknown Error"
+        );
+        // showToast("Logout Failed, Please try again.")
+      } else {
+        console.error("Network error during logout:", error.message);
+      }
+    }
+  };
+
+  // Zustand store
+  const { 
+    SideBarActiveGameType, setSideBarActiveGameType 
+  } = useSideBarStore();
+
+  const handleListItemClick = (subItem: SubmenuItem) => {
+    setSideBarActiveGameType(subItem.name as gameType); // Update activeGameType in Zustand store
+    router.push(subItem.path); // Navigate to the selected path
+  };
+
+  // Update Date and Time
   useEffect(() => {
     const updateDateTime = () => setDateTime(new Date());
     updateDateTime();
@@ -123,10 +155,14 @@ const Sidebar: React.FC<SidebarProps> = ({
     );
   };
 
+    );
+  };
+
   return (
     <>
       <MuiDrawer
         variant={isMobile ? "temporary" : "permanent"}
+        open={isMobile ? mobileOpen : !collapsed}
         open={isMobile ? mobileOpen : !collapsed}
         onClose={handleDrawerToggle}
         anchor="left"
@@ -151,6 +187,8 @@ const Sidebar: React.FC<SidebarProps> = ({
             overflowX: "hidden",
             backgroundColor: "#171717",
             color: "white",
+            transition: "width 0.3s ease",
+            overflow: "hidden",
           },
         }}
       >
@@ -219,6 +257,23 @@ const Sidebar: React.FC<SidebarProps> = ({
           </Box>
         </Box>
       </MuiDrawer>
+
+      {/* Toggle Button positioned at the bottom (outside of the Drawer) */}
+      <IconButton
+        onClick={toggleSidebar}
+        sx={{
+          position: "fixed",
+          bottom: 20,
+          left: collapsed ? 16 : drawerWidth - 58,
+          zIndex: 1300,
+          backgroundColor: "#383838",
+          "&:hover": { backgroundColor: "#383838" },
+          transition: "left 0.3s ease",
+          color: "white",
+        }}
+      >
+        {collapsed ? <ChevronRightIcon /> : <ChevronLeftIcon />}
+      </IconButton>
     </>
   );
 };

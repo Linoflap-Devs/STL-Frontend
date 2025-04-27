@@ -1,9 +1,7 @@
 import { useEffect, useState } from "react";
-import fetchHistoricalSummary from "~/utils/api/transactions";
 import * as React from "react";
 import { BarChart } from "@mui/x-charts/BarChart";
-import { Typography, Box, Stack, Divider, Button, Menu, MenuItem, TextField, } from "@mui/material";
-import FilterListIcon from '@mui/icons-material/FilterList';
+import { Typography, Box, Stack, Divider, Button } from "@mui/material";
 
 // Custom Legend
 const CustomLegend = () => (
@@ -19,108 +17,59 @@ const CustomLegend = () => (
     </Stack>
 );
 
-const BetsPlacedvsTotalWinningsPage = () => {
-    const [data, setData] = useState<any>(null);
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState<string | null>(null);
-    const [selectedFilter, setSelectedFilter] = useState("All");
+interface BettorsvsTotalWinningsPageProps {
+    data: any []; 
+}
+const BetsPlacedvsTotalWinningsPage:React.FC<BettorsvsTotalWinningsPageProps> = ({ data }) => {
+    console.log('Fetched Data from BetsPlacedvsTotalWinningsPage', JSON.stringify(data, null, 2))
+
     const [regions, setRegions] = useState<string[]>([]);
-    const [selectedDate, setSelectedDate] = useState<string>("");
-
-    const [bettorsData, setBettorsData] = useState<number[]>([]);
-    const [betsPlacedData, setBetsPlacedData] = useState<number[]>([]);
-
-    // Dropdown Menu State
-    const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
-    const open = Boolean(anchorEl);
-
-    const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
-        setAnchorEl(event.currentTarget);
-    };
-
-    const handleClose = (filter: string) => {
-        setSelectedFilter(filter);
-        setAnchorEl(null);
-    };
+    const [tumbokData, setTumbokData] = useState<number[]>([]);
+    const [sahodData, setSahodData] = useState<number[]>([]);
 
     const allRegions = [
-        "I", "II", "III", "IV-A", "MIMAROPA", "V",
-        "VI", "VII", "VIII", "IX", "X", "XI",
-        "XII", "CARAGA", "BARMM", "CAR", "NCR"
+        "I", "II", "III", "IV-A", "MIMAROPA", "V", "VI", "VII", "VIII", "IX", "X", "XI", "XII", "CARAGA", "BARMM", "CAR", "NCR", "Default"
     ];
 
     useEffect(() => {
-        const fetchData = async () => {
-            try {
-                setLoading(true);
-                setError(null);
-    
-                const queryParams = { filter: selectedFilter };
-                const response = await fetchHistoricalSummary(queryParams);
-    
-                console.log("API Response:", response);
-    
-                if (response.success) {
-                    let apiData = response.data.map((entry: any) => ({
-                        ...entry,
-                        GameType: entry.GameTypeId === 1 ? "Tumbok" : entry.GameTypeId === 2 ? "Sahod" : "Unknown",
-                    }));
-    
-                    console.log("Modified Data:", apiData);
-    
-                    // Initialize with all regions, defaulting to 0 bettors & bets
-                    const regionMap: Record<string, { bettors: number; bets: number }> = {};
-                    allRegions.forEach(region => {
-                        regionMap[region] = { bettors: 0, bets: 0 };
-                    });
-    
-                    apiData.forEach((entry: any) => {
-                        let region = entry.Region || "Unknown";
-                        region = region.replace(/^Region\s/, "");
-    
-                        if (regionMap[region]) {
-                            regionMap[region].bettors += entry.TotalBettors;
-                            regionMap[region].bets += entry.TotalBetAmount;
-                        }
-                    });
-    
-                    // Generate data arrays based on all 17 regions
-                    const updatedBettorsData = allRegions.map(region => regionMap[region]?.bettors || 0);
-                    const updatedBetsPlacedData = allRegions.map(region => regionMap[region]?.bets || 0);
-    
-                    console.log("Updated Bettors Data:", updatedBettorsData);
-                    console.log("Updated Bets Placed Data:", updatedBetsPlacedData);
-    
-                    // Ensure all 17 regions are displayed without "Region"
-                    setRegions(allRegions);
-                    setBettorsData(updatedBettorsData);
-                    setBetsPlacedData(updatedBetsPlacedData);
-                    setData(apiData);
-                } else {
-                    setError(response.message || "Failed to fetch data.");
+        if (!data || !Array.isArray(data)) return;
+
+        // Initialize region map
+        const regionMap: Record<string, { tumbok: number; sahod: number }> = {};
+        allRegions.forEach(region => {
+            regionMap[region] = { tumbok: 0, sahod: 0 };
+        });
+
+        data.forEach((entry) => {
+            let region = entry.Region || "Unknown";
+            region = region.replace(/^Region\s/, "");
+            
+            if (regionMap[region]) {
+                if (entry.BetTypeId === 1) {
+                    regionMap[region].tumbok += entry.TotalBetAmount;
+                } else if (entry.BetTypeId === 2) {
+                    regionMap[region].sahod += entry.TotalBetAmount;
                 }
-            } catch (err) {
-                console.error("Fetch error:", err);
-                setError("An unexpected error occurred.");
-            } finally {
-                setLoading(false);
             }
-        };
-    
-        fetchData();
-    }, [selectedFilter]);
-    
+        });
+
+        // Generate data arrays based on all 17 regions
+        setRegions(allRegions);
+        setTumbokData(allRegions.map(region => regionMap[region]?.tumbok || 0));
+        setSahodData(allRegions.map(region => regionMap[region]?.sahod || 0));
+    }, [data]);
+
     return (
         <>
             <Box sx={{ mt: 4, paddingTop: 7, paddingBottom: 4, paddingLeft: 2, backgroundColor: "#282828" }}>
-                <Box sx={{ paddingX: 3, }}>
-                    <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", mb: 2, }}>
+                <Box sx={{ paddingX: 3 }}>
+                    <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", mb: 2 }}>
                         <Box>
                             <Typography color="#B3B3B3" sx={{ fontSize: "17px", lineHeight: 1 }}>
                                 Side by Side Comparison of
                             </Typography>
                             <Typography color="#FFFFFF" sx={{ fontSize: "21px", lineHeight: 1.3, fontWeight: "700" }}>
-                                Regional Winner Report by Bet Type
+                                Regional Winner Report by Bet Types
                             </Typography>
                         </Box>
                         <CustomLegend />
@@ -132,21 +81,23 @@ const BetsPlacedvsTotalWinningsPage = () => {
                     <BarChart
                         borderRadius={20}
                         grid={{ horizontal: true }}
-                        xAxis={[{ scaleType: "band", data: regions, label: "PHILIPPINE REGIONS", categoryGapRatio: 0.8 } as any]}
+                        xAxis={[{ scaleType: "band", data: regions, label: "PHILIPPINE REGIONS" } as any]}
                         yAxis={[{ label: "AMOUNT" }]}
                         series={[
-                            { data: bettorsData, label: "Tumbok", color: "#BB86FC", },
-                            { data: betsPlacedData, label: "Sahod", color: "#5050A5" },
+                            { data: tumbokData, label: "Tumbok", color: "#BB86FC" },
+                            { data: sahodData, label: "Sahod", color: "#5050A5" },
                         ]}
                         slotProps={{
                             legend: { hidden: true },
                             bar: {
+                                // className: "bar-container-hover", // Add custom class here
                                 style: {
                                     borderTopLeftRadius: 5,
                                     borderTopRightRadius: 5,
+                                    transition: "fill 0.3s ease-in-out",
+                                    cursor: "pointer",
                                 },
                             },
-
                             axisLabel: {
                                 style: {
                                     fontSize: 12,
@@ -160,9 +111,7 @@ const BetsPlacedvsTotalWinningsPage = () => {
                                     fill: "#B3B3B3",
                                 },
                             },
-
                         }}
-
                         sx={{
                             "& .MuiChartsGrid-root line": {
                                 stroke: "white",
@@ -171,21 +120,32 @@ const BetsPlacedvsTotalWinningsPage = () => {
                             "& .MuiChartsAxis-line": {
                                 stroke: "none !important",
                             },
-                            "& .MuiChartsYAxis-root": {
-                                marginTop: 3,
+                            "& .MuiChartsHighlightElement-root": {
+                                fill: "#E3E3E3", //This changes the hover rectangle color
+                                transition: "fill 0.3s ease-in-out", // Smooth transition effect
                             },
-                        }}
+                        }}                
                     />
                 </Box>
-                <Box sx={{ display: 'flex', justifyContent: 'right', marginRight: 4, borderRadius: '8px' }}>
+
+                <Box sx={{ display: "flex", justifyContent: "flex-end", pr: 3, mt: 2 }}>
                     <Button
                         sx={{
-                            fontSize: '12px', textAlign: "left", color: '#3F3F3F', textTransform: 'none', backgroundColor: "#CCA1FD", mb: 0.7, paddingX: 4, paddingY: 0.9, width: 'auto', "&:hover": {
-                                backgroundColor: '#B389E0',
+                            borderRadius: '8px',
+                            paddingY: 1,
+                            paddingX: 2,
+                            textTransform: 'none',
+                            fontWeight: 400,
+                            lineHeight: '14.63px',
+                            "&:hover": {
+                                backgroundColor: '#B183E8',
                             },
+                            width: '145px',
+                            height: '34px',
+                            color: '#1b1b1b'
                         }}
                         variant="contained"
-                        onClick={handleClick}
+                        onClick={() => console.log("Exporting All as CSV")}
                     >
                         Export as CSV
                     </Button>

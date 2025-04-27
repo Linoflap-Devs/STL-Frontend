@@ -1,8 +1,7 @@
 import { useEffect, useState } from "react";
-import fetchHistoricalSummary from "~/utils/api/transactions";
 import * as React from "react";
 import { BarChart } from "@mui/x-charts/BarChart";
-import { Typography, Box, Stack, Divider, Button, Menu, MenuItem, TextField, } from "@mui/material";
+import { Typography, Box, Stack, Divider, Button} from "@mui/material";
 
 // Custom Legend
 const CustomLegend = () => (
@@ -13,125 +12,62 @@ const CustomLegend = () => (
         </Box>
         <Box sx={{ display: "flex", alignItems: "center" }}>
             <Box sx={{ width: 14, height: 14, borderRadius: "50%", backgroundColor: "#5050A5", mr: 1.5 }} />
-            <Typography color="white">3:00 PM</Typography>
+            <Typography color="white">03:00 PM</Typography>
         </Box>
         <Box sx={{ display: "flex", alignItems: "center" }}>
             <Box sx={{ width: 14, height: 14, borderRadius: "50%", backgroundColor: "#7266C9", mr: 1.5 }} />
-            <Typography color="white">7:00 PM</Typography>
+            <Typography color="white">07:00 PM</Typography>
         </Box>
     </Stack>
 );
 
-const BetTimePage = () => {
-    const [data, setData] = useState<any>(null);
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState<string | null>(null);
-    const [selectedFilter, setSelectedFilter] = useState("All");
+interface BetTimePageProps {
+    data: any[]
+}
+const BetTimePage: React.FC<BetTimePageProps> = ({ data }) => {
     const [regions, setRegions] = useState<string[]>([]);
-    const [selectedDate, setSelectedDate] = useState<string>("");
-
-    const [selectedGame, setSelectedGame] = useState<string>(""); // Add state for game filtering
-    const [selectedTime, setSelectedTime] = useState<string>(""); // Add state for time filtering
-
-    const [bettorsData, setBettorsData] = useState<number[]>([]);
-    const [betsPlacedData, setBetsPlacedData] = useState<number[]>([]);
-
-    // Dropdown Menu State
-    const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
-    const open = Boolean(anchorEl);
-
-    const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
-        setAnchorEl(event.currentTarget);
-    };
-
-    const handleClose = (filter: string) => {
-        setSelectedFilter(filter);
-        setAnchorEl(null);
-    };
+    const [gameType1, setGameType1] = useState<number[]>([]);
+    const [gameType2, setGameType2] = useState<number[]>([]);
+    const [gameType3, setGameType3] = useState<number[]>([]);
 
     const allRegions = [
-        "I", "II", "III", "IV-A", "MIMAROPA", "V",
-        "VI", "VII", "VIII", "IX", "X", "XI",
-        "XII", "CARAGA", "BARMM", "CAR", "NCR"
-    ];
+        "I", "II", "III", "IV-A", "MIMAROPA", "V","VI", "VII", "VIII", "IX", "X", "XI",
+        "XII", "CARAGA", "BARMM", "CAR", "NCR","Default"];
 
     useEffect(() => {
-        const fetchData = async () => {
-            try {
-                setLoading(true);
-                setError(null);
-    
-                const queryParams = { 
-                    filter: selectedFilter, 
-                    gameName: selectedGame, 
-                    time: selectedTime 
-                };
-    
-                const response = await fetchHistoricalSummary(queryParams);
-                console.log("API Response:", response);
-    
-                if (response.success) {
-                    const apiData = response.data;
-                    console.log("Fetched Data:", apiData);
-    
-                    // Define types properly
-                    type TimeSlots = "10:30 AM" | "3:00 PM" | "7:00 PM";
-    
-                    const regionMap: Record<string, Record<TimeSlots, number>> = {};
-    
-                    // Initialize all regions with zero values for each time slot
-                    allRegions.forEach(region => {
-                        regionMap[region] = { "10:30 AM": 0, "3:00 PM": 0, "7:00 PM": 0 };
-                    });
-    
-                    // Process API Data
-                    apiData.forEach((entry: any) => {
-                        let region = entry.Region || "Unknown";
-                        region = region.replace(/^Region\s/, "");
-    
-                        // Extract time from `GameName` (Assumes format: "STL Pares 10:30AM")
-                        const timeMatch = entry.GameName.match(/(10:30AM|3:00PM|7:00PM)/);
-                        if (!timeMatch) return;
-                        
-                        const betTime = timeMatch[0] as TimeSlots; // Explicitly set type
-    
-                        if (regionMap[region]) {
-                            regionMap[region][betTime] += entry.TotalBetAmount;
-                        }
-                    });
-    
-                    // Prepare data for the BarChart
-                    const updatedBettorsData = allRegions.map(region => regionMap[region]["10:30 AM"] || 0);
-                    const updatedBetsPlacedData_3PM = allRegions.map(region => regionMap[region]["3:00 PM"] || 0);
-                    const updatedBetsPlacedData_7PM = allRegions.map(region => regionMap[region]["7:00 PM"] || 0);
-    
-                    console.log("Updated 10:30 AM Data:", updatedBettorsData);
-                    console.log("Updated 3:00 PM Data:", updatedBetsPlacedData_3PM);
-                    console.log("Updated 7:00 PM Data:", updatedBetsPlacedData_7PM);
-    
-                    setRegions(allRegions);
-                    setBettorsData(updatedBettorsData);
-                    setBetsPlacedData([...updatedBetsPlacedData_3PM, ...updatedBetsPlacedData_7PM]); // Flatten array
-                    setData(apiData);
-                } else {
-                    setError(response.message || "Failed to fetch data.");
+        const regionMap: Record<string, { GameType1: number, GameType2: number, GameType3: number }> = {};
+
+        allRegions.forEach(region => {
+            regionMap[region] = { GameType1: 0, GameType2: 0, GameType3: 0 };
+        });
+
+        data.forEach(entry => {
+            let region = entry.Region || "Unknown";
+            region = region.replace(/^Region\s/, "");
+            const gameTypeId = entry.GameTypeId;
+
+            if (regionMap[region]) {
+                if (gameTypeId === 1) {
+                    regionMap[region].GameType1 += entry.TotalBetAmount;
+                } else if (gameTypeId === 2) {
+                    regionMap[region].GameType2 += entry.TotalBetAmount;
+                } else if (gameTypeId === 3) {
+                    regionMap[region].GameType3 += entry.TotalBetAmount;
                 }
-            } catch (err) {
-                console.error("Fetch error:", err);
-                setError("An unexpected error occurred.");
-            } finally {
-                setLoading(false);
             }
-        };
-    
-        fetchData();
-    }, [selectedFilter, selectedGame, selectedTime]);
-    
+        });
+
+        setRegions(allRegions);
+        setGameType1(allRegions.map(region => regionMap[region].GameType1));
+        setGameType2(allRegions.map(region => regionMap[region].GameType2));
+        setGameType3(allRegions.map(region => regionMap[region].GameType3));
+    }, [data]);
+
     return (
         <>
             <Box sx={{ mt: 4, paddingTop: 7, paddingBottom: 4, paddingLeft: 2, backgroundColor: "#282828" }}>
-                <Box sx={{ paddingX: 3, }}>
-                    <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", mb: 2, }}>
+                <Box sx={{ paddingX: 3 }}>
+                    <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", mb: 2 }}>
                         <Box>
                             <Typography color="#B3B3B3" sx={{ fontSize: "17px", lineHeight: 1 }}>
                                 Side by Side Comparison of
@@ -145,42 +81,30 @@ const BetTimePage = () => {
                     <Divider sx={{ backgroundColor: "#B3B3B3", opacity: 1, height: "2px", mt: 1 }} />
                 </Box>
 
-                <Box sx={{ height: 270, width: "100%", flexGrow: 0, minWidth: 0 }}>
+                <Box sx={{ height: 270, width: "100%" }}>
                     <BarChart
                         borderRadius={20}
                         grid={{ horizontal: true }}
-                        xAxis={[{ scaleType: "band", data: regions, label: "PHILIPPINE REGIONS", categoryGapRatio: 0.8 } as any]}
+                        xAxis={[{ scaleType: "band", data: regions, label: "PHILIPPINE REGIONS"} as any]}
                         yAxis={[{ label: "AMOUNT" }]}
                         series={[
-                            { data: bettorsData, label: "10:30 AM", color: "#BB86FC", },
-                            { data: betsPlacedData, label: "3:00 PM", color: "#5050A5" },
-                            { data: betsPlacedData, label: "7:00 PM", color: "#5050A5" },
+                            { data: gameType1, label: "10:30 AM", color: "#BB86FC", },
+                            { data: gameType2, label: "03:00 PM", color: "#5050A5" },
+                            { data: gameType3, label: "07:00 PM", color: "#7266C9" }
                         ]}
                         slotProps={{
                             legend: { hidden: true },
-                            bar: {
-                                style: {
-                                    borderTopLeftRadius: 5,
-                                    borderTopRightRadius: 5,
-                                },
-                            },
-
-                            axisLabel: {
-                                style: {
-                                    fontSize: 12,
-                                    fontWeight: "bold",
-                                    fill: "#B3B3B3",
-                                },
-                            },
-                            axisTickLabel: {
-                                style: {
-                                    fontSize: 12,
-                                    fill: "#B3B3B3",
-                                },
-                            },
+                            axisLabel: { style: { fontSize: 12, fontWeight: "bold", fill: "#B3B3B3" } },
+                            axisTickLabel: { style: { fontSize: 12, fill: "#B3B3B3" } }
                         }}
-
                         sx={{
+                            "& .MuiChartsBar-root": {
+                                transition: "fill 0.3s ease-in-out", // Smooth effect
+                                "&:hover": {
+                                    fill: "#E3E3E3", // Hover background color
+                                    cursor: "pointer", // Optional: Pointer cursor
+                                },
+                            },
                             "& .MuiChartsGrid-root line": {
                                 stroke: "white",
                                 strokeDasharray: "4 4",
@@ -194,15 +118,25 @@ const BetTimePage = () => {
                         }}
                     />
                 </Box>
-                <Box sx={{ display: 'flex', justifyContent: 'right', marginRight: 4, borderRadius: '8px' }}>
+
+                <Box sx={{ display: "flex", justifyContent: "flex-end", pr: 3, mt: 2 }}>
                     <Button
                         sx={{
-                            fontSize: '12px', textAlign: "left", color: '#3F3F3F', textTransform: 'none', backgroundColor: "#CCA1FD", mb: 0.7, paddingX: 4, paddingY: 0.9, width: 'auto', "&:hover": {
-                                backgroundColor: '#B389E0', fontWeight: '700',
+                            borderRadius: '8px',
+                            paddingY: 1,
+                            paddingX: 2,
+                            textTransform: 'none',
+                            fontWeight: 400,
+                            lineHeight: '14.63px',
+                            "&:hover": {
+                                backgroundColor: '#B183E8',
                             },
+                            width: '145px',
+                            height: '34px',
+                            color: '#1b1b1b'
                         }}
                         variant="contained"
-                        onClick={handleClick}
+                        onClick={() => console.log("Exporting All as CSV")}
                     >
                         Export as CSV
                     </Button>
