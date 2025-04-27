@@ -1,7 +1,8 @@
 import { useEffect, useState } from "react";
 import { Box, Typography, Divider } from "@mui/material";
 import CasinoIcon from '@mui/icons-material/Casino';
-import { fetchHistoricalRegion } from "~/utils/api/transactions";
+import { fetchHistoricalRegion, fetchHistoricalSummary } from "~/utils/api/transactions";
+import { historicalSummaryByRegionCategory } from "~/utils/transforms";
 
 interface RegionData {
   Region: string;
@@ -9,7 +10,7 @@ interface RegionData {
   trend?: number | undefined;
 }
 
-const TableBettingActivityToday = () => {
+const TableBettingActivityToday = (params: {gameCategoryId?: number}) => {
   const [rankedRegions, setRankedRegions] = useState<
       { region: RegionData; rank: number; trend: number }[]
     >([]);
@@ -26,10 +27,21 @@ const TableBettingActivityToday = () => {
         console.warn("No data found in API response!");
         return;
       }
-      const filteredData = response.data.filter(
+
+      let filteredData = response.data.filter(
         (item: { TransactionDate: string }) =>
           item.TransactionDate.startsWith(today)
       );
+
+      if(params.gameCategoryId && params.gameCategoryId > 0) {
+        const historicalSummary = await fetchHistoricalSummary();
+        const filteredSummary = historicalSummary.data.filter(
+          (item: { TransactionDate: string }) =>
+            item.TransactionDate.startsWith(today)
+        )
+        filteredData = historicalSummaryByRegionCategory(filteredSummary, params.gameCategoryId);
+        console.log(filteredData)
+      }
     
       // Aggregate TotalBettors per RegionId using reduce()
       const regionMap: Map<number, RegionData> = filteredData.reduce((map: { get: (arg0: any) => any; set: (arg0: any, arg1: any) => void; }, entry: { RegionId: any; TotalBettors: any; }) => {

@@ -3,7 +3,7 @@ import { Box, Typography } from "@mui/material";
 import { cardDashboardStyles } from "../../styles/theme";
 import { fetchHistoricalSummary } from "../../utils/api/transactions";
 
-const DashboardCardsPage = () => {
+const DashboardCardsPage = (params: {gameCategoryId?: number}) => {
   const [dashboardData, setDashboardData] = useState({
     totalBettors: 0,
     totalWinners: 0,
@@ -21,10 +21,15 @@ const DashboardCardsPage = () => {
           const today = new Date().toISOString().split("T")[0]; // Get today's date in YYYY-MM-DD
 
           // Filter data for today's date
-          const filteredData = response.data.filter(
+          let filteredData = response.data.filter(
             (item: { TransactionDate: string }) =>
               item.TransactionDate.startsWith(today)
           );
+
+          // Filter by category
+          if(params.gameCategoryId && params.gameCategoryId > 0) {
+            filteredData = filteredData.filter((item: { GameCategoryId: number }) => item.GameCategoryId === params.gameCategoryId);
+          }
 
           console.log(filteredData)
 

@@ -34,7 +34,7 @@ export interface User {
   status: string;
 }
 
-const TableBettingSummary: React.FC = () => {
+const TableBettingSummary = (params: {gameCategoryId?: number}) => {
   const [transactions, setTransactions] = useState<User[]>([
     {
       transactionNumber: "2025040300000001",
@@ -224,12 +224,17 @@ const TableBettingSummary: React.FC = () => {
   const [sortConfig, setSortConfig] = useState<{ key: string; direction: "asc" | "desc" } | null>(null);
 
   const fetchTransactionsData = async () => {
-    const response = await fetchTransactions();
+    let response = await fetchTransactions();
 
     if (!response.success || response.data.length === 0) {
       console.warn("No data found in API response!");
       return;
     }
+    
+    if(params.gameCategoryId && params.gameCategoryId > 0) {
+      response.data = response.data.filter((item: { GameCategoryId: number }) => item.GameCategoryId === params.gameCategoryId);
+    }
+
 
     const formattedData: User[] = response.data.map((transaction: any) => {
       return {

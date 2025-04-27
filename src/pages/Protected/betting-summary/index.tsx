@@ -8,11 +8,14 @@ import TableBettingActivityToday from '~/components/betting-summary/BettingActiv
 import ChartBettorsvsBetsPlacedSummary from "~/components/betting-summary/BettorsvsBetsPlacedChart";
 import ChartBettorsSummary from "~/components/betting-summary/BettorCountChart";
 import TableBettingSummary from "~/components/betting-summary/BettingSummaryTable";
+import ChartBettorsBetTypeSummary from "~/components/betting-summary/BettorCountByBetType";
 
 
-const BettingSummaryPage = () => {
+const BettingSummaryPage = (params: {gameCategoryId?: number}) => {
 
   const router = useRouter();
+
+  console.log(params.gameCategoryId)
 
   const handleViewComparisonClick = ()=> {
     router.push("/bets-comparisons"); 
@@ -25,7 +28,7 @@ const BettingSummaryPage = () => {
       </Typography>
       
       <Box>
-        <DashboardCardsPage />
+        <DashboardCardsPage gameCategoryId={params.gameCategoryId} />
       </Box>
       
       <Box 
@@ -34,13 +37,15 @@ const BettingSummaryPage = () => {
         }}>
         <Grid container spacing={0.5} alignItems="stretch">
           <Grid item xs={12} md={5}>
-            <TableBettingActivityToday/>
+            <TableBettingActivityToday gameCategoryId={params.gameCategoryId}/>
           </Grid>
           
           <Grid item xs={12} md={7}>
             <Box sx={{ display: "flex", flexDirection: "column", gap: 2, height: "100%", width: "100%" }}>
-              <ChartBettorsvsBetsPlacedSummary/>
-              <ChartBettorsSummary/>
+              <ChartBettorsvsBetsPlacedSummary gameCategoryId={params.gameCategoryId}/>
+              {
+                params.gameCategoryId && params.gameCategoryId > 0 ? <ChartBettorsBetTypeSummary gameCategoryId={params.gameCategoryId}/> : <ChartBettorsSummary />
+              }
             </Box>
           </Grid>
         </Grid>
@@ -81,7 +86,7 @@ const BettingSummaryPage = () => {
 
       <Box sx={{ width: '100%', mt: 2 }}>
         <TableBettingSummary 
-          // GameCategory={GameCategory as string } 
+          gameCategoryId={params.gameCategoryId}
         />
       </Box>
     </Box>
