@@ -22,6 +22,9 @@ import { useWinningStore, categoryType } from "../../../../store/useWinningStore
 import { useSideBarStore } from "../../../../store/useSideBarStore";
 
 import ChartTopRegionByWinsandWinners from "~/components/winning-summary/wins-comparison/TopRegionWinning";
+
+type dateType = 'Specific Date' | 'Date Duration';
+
 const WinningComparison = () => {
   const {
     // loading,
@@ -167,9 +170,9 @@ const formattedSecondDateDuration = secondDateDuration
                   label="First Date"
                   value={firstDateSpecific ? dayjs(firstDateSpecific) : null}
                   onChange={(newValue) =>
-                    setFirstDateSpecific(newValue.toDate())
+                    setFirstDateSpecific(newValue!.toDate())
                   } // Correct setter function
-                  renderInput={(params) => <TextField {...params} />}
+                  // renderInput={(params) => <TextField {...params} />}
                 />
               </LocalizationProvider>
             </Grid>
@@ -207,9 +210,9 @@ const formattedSecondDateDuration = secondDateDuration
                   label="Second Date"
                   value={secondDateSpecific ? dayjs(secondDateSpecific) : null}
                   onChange={(newValue) =>
-                    setSecondDateSpecific(newValue.toDate())
+                    setSecondDateSpecific(newValue!.toDate())
                   } // Correct setter function
-                  renderInput={(params) => <TextField {...params} />}
+                  // renderInput={(params) => <TextField {...params} />}
                 />
               </LocalizationProvider>
             </Grid>
@@ -267,9 +270,9 @@ const formattedSecondDateDuration = secondDateDuration
                   label="First Date"
                   value={firstDateSpecific ? dayjs(firstDateSpecific) : null}
                   onChange={(newValue) =>
-                    setFirstDateSpecific(newValue.toDate())
+                    setFirstDateSpecific(newValue!.toDate())
                   } // Correct setter function
-                  renderInput={(params) => <TextField {...params} />}
+                  // renderInput={(params) => <TextField {...params} />}
                 />
               </LocalizationProvider>
             </Grid>
@@ -307,9 +310,9 @@ const formattedSecondDateDuration = secondDateDuration
                   label="Second Date"
                   value={secondDateSpecific ? dayjs(secondDateSpecific) : null}
                   onChange={(newValue) =>
-                    setSecondDateSpecific(newValue.toDate())
+                    setSecondDateSpecific(newValue!.toDate())
                   } // Correct setter function
-                  renderInput={(params) => <TextField {...params} />}
+                  // renderInput={(params) => <TextField {...params} />}
                 />
               </LocalizationProvider>
             </Grid>
@@ -336,9 +339,9 @@ const formattedSecondDateDuration = secondDateDuration
                   label="First Date"
                   value={firstDateDuration ? dayjs(firstDateDuration) : null}
                   onChange={(newValue) =>
-                    setFirstDateDuration(newValue.toDate())
+                    setFirstDateDuration(newValue!.toDate())
                   } // Correct setter function
-                  renderInput={(params) => <TextField {...params} />}
+                  // renderInput={(params) => <TextField {...params} />}
                 />
               </LocalizationProvider>
             </Grid>
@@ -365,9 +368,9 @@ const formattedSecondDateDuration = secondDateDuration
                   label="Second Date"
                   value={secondDateDuration ? dayjs(secondDateDuration) : null}
                   onChange={(newValue) =>
-                    setSecondDateDuration(newValue.toDate())
+                    setSecondDateDuration(newValue!.toDate())
                   } // Correct setter function
-                  renderInput={(params) => <TextField {...params} />}
+                  // renderInput={(params) => <TextField {...params} />}
                 />
               </LocalizationProvider>
             </Grid>

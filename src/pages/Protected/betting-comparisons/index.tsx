@@ -23,6 +23,8 @@ import { useSideBarStore } from "../../../../store/useSideBarStore";
 
 import ChartTopRegionByBetsandBettors from "~/components/betting-summary/bets-comparison/TopRegionBetting";
 
+type dateType = 'Specific Date' | 'Date Duration';
+
 const BettingComparison = () => {
   const {
     activeGameType,
@@ -169,9 +171,9 @@ const formattedSecondDateDuration = secondDateDuration
                   label="First Date"
                   value={firstDateSpecific ? dayjs(firstDateSpecific) : null}
                   onChange={(newValue) =>
-                    setFirstDateSpecific(newValue as Date)
+                    setFirstDateSpecific(newValue as unknown as Date)
                   } // Correct setter function
-                  renderInput={(params) => <TextField {...params} />}
+                  // renderInput={(params) => <TextField {...params} />}
                 />
               </LocalizationProvider>
             </Grid>
@@ -209,9 +211,9 @@ const formattedSecondDateDuration = secondDateDuration
                   label="Second Date"
                   value={secondDateSpecific ? dayjs(secondDateSpecific) : null}
                   onChange={(newValue) =>
-                    setSecondDateSpecific(newValue as Date)
+                    setSecondDateSpecific(newValue as unknown as Date)
                   } // Correct setter function
-                  renderInput={(params) => <TextField {...params} />}
+                  // renderInput={(params) => <TextField {...params} />}
                 />
               </LocalizationProvider>
             </Grid>
@@ -269,9 +271,9 @@ const formattedSecondDateDuration = secondDateDuration
                   label="First Date"
                   value={firstDateSpecific ? dayjs(firstDateSpecific) : null}
                   onChange={(newValue) =>
-                    setFirstDateSpecific(newValue as Date)
+                    setFirstDateSpecific(newValue as unknown as Date)
                   } // Correct setter function
-                  renderInput={(params) => <TextField {...params} />}
+                  // renderInput={(params: any) => <TextField {...params} />}
                 />
               </LocalizationProvider>
             </Grid>
@@ -309,9 +311,9 @@ const formattedSecondDateDuration = secondDateDuration
                   label="Second Date"
                   value={secondDateSpecific ? dayjs(secondDateSpecific) : null}
                   onChange={(newValue) =>
-                    setSecondDateSpecific(newValue as Date)
+                    setSecondDateSpecific(newValue as unknown as Date)
                   } // Correct setter function
-                  renderInput={(params) => <TextField {...params} />}
+                  // renderInput={(params) => <TextField {...params} />}
                 />
               </LocalizationProvider>
             </Grid>
@@ -338,9 +340,9 @@ const formattedSecondDateDuration = secondDateDuration
                   label="First Date"
                   value={firstDateDuration ? dayjs(firstDateDuration) : null}
                   onChange={(newValue) =>
-                    setFirstDateDuration(newValue as Date)
+                    setFirstDateDuration(newValue as unknown as Date)
                   } // Correct setter function
-                  renderInput={(params) => <TextField {...params} />}
+                  // renderInput={(params) => <TextField {...params} />}
                 />
               </LocalizationProvider>
             </Grid>
@@ -367,9 +369,9 @@ const formattedSecondDateDuration = secondDateDuration
                   label="Second Date"
                   value={secondDateDuration ? dayjs(secondDateDuration) : null}
                   onChange={(newValue) =>
-                    setSecondDateDuration(newValue as Date)
+                    setSecondDateDuration(newValue as unknown as Date)
                   } // Correct setter function
-                  renderInput={(params) => <TextField {...params} />}
+                  // renderInput={(params) => <TextField {...params} />}
                 />
               </LocalizationProvider>
             </Grid>

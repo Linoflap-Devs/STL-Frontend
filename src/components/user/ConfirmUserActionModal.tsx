@@ -18,8 +18,8 @@ interface ConfirmUserActionModalProps {
   onSubmit: (newUser: any) => void;
   setUser: React.Dispatch<React.SetStateAction<any>>;
   setErrors: React.Dispatch<React.SetStateAction<any>>;
-  selectedUser: User | null; // for remarks
-  setSelectedUser: React.Dispatch<React.SetStateAction<User | null>>; // for remarks
+  selectedUser?: User | null; // for remarks
+  setSelectedUser?: React.Dispatch<React.SetStateAction<User | null>>; // for remarks
   actionType: "create" | "update" | "suspend";
 }
 
@@ -52,7 +52,7 @@ const ConfirmUserActionModalPage: React.FC<ConfirmUserActionModalProps> = ({
   const userTypeId = userType === "manager" ? 2 : 3;
 
   const handleManagerChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-    if (selectedUser) {
+    if (selectedUser && setSelectedUser) {
       setSelectedUser((prevUser) => prevUser ? { ...prevUser, remarks: e.target.value } : null);
     }
   };

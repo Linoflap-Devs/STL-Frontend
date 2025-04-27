@@ -1,5 +1,5 @@
 import React from 'react';
-import SetNewPassword from '~/components/Auth/SetNewPassword'; 
+import SetNewPassword from '~/components/auth/SetNewPassword'; 
 
 const SetNewPasswordPage = () => {
 
