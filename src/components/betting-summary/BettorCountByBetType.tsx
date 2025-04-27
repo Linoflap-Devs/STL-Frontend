@@ -179,7 +179,7 @@ const ChartBettorsBetTypeSummary = (params: {gameCategoryId?: number}) => {
             sx={{ 
               fontSize: "16px" 
             }}>
-            Today&apos;s Bet Count by Bet Type
+            Today&apos;s Bets Placed by Bet Type
           </Typography>
         </Box>
         <CustomLegend/>
