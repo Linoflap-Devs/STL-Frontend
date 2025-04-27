@@ -1,5 +1,5 @@
 export const UserSectionData = {
-    titleHeader: "Wendell Ravago",
+    titleHeader: "Admin User",
     userRole: "Admin",
     image: "/images/STL_Logo.png",
     pages: ['Dashboard', 'Managers', 'Executive', 'Betting Summary', 'Winning Summary', 'Draw Summary', 'Operators'],

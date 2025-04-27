@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Box, Typography, Stack } from "@mui/material";
 import { BarChart } from "@mui/x-charts/BarChart";
 import { fetchHistoricalSummary } from "../../utils/api/transactions";
+import { useRouter } from "next/navigation";
 
 // Custom Legend
 const CustomLegend = () => (
@@ -26,6 +27,8 @@ const summary: Record<number, { gameName: string; bettors: number; bets: number;
 const SummaryBettorsBetsPlacedPage = () => {
   const [data, setData] = useState<{ gameName: string; bettors: number; bets: number; winners: number }[]>([]);
   const summaryRecord = summary as Record<number, { gameName: string; bettors: number; bets: number; winners: number }>;
+
+  const router = useRouter();
 
   useEffect(() => {
     const fetchDataDashboard = async () => {
@@ -78,6 +81,8 @@ const SummaryBettorsBetsPlacedPage = () => {
     fetchDataDashboard();
   }, []);
 
+  const moveToBetSummary = () => { router.push('/betting-summary/dashboard') }
+
   return (
     <Box sx={{ backgroundColor: "#171717", padding: "1rem", borderRadius: "8px", paddingBottom: "2rem" }}>
       <Box>
@@ -85,7 +90,7 @@ const SummaryBettorsBetsPlacedPage = () => {
           <Typography color="#FFFFFF" sx={{ fontSize: "20px" }}>
             Summary of Bettors and Bets Placed Today
           </Typography>
-          <Typography color="#67ABEB" sx={{ fontSize: "12px", cursor: "pointer", textAlign: "right" }}>
+          <Typography color="#67ABEB" sx={{ fontSize: "12px", cursor: "pointer", textAlign: "right" }} onClick={() => {moveToBetSummary()}}>
             View Bet Summary
           </Typography>
         </Box>
