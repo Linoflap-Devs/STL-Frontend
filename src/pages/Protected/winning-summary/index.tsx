@@ -8,9 +8,10 @@ import TableWinningActivityToday from "~/components/winning-summary/WinningActiv
 import ChartWinnersvsWinningsSummary from "~/components/winning-summary/WinnersvsWinningsChart";
 import TableWinningSummary from "~/components/winning-summary/WinningSummaryTable";
 import ChartWinnersSummary from "~/components/winning-summary/WinnerCountChart";
+import ChartWinnersBetTypeSummary from "~/components/winning-summary/WinnerCountBetTypeChart";
 
 
-const WinningSummaryPage = () => {
+const WinningSummaryPage = (params: {gameCategoryId?: number}) => {
 
   const router = useRouter();
 
@@ -25,7 +26,7 @@ const WinningSummaryPage = () => {
           </Typography>
 
           <Box>
-            <DashboardCardsPage />
+            <DashboardCardsPage gameCategoryId={params.gameCategoryId}/>
           </Box>
         
         <Box 
@@ -34,13 +35,15 @@ const WinningSummaryPage = () => {
         }}>
           <Grid container spacing={0.5} alignItems="stretch">
             <Grid item xs={12} md={5}>
-              <TableWinningActivityToday/>
+              <TableWinningActivityToday gameCategoryId={params.gameCategoryId}/>
             </Grid>
             
             <Grid item xs={12} md={7}>
               <Box sx={{ display: "flex", flexDirection: "column", gap: 2, height: "100%", width: "100%" }}>
-                <ChartWinnersvsWinningsSummary/>
-                <ChartWinnersSummary/>
+                <ChartWinnersvsWinningsSummary gameCategoryId={params.gameCategoryId}/>
+                {
+                params.gameCategoryId && params.gameCategoryId > 0 ? <ChartWinnersBetTypeSummary gameCategoryId={params.gameCategoryId}/> : <ChartWinnersSummary />
+              }
               </Box>
             </Grid>
           </Grid>
@@ -82,7 +85,7 @@ const WinningSummaryPage = () => {
       <Box>
         {/* TableBettingSummary component */}
         <Box sx={{ width: '100%', mt: 2 }}>
-          <TableWinningSummary/>
+          <TableWinningSummary gameCategoryId={params.gameCategoryId}/>
         </Box>
       </Box>
     </>

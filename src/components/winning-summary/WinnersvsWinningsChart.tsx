@@ -37,7 +37,7 @@ const CustomLegend = () => (
   </Stack>
 );
 
-const ChartWinnersvsWinningsSummary = () => {
+const ChartWinnersvsWinningsSummary = ( params: {gameCategoryId?: number}) => {
   const [data, setData] = useState<
     { draw: string; winners: number; winnings: number }[]
   >([]);
@@ -53,9 +53,15 @@ const ChartWinnersvsWinningsSummary = () => {
           console.log(today); // Output: "2025-03-25T00:00:00.000Z"
 
           // Filter Data for Today's Date
-          const res = response.data.filter((item: { TransactionDate: string }) =>
+          let res = response.data.filter((item: { TransactionDate: string }) =>
             item.TransactionDate.startsWith(today)
           );
+
+          if (params.gameCategoryId && params.gameCategoryId > 0) {
+            res = res.filter((item: { GameCategoryId: number }) =>
+              item.GameCategoryId === params.gameCategoryId
+            );
+          }
 
         if (response.success && Array.isArray(res)) {
           // Aggregate data by GameTypeId

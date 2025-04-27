@@ -39,7 +39,7 @@ export interface User {
   payoutAmount: number
 }
 
-const TableWinningSummary: React.FC = () => {
+const TableWinningSummary = (params: {gameCategoryId?: number}) => {
   const [transactions, setTransactions] = useState<User[]>([]);
   const [filteredTransactions, setFilteredTransactions] = useState<User[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
@@ -60,6 +60,10 @@ const TableWinningSummary: React.FC = () => {
 
         const response = await fetchWinners();
         console.log(response)
+
+        if(params.gameCategoryId && params.gameCategoryId > 0) {
+          response.data = response.data.filter((item: { GameCategoryId: number }) => item.GameCategoryId === params.gameCategoryId);
+        }
 
         if (response.success) {
           // Transform the API data to match the User interface
@@ -193,7 +197,7 @@ const TableWinningSummary: React.FC = () => {
         <TableBody>
           {filteredTransactions.length === 0 ? (
             <TableRow>
-              <TableCell colSpan={8} align="center">
+              <TableCell colSpan={12} align="center">
                 <Box
                   sx={{
                     display: "flex",

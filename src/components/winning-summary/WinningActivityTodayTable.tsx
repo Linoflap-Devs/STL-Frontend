@@ -2,7 +2,8 @@ import { useEffect, useState } from "react";
 import { Box, Typography, Divider } from "@mui/material";
 import MoneyIcon from "@mui/icons-material/AttachMoney";
 import { fetchWinners } from "~/utils/api/winners";
-import { fetchHistoricalRegion } from "~/utils/api/transactions";
+import { fetchHistoricalRegion, fetchHistoricalSummary } from "~/utils/api/transactions";
+import { historicalSummaryByRegionCategory } from "~/utils/transforms";
 // import fetchHistoricalRegion from "~/utils/api/getHistoricalRegion";
 
 // Define types
@@ -12,11 +13,11 @@ interface RegionData {
   trend?: number;
 }
 
-const TableWinningActivityToday = () => {
+const TableWinningActivityToday = (params: {gameCategoryId?: number}) => {
   const [rankedRegions, setRankedRegions] = useState<
         { region: RegionData; rank: number; trend: number }[]
       >([]);
-    
+  
       const getWinningRegions = async () => {
         const today = new Date().toISOString().split('T')[0];
   
@@ -26,10 +27,21 @@ const TableWinningActivityToday = () => {
           console.warn("No data found in API response!");
           return;
         }
-        const filteredData = response.data.filter(
+
+        let filteredData = response.data.filter(
           (item: { TransactionDate: string }) =>
             item.TransactionDate.startsWith(today)
         );
+
+        if(params.gameCategoryId && params.gameCategoryId > 0) {
+          const historicalSummary = await fetchHistoricalSummary();
+          const filteredSummary = historicalSummary.data.filter(
+            (item: { TransactionDate: string }) =>
+              item.TransactionDate.startsWith(today)
+          )
+          filteredData = historicalSummaryByRegionCategory(filteredSummary, params.gameCategoryId);
+          console.log(filteredData)
+        }
       
         // Aggregate TotalBettors per RegionId using reduce()
         const regionMap: Map<number, RegionData> = filteredData.reduce((map: { get: (arg0: any) => any; set: (arg0: any, arg1: any) => void; }, entry: { RegionId: any; TotalBettors: any; }) => {

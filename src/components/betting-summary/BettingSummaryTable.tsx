@@ -217,7 +217,7 @@ const TableBettingSummary = (params: {gameCategoryId?: number}) => {
       status: "Void",
     },
   ]);
-  const [filteredTransactions, setFilteredTransactions] = useState<User[]>(transactions);
+  const [filteredTransactions, setFilteredTransactions] = useState<User[]>([]);
   const [searchQuery, setSearchQuery] = useState<string>("");
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
@@ -381,7 +381,7 @@ const TableBettingSummary = (params: {gameCategoryId?: number}) => {
         <TableBody>
           {filteredTransactions.length === 0 ? (
             <TableRow>
-              <TableCell colSpan={8} align="center">
+              <TableCell colSpan={10} align="center">
                 <Box
                   sx={{
                     display: "flex",
