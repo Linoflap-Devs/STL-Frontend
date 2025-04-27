@@ -26,6 +26,8 @@ const DashboardCardsPage = () => {
               item.TransactionDate.startsWith(today)
           );
 
+          console.log(filteredData)
+
           // Aggregate the totals
           const totals = filteredData.reduce(
             (
@@ -84,7 +86,7 @@ const DashboardCardsPage = () => {
         },
         {
           title: "Total Bets Placed",
-          value: `${dashboardData.totalBetsPlaced.toLocaleString()}`,
+          value: `₱ ${dashboardData.totalBetsPlaced.toLocaleString()}`,
         },
         {
           title: "Total Payout",

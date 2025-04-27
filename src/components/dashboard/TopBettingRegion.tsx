@@ -29,9 +29,13 @@ const TopBettingRegionPage = () => {
       console.warn("No data found in API response!");
       return;
     }
+    const filteredData = response.data.filter(
+      (item: { TransactionDate: string }) =>
+        item.TransactionDate.startsWith(today)
+    );
   
     // Aggregate TotalBettors per RegionId using reduce()
-    const regionMap: Map<number, RegionData> = response.data.reduce((map: { get: (arg0: any) => any; set: (arg0: any, arg1: any) => void; }, entry: { RegionId: any; TotalBettors: any; }) => {
+    const regionMap: Map<number, RegionData> = filteredData.reduce((map: { get: (arg0: any) => any; set: (arg0: any, arg1: any) => void; }, entry: { RegionId: any; TotalBettors: any; }) => {
       const existing = map.get(entry.RegionId);
       if (existing) {
         existing.TotalBettors += entry.TotalBettors;

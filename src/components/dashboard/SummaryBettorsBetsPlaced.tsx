@@ -61,7 +61,9 @@ const SummaryBettorsBetsPlacedPage = () => {
           });
 
           // Convert summary object to an array
-          const formattedData = Object.values(summary);
+          const formattedData = Object.values(summaryRecord);
+
+          console.log(formattedData)
 
           //console.log("Aggregated Data:", formattedData);
           setData(formattedData);
@@ -97,7 +99,7 @@ const SummaryBettorsBetsPlacedPage = () => {
             justifyContent: "center",
             alignItems: "stretch",
             flexGrow: 1,
-            marginLeft: "3rem",
+            marginLeft: "1rem",
             marginTop: "0px",
             height: "100%",
             width: "100%",
@@ -105,6 +107,7 @@ const SummaryBettorsBetsPlacedPage = () => {
           height={270}
           width={790} 
           grid={{ vertical: true }}
+          margin={{left: 90}}
           layout="horizontal"
           series={[
             { data: data.map((item) => item.bettors), color: "#BB86FC" },

@@ -73,14 +73,14 @@ const SummaryWinnersDrawTimePage = () => {
           return itemISO === todayISO;
         });
 
-        console.log("Filtered Data:", filteredData);
+        console.log("Filtered Data (Winners Summary):", filteredData);
 
         // Aggregate data by game type
-        const aggregatedData = filteredData.reduce((acc: { gameName: string; winners: any; }[], item: { GameTypeId: any; TotalWinners: any; }) => {
-          const gameTypeId = item.GameTypeId;
+        const aggregatedData = filteredData.reduce((acc: { gameName: string; winners: any; }[], item: { DrawOrder: any; TotalWinners: any; }) => {
+          const gameTypeId = item.DrawOrder;
           const gameName = gameNameMapping[gameTypeId] || `Game ${gameTypeId}`;
 
-          const existing = acc.find((g) => g.gameName === gameName);
+          const existing = acc.find((g) => {console.log(g); return g.gameName === gameName});
 
           if (existing) {
             existing.winners += item.TotalWinners || 0;
@@ -135,6 +135,7 @@ const SummaryWinnersDrawTimePage = () => {
           }}
           height={270}
           width={790}
+          margin={{left: 90}}
           grid={{ vertical: true }}
           layout="horizontal"
           series={[
@@ -155,7 +156,7 @@ const SummaryWinnersDrawTimePage = () => {
               label: "Total Winners",
               scaleType: "linear",
               min: 0,
-              max: Math.max(...data.map((item) => item.winners), 10000),
+              max: Math.max(...data.map((item) => item.winners), 100),
               valueFormatter: (value: number) => `${value}`,
               tickSize: 8,
               barCategoryGap: 0.7,
