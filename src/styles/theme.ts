@@ -5,7 +5,6 @@ const darkTheme = createTheme({
     mode: "dark",
     background: {
       default: "#212121",
-      default: "#212121",
     },
     text: {
       primary: "#FFFFFF",
@@ -20,13 +19,9 @@ const darkTheme = createTheme({
       styleOverrides: {
         contained: {
           color: "#181A1B",
-          color: "#181A1B",
           borderRadius: 5,
           backgroundColor: "#67ABEB",
-          backgroundColor: "#67ABEB",
           "&:hover": {
-            backgroundColor: "#559AD6",
-          },
             backgroundColor: "#559AD6",
           },
         },
@@ -45,15 +40,12 @@ const darkTheme = createTheme({
             transition: "background-color 0.3s ease, border-color 0.3s ease",
             "&:hover .MuiOutlinedInput-notchedOutline": {
               borderColor: "#FFFFFF",
-              borderColor: "#FFFFFF",
             },
             "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
-              borderColor: "#FFFFFF",
               borderColor: "#FFFFFF",
             },
           },
           "& .MuiOutlinedInput-notchedOutline": {
-            borderColor: "#3F3F3F",
             borderColor: "#3F3F3F",
             transition: "border-color 0.3s ease",
           },
@@ -79,7 +71,6 @@ const darkTheme = createTheme({
       styleOverrides: {
         root: {
           backgroundColor: "#171717",
-          backgroundColor: "#171717",
           borderRadius: 5,
           borderCollapse: "collapse",
         },
@@ -104,7 +95,6 @@ const darkTheme = createTheme({
       styleOverrides: {
         root: {
           backgroundColor: "#2F2F2F",
-          backgroundColor: "#2F2F2F",
           lineHeight: "1.5rem",
           textTransform: "uppercase",
           fontWeight: "bold",
@@ -115,12 +105,10 @@ const darkTheme = createTheme({
       styleOverrides: {
         root: {
           borderBottom: "0.5px solid #2F2F2F",
-          borderBottom: "0.5px solid #2F2F2F",
           "&:hover": {
             backgroundColor: "#212121",
           },
           "&.Mui-selected": {
-            backgroundColor: "#2F2F2F",
             backgroundColor: "#2F2F2F",
           },
         },
@@ -136,14 +124,12 @@ const darkTheme = createTheme({
           },
           "&:hover": {
             backgroundColor: "#3F3F3F",
-            backgroundColor: "#3F3F3F",
           },
           "& .MuiSvgIcon-root": {
             fill: "#6C7480",
             padding: 0,
             margin: 0,
             fontSize: "21px",
-            backgroundColor: "#3F3F3F !important",
             backgroundColor: "#3F3F3F !important",
             borderRadius: "5px",
             height: "20px",
@@ -163,9 +149,6 @@ const darkTheme = createTheme({
     },
     MuiMenu: {
       styleOverrides: {
-        root: {
-          borderRadius: "0px",
-        },
         root: {
           borderRadius: "0px",
         },
@@ -204,7 +187,6 @@ const darkTheme = createTheme({
           borderRadius: "6px",
           padding: "25px 8px 27px 8px",
           backgroundColor: '#212121',
-          backgroundColor: '#212121',
         },
       },
     },
@@ -232,10 +214,8 @@ const darkTheme = createTheme({
       },
     },
     MuiInputLabel: {
-    MuiInputLabel: {
       styleOverrides: {
         root: {
-          fontSize: '15px',
           fontSize: '15px',
         },
       },
@@ -257,17 +237,13 @@ const darkTheme = createTheme({
         root: {
           fontSize: "0.80rem",
           marginBottom: "0px !important",
-          marginBottom: "0px !important",
           marginLeft: "0px",
-          color: '#FF7A7A !important', // Custom color for error text
           color: '#FF7A7A !important', // Custom color for error text
         },
       },
     },
     MuiOutlinedInput: {
-    MuiOutlinedInput: {
       styleOverrides: {
-        input: {
         input: {
           color: "#ffffff",
           //padding: "10px 16px",
@@ -283,7 +259,7 @@ const darkTheme = createTheme({
           fontSize: "12px",
         },
       },
-    },    
+    },
   },
 });
 
@@ -294,7 +270,6 @@ export const buttonStyles = {
   fontSize: 12,
   borderRadius: "8px",
   width: "auto",
-  color: '#181A1B',
   color: '#181A1B',
 };
 
@@ -356,17 +331,6 @@ export const filterStyles = {
   "& .MuiInputBase-input": {
     padding: 0,
   },
-};
-
-export const cardDashboardStyles = {
-  height: "auto",
-  border: "1px solid",
-  borderColor: "#171717",
-  backgroundColor: "#171717",
-  borderRadius: "8px",
-  paddingY: "1.9rem",
-  paddingX: "1rem",
-  margin: "0 auto",
 };
 
 export const cardDashboardStyles = {

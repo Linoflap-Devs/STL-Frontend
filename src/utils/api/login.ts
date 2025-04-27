@@ -22,7 +22,6 @@ export const loginUser = async (
       );
     } else {
       throw new Error("An unexpected error occurred.");
-      throw new Error("An unexpected error occurred.");
     }
   }
   
