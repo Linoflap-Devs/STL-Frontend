@@ -150,7 +150,7 @@ const toolTip = ({GameTime, BettingBreakdown, STLBreakdown, BettorsBreakdown, Be
           <Typography
             sx={{ fontWeight: 700, fontSize: "16px", marginBottom: "5px" }}
           >
-            {Region}
+            Region
           </Typography>
           <Box sx={{ borderBottom: "1px solid #FFFFFF", margin: "5px 0" }} />
           <Typography>Bettors: {Date1Bettors.toLocaleString()}</Typography>
@@ -186,7 +186,7 @@ const toolTip = ({GameTime, BettingBreakdown, STLBreakdown, BettorsBreakdown, Be
           <Typography
             sx={{ fontWeight: 700, fontSize: "16px", marginBottom: "5px" }}
           >
-            {Region}
+            Region
           </Typography>
           <Box sx={{ borderBottom: "1px solid #FFFFFF", margin: "5px 0" }} />
           <Typography>Tumbok: {Date1Tumbok.toLocaleString()}</Typography>
