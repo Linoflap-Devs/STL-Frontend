@@ -19,14 +19,17 @@ import FilterListIcon from "@mui/icons-material/FilterList";
 import ArrowUpwardIcon from "@mui/icons-material/ArrowUpward";
 import ArrowDownwardIcon from "@mui/icons-material/ArrowDownward";
 import PersonOffIcon from "@mui/icons-material/PersonOff";
+import { fetchHistoricalRegion, fetchTransactions } from "~/utils/api/transactions";
 
 export interface User {
   transactionNumber: string;
   date: string;
   drawTime: string;
   betAmount: number;
+  tumbok: number;
+  sahod: number;
+  ramble: number;
   gameType: string;
-  betType: string;
   selectedPair: string;
   status: string;
 }
@@ -38,8 +41,10 @@ const TableBettingSummary: React.FC = () => {
       date: "2025/01/22 13:05:32",
       drawTime: "First Draw",
       betAmount: 1000,
+      tumbok: 0,
+      sahod: 0,
+      ramble: 0,
       gameType: "STL Pares",
-      betType: "Straight",
       selectedPair: "12-34",
       status: "Active",
     },
@@ -48,8 +53,10 @@ const TableBettingSummary: React.FC = () => {
       date: "2025/01/22 13:05:32",
       drawTime: "First Draw",
       betAmount: 2000,
+      tumbok: 0,
+      sahod: 0,
+      ramble: 0,
       gameType: "STL Swer2",
-      betType: "Rambol",
       selectedPair: "56-78",
       status: "Void",
     },
@@ -58,8 +65,10 @@ const TableBettingSummary: React.FC = () => {
       date: "2025/01/22 13:05:32",
       drawTime: "First Draw",
       betAmount: 1500,
+      tumbok: 0,
+      sahod: 0,
+      ramble: 0,
       gameType: "STL Swer3",
-      betType: "Straight",
       selectedPair: "90-12",
       status: "Active",
     },
@@ -68,8 +77,10 @@ const TableBettingSummary: React.FC = () => {
       date: "2025/01/22 13:05:32",
       drawTime: "First Draw",
       betAmount: 2500,
+      tumbok: 0,
+      sahod: 0,
+      ramble: 0,
       gameType: "STL Swer4",
-      betType: "Rambol",
       selectedPair: "34-56",
       status: "Void",
     },
@@ -78,8 +89,10 @@ const TableBettingSummary: React.FC = () => {
       date: "2025/01/22 13:05:32",
       drawTime: "First Draw",
       betAmount: 2500,
+      tumbok: 0,
+      sahod: 0,
+      ramble: 0,
       gameType: "STL Swer4",
-      betType: "Rambol",
       selectedPair: "34-56",
       status: "Void",
     },
@@ -88,8 +101,10 @@ const TableBettingSummary: React.FC = () => {
       date: "2025/01/22 13:05:32",
       drawTime: "First Draw",
       betAmount: 2500,
+      tumbok: 0,
+      sahod: 0,
+      ramble: 0,
       gameType: "STL Swer4",
-      betType: "Rambol",
       selectedPair: "34-56",
       status: "Void",
     },
@@ -98,8 +113,10 @@ const TableBettingSummary: React.FC = () => {
       date: "2025/01/22 13:05:32",
       drawTime: "First Draw",
       betAmount: 2500,
+      tumbok: 0,
+      sahod: 0,
+      ramble: 0,
       gameType: "STL Swer4",
-      betType: "Rambol",
       selectedPair: "34-56",
       status: "Void",
     },
@@ -108,8 +125,10 @@ const TableBettingSummary: React.FC = () => {
       date: "2025/01/22 13:05:32",
       drawTime: "First Draw",
       betAmount: 2500,
+      tumbok: 0,
+      sahod: 0,
+      ramble: 0,
       gameType: "STL Swer4",
-      betType: "Rambol",
       selectedPair: "34-56",
       status: "Void",
     },
@@ -118,8 +137,10 @@ const TableBettingSummary: React.FC = () => {
       date: "2025/01/22 13:05:32",
       drawTime: "First Draw",
       betAmount: 2500,
+      tumbok: 0,
+      sahod: 0,
+      ramble: 0,
       gameType: "STL Swer4",
-      betType: "Rambol",
       selectedPair: "34-56",
       status: "Void",
     },
@@ -128,8 +149,10 @@ const TableBettingSummary: React.FC = () => {
       date: "2025/01/22 13:05:32",
       drawTime: "First Draw",
       betAmount: 2500,
+      tumbok: 0,
+      sahod: 0,
+      ramble: 0,
       gameType: "STL Swer4",
-      betType: "Rambol",
       selectedPair: "34-56",
       status: "Void",
     },
@@ -138,8 +161,10 @@ const TableBettingSummary: React.FC = () => {
       date: "2025/01/22 13:05:32",
       drawTime: "First Draw",
       betAmount: 2500,
+      tumbok: 0,
+      sahod: 0,
+      ramble: 0,
       gameType: "STL Swer4",
-      betType: "Rambol",
       selectedPair: "34-56",
       status: "Void",
     },
@@ -148,8 +173,10 @@ const TableBettingSummary: React.FC = () => {
       date: "2025/01/22 13:05:32",
       drawTime: "First Draw",
       betAmount: 2500,
+      tumbok: 0,
+      sahod: 0,
+      ramble: 0,
       gameType: "STL Swer4",
-      betType: "Rambol",
       selectedPair: "34-56",
       status: "Void",
     },
@@ -158,8 +185,10 @@ const TableBettingSummary: React.FC = () => {
       date: "2025/01/22 13:05:32",
       drawTime: "First Draw",
       betAmount: 2500,
+      tumbok: 0,
+      sahod: 0,
+      ramble: 0,
       gameType: "STL Swer4",
-      betType: "Rambol",
       selectedPair: "34-56",
       status: "Void",
     },
@@ -168,8 +197,10 @@ const TableBettingSummary: React.FC = () => {
       date: "2025/01/22 13:05:32",
       drawTime: "First Draw",
       betAmount: 2500,
+      tumbok: 0,
+      sahod: 0,
+      ramble: 0,
       gameType: "STL Swer4",
-      betType: "Rambol",
       selectedPair: "34-56",
       status: "Void",
     },
@@ -178,8 +209,10 @@ const TableBettingSummary: React.FC = () => {
       date: "2025/01/22 13:05:32",
       drawTime: "First Draw",
       betAmount: 2500,
+      tumbok: 0,
+      sahod: 0,
+      ramble: 0,
       gameType: "STL Swer4",
-      betType: "Rambol",
       selectedPair: "34-56",
       status: "Void",
     },
@@ -190,6 +223,36 @@ const TableBettingSummary: React.FC = () => {
   const [rowsPerPage, setRowsPerPage] = useState(10);
   const [sortConfig, setSortConfig] = useState<{ key: string; direction: "asc" | "desc" } | null>(null);
 
+  const fetchTransactionsData = async () => {
+    const response = await fetchTransactions();
+
+    if (!response.success || response.data.length === 0) {
+      console.warn("No data found in API response!");
+      return;
+    }
+
+    const formattedData: User[] = response.data.map((transaction: any) => {
+      return {
+        transactionNumber: transaction.TransactionNumber,
+        date: transaction.DateOfTransaction,
+        drawTime: transaction.DrawOrder == 1 ? "First Draw" : transaction.DrawOrder == 2 ? "Second Draw" : "Third Draw",
+        betAmount: transaction.BetAmount,
+        tumbok: transaction.Tumbok,
+        sahod: transaction.Sahod,
+        ramble: transaction.Ramble,
+        gameType: transaction.GameCategory,
+        selectedPair: `${transaction.CombinationOne}-${transaction.CombinationTwo}${ transaction.CombinationThree > 0 ? `-${transaction.CombinationThree}` : ""}${transaction.CombinationFour > 0 ? `-${transaction.CombinationFour}` : ""}`,
+        status: transaction.TransactionStatus
+      }
+    })
+
+    setTransactions(formattedData)
+  }
+
+  useEffect(() => {
+    fetchTransactionsData();
+  }, [])
+
   // Apply search functionality
   useEffect(() => {
     if (searchQuery) {
@@ -198,7 +261,6 @@ const TableBettingSummary: React.FC = () => {
         (transaction) =>
           transaction.transactionNumber.toLowerCase().includes(lowercasedQuery) ||
           transaction.gameType.toLowerCase().includes(lowercasedQuery) ||
-          transaction.betType.toLowerCase().includes(lowercasedQuery) ||
           transaction.selectedPair.toLowerCase().includes(lowercasedQuery)
       );
       setFilteredTransactions(filtered);
@@ -215,13 +277,29 @@ const TableBettingSummary: React.FC = () => {
     }
     setSortConfig({ key, direction });
 
-    const sortedData = [...filteredTransactions].sort((a, b) => {
+    const sortedData = [...filteredTransactions].sort((a: any, b: any) => {
       if (a[key] < b[key]) return direction === "asc" ? -1 : 1;
       if (a[key] > b[key]) return direction === "asc" ? 1 : -1;
       return 0;
     });
     setFilteredTransactions(sortedData);
   };
+
+  const formatDate = (dateString: string) => {
+    // Create a new Date object
+    const date = new Date(dateString);
+
+    // Format the date components
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0'); // Months are 0-indexed
+    const day = String(date.getDate()).padStart(2, '0');
+    const hours = String(date.getHours()).padStart(2, '0');
+    const minutes = String(date.getMinutes()).padStart(2, '0');
+    const seconds = String(date.getSeconds()).padStart(2, '0');
+
+    // Create the formatted date string
+    return `${year}/${month}/${day} ${hours}:${minutes}:${seconds}`;
+  } 
 
   // Render table
   return (
@@ -288,7 +366,9 @@ const TableBettingSummary: React.FC = () => {
                 ) : null}
               </TableCell>
             ))}
-            <TableCell>BET TYPE</TableCell>
+            <TableCell>TUMBOK</TableCell>
+            <TableCell>SAHOD</TableCell>
+            <TableCell>RAMBLE</TableCell>
             <TableCell>BET PATTERN</TableCell>
             <TableCell>STATUS</TableCell>
           </TableRow>
@@ -322,11 +402,13 @@ const TableBettingSummary: React.FC = () => {
               .map((transaction) => (
                 <TableRow key={transaction.transactionNumber}>
                   <TableCell>{transaction.transactionNumber}</TableCell>
-                  <TableCell>{transaction.date}</TableCell>
+                  <TableCell>{formatDate(transaction.date)}</TableCell>
                   <TableCell>{transaction.drawTime}</TableCell>
                   <TableCell>₱{transaction.betAmount}</TableCell>
                   <TableCell>{transaction.gameType}</TableCell>
-                  <TableCell>{transaction.betType}</TableCell>
+                  <TableCell>{transaction.tumbok}</TableCell>
+                  <TableCell>{transaction.sahod}</TableCell>
+                  <TableCell>{transaction.ramble}</TableCell>
                   <TableCell>{transaction.selectedPair}</TableCell>
                   <TableCell>
                     <Button
@@ -338,11 +420,11 @@ const TableBettingSummary: React.FC = () => {
                         padding: "1.2px 13.5px",
                         fontSize: "14px",
                         backgroundColor:
-                          transaction.status === "Void" ? "#FF7A7A" : "#4CAF50",
+                          transaction.status === "Inactive" ? "#FF7A7A" : "#4CAF50",
                         color: "#171717",
                         "&:hover": {
                           backgroundColor:
-                            transaction.status === "Void"
+                            transaction.status === "Inactive"
                               ? "#F05252"
                               : "#4CAF50",
                         },

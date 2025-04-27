@@ -1,8 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Box, Typography, Stack } from "@mui/material";
 import { BarChart } from "@mui/x-charts/BarChart";
-
-import fetchHistoricalSummary from "~/utils/api/transactions/getHistoricalSummary";
+import { fetchHistoricalSummary } from "~/utils/api/transactions";
 
 const CustomLegend = () => (
   <Stack
@@ -48,32 +47,40 @@ const ChartBettorsvsBetsPlacedSummary = () => {
     const fetchData = async () => {
       setLoading(true);
       try {
-        const res = await fetchHistoricalSummary({}); // Add query params if needed
+        const response = await fetchHistoricalSummary(); // Add query params if needed
 
-        console.log(
-          "Result Data from BettorsvsBetsPlacedChart: " +
-            JSON.stringify(res.data, null, 2)
-        );
+        const today = new Date().toISOString().split("T")[0];
+          console.log(today); // Output: "2025-03-25T00:00:00.000Z"
 
-        if (res.success && Array.isArray(res.data)) {
+          // Filter Data for Today's Date
+          const res = response.data.filter((item: { TransactionDate: string }) =>
+            item.TransactionDate.startsWith(today)
+          );
+
+
+        // console.log(
+        //   "Result Data from BettorsvsBetsPlacedChart: " +
+        //     JSON.stringify(res, null, 2)
+        // );
+
+        if (response.success && Array.isArray(res)) {
           // Aggregate data by GameTypeId
           const aggregatedData: Record<
             number,
             { bettors: number; bets: number }
           > = {};
 
-          res.data.forEach(
+          res.forEach(
             (item: {
-              GameTypeId: number;
+              DrawOrder: number;
               TotalBettors: number;
-              TotalBetsPlaced: number;
+              TotalBets: number;
             }) => {
-              if (!aggregatedData[item.GameTypeId]) {
-                aggregatedData[item.GameTypeId] = { bettors: 0, bets: 0 };
+              if (!aggregatedData[item.DrawOrder]) {
+                aggregatedData[item.DrawOrder] = { bettors: 0, bets: 0 };
               }
-
-              aggregatedData[item.GameTypeId].bettors += item.TotalBettors;
-              aggregatedData[item.GameTypeId].bets += item.TotalBetsPlaced;
+              aggregatedData[item.DrawOrder].bettors += item.TotalBettors;
+              aggregatedData[item.DrawOrder].bets += item.TotalBets;
             }
           );
 
@@ -108,7 +115,7 @@ const ChartBettorsvsBetsPlacedSummary = () => {
     };
 
     fetchData();
-    console.log(`Bettors vs Bets Placed Summary Data: ${data}`);
+    //console.log(`Bettors vs Bets Placed Summary Data: ${data}`);
   }, []);
 
   // const maxX = Math.max(
@@ -152,11 +159,11 @@ const ChartBettorsvsBetsPlacedSummary = () => {
           margin={{ left: 90, right: 20, top: 20, bottom: 40 }}
           series={[
             {
-              data: [10, 20,30],
+              data: data.map((item) => item.bettors),
               color: "#E5C7FF",
             },
             {
-              data: [40, 50, 60],
+              data: data.map((item) => item.bets),
               color: "#D2A7FF",
             },
           ]}

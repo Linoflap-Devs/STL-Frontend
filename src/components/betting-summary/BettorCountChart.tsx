@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Box, Typography, Stack, CircularProgress } from "@mui/material";
 import { BarChart } from "@mui/x-charts/BarChart";
+import { fetchHistoricalSummary } from "~/utils/api/transactions";
 // import fetchHistoricalSummary from "~/utils/api/transactions/getHistoricalSummary";
 
 // Mapping GameTypeId to Draw Names
@@ -72,10 +73,100 @@ const CustomLegend = () => (
 
 const ChartBettorsSummary = () => {
 
+  const [data, setData] = useState<
+      { draw: string; pares: number, swer2: number, swer3: number, swer4: number }[]
+    >([]);
+  const [loading, setLoading] = useState(false);
+
   const xAxisTicks = [
     0, 1, 5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 55, 60, 65, 70, 75, 80, 85, 90,
     95, 100,
   ];
+
+  useEffect(() => {
+      const fetchData = async () => {
+        setLoading(true);
+        try {
+          const response = await fetchHistoricalSummary(); // Add query params if needed
+          
+          const today = new Date().toISOString().split("T")[0];
+          console.log(today); // Output: "2025-03-25T00:00:00.000Z"
+
+          // Filter Data for Today's Date
+          const res = response.data.filter((item: { TransactionDate: string }) =>
+            item.TransactionDate.startsWith(today)
+          );
+
+          console.log(
+            "Result Data from BettorsvsBetsPlacedChart: " +
+              JSON.stringify(res.data, null, 2)
+          );
+  
+          if (response.success && Array.isArray(res)) {
+            // Aggregate data by GameTypeId
+            const aggregatedData: Record<
+              number,
+              { pares: number; swer2: number; swer3: number; swer4: number }
+            > = {};
+  
+            res.forEach(
+              (item: {
+                DrawOrder: number;
+                TotalBettors: number;
+                TotalBets: number;
+                GameCategoryId: number;
+              }) => {
+                if (!aggregatedData[item.DrawOrder]) {
+                  aggregatedData[item.DrawOrder] = { pares: 0, swer2: 0, swer3: 0, swer4: 0 };
+                }
+  
+                aggregatedData[item.DrawOrder].pares += item.GameCategoryId == 1 ? item.TotalBets : 0;
+                aggregatedData[item.DrawOrder].swer2 += item.GameCategoryId == 2 ? item.TotalBets : 0;
+                aggregatedData[item.DrawOrder].swer3 += item.GameCategoryId == 3 ? item.TotalBets : 0;
+                aggregatedData[item.DrawOrder].swer4 += item.GameCategoryId == 4 ? item.TotalBets : 0;
+              }
+            );
+  
+            // Convert aggregated data into the required format
+            const formattedData = [
+              {
+                draw: "First Draw",
+                pares: aggregatedData[1]?.pares || 0,
+                swer2: aggregatedData[1]?.swer2 || 0,
+                swer3: aggregatedData[1]?.swer3 || 0,
+                swer4: aggregatedData[1]?.swer4 || 0,
+              },
+              {
+                draw: "Second Draw",
+                pares: aggregatedData[2]?.pares || 0,
+                swer2: aggregatedData[2]?.swer2 || 0,
+                swer3: aggregatedData[2]?.swer3 || 0,
+                swer4: aggregatedData[2]?.swer4 || 0,
+              },
+              {
+                draw: "Third Draw",
+                pares: aggregatedData[3]?.pares || 0,
+                swer2: aggregatedData[3]?.swer2 || 0,
+                swer3: aggregatedData[3]?.swer3 || 0,
+                swer4: aggregatedData[3]?.swer4 || 0,
+              },
+            ];
+  
+            setData(formattedData);
+            console.log(formattedData)
+            setLoading(false);
+          }
+        } catch (error) {
+          console.log(
+            "Error loading BettorsvsBetsPlacedSummary: " +
+              (error as Error).message
+          );
+        }
+      };
+  
+      fetchData();
+      console.log(`Bettors vs Bets Placed Summary Data: ${data}`);
+    }, []);
 
   return (
     <Box
@@ -121,19 +212,19 @@ const ChartBettorsSummary = () => {
             margin={{ left: 90, right: 20, top: 20, bottom: 40 }}
             series={[
               {
-                data: [2, 4, 6],
+                data: data.map((item) => item.pares),
                 color: "#E5C7FF",
               },
               {
-                data: [8, 10, 12],
+                data: data.map((item) => item.swer2),
                 color: "#D2A7FF",
               },
               {
-                data: [14, 16,18],  
+                data: data.map((item) => item.swer3),  
                 color: "#BB86FC",
               },
               {
-                data: [20, 22, 24],
+                data: data.map((item) => item.swer4),
                 color: "#A06FE6",
               },
             ]}
@@ -149,7 +240,7 @@ const ChartBettorsSummary = () => {
                 label: "Amount (in 100,000 units)",
                 // scaleType: "linear",
                 min: 0,
-                max: 100,
+                max: 50,
                 tickValues: xAxisTicks,
                 tickSpacing: 1,
               } as any,

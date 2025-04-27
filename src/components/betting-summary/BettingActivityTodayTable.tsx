@@ -1,31 +1,83 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Box, Typography, Divider } from "@mui/material";
 import CasinoIcon from '@mui/icons-material/Casino';
+import { fetchHistoricalRegion } from "~/utils/api/transactions";
 
 interface RegionData {
   Region: string;
-  totalBetAmount: number;
+  TotalBetAmount: number;
   trend?: number | undefined;
 }
 
 const TableBettingActivityToday = () => {
+  const [rankedRegions, setRankedRegions] = useState<
+      { region: RegionData; rank: number; trend: number }[]
+    >([]);
+  
+    const getBettingRegions = async () => {
+      const today = new Date().toISOString().split('T')[0];
+  
+      console.log("Date Today, TopBettingRegion: ", today)
+    
+      // Assuming fetchHistoricalRegion accepts a date parameter
+      const response = await fetchHistoricalRegion({ date: today });
+    
+      if (!response.success || response.data.length === 0) {
+        console.warn("No data found in API response!");
+        return;
+      }
+      const filteredData = response.data.filter(
+        (item: { TransactionDate: string }) =>
+          item.TransactionDate.startsWith(today)
+      );
+    
+      // Aggregate TotalBettors per RegionId using reduce()
+      const regionMap: Map<number, RegionData> = filteredData.reduce((map: { get: (arg0: any) => any; set: (arg0: any, arg1: any) => void; }, entry: { RegionId: any; TotalBettors: any; }) => {
+        const existing = map.get(entry.RegionId);
+        if (existing) {
+          existing.TotalBettors += entry.TotalBettors;
+        } else {
+          map.set(entry.RegionId, { ...entry });
+        }
+        return map;
+      }, new Map<number, RegionData>());
+    
+      // Convert to array and explicitly cast to RegionData[]
+      const sortedRegions = Array.from(regionMap.values() as Iterable<RegionData>)
+        .sort((a, b) => b.TotalBetAmount - a.TotalBetAmount)
+        // .filter(region => region.TotalBetAmount > 0);
+    
+      const ranked: { region: RegionData; rank: number; trend: number }[] =
+        sortedRegions.map((region, index) => ({
+          region,
+          rank: index + 1,
+          trend: index,
+        }));
+    
+      setRankedRegions(ranked);
+    };
+    
+    useEffect(() => {
+      getBettingRegions();
+    }, []);
+
   // Hardcoded data for all Philippine regions
   const [regionData] = useState<RegionData[]>([
-    { Region: "National Capital Region (NCR)", totalBetAmount: 1850000, trend: 3 },
-    { Region: "Cordillera Administrative Region (CAR)", totalBetAmount: 320000, trend: 1 },
-    { Region: "Ilocos Region (Region I)", totalBetAmount: 450000, trend: -1 },
-    { Region: "Cagayan Valley (Region II)", totalBetAmount: 380000, trend: 2 },
-    { Region: "Central Luzon (Region III)", totalBetAmount: 920000, trend: 1 },
-    { Region: "Calabarzon (Region IV-A)", totalBetAmount: 1150000, trend: 2 },
-    { Region: "Mimaropa (Region IV-B)", totalBetAmount: 280000, trend: 2 },
-    { Region: "Bicol Region (Region V)", totalBetAmount: 350000, trend: -1 },
-    { Region: "Western Visayas (Region VI)", totalBetAmount: 510000, trend: 1 },
-    { Region: "Central Visayas (Region VII)", totalBetAmount: 680000, trend: 3 },
-    { Region: "Eastern Visayas (Region VIII)", totalBetAmount: 290000, trend: -2 },
-    { Region: "Zamboanga Peninsula (Region IX)", totalBetAmount: 310000, trend: 2 },
-    { Region: "Northern Mindanao (Region X)", totalBetAmount: 390000, trend: 1 },
-    { Region: "Davao Region (Region XI)", totalBetAmount: 550000, trend: 2 },
-    { Region: "Soccsksargen (Region XII)", totalBetAmount: 330000, trend: -1 },
+    { Region: "National Capital Region (NCR)", TotalBetAmount: 1850000, trend: 3 },
+    { Region: "Cordillera Administrative Region (CAR)", TotalBetAmount: 320000, trend: 1 },
+    { Region: "Ilocos Region (Region I)", TotalBetAmount: 450000, trend: -1 },
+    { Region: "Cagayan Valley (Region II)", TotalBetAmount: 380000, trend: 2 },
+    { Region: "Central Luzon (Region III)", TotalBetAmount: 920000, trend: 1 },
+    { Region: "Calabarzon (Region IV-A)", TotalBetAmount: 1150000, trend: 2 },
+    { Region: "Mimaropa (Region IV-B)", TotalBetAmount: 280000, trend: 2 },
+    { Region: "Bicol Region (Region V)", TotalBetAmount: 350000, trend: -1 },
+    { Region: "Western Visayas (Region VI)", TotalBetAmount: 510000, trend: 1 },
+    { Region: "Central Visayas (Region VII)", TotalBetAmount: 680000, trend: 3 },
+    { Region: "Eastern Visayas (Region VIII)", TotalBetAmount: 290000, trend: -2 },
+    { Region: "Zamboanga Peninsula (Region IX)", TotalBetAmount: 310000, trend: 2 },
+    { Region: "Northern Mindanao (Region X)", TotalBetAmount: 390000, trend: 1 },
+    { Region: "Davao Region (Region XI)", TotalBetAmount: 550000, trend: 2 },
+    { Region: "Soccsksargen (Region XII)", TotalBetAmount: 330000, trend: -1 },
   ]);
 
   return (
@@ -73,7 +125,7 @@ const TableBettingActivityToday = () => {
           overflowY: "auto" 
           }}
       >
-        {regionData.map((item, index) => (
+        {rankedRegions.map((item, index) => (
           <Box
             key={index}
             sx={{ 
@@ -121,7 +173,7 @@ const TableBettingActivityToday = () => {
                 textOverflow: "ellipsis"
               }}
             >
-              {item.Region}
+              {item.region.Region}
             </Typography>
             <Typography
               sx={{
@@ -132,7 +184,7 @@ const TableBettingActivityToday = () => {
                 fontSize: "0.95rem",
               }}
             >
-              ₱{item.totalBetAmount.toLocaleString()}
+              ₱{item.region.TotalBetAmount.toLocaleString()}
             </Typography>
           </Box>
         ))}

@@ -33,6 +33,19 @@ export const fetchHistoricalRegion = async (p0?: { date: string; }) => {
     }
 };
 
-export default { fetchHistoricalSummary, fetchHistoricalRegion };
+export const fetchTransactions = async (p0?: { date: string; }) => {
+    try {
+        const url = validateRelativeUrl("/transactions/getTransactions");
+        const response = await axiosInstance.get(url, {
+        });
+
+        return response.data;
+    } catch (error) {
+        console.error("Error fetching users:", (error as Error).message);
+        return { success: false, message: (error as Error).message, data: [] };
+    }
+};
+
+export default { fetchHistoricalSummary, fetchHistoricalRegion, fetchTransactions };
 
 
