@@ -1,5 +1,6 @@
 import dynamic from "next/dynamic";
 import React, { Suspense } from "react";
+import GameCombinationModal from "~/components/dashboard/GameCombinationForm";
 
 const DashboardSkeletonPage = dynamic(() =>
   import("~/components/dashboard/DashboardSkeleton").then((mod) => ({
@@ -28,6 +29,7 @@ const DashboardPage = () => {
                 <DrawResultsPage />
                 <TopBettingRegionPage />
                 <TopWinningRegionPage />
+                <GameCombinationModal />
               </div>
 
               {/* Right Column */}

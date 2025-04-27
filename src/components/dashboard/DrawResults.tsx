@@ -10,7 +10,7 @@ import {
   SelectChangeEvent,
 } from "@mui/material";
 import CasinoIcon from "@mui/icons-material/Casino";
-import getTodaysWinningCombination from "../../utils/api/winningcombinations";
+import {getTodaysWinningCombination} from "../../utils/api/winningcombinations";
 import { buttonNumberStyles } from "../../styles/theme";
 
 const displayValue = (value: string | null) => (value ? value : "\u00A0");

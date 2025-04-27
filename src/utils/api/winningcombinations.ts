@@ -20,6 +20,20 @@ const getTodaysWinningCombination = async () => {
     }
 };
 
-export default getTodaysWinningCombination;
+const addWinningCombination = async (data: Record<string, string>) => {
+    try {
+        const url = validateRelativeUrl("/winningcombinations/addWinningCombination");
+
+        const response = await axiosInstance.post(url, data, {})
+        return response.data
+    }
+    catch (error) {
+        console.error("Error adding combination:", (error as Error).message);
+        return { success: false, message: (error as Error).message, data: [] };
+    }
+}
+
+export { getTodaysWinningCombination, addWinningCombination };
+
 
 
