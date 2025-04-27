@@ -79,9 +79,11 @@ const App = ({ Component, pageProps }: AppProps) => {
             }
           } catch {
             handleAuthFailure();
+            setLoading(false);
           }
         } else {
           handleAuthFailure();
+          setLoading(false);
         }
       }
     };
