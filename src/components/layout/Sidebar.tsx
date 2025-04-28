@@ -56,6 +56,7 @@ const WINNING_SUBMENUS: SubmenuItem[] = [
   { name: "STL Swer4", path: "/winning-summary/stl-swer4" },
 ];
 
+
 const Sidebar: React.FC = () => {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("md"));
@@ -68,8 +69,32 @@ const Sidebar: React.FC = () => {
   const [collapsed, setCollapsed] = useState(false);
 
   const router = useRouter();
-  // asPath - current URL path(pathname&query/search params)
-  const currentPath = router.asPath;
+  const currentPath = router.asPath; // asPath - current URL path(pathname&query/search params)
+
+  // Zustand store
+  const { SideBarActiveGameType, setSideBarActiveGameType } = useSideBarStore();
+  
+  // Update active submenu and Zustand store on initial load
+  useEffect(() => {
+    if (currentPath.startsWith("/betting-summary")) {
+      setOpenSubmenu("Betting Summary");
+      const activeSubmenu = BETTING_SUBMENUS.find((submenu) =>
+        currentPath.includes(submenu.path)
+      );
+      if (activeSubmenu) {
+        setSideBarActiveGameType(activeSubmenu.name as gameType);
+      }
+    } else if (currentPath.startsWith("/winning-summary")) {
+      setOpenSubmenu("Winning Summary");
+      const activeSubmenu = WINNING_SUBMENUS.find((submenu) =>
+        currentPath.includes(submenu.path)
+      );
+      if (activeSubmenu) {
+        setSideBarActiveGameType(activeSubmenu.name as gameType);
+      }
+    }
+    console.log(`Active Game Type (sidebar): ${SideBarActiveGameType}`)
+  }, [currentPath, setSideBarActiveGameType]);
 
   // Handle Logout
   const handleLogout = async () => {
@@ -90,11 +115,6 @@ const Sidebar: React.FC = () => {
       }
     }
   };
-
-  // Zustand store
-  const { 
-    SideBarActiveGameType, setSideBarActiveGameType 
-  } = useSideBarStore();
 
   const handleListItemClick = (subItem: SubmenuItem) => {
     setSideBarActiveGameType(subItem.name as gameType); // Update activeGameType in Zustand store
@@ -145,6 +165,34 @@ const Sidebar: React.FC = () => {
     setCollapsed(!collapsed);
   };
 
+  const renderSubmenuItems = (submenus: SubmenuItem[]) => {
+    return submenus.map((subItem) => (
+      <ListItem key={subItem.path} disablePadding sx={{ pl: 4 }}>
+        <ListItemButton
+          selected={SideBarActiveGameType === subItem.name}
+          onClick={() => handleListItemClick(subItem)}
+          sx={{
+            py: 1,
+            borderRadius: "6px",
+            "&.Mui-selected": {
+              backgroundColor: "rgba(187, 134, 252, 0.16)",
+              color: "#BB86FC",
+            },
+          }}
+        >
+          <ListItemText
+            primary={subItem.name}
+            primaryTypographyProps={{
+              fontSize: 14,
+              fontWeight: SideBarActiveGameType === subItem.name ? "700" : "300",
+            }}
+          />
+        </ListItemButton>
+      </ListItem>
+    ));
+  };
+
+
   // Render a single menu item based on mode (collapsed/full)
   // 'page' was from UserSectionData.pages.map
   const renderMenuItem = (page: string) => {
@@ -193,10 +241,9 @@ const Sidebar: React.FC = () => {
             <ListItemButton
               onClick={() => {
                 if (collapsed) setCollapsed(false);
-                // OpenSubmenu === Betting Summary
                 setOpenSubmenu(openSubmenu === page ? null : page);
                 if (!currentPath.startsWith("/betting-summary")) {
-                  console.log("Navigating to: dashboard" )
+                  setSideBarActiveGameType("Dashboard");
                   router.push("/betting-summary/dashboard");
                 }
               }}
@@ -234,135 +281,78 @@ const Sidebar: React.FC = () => {
                 </>
               )}
             </ListItemButton>
-
+  
             <Collapse
               in={!collapsed && openSubmenu === page}
               timeout="auto"
               unmountOnExit
             >
               <List component="div" disablePadding>
-                {BETTING_SUBMENUS.map((subItem) => (
-                  <ListItem key={subItem.path} disablePadding sx={{ pl: 4 }}>
-                    <ListItemButton
-                      component="a"
-                      href={subItem.path}
-                      selected={SideBarActiveGameType === subItem.name}
-                      onClick={() => handleListItemClick(subItem)}
-                      sx={{
-                        py: 1,
-                        borderRadius: "6px",
-                        "&.Mui-selected": {
-                          backgroundColor: "rgba(187, 134, 252, 0.16)",
-                          color: "#BB86FC",
-                        },
-                      }}
-                    >
-                      <ListItemText
-                        primary={subItem.name}
-                        primaryTypographyProps={{
-                          fontSize: 14,
-                          fontWeight:
-                            currentPath === `/betting-summary/${subItem.path}`
-                              ? "700"
-                              : "300",
-                        }}
-                      />
-                    </ListItemButton>
-                  </ListItem>
-                ))}
+                {renderSubmenuItems(BETTING_SUBMENUS)}
               </List>
             </Collapse>
           </Box>
-      );
-    }
-    if (page === "Winning Summary") {
-      return (
-        <Box key={page}>
-          <ListItemButton
-            onClick={() => {
-              if (collapsed) setCollapsed(false);
-              // OpenSubmenu === Betting Summary
-              setOpenSubmenu(openSubmenu === page ? null : page);
-              if (!currentPath.startsWith("/betting-summary")) {
-                console.log("Navigating to: dashboard" )
-                router.push("/winning-summary/dashboard");
-              }
-            }}
-            sx={{
-              px: collapsed ? 0 : 1,
-              py: 1.5,
-              borderRadius: "6px",
-              my: 1,
-              color: currentPath.startsWith("/winning-summary")
-                ? "#BB86FC"
-                : "inherit",
-            }}
-          >
-            <CasinoIcon
-              sx={{
-                fontSize: collapsed ? "1.4rem" : "1.3rem",
-                mr: collapsed ? 0 : 1,
-                ml: collapsed ? 0.5 : 0,
+        );
+      }
+      if (page === "Winning Summary") {
+        return (
+          <Box key={page}>
+            <ListItemButton
+              onClick={() => {
+                if (collapsed) setCollapsed(false);
+                setOpenSubmenu(openSubmenu === page ? null : page);
+                if (!currentPath.startsWith("/winning-summary")) {
+                  setSideBarActiveGameType("Dashboard");
+                  router.push("/winning-summary/dashboard");
+                }
               }}
-            />
-            {!collapsed && (
-              <>
-                <Typography
-                  sx={{
-                    flexGrow: 1,
-                    fontSize: 14,
-                    fontWeight: currentPath.startsWith("/betting-summary")
-                      ? "700"
-                      : "300",
-                  }}
-                >
-                  {page}
-                </Typography>
-                {openSubmenu === page ? <ExpandLess /> : <ExpandMore />}
-              </>
-            )}
-          </ListItemButton>
-
-          <Collapse
-            in={!collapsed && openSubmenu === page}
-            timeout="auto"
-            unmountOnExit
-          >
-            <List component="div" disablePadding>
-              {WINNING_SUBMENUS.map((subItem) => (
-                <ListItem key={subItem.path} disablePadding sx={{ pl: 4 }}>
-                  <ListItemButton
-                    component="a"
-                    href={subItem.path}
-                    selected={SideBarActiveGameType === subItem.name}
-                    onClick={() => handleListItemClick(subItem)}
+              sx={{
+                px: collapsed ? 0 : 1,
+                py: 1.5,
+                borderRadius: "6px",
+                my: 1,
+                color: currentPath.startsWith("/winning-summary")
+                  ? "#BB86FC"
+                  : "inherit",
+              }}
+            >
+              <FaxIcon
+                sx={{
+                  fontSize: collapsed ? "1.4rem" : "1.3rem",
+                  mr: collapsed ? 0 : 1,
+                  ml: collapsed ? 0.5 : 0,
+                }}
+              />
+              {!collapsed && (
+                <>
+                  <Typography
                     sx={{
-                      py: 1,
-                      borderRadius: "6px",
-                      "&.Mui-selected": {
-                        backgroundColor: "rgba(187, 134, 252, 0.16)",
-                        color: "#BB86FC",
-                      },
+                      flexGrow: 1,
+                      fontSize: 14,
+                      fontWeight: currentPath.startsWith("/winning-summary")
+                        ? "700"
+                        : "300",
                     }}
                   >
-                    <ListItemText
-                      primary={subItem.name}
-                      primaryTypographyProps={{
-                        fontSize: 14,
-                        fontWeight:
-                          currentPath === `/betting-summary/${subItem.path}`
-                            ? "700"
-                            : "300",
-                      }}
-                    />
-                  </ListItemButton>
-                </ListItem>
-              ))}
-            </List>
-          </Collapse>
-        </Box>
-      );
-    }
+                    {page}
+                  </Typography>
+                  {openSubmenu === page ? <ExpandLess /> : <ExpandMore />}
+                </>
+              )}
+            </ListItemButton>
+  
+            <Collapse
+              in={!collapsed && openSubmenu === page}
+              timeout="auto"
+              unmountOnExit
+            >
+              <List component="div" disablePadding>
+                {renderSubmenuItems(WINNING_SUBMENUS)}
+              </List>
+            </Collapse>
+          </Box>
+        );
+      }
 
     return (
       <Box
