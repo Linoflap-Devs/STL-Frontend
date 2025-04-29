@@ -75,7 +75,7 @@ const LoginPage = () => {
     >
       <div className="absolute inset-0 bg-[#242424D9] z-10" />
       <div className="relative z-20 flex w-full justify-center items-center">
-        <div className="p-10 bg-[#181A1B] rounded-lg flex flex-col items-center justify-center">
+        <div className="p-8 bg-[#181A1B] rounded-lg flex flex-col items-center justify-center">
           {/* Logo + Title */}
           <div className="text-center mb-4 mt-2">
             <img
@@ -183,7 +183,7 @@ const LoginPage = () => {
             </button>
 
             {/* Forgot Password */}
-            <p className="text-center text-xs mt-2">
+            <p className="text-center text-xs mt-4">
               <a
                 href="/auth/forgot-password"
                 className="text-[#67ABEB] hover:underline"
