@@ -93,7 +93,8 @@ function ChartOperatorsSummary() {
                 borderRadius: "8px",
                 fontSize: "12px",
                 fontWeight: "400",
-                cursor: "pointer"
+                cursor: "pointer",
+                width: "150px",
               }}
             >
               Export as CSV
