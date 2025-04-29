@@ -1,6 +1,6 @@
 import { create } from "zustand";
 
-type DashboardData = {
+type OperatorsData = {
   totalOperators: number;
   totalActiveOperators: number;
   totalDeletedOperators: number;
@@ -8,22 +8,22 @@ type DashboardData = {
   totalNewOperators: number;
 };
 
-type DashboardStore = {
-  dashboardData: DashboardData;
+type OperatorsStore = {
+  operatorsData: OperatorsData;
   // Partial<T> - typescript utility makes all fields of T optional
-  setDashboardData: (data: Partial<DashboardData>) => void;
+  setOperatorsData: (data: Partial<OperatorsData>) => void;
 };
 
-export const useDashboardStore = create<DashboardStore>((set) => ({
-  dashboardData: {
+export const useOperatorsStore = create<OperatorsStore>((set) => ({
+  operatorsData: {
     totalOperators: 0,
     totalActiveOperators: 0,
     totalDeletedOperators: 0,
     totalInactiveOperators: 0,
     totalNewOperators: 0,
   },
-  setDashboardData: (data) =>
+  setOperatorsData: (data) =>
     set((state) => ({
-      dashboardData: { ...state.dashboardData, ...data },
+      operatorsData: { ...state.operatorsData, ...data },
     })),
 }));
