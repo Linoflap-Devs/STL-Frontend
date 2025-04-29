@@ -24,6 +24,7 @@ import ArrowUpwardIcon from "@mui/icons-material/ArrowUpward";
 import ArrowDownwardIcon from "@mui/icons-material/ArrowDownward";
 import PersonOffIcon from "@mui/icons-material/PersonOff";
 
+import ModalAddOperator from './AddOperatorModal';
 export interface Operators {
   companyName: string;
   approvedAreaOfOperations: string;
@@ -150,7 +151,8 @@ const TableOperatorsSummary = () => {
   const [rowsPerPage, setRowsPerPage] = useState(10);
   const [sortConfig, setSortConfig] = useState<{ key: string; direction: "asc" | "desc" } | null>(null);
 
-  
+  const [openAddModal, setOpenAddModal] = useState(false);
+
     // Apply search functionality
     useEffect(() => {
       if (searchQuery) {
@@ -253,6 +255,7 @@ const TableOperatorsSummary = () => {
               cursor: "pointer",
               width: "150px",
             }}
+            onClick={()=> setOpenAddModal(true)}
           >
             Add Operators
           </button>
@@ -365,8 +368,11 @@ const TableOperatorsSummary = () => {
         }}
       />
     </Box>
+    {openAddModal && <ModalAddOperator open={openAddModal} onClose={() => setOpenAddModal(false)} />}
   </TableContainer>
+  
   )
+
 }
 
 export default TableOperatorsSummary
