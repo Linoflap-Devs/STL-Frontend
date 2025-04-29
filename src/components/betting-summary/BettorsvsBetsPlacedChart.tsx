@@ -4,7 +4,6 @@ import { BarChart } from "@mui/x-charts/BarChart";
 import { fetchHistoricalSummary } from "~/utils/api/transactions";
 
 import { TodaysBettorsAndBetsData, addLabels } from "./tooltips/dataSet";
-import { DefaultChartsItemTooltipContent } from '@mui/x-charts/ChartsTooltip';
 const CustomLegend = () => (
   <Stack
     direction="row"
@@ -39,18 +38,6 @@ const CustomLegend = () => (
   </Stack>
 );
 
-const CustomTooltipContent = (props) => {
-  return (
-    <Box>
-      <DefaultChartsItemTooltipContent {...props} />
-      <Box sx={{ mt: 1, borderTop: '1px solid #ccc', pt: 1 }}>
-        <Typography variant="body2" color="textSecondary">
-          Ratio of Bettors to Bets is 1:4.58
-        </Typography>
-      </Box>
-    </Box>
-  );
-};
 const ChartBettorsvsBetsPlacedSummary = (params: {gameCategoryId?: number}) => {
   // const [data, setData] = useState<
   //   { draw: string; bettors: number; bets: number }[]
