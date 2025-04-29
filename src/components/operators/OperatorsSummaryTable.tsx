@@ -25,6 +25,7 @@ import ArrowDownwardIcon from "@mui/icons-material/ArrowDownward";
 import PersonOffIcon from "@mui/icons-material/PersonOff";
 
 import ModalAddOperator from './AddOperatorModal';
+import ModalViewOperator from './ViewOperatorModal';
 export interface Operators {
   companyName: string;
   approvedAreaOfOperations: string;
@@ -33,42 +34,36 @@ export interface Operators {
   status: string;
 }
 
-const ActionsMenu = () => {
+const ActionsMenu = ({ onView }: { onView: () => void }) => {
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
+
   const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
     setAnchorEl(event.currentTarget);
   };
+
   const handleClose = () => {
     setAnchorEl(null);
   };
 
+  const handleViewClick = () => {
+    onView(); // trigger parent handler
+    handleClose(); // close the menu
+  };
+
   return (
     <div>
-      <Button
-        id="basic-button"
-        aria-controls={open ? 'basic-menu' : undefined}
-        aria-haspopup="true"
-        aria-expanded={open ? 'true' : undefined}
-        onClick={handleClick}
-      >
-        <MoreHoriz/>
+      <Button onClick={handleClick}>
+        <MoreHoriz />
       </Button>
-      <Menu
-        id="basic-menu"
-        anchorEl={anchorEl}
-        open={open}
-        onClose={handleClose}
-        MenuListProps={{
-          'aria-labelledby': 'basic-button',
-        }}
-      >
-        <MenuItem onClick={handleClose}>View</MenuItem>
+      <Menu anchorEl={anchorEl} open={open} onClose={handleClose}>
+        <MenuItem onClick={handleViewClick}>View</MenuItem>
         <MenuItem onClick={handleClose}>Delete</MenuItem>
       </Menu>
     </div>
   );
-}
+};
+
 
 const TableOperatorsSummary = () => {
   const [transactions, setTransactions] = useState<Operators[]>(
@@ -151,7 +146,9 @@ const TableOperatorsSummary = () => {
   const [rowsPerPage, setRowsPerPage] = useState(10);
   const [sortConfig, setSortConfig] = useState<{ key: string; direction: "asc" | "desc" } | null>(null);
 
+    // State for Modals
   const [openAddModal, setOpenAddModal] = useState(false);
+  const [openViewModal, setOpenViewModal] = useState(false)
 
     // Apply search functionality
     useEffect(() => {
@@ -186,21 +183,21 @@ const TableOperatorsSummary = () => {
       setFilteredTransactions(sortedData);
     };
   
-    const formatDate = (dateString: string) => {
-      // Create a new Date object
-      const date = new Date(dateString);
+    // const formatDate = (dateString: string) => {
+    //   // Create a new Date object
+    //   const date = new Date(dateString);
   
-      // Format the date components
-      const year = date.getFullYear();
-      const month = String(date.getMonth() + 1).padStart(2, '0'); // Months are 0-indexed
-      const day = String(date.getDate()).padStart(2, '0');
-      const hours = String(date.getHours()).padStart(2, '0');
-      const minutes = String(date.getMinutes()).padStart(2, '0');
-      const seconds = String(date.getSeconds()).padStart(2, '0');
+    //   // Format the date components
+    //   const year = date.getFullYear();
+    //   const month = String(date.getMonth() + 1).padStart(2, '0'); // Months are 0-indexed
+    //   const day = String(date.getDate()).padStart(2, '0');
+    //   const hours = String(date.getHours()).padStart(2, '0');
+    //   const minutes = String(date.getMinutes()).padStart(2, '0');
+    //   const seconds = String(date.getSeconds()).padStart(2, '0');
   
-      // Create the formatted date string
-      return `${year}/${month}/${day} ${hours}:${minutes}:${seconds}`;
-    } 
+    //   // Create the formatted date string
+    //   return `${year}/${month}/${day} ${hours}:${minutes}:${seconds}`;
+    // } 
   return (
     <TableContainer>
     <Box sx={{ backgroundColor: "#171717" }}>
@@ -340,7 +337,7 @@ const TableOperatorsSummary = () => {
                   </Button>
                 </TableCell>
                 <TableCell>
-                  <ActionsMenu />
+                  <ActionsMenu onView={() => setOpenViewModal(true)} />
                 </TableCell>
               </TableRow>
             ))
@@ -369,6 +366,7 @@ const TableOperatorsSummary = () => {
       />
     </Box>
     {openAddModal && <ModalAddOperator open={openAddModal} onClose={() => setOpenAddModal(false)} />}
+    <ModalViewOperator open={openViewModal} onClose={() => setOpenViewModal(false)}/>
   </TableContainer>
   
   )
