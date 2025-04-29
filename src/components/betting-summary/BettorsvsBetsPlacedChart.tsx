@@ -1,8 +1,10 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import { Box, Typography, Stack } from "@mui/material";
 import { BarChart } from "@mui/x-charts/BarChart";
 import { fetchHistoricalSummary } from "~/utils/api/transactions";
 
+import { TodaysBettorsAndBetsData, addLabels } from "./tooltips/dataSet";
+import { DefaultChartsItemTooltipContent } from '@mui/x-charts/ChartsTooltip';
 const CustomLegend = () => (
   <Stack
     direction="row"
@@ -37,15 +39,27 @@ const CustomLegend = () => (
   </Stack>
 );
 
+const CustomTooltipContent = (props) => {
+  return (
+    <Box>
+      <DefaultChartsItemTooltipContent {...props} />
+      <Box sx={{ mt: 1, borderTop: '1px solid #ccc', pt: 1 }}>
+        <Typography variant="body2" color="textSecondary">
+          Ratio of Bettors to Bets is 1:4.58
+        </Typography>
+      </Box>
+    </Box>
+  );
+};
 const ChartBettorsvsBetsPlacedSummary = (params: {gameCategoryId?: number}) => {
-  const [data, setData] = useState<
-    { draw: string; bettors: number; bets: number }[]
-  >([]);
-  const [loading, setLoading] = useState(false);
+  // const [data, setData] = useState<
+  //   { draw: string; bettors: number; bets: number }[]
+  // >([]);
+  // const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     const fetchData = async () => {
-      setLoading(true);
+      // setLoading(true);
       try {
         const response = await fetchHistoricalSummary(); // Add query params if needed
 
@@ -90,26 +104,26 @@ const ChartBettorsvsBetsPlacedSummary = (params: {gameCategoryId?: number}) => {
           );
 
           // Convert aggregated data into the required format
-          const formattedData = [
-            {
-              draw: "First Draw",
-              bettors: aggregatedData[1]?.bettors || 0,
-              bets: aggregatedData[1]?.bets || 0,
-            },
-            {
-              draw: "Second Draw",
-              bettors: aggregatedData[2]?.bettors || 0,
-              bets: aggregatedData[2]?.bets || 0,
-            },
-            {
-              draw: "Third Draw",
-              bettors: aggregatedData[3]?.bettors || 0,
-              bets: aggregatedData[3]?.bets || 0,
-            },
-          ];
+          // const formattedData = [
+          //   {
+          //     draw: "First Draw",
+          //     bettors: aggregatedData[1]?.bettors || 0,
+          //     bets: aggregatedData[1]?.bets || 0,
+          //   },
+          //   {
+          //     draw: "Second Draw",
+          //     bettors: aggregatedData[2]?.bettors || 0,
+          //     bets: aggregatedData[2]?.bets || 0,
+          //   },
+          //   {
+          //     draw: "Third Draw",
+          //     bettors: aggregatedData[3]?.bettors || 0,
+          //     bets: aggregatedData[3]?.bets || 0,
+          //   },
+          // ];
 
-          setData(formattedData);
-          setLoading(false);
+          // setData(formattedData);
+          // setLoading(false);
         }
       } catch (error) {
         console.log(
@@ -162,22 +176,23 @@ const ChartBettorsvsBetsPlacedSummary = (params: {gameCategoryId?: number}) => {
           grid={{ vertical: true }}
           layout="horizontal"
           margin={{ left: 90, right: 20, top: 20, bottom: 40 }}
-          series={[
-            {
-              data: data.map((item) => item.bettors),
-              color: "#E5C7FF",
-            },
-            {
-              data: data.map((item) => item.bets),
-              color: "#D2A7FF",
-            },
-          ]}
+          // series={[
+          //   {
+          //     data: data.map((item) => item.bettors),
+          //     color: "#E5C7FF",
+          //   },
+          //   {
+          //     data: data.map((item) => item.bets),
+          //     color: "#D2A7FF",
+          //   },
+          // ]}
+          dataset={TodaysBettorsAndBetsData}
           yAxis={[
             {
               scaleType: "band",
               data: ["First Draw", "Second Draw", "Third Draw"], 
               // series={[{ data: [4, 3, 5] }, { data: [1, 6, 3] }]},
-            } as any,
+            },
           ]}
           xAxis={[
             {
@@ -187,8 +202,12 @@ const ChartBettorsvsBetsPlacedSummary = (params: {gameCategoryId?: number}) => {
               max: 100,
               tickValues: xAxisTicks,
               tickSpacing:1 ,
-            } as any,
+            },
           ]}
+          series={addLabels([
+            { dataKey: 'bettors', color: '#E5C7FF' },
+            { dataKey: 'bets', color: '#D2A7FF' }
+          ])}
         />
       </Box>
     </Box>
