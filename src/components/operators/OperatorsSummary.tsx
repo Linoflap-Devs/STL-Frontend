@@ -61,7 +61,7 @@ function ChartOperatorsSummary() {
           borderRadius: "8px",
           paddingBottom: "2rem",
           width: "100%",
-          height: "585px"
+          height: "600px"
       }}
     >
         <Box
@@ -69,7 +69,7 @@ function ChartOperatorsSummary() {
             display: "flex",
             justifyContent: "space-between",
             alignItems: "center",
-            mb: 2,
+            mb: 0,
           }}
         >
           <Typography 
@@ -101,7 +101,7 @@ function ChartOperatorsSummary() {
           </Box>
         </Box>
 
-        <Stack direction="row" alignItems="center" spacing={1.5} mb={2}>
+        <Stack direction="row" alignItems="center" spacing={1.5} mb={0}>
             <Box
               sx={{
                 width: 15,
@@ -143,7 +143,7 @@ function ChartOperatorsSummary() {
                 {
                   label: "Amount (in 100,000 units)",
                   min: 0,
-                  max: 100,
+                  max: 50,
                 },
               ]}
               series={sampleChartData.map(item => ({
