@@ -75,7 +75,7 @@ const LoginPage = () => {
     >
       <div className="absolute inset-0 bg-[#242424D9] z-10" />
       <div className="relative z-20 flex w-full justify-center items-center">
-        <div className="w-[90%] sm:w-[60%] md:w-[40%] max-w-[500px] p-10 bg-[#181A1B] rounded-lg flex flex-col items-center justify-center">
+        <div className="p-10 bg-[#181A1B] rounded-lg flex flex-col items-center justify-center">
           {/* Logo + Title */}
           <div className="text-center mb-4 mt-2">
             <img
@@ -87,13 +87,13 @@ const LoginPage = () => {
             <h1 className="text-2xl font-bold text-white">
               {LoginSectionData.cardTitle}
             </h1>
-            <p className="text-gray-400 text-xs">
+            <p className="text-gray-400 text-xs md:text-base">
               {LoginSectionData.cardDescription}
             </p>
           </div>
 
           {/* Form */}
-          <form onSubmit={handleLogin} className="w-[85%]">
+          <form onSubmit={handleLogin} className="w-full">
             <div className="flex flex-col w-full">
               {/* Email */}
               <div className="mb-4">
@@ -179,7 +179,7 @@ const LoginPage = () => {
                   : "bg-[#67ABEB] text-[#181A1B] hover:opacity-90"
               }`}
             >
-              {isLoggingIn ? "Logging in..." : LoginSectionData.buttonText}
+              {LoginSectionData.buttonText}
             </button>
 
             {/* Forgot Password */}
@@ -192,6 +192,12 @@ const LoginPage = () => {
               </a>
             </p>
           </form>
+
+          {isLoggingIn && (
+            <div className="fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center z-50">
+              <div className="text-white text-lg font-semibold">Logging in...</div>
+            </div>
+          )}
 
           {/* Footer */}
           <div className="absolute bottom-7 text-center">
