@@ -29,7 +29,7 @@ const SummaryWinnersDrawTimePage = React.lazy(
 
 const DashboardPage = () => {
   return (
-    <div className="space-y-4">
+    <div className="space-y-4 h-full">
       <Suspense fallback={<DashboardSkeletonPage />}>
         <h1 className="text-3xl font-bold">Dashboard</h1>
         <DashboardCardsPage />

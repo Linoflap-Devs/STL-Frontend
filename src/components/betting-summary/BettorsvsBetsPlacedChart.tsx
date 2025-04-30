@@ -38,7 +38,9 @@ const CustomLegend = () => (
   </Stack>
 );
 
-const ChartBettorsvsBetsPlacedSummary = (params: {gameCategoryId?: number}) => {
+const ChartBettorsvsBetsPlacedSummary = (params: {
+  gameCategoryId?: number;
+}) => {
   // const [data, setData] = useState<
   //   { draw: string; bettors: number; bets: number }[]
   // >([]);
@@ -51,18 +53,19 @@ const ChartBettorsvsBetsPlacedSummary = (params: {gameCategoryId?: number}) => {
         const response = await fetchHistoricalSummary(); // Add query params if needed
 
         const today = new Date().toISOString().split("T")[0];
-          console.log(today); // Output: "2025-03-25T00:00:00.000Z"
+        console.log(today); // Output: "2025-03-25T00:00:00.000Z"
 
-          // Filter Data for Today's Date
-          let res = response.data.filter((item: { TransactionDate: string }) =>
-            item.TransactionDate.startsWith(today)
-          );
+        // Filter Data for Today's Date
+        let res = response.data.filter((item: { TransactionDate: string }) =>
+          item.TransactionDate.startsWith(today)
+        );
 
-          if (params.gameCategoryId && params.gameCategoryId > 0) {
-            res = res.filter((item: { GameCategoryId: number }) =>
+        if (params.gameCategoryId && params.gameCategoryId > 0) {
+          res = res.filter(
+            (item: { GameCategoryId: number }) =>
               item.GameCategoryId === params.gameCategoryId
-            );
-          }
+          );
+        }
 
         // console.log(
         //   "Result Data from BettorsvsBetsPlacedChart: " +
@@ -129,7 +132,10 @@ const ChartBettorsvsBetsPlacedSummary = (params: {gameCategoryId?: number}) => {
   //   ...data.map((item) => item.bettors / 10000),
   //   ...data.map((item) => item.bets / 100000)
   // );
-  const xAxisTicks = [0, 1, 5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 55, 60, 65, 70, 75, 80, 85, 90, 95, 100]
+  const xAxisTicks = [
+    0, 1, 5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 55, 60, 65, 70, 75, 80, 85, 90,
+    95, 100,
+  ];
 
   return (
     <Box
@@ -141,24 +147,26 @@ const ChartBettorsvsBetsPlacedSummary = (params: {gameCategoryId?: number}) => {
         width: "100%",
       }}
     >
-      <Typography 
-      color="#FFFFFF"
-      sx={{ 
-        fontSize: "16px" 
-      }}>
+      <Typography
+        color="#FFFFFF"
+        sx={{
+          fontSize: "16px",
+        }}
+      >
         Today&apos;s Bettors and Total Bets
       </Typography>
       <CustomLegend />
 
       <Box
-          sx={{
+        sx={{
           height: "100%",
           display: "flex",
           flexDirection: "column",
           flexGrow: 1,
-          }}
+        }}
       >
         <BarChart
+          slotProps={{ legend: { hidden: true } }}
           height={300}
           grid={{ vertical: true }}
           layout="horizontal"
@@ -177,7 +185,7 @@ const ChartBettorsvsBetsPlacedSummary = (params: {gameCategoryId?: number}) => {
           yAxis={[
             {
               scaleType: "band",
-              data: ["First Draw", "Second Draw", "Third Draw"], 
+              data: ["First Draw", "Second Draw", "Third Draw"],
               // series={[{ data: [4, 3, 5] }, { data: [1, 6, 3] }]},
             },
           ]}
@@ -185,15 +193,15 @@ const ChartBettorsvsBetsPlacedSummary = (params: {gameCategoryId?: number}) => {
             {
               label: "Amount (in 100,000 units)",
               // scaleType: "linear",
-              min: 0, 
+              min: 0,
               max: 100,
               tickValues: xAxisTicks,
-              tickSpacing:1 ,
+              tickSpacing: 1,
             },
           ]}
           series={addLabels([
-            { dataKey: 'bettors', color: '#E5C7FF' },
-            { dataKey: 'bets', color: '#D2A7FF' }
+            { dataKey: "bettors", color: "#E5C7FF" },
+            { dataKey: "bets", color: "#D2A7FF" },
           ])}
         />
       </Box>

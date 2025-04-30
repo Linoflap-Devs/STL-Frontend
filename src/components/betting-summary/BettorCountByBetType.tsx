@@ -197,6 +197,7 @@ const ChartBettorsBetTypeSummary = (params: {gameCategoryId?: number}) => {
             height={300}
             // width={{100%}}
             grid={{ vertical: true }}
+            slotProps={{ legend: { hidden: true } }}
             layout="horizontal"
             margin={{ left: 90, right: 20, top: 20, bottom: 40 }}
             dataset={TodaysBettorCountByGameTypeData}

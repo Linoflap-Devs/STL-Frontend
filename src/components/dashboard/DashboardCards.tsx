@@ -108,7 +108,7 @@ const DashboardCardsPage = (params: { gameCategoryId?: number }) => {
           {item.value === undefined || item.value === null ? (
             <div className="w-20 h-6 bg-gray-500 animate-pulse rounded-md mt-3" />
           ) : (
-            <p className="text-base md:text-base lg:text-3xl font-bold leading-[1.1]">{item.value}</p>
+            <p className="text-base md:text-base lg:text-2xl font-bold leading-[1.1]">{item.value}</p>
           )}
         </div>
       ))}
