@@ -51,10 +51,6 @@ const nextConfig: NextConfig = {
         destination: '/Protected/draw-summary',
       },
       {
-        source: '/draw-summary',
-        destination: '/Protected/draw-summary',
-      },
-      {
         source: '/dashboard',
         destination: '/Protected/dashboard',
       },

@@ -1,7 +1,10 @@
-import React, { useEffect, useState } from "react";
+// import React, { useEffect, useState } from "react";
 import { Box, Typography, Stack } from "@mui/material";
 import { BarChart } from "@mui/x-charts/BarChart";
-import { fetchHistoricalSummary } from "~/utils/api/transactions";
+// import { fetchHistoricalSummary } from "~/utils/api/transactions";
+
+
+import { TodaysWinnersAndWinsData, addLabels } from "./tooltips/dataSet";
 
 const CustomLegend = () => (
   <Stack
@@ -38,86 +41,86 @@ const CustomLegend = () => (
 );
 
 const ChartWinnersvsWinningsSummary = ( params: {gameCategoryId?: number}) => {
-  const [data, setData] = useState<
-    { draw: string; winners: number; winnings: number }[]
-  >([]);
+  // const [data, setData] = useState<
+  //   { draw: string; winners: number; winnings: number }[]
+  // >([]);
   // const [loading, setLoading] = useState(false);
 
-  useEffect(() => {
-    const fetchData = async () => {
-      // setLoading(true);
-      try {
-        const response = await fetchHistoricalSummary(); // Add query params if needed
+  // useEffect(() => {
+  //   const fetchData = async () => {
+  //     // setLoading(true);
+  //     try {
+  //       const response = await fetchHistoricalSummary(); // Add query params if needed
 
-        const today = new Date().toISOString().split("T")[0];
-          console.log(today); // Output: "2025-03-25T00:00:00.000Z"
+  //       const today = new Date().toISOString().split("T")[0];
+  //         console.log(today); // Output: "2025-03-25T00:00:00.000Z"
 
-          // Filter Data for Today's Date
-          let res = response.data.filter((item: { TransactionDate: string }) =>
-            item.TransactionDate.startsWith(today)
-          );
+  //         // Filter Data for Today's Date
+  //         let res = response.data.filter((item: { TransactionDate: string }) =>
+  //           item.TransactionDate.startsWith(today)
+  //         );
 
-          if (params.gameCategoryId && params.gameCategoryId > 0) {
-            res = res.filter((item: { GameCategoryId: number }) =>
-              item.GameCategoryId === params.gameCategoryId
-            );
-          }
+  //         if (params.gameCategoryId && params.gameCategoryId > 0) {
+  //           res = res.filter((item: { GameCategoryId: number }) =>
+  //             item.GameCategoryId === params.gameCategoryId
+  //           );
+  //         }
 
-        if (response.success && Array.isArray(res)) {
-          // Aggregate data by GameTypeId
-          const aggregatedData: Record<
-            number,
-            { winners: number; winnings: number }
-          > = {};
+  //       if (response.success && Array.isArray(res)) {
+  //         // Aggregate data by GameTypeId
+  //         const aggregatedData: Record<
+  //           number,
+  //           { winners: number; winnings: number }
+  //         > = {};
 
-          res.forEach(
-            (item: {
-              DrawOrder: number;
-              TotalWinners: number;
-              TotalPayout: number;
-            }) => {
-              if (!aggregatedData[item.DrawOrder]) {
-                aggregatedData[item.DrawOrder] = { winners: 0, winnings: 0 };
-              }
+  //         res.forEach(
+  //           (item: {
+  //             DrawOrder: number;
+  //             TotalWinners: number;
+  //             TotalPayout: number;
+  //           }) => {
+  //             if (!aggregatedData[item.DrawOrder]) {
+  //               aggregatedData[item.DrawOrder] = { winners: 0, winnings: 0 };
+  //             }
 
-              aggregatedData[item.DrawOrder].winners += item.TotalWinners;
-              aggregatedData[item.DrawOrder].winnings += item.TotalPayout;
-            }
-          );
+  //             aggregatedData[item.DrawOrder].winners += item.TotalWinners;
+  //             aggregatedData[item.DrawOrder].winnings += item.TotalPayout;
+  //           }
+  //         );
 
-          // Convert aggregated data into the required format
-          const formattedData = [
-            {
-              draw: "First Draw",
-              winners: aggregatedData[1]?.winners || 0,
-              winnings: aggregatedData[1]?.winnings || 0,
-            },
-            {
-              draw: "Second Draw",
-              winners: aggregatedData[2]?.winners || 0,
-              winnings: aggregatedData[2]?.winnings || 0,
-            },
-            {
-              draw: "Third Draw",
-              winners: aggregatedData[3]?.winners || 0,
-              winnings: aggregatedData[3]?.winnings || 0,
-            },
-          ];
+  //         // Convert aggregated data into the required format
+  //         const formattedData = [
+  //           {
+  //             draw: "First Draw",
+  //             winners: aggregatedData[1]?.winners || 0,
+  //             winnings: aggregatedData[1]?.winnings || 0,
+  //           },
+  //           {
+  //             draw: "Second Draw",
+  //             winners: aggregatedData[2]?.winners || 0,
+  //             winnings: aggregatedData[2]?.winnings || 0,
+  //           },
+  //           {
+  //             draw: "Third Draw",
+  //             winners: aggregatedData[3]?.winners || 0,
+  //             winnings: aggregatedData[3]?.winnings || 0,
+  //           },
+  //         ];
 
-          setData(formattedData);
-          // setLoading(false);
-        }
-      } catch (error) {
-        console.log(
-          "Error loading BettorsvsBetsPlacedSummary: " +
-            (error as Error).message
-        );
-      }
-    };
+  //         setData(formattedData);
+  //         // setLoading(false);
+  //       }
+  //     } catch (error) {
+  //       console.log(
+  //         "Error loading BettorsvsBetsPlacedSummary: " +
+  //           (error as Error).message
+  //       );
+  //     }
+  //   };
 
-    fetchData();
-    console.log(`Bettors vs Bets Placed Summary Data: ${data}`);
-  }, []);
+  //   fetchData();
+  //   console.log(`Bettors vs Bets Placed Summary Data: ${data}`);
+  // }, []);
 
   // const maxX = Math.max(
   //   70,
@@ -158,22 +161,13 @@ const ChartWinnersvsWinningsSummary = ( params: {gameCategoryId?: number}) => {
           grid={{ vertical: true }}
           layout="horizontal"
           margin={{ left: 90, right: 20, top: 20, bottom: 40 }}
-          series={[
-            {
-              data: data.map((item) => item.winners),
-              color: "#E5C7FF",
-            },
-            {
-              data: data.map((item) => item.winnings),
-              color: "#D2A7FF",
-            },
-          ]}
+          dataset={TodaysWinnersAndWinsData}
           yAxis={[
             {
               scaleType: "band",
               data: ["First Draw", "Second Draw", "Third Draw"], 
               // series={[{ data: [4, 3, 5] }, { data: [1, 6, 3] }]},
-            } as any,
+            },
           ]}
           xAxis={[
             {
@@ -183,8 +177,12 @@ const ChartWinnersvsWinningsSummary = ( params: {gameCategoryId?: number}) => {
               max: 100,
               tickValues: xAxisTicks,
               tickSpacing:1 ,
-            } as any,
+            },
           ]}
+          series={addLabels([
+            { dataKey: 'winners', color: '#E5C7FF'},
+            { dataKey: 'winnings', color: '#D2A7FF' }
+          ])}
         />
       </Box>
     </Box>
