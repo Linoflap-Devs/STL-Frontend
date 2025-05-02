@@ -1,26 +1,27 @@
 import { create } from "zustand";
+import { AddOperatorFormData, OperatorsStore} from '../src/types/types'
 
-type OperatorsData = {
-  totalOperators: number;
-  totalActiveOperators: number;
-  totalDeletedOperators: number;
-  totalInactiveOperators: number;
-  totalNewOperators: number;
-};
-type AddOperatorFormData = {
-  companyName: string;
-  email: string;
-  phone: string;
-  dateOfOperations: string;
-  areaOfOperations: string;
-  gameTypes: {
-    stlPares: boolean;
-    stlSwer2: boolean;
-    stlSwer3: boolean;
-    stlSwer4: boolean;
-    allGames: boolean;
-  }
-}
+// type OperatorsData = {
+//   totalOperators: number;
+//   totalActiveOperators: number;
+//   totalDeletedOperators: number;
+//   totalInactiveOperators: number;
+//   totalNewOperators: number;
+// };
+// type AddOperatorFormData = {
+//   companyName: string;
+//   email: string;
+//   phone: string;
+//   dateOfOperations: string;
+//   areaOfOperations: string;
+//   gameTypes: {
+//     stlPares: boolean;
+//     stlSwer2: boolean;
+//     stlSwer3: boolean;
+//     stlSwer4: boolean;
+//     allGames: boolean;
+//   }
+// }
 const defaultOperatorForm: AddOperatorFormData = {
   companyName: '',
   email: '',
@@ -35,17 +36,17 @@ const defaultOperatorForm: AddOperatorFormData = {
     allGames: false,
   }
 }
-type OperatorsStore = {
-  //OperatorsCards Component
-  operatorsData: OperatorsData;
-  // Partial<T> - typescript utility makes all fields of T optional
-  setOperatorsData: (data: Partial<OperatorsData>) => void;
-  //Add Operator Component
-  addOperatorForm: AddOperatorFormData;
-  setOperatorFormData: (data:  Partial<AddOperatorFormData>) => void;
-  setAllGameTypes: (data: Partial<AddOperatorFormData['gameTypes']>) => void;
+// type OperatorsStore = {
+//   //OperatorsCards Component
+//   operatorsData: OperatorsData;
+//   // Partial<T> - typescript utility makes all fields of T optional
+//   setOperatorsData: (data: Partial<OperatorsData>) => void;
+//   //Add Operator Component
+//   addOperatorForm: AddOperatorFormData;
+//   setOperatorFormData: (data:  Partial<AddOperatorFormData>) => void;
+//   setAllGameTypes: (data: Partial<AddOperatorFormData['gameTypes']>) => void;
 
-};
+// };
 
 
 
@@ -80,5 +81,5 @@ export const useOperatorsStore = create<OperatorsStore>((set) => ({
       }
     })
   )
-  
+
 }));
