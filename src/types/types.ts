@@ -1,3 +1,4 @@
+
 // Operators
 export type OperatorsData = {
   totalOperators: number;
@@ -30,3 +31,4 @@ export type OperatorsStore = {
   setOperatorFormData: (data:  Partial<AddOperatorFormData>) => void;
   setAllGameTypes: (data: Partial<AddOperatorFormData['gameTypes']>) => void;
 };
+

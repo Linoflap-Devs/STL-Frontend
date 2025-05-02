@@ -2,8 +2,12 @@ import { z } from 'zod';
 
 export const operatorSchema = z.object({
   companyName: z.string().min(1, 'Company Name is required'),
-  email: z.string().email('Invalid email').min(1, 'Email is required'),
-  phone: z.string().min(1, 'Phone Number is required'),
+  email: z.string()
+    .min(1, 'Email is required')
+    .email('Please enter a valid email address. e.g. xxx@email.com'),
+  phone: z.string()
+    .min(1, 'Phone Number is required')
+    .regex(/^09\d{2}[ -]?\d{3}[ -]?\d{4}$/, 'Please enter a valid phone number. e.g. 09xx xxx xxxx'),
   dateOfOperations: z.string().min(1, 'Date of Operations is required'),
   areaOfOperations: z.string().min(1, 'Area of Operations is required'),
   gameTypes: z.object({
@@ -18,8 +22,12 @@ export const operatorSchema = z.object({
 export const updateOperatorSchema = z.object({
   status: z.string(),
   companyName: z.string().min(1, 'Company Name is required'),
-  email: z.string().email('Invalid email').min(1, 'Email is required'),
-  phone: z.string().min(1, 'Phone Number is required'),
+  email: z.string()
+  .email('Please enter a valid email address. e.g. xxx@email.com')
+  .min(1, 'Email is required'),
+  phone: z.string()
+    .min(1, 'Phone Number is required')
+    .regex(/^09\d{2}[ -]?\d{3}[ -]?\d{4}$/, 'Please enter a valid phone number. e.g. 09xx xxx xxxx'),
   dateOfOperations: z.string().min(1, 'Date of Operations is required'),
   areaOfOperations: z.string().min(1, 'Area of Operations is required'),
   gameTypes: z.object({

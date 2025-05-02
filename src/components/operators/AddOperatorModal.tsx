@@ -8,11 +8,19 @@ import {
   Typography,
   Modal,
   IconButton,
+  FormControl
 } from '@mui/material';
 import Grid from '@mui/material/Grid2'
 import CloseIcon from '@mui/icons-material/Close';
 import { useOperatorsStore } from '../../../store/useOperatorStore';
 
+import { useForm,SubmitHandler } from 'react-hook-form'; // manage form state
+import { zodResolver } from '@hookform/resolvers/zod';// validate the form based my zod rules.
+import { operatorSchema } from '~/schemas/operatorSchema';
+import { z } from 'zod';
+import { AddOperatorFormData } from '~/types/types';
+
+type OperatorFormSchema = z.infer<typeof operatorSchema>;
 interface AddOperatorModalProps {
   open: boolean;
   onClose: () => void;
@@ -24,20 +32,62 @@ const ModalAddOperator = ({ open, onClose }: AddOperatorModalProps) => {
     setOperatorFormData,
     setAllGameTypes,
   } = useOperatorsStore();
-  const handleChange= (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    const { name, value} = e.target;
-    setOperatorFormData({ [name]: value})
-  }
+  // const handleChange= (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+  //   const { name, value} = e.target;
+  //   setOperatorFormData({ [name]: value})
+  // }
   const handleCheckboxChange = (e) => {
     const { name, checked } = e.target;
     setAllGameTypes({ [name]: checked });
   }
 
+
+  // initialize form w/ useForm
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<OperatorFormSchema>({
+    resolver: zodResolver(operatorSchema),
+    defaultValues: {
+      companyName: '',
+      email: '',
+      phone: '',
+      dateOfOperations: '',
+      areaOfOperations: '',
+      gameTypes: {
+        stlPares: false,
+        stlSwer2: false,
+        stlSwer3: false,
+        stlSwer4: false,
+        allGames: false
+      }
+    }
+  })
+  
+  const onSubmit: SubmitHandler<AddOperatorFormData> = (data: z.infer<typeof operatorSchema>) => {
+    console.log("Validated Data: ", data);
+    // create POST request
+    // axios.post('/my-api-endpoint', data)
+    //   .then(response => {
+    //     console.log('Operator added:', response.data);
+    //     onClose(); // close modal on success
+    //   })
+    //   .catch(error => {
+    //     console.error('Error adding operator:', error);
+    //   });
+
+    // Sync validated data to Zustand store
+    setOperatorFormData(data);
+  };
+  const onError = (err: any) => {
+    console.log('Validation Errors:', err);
+    console.log(errors)
+  };
   // Debugging
   console.log('AddOperatorForm', addOperatorForm)
-  
   return (
-    <Modal
+      <Modal
       open={open}
       onClose={onClose}
       aria-labelledby="add-operator-modal-title"
@@ -70,55 +120,71 @@ const ModalAddOperator = ({ open, onClose }: AddOperatorModalProps) => {
             <CloseIcon />
           </IconButton>
         </Box>
+        <form onSubmit={handleSubmit(onSubmit, onError)}>
         <Grid container spacing={2} mb={1}>
             <Grid size={6}>
               <TextField 
                   fullWidth 
                   label="Company Name" 
-                  name="companyName"
+                  // name="companyName"
                   variant="outlined"
-                  margin="normal" 
-                  value={ addOperatorForm.companyName} 
-                  onChange={handleChange}
+                  margin="normal"
+                  // value={ addOperatorForm.companyName} 
+                  // onChange={handleChange}
+                  {...register('companyName')}
+                  error={!!errors.companyName}
+                  helperText={errors.companyName?.message}
                   />
               <TextField 
                   fullWidth 
                   label="Email Address"
-                  name="email"
+                  // name="email"
                   variant="outlined" 
                   margin="normal" 
-                  value={addOperatorForm.email}
-                  onChange={handleChange}
+                  // value={addOperatorForm.email}
+                  // onChange={handleChange}
+                  {...register('email')}
+                  error={!!errors.email}
+                  helperText={errors.email?.message}
               />
               <TextField 
                   fullWidth 
                   label="Phone Number" 
-                  name="phone"
+                  // name="phone"
                   variant="outlined" 
                   margin="normal" 
-                  value={addOperatorForm.phone}
-                  onChange={handleChange}
+                  // value={addOperatorForm.phone}
+                  // onChange={handleChange}
+                  {...register('phone')}
+                  error={!!errors.phone}
+                  helperText={errors.phone?.message}
               />
             </Grid>
             <Grid size={6}>
               <TextField 
                   fullWidth 
                   label="Date of Operations"
-                  name="dateOfOperations"
+                  // name="dateOfOperations"
                   variant="outlined" 
                   margin="normal" 
-                  value={addOperatorForm.dateOfOperations}
-                  onChange={handleChange}
+                  // value={addOperatorForm.dateOfOperations}
+                  // onChange={handleChange}
+                  {...register('dateOfOperations')}
+                  error={!!errors.dateOfOperations}
+                  helperText={errors.dateOfOperations?.message}
               />
               <TextField 
                   fullWidth 
                   label="Area of Operations"
-                  name="areaOfOperations" 
+                  // name="areaOfOperations" 
                   variant="outlined" 
                   margin="normal"
                   multiline rows={3} 
-                  value={addOperatorForm.areaOfOperations}
-                  onChange={handleChange}
+                  // value={addOperatorForm.areaOfOperations}
+                  // onChange={handleChange}
+                  {...register('areaOfOperations')}
+                  error={!!errors.areaOfOperations}
+                  helperText={errors.areaOfOperations?.message}
               />
             </Grid>
         </Grid>
@@ -127,42 +193,43 @@ const ModalAddOperator = ({ open, onClose }: AddOperatorModalProps) => {
         </Typography>
         <Box sx={{ display: 'flex', gap: 1, mb: 2 }}>
           <FormControlLabel 
-              control={<Checkbox name="stlPares"/>} 
+              control={<Checkbox {...register('gameTypes.stlPares')}/>} 
               label="STL Pares"
-              checked={addOperatorForm.gameTypes.stlPares}
-              onChange={handleCheckboxChange}
+              // checked={addOperatorForm.gameTypes.stlPares}
+              // onChange={handleCheckboxChange}
           />
           <FormControlLabel 
-              control={<Checkbox name="stlSwer2"/>} 
+              control={<Checkbox {...register('gameTypes.stlSwer2')}/>} 
               label="STL Swer2" 
-              checked={addOperatorForm.gameTypes.stlSwer2}
-              onChange={handleCheckboxChange}
+              // checked={addOperatorForm.gameTypes.stlSwer2}
+              // onChange={handleCheckboxChange}
           />
           <FormControlLabel 
-              control={<Checkbox name="stlSwer3" />} 
+              control={<Checkbox {...register('gameTypes.stlSwer3')}/>} 
               label="STL Swer3"
-              checked={addOperatorForm.gameTypes.stlSwer3}
-              onChange={handleCheckboxChange}
+              // checked={addOperatorForm.gameTypes.stlSwer3}
+              // onChange={handleCheckboxChange}
           />
           <FormControlLabel 
-              control={<Checkbox name="stlSwer4" />} 
+              control={<Checkbox {...register('gameTypes.stlSwer4')} />} 
               label="STL Swer4"
-              checked={addOperatorForm.gameTypes.stlSwer4}
-              onChange={handleCheckboxChange}
+              // checked={addOperatorForm.gameTypes.stlSwer4}
+              // onChange={handleCheckboxChange}
           />
           <FormControlLabel 
-              control={<Checkbox name="allGames"/>} 
+              control={<Checkbox {...register('gameTypes.allGames')}/>} 
               label="All Games Included"
-              checked={addOperatorForm.gameTypes.allGames}
-              onChange={handleCheckboxChange}
+              // checked={addOperatorForm.gameTypes.allGames}
+              // onChange={handleCheckboxChange}
           />
         </Box>
-
-        <Button fullWidth variant="contained" onClick={() => console.log('Add Operator Clicked')}>
+        <Button fullWidth variant="contained" type="submit">
           Add Operator
         </Button>
+        </form>
       </Box>
     </Modal>
+
   );
 }
 
