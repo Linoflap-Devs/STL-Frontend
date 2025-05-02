@@ -1,32 +1,39 @@
 import React, { useEffect, useState } from "react";
-import { Box, Typography, Stack } from "@mui/material";
 import { BarChart } from "@mui/x-charts/BarChart";
 import { fetchHistoricalSummary } from "../../utils/api/transactions";
 import { useRouter } from "next/navigation";
 
 // Custom Legend
 const CustomLegend = () => (
-  <Stack direction="row" spacing={2} justifyContent="left" sx={{ mt: 0.5, mr: 4 }}>
-    <Box sx={{ display: "flex", alignItems: "center" }}>
-      <Box sx={{ width: 14, height: 14, borderRadius: "50%", backgroundColor: "#BB86FC", mr: 1.5 }} />
-      <Typography color="white">Bettors</Typography>
-    </Box>
-    <Box sx={{ display: "flex", alignItems: "center" }}>
-      <Box sx={{ width: 14, height: 14, borderRadius: "50%", backgroundColor: "#5050A5", mr: 1.5 }} />
-      <Typography color="white">Bets</Typography>
-    </Box>
-  </Stack>
+  <div className="flex flex-row space-x-8 justify-start mt-1 mr-4">
+    <div className="flex items-center">
+      <div className="w-3.5 h-3.5 rounded-full bg-[#BB86FC] mr-1.5" />
+      <p className="text-white">Bettors</p>
+    </div>
+    <div className="flex items-center">
+      <div className="w-3.5 h-3.5 rounded-full bg-[#5050A5] mr-1.5" />
+      <p className="text-white">Bets</p>
+    </div>
+  </div>
 );
 
-const summary: Record<number, { gameName: string; bettors: number; bets: number; winners: number }> = {
+const summary: Record<
+  number,
+  { gameName: string; bettors: number; bets: number; winners: number }
+> = {
   1: { gameName: "First Draw", bettors: 0, bets: 0, winners: 0 },
   2: { gameName: "Second Draw", bettors: 0, bets: 0, winners: 0 },
   3: { gameName: "Third Draw", bettors: 0, bets: 0, winners: 0 },
 };
 
 const SummaryBettorsBetsPlacedPage = () => {
-  const [data, setData] = useState<{ gameName: string; bettors: number; bets: number; winners: number }[]>([]);
-  const summaryRecord = summary as Record<number, { gameName: string; bettors: number; bets: number; winners: number }>;
+  const [data, setData] = useState<
+    { gameName: string; bettors: number; bets: number; winners: number }[]
+  >([]);
+  const summaryRecord = summary as Record<
+    number,
+    { gameName: string; bettors: number; bets: number; winners: number }
+  >;
 
   const router = useRouter();
 
@@ -43,8 +50,9 @@ const SummaryBettorsBetsPlacedPage = () => {
           console.log(today); // Output: "2025-03-25T00:00:00.000Z"
 
           // Filter Data for Today's Date
-          const filteredData = response.data.filter((item: { TransactionDate: string }) =>
-            item.TransactionDate.startsWith(today)
+          const filteredData = response.data.filter(
+            (item: { TransactionDate: string }) =>
+              item.TransactionDate.startsWith(today)
           );
 
           // Initialize Data Aggregation
@@ -55,18 +63,25 @@ const SummaryBettorsBetsPlacedPage = () => {
           };
 
           // Loop through filtered data and update summary
-          filteredData.forEach((item: { DrawOrder: number; TotalBettors: number; TotalBets: number; TotalWinners: number }) => {
-            if (summaryRecord[item.DrawOrder]) {
-              summaryRecord[item.DrawOrder].bettors += item.TotalBettors || 0;
-              summaryRecord[item.DrawOrder].bets += item.TotalBets || 0;
-              summaryRecord[item.DrawOrder].winners += item.TotalWinners || 0;
+          filteredData.forEach(
+            (item: {
+              DrawOrder: number;
+              TotalBettors: number;
+              TotalBets: number;
+              TotalWinners: number;
+            }) => {
+              if (summaryRecord[item.DrawOrder]) {
+                summaryRecord[item.DrawOrder].bettors += item.TotalBettors || 0;
+                summaryRecord[item.DrawOrder].bets += item.TotalBets || 0;
+                summaryRecord[item.DrawOrder].winners += item.TotalWinners || 0;
+              }
             }
-          });
+          );
 
           // Convert summary object to an array
           const formattedData = Object.values(summaryRecord);
 
-          console.log(formattedData)
+          console.log(formattedData);
 
           //console.log("Aggregated Data:", formattedData);
           setData(formattedData);
@@ -81,48 +96,55 @@ const SummaryBettorsBetsPlacedPage = () => {
     fetchDataDashboard();
   }, []);
 
-  const moveToBetSummary = () => { router.push('/betting-summary/dashboard') }
+  const moveToBetSummary = () => {
+    router.push("/betting-summary/dashboard");
+  };
 
   return (
-    <Box sx={{ backgroundColor: "#171717", padding: "1rem", borderRadius: "8px", paddingBottom: "2rem" }}>
-      <Box>
-        <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", width: "100%" }}>
-          <Typography color="#FFFFFF" sx={{ fontSize: "20px" }}>
+    <div className="bg-[#171717] p-4 rounded-lg pb-8">
+      <div>
+        <div className="flex justify-between items-center w-full">
+          <p className="text-white text-xl">
             Summary of Bettors and Bets Placed Today
-          </Typography>
-          <Typography color="#67ABEB" sx={{ fontSize: "12px", cursor: "pointer", textAlign: "right" }} onClick={() => {moveToBetSummary()}}>
+          </p>
+          <p
+            className="hover:text-[#67ABEB] text-xs cursor-pointer text-right mr-12 mt-4 bg-[#212121] px-4 py-2 rounded-md"
+            onClick={() => {
+              moveToBetSummary();
+            }}
+          >
             View Bet Summary
-          </Typography>
-        </Box>
+          </p>
+        </div>
         <CustomLegend />
-      </Box>
+      </div>
 
-      <Box sx={{ height: "100%", display: "flex", flexGrow: 1, flexDirection: "row" }}>
+      <div className="h-full w-full">
         <BarChart
-          sx={{
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "stretch",
-            flexGrow: 1,
-            marginLeft: "1rem",
-            marginTop: "0px",
-            height: "100%",
-            width: "100%",
-          }}
-          height={270}
-          width={790} 
+          className="w-full h-full"
+          height={400}
+          width={1000}
           grid={{ vertical: true }}
-          margin={{left: 90}}
+          margin={{ left: 90, right: 20, top: 20, bottom: 70 }}
           layout="horizontal"
+          slotProps={{ legend: { hidden: true } }}
           series={[
-            { data: data.map((item) => item.bettors), color: "#BB86FC" },
-            { data: data.map((item) => item.bets), color: "#5050A5" },
+            {
+              data: data.map((item) => item.bettors),
+              color: "#BB86FC",
+              label: "Bettors",
+            },
+            {
+              data: data.map((item) => item.bets),
+              color: "#5050A5",
+              label: "Bets",
+            },
           ]}
           yAxis={[
             {
               scaleType: "band",
               data: data.map((item) => item.gameName),
-              tickLabelProps: { style: { fontSize: "12px" } },
+              tickLabelProps: { style: { fontSize: "14px" } },
             } as any,
           ]}
           xAxis={[
@@ -134,11 +156,12 @@ const SummaryBettorsBetsPlacedPage = () => {
               valueFormatter: (value: number) => `${value}`,
               tickSize: 2,
               barCategoryGap: 0.3,
+              tickLabelProps: { style: { fontSize: "12px" } },
             } as any,
           ]}
         />
-      </Box>
-    </Box>
+      </div>
+    </div>
   );
 };
 

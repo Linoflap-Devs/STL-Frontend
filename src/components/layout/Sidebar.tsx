@@ -7,7 +7,7 @@ import {
   FaBusinessTime,
   FaUserShield,
   FaDiceSix,
-  FaFax,
+  FaBroadcastTower,
   FaMoneyBillAlt,
   FaStoreAlt,
   FaChevronLeft,
@@ -92,18 +92,17 @@ const Sidebar: React.FC = () => {
     ));
 
   const renderMenuItem = (label: string) => {
-    const iconSize = 20
-    const iconMap: Record<string, JSX.Element> = {
+    const iconSize = 20;
+    const iconMap: Record<string, React.ReactNode> = {
       Dashboard: <FaHome size={iconSize} />,
       Managers: <FaUserShield size={iconSize} />,
       Executive: <FaBusinessTime size={iconSize} />,
       "Betting Summary": <FaDiceSix size={iconSize} />,
       "Winning Summary": <FaMoneyBillAlt size={iconSize} />,
-      "Draw Summary": <FaMoneyBillAlt size={iconSize} />,
+      "Draw Summary": <FaBroadcastTower size={iconSize} />,
       Operators: <FaStoreAlt size={iconSize} />,
-      Logout: <FaChevronLeft size={iconSize} />,
     };
-
+    
     const routeMap: Record<string, string> = {
       Dashboard: "/dashboard",
       Managers: "/managers",
@@ -112,7 +111,6 @@ const Sidebar: React.FC = () => {
       "Betting Summary": "/betting-summary",
       "Draw Summary": "/draw-summary",
       Operators: "/operators",
-      Logout: "/",
     };
 
     const path =
@@ -170,48 +168,45 @@ const Sidebar: React.FC = () => {
   return (
     <aside
       className={clsx(
-        "h-screen bg-[#171717] text-white flex flex-col transition-all duration-300",
+        "bg-[#171717] text-white flex flex-col transition-all duration-300",
         collapsed ? "w-16" : "w-60"
       )}
     >
-      <div className="flex justify-end px-4 py-4">
+      <div
+        className={clsx(
+          "px-4 py-4 flex items-center",
+          collapsed ? "flex-col justify-center" : "flex-row justify-between"
+        )}
+      >
         <button
           onClick={toggleCollapse}
-          className="flex items-center justify-center bg-[#D5D5D5] text-[#171717] rounded-full w-8 h-8 p-1 hover:bg-gray-300 transition-colors duration-200"
+          className="mb-2 flex items-center justify-center bg-[#D5D5D5] text-[#171717] rounded-full w-8 h-8 p-1 hover:bg-gray-300 transition-colors duration-200"
         >
           {collapsed ? (
-            <FaChevronRight size={14} />
+            <FaChevronRight size={16} />
           ) : (
-            <FaChevronLeft size={14} />
+            <FaChevronLeft size={16} />
           )}
         </button>
-      </div>
 
-      <div className="p-4 flex items-center gap-3">
-        <img
-          src={UserSectionData.image}
-          alt="Logo"
-          className={clsx(
-            "transition-all duration-300",
-            collapsed ? "w-10" : "w-14"
-          )}
-        />
-        {!collapsed && (
-          <div>
-            <div className="text-purple-300 text-sm font-bold">
-              {UserSectionData.titleHeader}
-            </div>
-            <div className="text-xs text-[#D5D5D5]">
-              {UserSectionData.userRole}
-            </div>
-          </div>
-        )}
+        <div className="flex items-center">
+          <img
+            src={UserSectionData.image}
+            alt="Logo"
+            className={clsx(
+              "transition-all duration-300",
+              collapsed ? "w-10 mt-4" : "w-14"
+            )}
+          />
+        </div>
       </div>
 
       {!collapsed && (
         <div className="bg-[#2F2F2F] rounded-md mx-4 p-4 mb-4">
           <div className="text-xs text-[#D5D5D5]">{formattedDate}</div>
-          <div className="text-2xl font-bold">{formattedTime}</div>
+          <div className="text-xs md:text-sm lg:text-2xl font-bold">
+            {formattedTime}
+          </div>
         </div>
       )}
 

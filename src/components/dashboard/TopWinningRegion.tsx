@@ -1,9 +1,8 @@
 import React, { useState, useEffect } from "react";
-import { Box, Typography, Divider } from "@mui/material";
-import MoneyIcon from "@mui/icons-material/Money";
+import { fetchHistoricalRegion } from "~/utils/api/transactions";
+import { FaMoneyBillAlt } from "react-icons/fa";
 import ArrowUpwardIcon from "@mui/icons-material/ArrowUpward";
 import ArrowDownwardIcon from "@mui/icons-material/ArrowDownward";
-import { fetchHistoricalRegion } from "~/utils/api/transactions";
 
 interface RegionData {
   RegionId: number;
@@ -56,50 +55,45 @@ const TopWinningRegionPage = () => {
   }, []);
 
   return (
-    <Box sx={{ backgroundColor: "#171717", padding: 2, borderRadius: "10px" }}>
-      <Box sx={{ display: "flex", mb: 1 }}>
-        <Box sx={{ backgroundColor: "#2F2F2F" }}>
-          <MoneyIcon sx={{ color: "#67ABEB" }} />
-        </Box>
-        <Typography sx={{ fontWeight: 300, fontSize: "16px", ml: 2 }}>
+    <div className="bg-[#171717] p-4 rounded-xl">
+      <div className="flex mb-2">
+        <div className="bg-[#2F2F2F] p-1 rounded-lg">
+          <FaMoneyBillAlt size={24} color={"#67ABEB"}/>
+        </div>
+        <p className="font-light text-base ml-2">
           Top Winning Regions Today
-        </Typography>
-      </Box>
-      <Divider sx={{ backgroundColor: "#303030", mb: "1rem" }} />
+        </p>
+      </div>
+      <div className="bg-[#303030] h-px mb-4" />
 
       {/* Display Ranked Regions */}
       {rankedRegions.length > 0 ? (
         rankedRegions.map(({ region, rank, trend }) => (
-          <Box key={region.RegionId} sx={{ display: "flex", alignItems: "center", padding: "5px 0" }}>
-            <Box sx={{ display: "flex", alignItems: "center", width: "15%" }}>
-              <Typography
-                sx={{
-                  fontWeight: "bold",
-                  color: trend === "up" ? "#4CAF50" : "#FF7A7A",
-                }}
-              >
+          <div key={region.RegionId} className="flex items-center py-1">
+            <div className="flex items-center w-[15%]">
+              <span className={`font-bold ${trend === "up" ? "text-[#4CAF50]" : "text-[#FF7A7A]"}`}>
                 {rank}
-              </Typography>
+              </span>
               {trend === "up" ? (
-                <ArrowUpwardIcon sx={{ color: "#4CAF50", ml: 0.5, fontSize: 18 }} />
+                <ArrowUpwardIcon className="text-[#4CAF50] ml-1 text-lg" />
               ) : (
-                <ArrowDownwardIcon sx={{ color: "#FF7A7A", ml: 0.5, fontSize: 18 }} />
+                <ArrowDownwardIcon className="text-[#FF7A7A] ml-1 text-lg" />
               )}
-            </Box>
-            <Typography sx={{ color: "#fff", fontWeight: "bold", flex: 1, ml: 2 }}>
+            </div>
+            <p className="text-white font-bold flex-1 ml-4">
               {region.RegionFull}
-            </Typography>
-            <Typography sx={{ textAlign: "center", flex: 1 }}>
+            </p>
+            <p className="text-center flex-1">
               {region.TotalWinners.toLocaleString()}
-            </Typography>
-          </Box>
+            </p>
+          </div>
         ))
       ) : (
-        <Typography sx={{ textAlign: "center", color: "#888" }}>
+        <p className="text-center text-[#888]">
           No data available
-        </Typography>
+        </p>
       )}
-    </Box>
+    </div>
   );
 };
 

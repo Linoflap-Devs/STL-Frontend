@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useRouter } from "next/router";
 import { getCurrentUser, logoutUser } from "~/utils/api/auth";
-import LogoutIcon from "@mui/icons-material/Logout";
+import { FaSignOutAlt } from "react-icons/fa";
 import { Skeleton } from "@mui/material";
 
 interface HeaderProps {
@@ -29,7 +29,11 @@ const getUserRole = (userTypeId: number) => {
 
 const Header: React.FC<HeaderProps> = () => {
   const router = useRouter();
-  const [user, setUser] = useState<{ firstName: string; lastName: string; userTypeId: number } | null>(null);
+  const [user, setUser] = useState<{
+    firstName: string;
+    lastName: string;
+    userTypeId: number;
+  } | null>(null);
 
   useEffect(() => {
     (async () => {
@@ -75,13 +79,10 @@ const Header: React.FC<HeaderProps> = () => {
               {user ? getUserRole(user.userTypeId) : ""}
             </div>
           </div>
-          <div 
-            className="cursor-pointer flex"
-            onClick={handleLogout}
-          >
+          <div className="cursor-pointer flex" onClick={handleLogout}>
             <div title="Logout User">
               <button className="p-2 bg-[#D9D9D9] rounded-full text-[#171717]">
-                <LogoutIcon fontSize="small" />
+                <FaSignOutAlt size={16} />
               </button>
             </div>
           </div>
@@ -89,7 +90,6 @@ const Header: React.FC<HeaderProps> = () => {
       </div>
     </header>
   );
-  
 };
 
 export default Header;

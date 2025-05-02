@@ -8,24 +8,36 @@ const DashboardSkeletonPage = dynamic(() =>
   }))
 );
 
-const DashboardCardsPage = React.lazy(() => import("~/components/dashboard/DashboardCards"));
-const DrawResultsPage = React.lazy(() => import("~/components/dashboard/DrawResults"));
-const TopBettingRegionPage = React.lazy(() => import("~/components/dashboard/TopBettingRegion"));
-const TopWinningRegionPage = React.lazy(() => import("~/components/dashboard/TopWinningRegion"));
-const SummaryBettorsBetsPlacedPage = React.lazy(() => import("~/components/dashboard/SummaryBettorsBetsPlaced"));
-const SummaryWinnersDrawTimePage = React.lazy(() => import("~/components/dashboard/SummaryWinnersDrawTime"));
+const DashboardCardsPage = React.lazy(
+  () => import("~/components/dashboard/DashboardCards")
+);
+const DrawResultsPage = React.lazy(
+  () => import("~/components/dashboard/DrawResults")
+);
+const TopBettingRegionPage = React.lazy(
+  () => import("~/components/dashboard/TopBettingRegion")
+);
+const TopWinningRegionPage = React.lazy(
+  () => import("~/components/dashboard/TopWinningRegion")
+);
+const SummaryBettorsBetsPlacedPage = React.lazy(
+  () => import("~/components/dashboard/SummaryBettorsBetsPlaced")
+);
+const SummaryWinnersDrawTimePage = React.lazy(
+  () => import("~/components/dashboard/SummaryWinnersDrawTime")
+);
 
 const DashboardPage = () => {
   return (
-    <div className="space-y-4">
+    <div className="space-y-4 h-full">
       <Suspense fallback={<DashboardSkeletonPage />}>
         <h1 className="text-3xl font-bold">Dashboard</h1>
         <DashboardCardsPage />
         <div className="flex flex-col items-center space-y-4">
           <div className="w-full space-y-4">
-            <div className="w-full flex flex-col md:flex-row space-y-4 md:space-y-0 md:space-x-4">
+            <div className="w-full flex flex-col lg:flex-row space-y-4 lg:space-y-0 lg:space-x-4">
               {/* Left Column */}
-              <div className="flex-1 space-y-6">
+              <div className="space-y-6 w-full lg:w-1/3">
                 <DrawResultsPage />
                 <TopBettingRegionPage />
                 <TopWinningRegionPage />
@@ -33,7 +45,7 @@ const DashboardPage = () => {
               </div>
 
               {/* Right Column */}
-              <div className="flex-2 space-y-6">
+              <div className="space-y-6 w-full lg:w-2/3">
                 <SummaryBettorsBetsPlacedPage />
                 <SummaryWinnersDrawTimePage />
               </div>
