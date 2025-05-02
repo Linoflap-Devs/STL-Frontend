@@ -20,6 +20,7 @@ import { operatorSchema } from '~/schemas/operatorSchema';
 import { z } from 'zod';
 import { AddOperatorFormData } from '~/types/types';
 
+import Swal from 'sweetalert2'
 type OperatorFormSchema = z.infer<typeof operatorSchema>;
 interface AddOperatorModalProps {
   open: boolean;
@@ -78,6 +79,25 @@ const ModalAddOperator = ({ open, onClose }: AddOperatorModalProps) => {
     //   });
 
     // Sync validated data to Zustand store
+    Swal.fire({
+      title: "Add Confirmation",
+      text: "Did you enter the correct details?",
+      icon: "question",
+      showCancelButton: true,
+      confirmButtonColor: "#67ABEB",
+      cancelButtonColor: "#808080",
+      confirmButtonText: "Yes, I did",
+      cancelButtonText: "No, let me check",
+    }).then((result) => {
+      if (result.isConfirmed) {
+        Swal.fire({
+          title: "Operator Added",
+          text: "The operator has beed added successfully.",
+          icon: "success",
+          confirmButtonColor: "#67ABEB"
+        });
+      }
+    });
     setOperatorFormData(data);
   };
   const onError = (err: any) => {
