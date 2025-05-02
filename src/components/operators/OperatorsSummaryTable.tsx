@@ -26,6 +26,7 @@ import PersonOffIcon from "@mui/icons-material/PersonOff";
 
 import ModalAddOperator from './AddOperatorModal';
 import ModalViewOperator from './ViewOperatorModal';
+
 export interface Operators {
   companyName: string;
   approvedAreaOfOperations: string;

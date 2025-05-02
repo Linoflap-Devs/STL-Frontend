@@ -1,7 +1,7 @@
 import { cardDashboardStyles } from "../../styles/theme";
 
 // Operators Page Store
-import { useOperatorsStore} from "../../../store/useOperatorsStore";
+import { useOperatorsStore} from "../../../store/useOperatorStore";
 
 const CardsOperatorsPage = () => {
   const {operatorsData} = useOperatorsStore();
