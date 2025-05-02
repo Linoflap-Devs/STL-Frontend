@@ -11,6 +11,7 @@ import {
 } from '@mui/material';
 import Grid from '@mui/material/Grid2'
 import CloseIcon from '@mui/icons-material/Close';
+import { useOperatorsStore } from '../../../store/useOperatorStore';
 
 interface AddOperatorModalProps {
   open: boolean;
@@ -18,6 +19,23 @@ interface AddOperatorModalProps {
 }
 
 const ModalAddOperator = ({ open, onClose }: AddOperatorModalProps) => {
+  const {
+    addOperatorForm,
+    setOperatorFormData,
+    setAllGameTypes,
+  } = useOperatorsStore();
+  const handleChange= (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    const { name, value} = e.target;
+    setOperatorFormData({ [name]: value})
+  }
+  const handleCheckboxChange = (e) => {
+    const { name, checked } = e.target;
+    setAllGameTypes({ [name]: checked });
+  }
+
+  // Debugging
+  console.log('AddOperatorForm', addOperatorForm)
+  
   return (
     <Modal
       open={open}
@@ -54,24 +72,90 @@ const ModalAddOperator = ({ open, onClose }: AddOperatorModalProps) => {
         </Box>
         <Grid container spacing={2} mb={1}>
             <Grid size={6}>
-              <TextField fullWidth label="Company Name" variant="outlined" margin="normal" />
-              <TextField fullWidth label="Email Address" variant="outlined" margin="normal" />
-              <TextField fullWidth label="Phone Number" variant="outlined" margin="normal" />
+              <TextField 
+                  fullWidth 
+                  label="Company Name" 
+                  name="companyName"
+                  variant="outlined"
+                  margin="normal" 
+                  value={ addOperatorForm.companyName} 
+                  onChange={handleChange}
+                  />
+              <TextField 
+                  fullWidth 
+                  label="Email Address"
+                  name="email"
+                  variant="outlined" 
+                  margin="normal" 
+                  value={addOperatorForm.email}
+                  onChange={handleChange}
+              />
+              <TextField 
+                  fullWidth 
+                  label="Phone Number" 
+                  name="phone"
+                  variant="outlined" 
+                  margin="normal" 
+                  value={addOperatorForm.phone}
+                  onChange={handleChange}
+              />
             </Grid>
             <Grid size={6}>
-              <TextField fullWidth label="Date of Operations" variant="outlined" margin="normal" />
-              <TextField fullWidth label="Area of Operations" variant="outlined" margin="normal" multiline rows={3} />
+              <TextField 
+                  fullWidth 
+                  label="Date of Operations"
+                  name="dateOfOperations"
+                  variant="outlined" 
+                  margin="normal" 
+                  value={addOperatorForm.dateOfOperations}
+                  onChange={handleChange}
+              />
+              <TextField 
+                  fullWidth 
+                  label="Area of Operations"
+                  name="areaOfOperations" 
+                  variant="outlined" 
+                  margin="normal"
+                  multiline rows={3} 
+                  value={addOperatorForm.areaOfOperations}
+                  onChange={handleChange}
+              />
             </Grid>
         </Grid>
         <Typography variant="subtitle1" gutterBottom>
           Game Type Included
         </Typography>
         <Box sx={{ display: 'flex', gap: 1, mb: 2 }}>
-          <FormControlLabel control={<Checkbox />} label="STL Pares" />
-          <FormControlLabel control={<Checkbox />} label="STL Swer2" />
-          <FormControlLabel control={<Checkbox />} label="STL Swer3" />
-          <FormControlLabel control={<Checkbox />} label="STL Swer4" />
-          <FormControlLabel control={<Checkbox />} label="All Games Included" />
+          <FormControlLabel 
+              control={<Checkbox name="stlPares"/>} 
+              label="STL Pares"
+              checked={addOperatorForm.gameTypes.stlPares}
+              onChange={handleCheckboxChange}
+          />
+          <FormControlLabel 
+              control={<Checkbox name="stlSwer2"/>} 
+              label="STL Swer2" 
+              checked={addOperatorForm.gameTypes.stlSwer2}
+              onChange={handleCheckboxChange}
+          />
+          <FormControlLabel 
+              control={<Checkbox name="stlSwer3" />} 
+              label="STL Swer3"
+              checked={addOperatorForm.gameTypes.stlSwer3}
+              onChange={handleCheckboxChange}
+          />
+          <FormControlLabel 
+              control={<Checkbox name="stlSwer4" />} 
+              label="STL Swer4"
+              checked={addOperatorForm.gameTypes.stlSwer4}
+              onChange={handleCheckboxChange}
+          />
+          <FormControlLabel 
+              control={<Checkbox name="allGames"/>} 
+              label="All Games Included"
+              checked={addOperatorForm.gameTypes.allGames}
+              onChange={handleCheckboxChange}
+          />
         </Box>
 
         <Button fullWidth variant="contained" onClick={() => console.log('Add Operator Clicked')}>
