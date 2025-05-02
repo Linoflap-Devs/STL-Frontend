@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useState} from 'react';
 import {
   Box,
   TextField,
@@ -21,6 +21,8 @@ import { z } from 'zod';
 import { AddOperatorFormData } from '~/types/types';
 
 import Swal from 'sweetalert2'
+import ModalConfirmIdentity from './ConfirmIdentityModal';
+
 type OperatorFormSchema = z.infer<typeof operatorSchema>;
 interface AddOperatorModalProps {
   open: boolean;
@@ -28,6 +30,18 @@ interface AddOperatorModalProps {
 }
 
 const ModalAddOperator = ({ open, onClose }: AddOperatorModalProps) => {
+  const [modalOpen, setModalOpen] = useState(false);
+  
+  const handleModalConfirm = ()=>{
+    // Close Modal
+    setModalOpen(false)
+    Swal.fire({
+      title: "Operator Added",
+      text: "The operator has beed added successfully.",
+      icon: "success",
+      confirmButtonColor: "#67ABEB"
+    });  
+  }
   const {
     addOperatorForm,
     setOperatorFormData,
@@ -37,11 +51,10 @@ const ModalAddOperator = ({ open, onClose }: AddOperatorModalProps) => {
   //   const { name, value} = e.target;
   //   setOperatorFormData({ [name]: value})
   // }
-  const handleCheckboxChange = (e) => {
-    const { name, checked } = e.target;
-    setAllGameTypes({ [name]: checked });
-  }
-
+  // const handleCheckboxChange = (e) => {
+  //   const { name, checked } = e.target;
+  //   setAllGameTypes({ [name]: checked });
+  // }
 
   // initialize form w/ useForm
   const {
@@ -90,12 +103,13 @@ const ModalAddOperator = ({ open, onClose }: AddOperatorModalProps) => {
       cancelButtonText: "No, let me check",
     }).then((result) => {
       if (result.isConfirmed) {
-        Swal.fire({
-          title: "Operator Added",
-          text: "The operator has beed added successfully.",
-          icon: "success",
-          confirmButtonColor: "#67ABEB"
-        });
+        setModalOpen(true);
+        // Swal.fire({
+        //   title: "Operator Added",
+        //   text: "The operator has beed added successfully.",
+        //   icon: "success",
+        //   confirmButtonColor: "#67ABEB"
+        // });
       }
     });
     setOperatorFormData(data);
@@ -107,7 +121,8 @@ const ModalAddOperator = ({ open, onClose }: AddOperatorModalProps) => {
   // Debugging
   console.log('AddOperatorForm', addOperatorForm)
   return (
-      <Modal
+      
+    <Modal
       open={open}
       onClose={onClose}
       aria-labelledby="add-operator-modal-title"
@@ -247,10 +262,16 @@ const ModalAddOperator = ({ open, onClose }: AddOperatorModalProps) => {
           Add Operator
         </Button>
         </form>
+        <ModalConfirmIdentity
+            open={modalOpen}
+            onClose={() => setModalOpen(false)}
+            onConfirm={handleModalConfirm}
+        />
       </Box>
     </Modal>
 
   );
 }
 
-export default ModalAddOperator;
+
+export default ModalAddOperator
