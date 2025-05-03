@@ -15,7 +15,7 @@ const BettingSummaryPage = (params: {gameCategoryId?: number}) => {
 
   const router = useRouter();
 
-  console.log(params.gameCategoryId)
+  console.log('Game Category: ',params.gameCategoryId)
 
   const handleViewComparisonClick = ()=> {
     router.push("/bets-comparisons"); 
