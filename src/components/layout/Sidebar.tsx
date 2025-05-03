@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useRouter } from "next/router";
 import { useSideBarStore, gameType } from "../../../store/useSideBarStore";
+// import Image from 'next/image'
 import { UserSectionData } from "../../data/AdminSectionData";
 import {
   FaHome,
@@ -32,18 +33,44 @@ const WINNING_SUBMENUS = [
   { name: "STL Swer3", path: "/winning-summary/stl-swer3" },
   { name: "STL Swer4", path: "/winning-summary/stl-swer4" },
 ];
+const DRAW_SUBMENUS = [
+  { name: "STL Pares", path: "/draw-summary/stl-pares" },
+  { name: "STL Swer2", path: "/draw-summary/stl-swer2" },
+  { name: "STL Swer3", path: "/draw-summary/stl-swer3" },
+  { name: "STL Swer4", path: "/draw-summary/stl-swer4" },
+]
 
 const Sidebar: React.FC = () => {
-  const [collapsed, setCollapsed] = useState(false);
-  const [openSubmenu, setOpenSubmenu] = useState<string | null>(null);
-  const [dateTime, setDateTime] = useState<Date | null>(null);
+  // Handling Paths
   const router = useRouter();
   const currentPath = router.asPath;
-
   const { SideBarActiveGameType, setSideBarActiveGameType } = useSideBarStore();
+  const isCurrent = (path: string) => currentPath === path;
+  //  if the current URL path(currentPath) starts with a certain group path (groupPath)
+  const isGroupActive = (groupPath: string) => currentPath.startsWith(groupPath);
 
+
+  const [collapsed, setCollapsed] = useState(false);
+  // State whether open the submenu for Betting and Winning or not
+  const [openSubmenu, setOpenSubmenu] = useState<string | null>(null);
   const toggleCollapse = () => setCollapsed(!collapsed);
 
+
+  // Date Time
+  const [dateTime, setDateTime] = useState<Date | null>(null);
+  const formattedDate =
+  dateTime?.toLocaleDateString("en-PH", {
+    month: "long",
+    day: "numeric",
+    year: "numeric",
+  }) ?? "N/A";
+  const formattedTime =
+  dateTime?.toLocaleTimeString("en-PH", {
+    hour: "2-digit",
+    minute: "2-digit",
+    second: "2-digit",
+    hour12: true,
+  }) ?? "N/A";
   useEffect(() => {
     const updateDateTime = () => setDateTime(new Date());
     updateDateTime();
@@ -55,44 +82,12 @@ const Sidebar: React.FC = () => {
     setSideBarActiveGameType(subItem.name as gameType);
     router.push(subItem.path);
   };
-
-  const isCurrent = (path: string) => currentPath === path;
-  const isGroupActive = (groupPath: string) =>
-    currentPath.startsWith(groupPath);
-
-  const formattedDate =
-    dateTime?.toLocaleDateString("en-PH", {
-      month: "long",
-      day: "numeric",
-      year: "numeric",
-    }) ?? "N/A";
-
-  const formattedTime =
-    dateTime?.toLocaleTimeString("en-PH", {
-      hour: "2-digit",
-      minute: "2-digit",
-      second: "2-digit",
-      hour12: true,
-    }) ?? "N/A";
-
-  const renderSubmenu = (items: typeof BETTING_SUBMENUS) =>
-    items.map(({ name, path }) => (
-      <div
-        key={path}
-        onClick={() => handleListItemClick({ name, path })}
-        className={clsx(
-          "ml-6 py-2 pl-4 pr-2 rounded-md cursor-pointer text-sm transition-colors",
-          SideBarActiveGameType === name
-            ? "bg-purple-200 text-purple-800 font-bold"
-            : "text-gray-300 hover:bg-gray-700 hover:text-white"
-        )}
-      >
-        {name}
-      </div>
-    ));
-
+  
+  // Menu
   const renderMenuItem = (label: string) => {
     const iconSize = 20;
+
+    // will map here if the label === "Betting Summary" || "Winning SUmmary"
     const iconMap: Record<string, React.ReactNode> = {
       Dashboard: <FaHome size={iconSize} />,
       Managers: <FaUserShield size={iconSize} />,
@@ -102,7 +97,6 @@ const Sidebar: React.FC = () => {
       "Draw Summary": <FaBroadcastTower size={iconSize} />,
       Operators: <FaStoreAlt size={iconSize} />,
     };
-    
     const routeMap: Record<string, string> = {
       Dashboard: "/dashboard",
       Managers: "/managers",
@@ -113,21 +107,52 @@ const Sidebar: React.FC = () => {
       Operators: "/operators",
     };
 
+    // generates URL path for menu item, using predefined route if avail, or falling back to a default format if not
+    // gets the given path for the given 'label', from routeMap above.
+    // routeMap[label] = 'Dashboard' path will be /dashboard
+    // if routeMap[label] = 'Sample Key'/'null' or wala yung label sa routeMap keys natin, fallback path will be /sample-key
     const path =
       routeMap[label] ?? `/${label.toLowerCase().replace(/\s+/g, "-")}`;
 
-    if (label === "Betting Summary" || label === "Winning Summary") {
-      const submenu =
-        label === "Betting Summary" ? BETTING_SUBMENUS : WINNING_SUBMENUS;
+    if (
+      label === "Betting Summary" || 
+      label === "Winning Summary" ||
+      label === "Draw Summary"
+    ) {
+      // Object we'll referencing on creating divs
+      let submenu;
+      if (label === "Betting Summary") submenu = BETTING_SUBMENUS;
+      else if(label === "Winning Summary") submenu = WINNING_SUBMENUS;
+      else submenu = DRAW_SUBMENUS;
+
 
       return (
         <div key={label}>
           <div
             onClick={() => {
+              {/* openSubmenu === current label */}
               setOpenSubmenu(openSubmenu === label ? null : label);
+              {/* 
+                if user is not already inside the sidebar group
+                !isGroupActive('winning-summary')
+                if !currentPath.startsWith('winning-summary')
+                activeGameType = 'Dashboard' by default
+                /winning-summary/dashboard
+                Inly direct to dashboard if available
+              */}
               if (!isGroupActive(path)) {
-                setSideBarActiveGameType("Dashboard");
-                router.push(`${path}/dashboard`);
+                if(label === "Betting Summary" || label === "Winning Summary"){
+                  setSideBarActiveGameType("Dashboard");
+                  router.push(`${path}/dashboard`);
+                } else {
+                  // For Draw Summary, just navigate to the first submenu path
+                  const firstPath = submenu[0]?.path;
+                  if(firstPath) {
+                    setSideBarActiveGameType(submenu[0].name as gameType)
+                    // router.push(`${path}/${firstPath}`)
+                    router.push(firstPath)
+                  }
+                }
               }
             }}
             className={clsx(
@@ -139,6 +164,9 @@ const Sidebar: React.FC = () => {
           >
             <span className="flex items-center gap-2 text-sm">
               {iconMap[label]}
+              {/* 
+                if !collapsed corresponding label w/icon will be displayed
+              */}
               {!collapsed && label}
             </span>
             {!collapsed &&
@@ -164,6 +192,25 @@ const Sidebar: React.FC = () => {
       </div>
     );
   };
+
+  // Submenu
+  const renderSubmenu = (items: typeof BETTING_SUBMENUS) =>
+    items.map(({ name, path }) => (
+      <div
+        key={path}
+        onClick={() => handleListItemClick({ name, path })}
+        className={clsx(
+          "ml-6 py-2 pl-4 pr-2 rounded-md cursor-pointer text-sm transition-colors",
+          SideBarActiveGameType === name
+            ? "bg-purple-200 text-purple-800 font-bold"
+            : "text-gray-300 hover:bg-gray-700 hover:text-white"
+        )}
+      >
+        {name}
+      </div>
+    ));
+
+
 
   return (
     <aside
