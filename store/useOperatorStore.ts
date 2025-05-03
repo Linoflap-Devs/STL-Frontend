@@ -1,5 +1,5 @@
 import { create } from "zustand";
-import { AddOperatorFormData, OperatorsStore} from '../src/types/types'
+import { AddOperatorFormData,UpdateOperatorFormData, OperatorsStore} from '../src/types/types'
 
 // type OperatorsData = {
 //   totalOperators: number;
@@ -35,6 +35,26 @@ const defaultOperatorForm: AddOperatorFormData = {
     stlSwer4: false,
     allGames: false,
   }
+}
+const defaultUpdateOperatorForm: UpdateOperatorFormData = {
+  status: ' ',
+  companyName:' ',
+  email: ' ',
+  phone: ' ',
+  dateOfOperations: ' ',
+  areaOfOperations: ' ',
+  gameTypes: {
+    stlPares: false,
+    stlSwer2: false,
+    stlSwer3: false,
+    stlSwer4: false,
+    allGames: false,
+  },
+  createdBy: ' ',
+  latestUpdateBy: ' ',
+  creationDate: ' ',
+  latestUpdateDate: ' ',
+  remarks: '',
 }
 // type OperatorsStore = {
 //   //OperatorsCards Component
@@ -72,6 +92,15 @@ export const useOperatorsStore = create<OperatorsStore>((set) => ({
         ...state.addOperatorForm, 
         ...data},
     })
+  ),
+  // Update Operator Component
+  updateOperatorForm: defaultUpdateOperatorForm,
+  setUpdateOperatorFormData: (data) =>
+    set((state)=>({
+      updateOperatorForm: {
+        ...state.updateOperatorForm,
+        ...data},
+      })
   ),
   setAllGameTypes: (data)=>
     set((state)=> ({
