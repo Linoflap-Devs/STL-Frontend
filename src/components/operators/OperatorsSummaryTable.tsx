@@ -35,35 +35,35 @@ export interface Operators {
   status: string;
 }
 
-const ActionsMenu = ({ onView }: { onView: () => void }) => {
-  const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
-  const open = Boolean(anchorEl);
+  const ActionsMenu = ({ onView }: { onView: () => void }) => {
+    const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
+    const open = Boolean(anchorEl);
 
-  const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
-    setAnchorEl(event.currentTarget);
+    const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
+      setAnchorEl(event.currentTarget);
+    };
+
+    const handleClose = () => {
+      setAnchorEl(null);
+    };
+
+    const handleViewClick = () => {
+      onView(); // trigger parent handler
+      handleClose(); // close the menu
+    };
+
+    return (
+      <div>
+        <Button onClick={handleClick}>
+          <MoreHoriz />
+        </Button>
+        <Menu anchorEl={anchorEl} open={open} onClose={handleClose}>
+          <MenuItem onClick={handleViewClick}>View</MenuItem>
+          <MenuItem onClick={handleClose}>Delete</MenuItem>
+        </Menu>
+      </div>
+    );
   };
-
-  const handleClose = () => {
-    setAnchorEl(null);
-  };
-
-  const handleViewClick = () => {
-    onView(); // trigger parent handler
-    handleClose(); // close the menu
-  };
-
-  return (
-    <div>
-      <Button onClick={handleClick}>
-        <MoreHoriz />
-      </Button>
-      <Menu anchorEl={anchorEl} open={open} onClose={handleClose}>
-        <MenuItem onClick={handleViewClick}>View</MenuItem>
-        <MenuItem onClick={handleClose}>Delete</MenuItem>
-      </Menu>
-    </div>
-  );
-};
 
 
 const TableOperatorsSummary = () => {
@@ -147,6 +147,8 @@ const TableOperatorsSummary = () => {
   const [rowsPerPage, setRowsPerPage] = useState(10);
   const [sortConfig, setSortConfig] = useState<{ key: string; direction: "asc" | "desc" } | null>(null);
 
+  // State to track which operator to view
+  const [selectedOperator, setSelectedOperator] = useState<Operators | null>(null)
     // State for Modals
   const [openAddModal, setOpenAddModal] = useState(false);
   const [openViewModal, setOpenViewModal] = useState(false)
@@ -271,7 +273,10 @@ const TableOperatorsSummary = () => {
             { label: "Status", key: "status" },
             { label: "Actions", key: "" },
           ].map((column) => (
-            <TableCell key={column.key} onClick={() => handleSort(column.key)} sx={{ cursor: "pointer" }}>
+            <TableCell 
+              key={column.key} 
+              onClick={() => handleSort(column.key)} 
+              sx={{ cursor: "pointer" }}>
               {column.label}
               {sortConfig?.key === column.key ? (
                 sortConfig.direction === "asc" ? (
@@ -366,6 +371,7 @@ const TableOperatorsSummary = () => {
         }}
       />
     </Box>
+    
     {openAddModal && <ModalAddOperator open={openAddModal} onClose={() => setOpenAddModal(false)} />}
     <ModalViewOperator open={openViewModal} onClose={() => setOpenViewModal(false)}/>
   </TableContainer>

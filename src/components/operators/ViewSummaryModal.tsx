@@ -26,6 +26,7 @@ import {
   NavigateBefore as NavigateBeforeIcon,
   NavigateNext as NavigateNextIcon
 } from '@mui/icons-material';
+import ArrowBackIos from '@mui/icons-material/ArrowBackIos';
 import { useState } from 'react';
 
 interface AuditLog {
@@ -43,7 +44,7 @@ interface AuditLogModalProps {
   auditLogs: AuditLog[];
 }
 
-const AuditLogModal: React.FC<AuditLogModalProps> = ({
+const ModalAuditLog: React.FC<AuditLogModalProps> = ({
   open,
   onClose,
   title,
@@ -84,7 +85,15 @@ const AuditLogModal: React.FC<AuditLogModalProps> = ({
   return (
     <Dialog open={open} onClose={onClose} fullWidth maxWidth="lg">
       <DialogTitle sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-        <Typography variant="h6">{title}</Typography>
+        <Box
+          sx={{
+            display: 'flex',
+            flexDirection: 'column'
+          }}
+        >
+          <Typography variant="h6">{title}</Typography>
+          <Typography>Operator</Typography>
+        </Box>
         <IconButton onClick={onClose}>
           <CloseIcon />
         </IconButton>
@@ -104,7 +113,7 @@ const AuditLogModal: React.FC<AuditLogModalProps> = ({
               </InputAdornment>
             ),
           }}
-          sx={{ mb: 2 }}
+          sx={{ mb: 2, mt: 2 }}
         />
         <TableContainer component={Paper}>
           <Table sx={{ minWidth: 650 }} aria-label="audit log table">
@@ -192,4 +201,4 @@ const AuditLogModal: React.FC<AuditLogModalProps> = ({
   );
 };
 
-export default AuditLogModal;
+export default ModalAuditLog;
