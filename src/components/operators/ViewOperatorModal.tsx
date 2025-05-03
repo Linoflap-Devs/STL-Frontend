@@ -131,13 +131,18 @@ function ModalViewOperator({ open, onClose, operatorData }: ViewOperatorModalPro
                   labelId="status-label"
                   id="status"
                   value={status}
+                  disabled
                   // onChange={(event) => handleInputChange('status', event.target.value)} // Add your change handler
                 >
                   <MenuItem value="Active">Active</MenuItem>
                   <MenuItem value="Inactive">Inactive</MenuItem>
                 </Select>
               </FormControl>
-              <Button variant="contained" onClick={() => console.log('Update Clicked')}>
+              <Button 
+                  variant="contained" 
+                  onClick={() => console.log('Update Clicked')}
+                  disabled
+              >
                 Update
               </Button>
             </Box>
@@ -147,13 +152,13 @@ function ModalViewOperator({ open, onClose, operatorData }: ViewOperatorModalPro
             </Typography>
             <Grid container spacing={2}>
               <Grid  size={6}>
-                <TextField fullWidth label="Company Name" variant="outlined" value={companyName} InputProps={{ readOnly: true }}/>
+                <TextField disabled fullWidth label="Company Name" variant="outlined" value={companyName} InputProps={{ readOnly: true }}/>
               </Grid>
               <Grid  size={6}>
-                <TextField fullWidth label="Date of Operations" variant="outlined" value={dateOfOperations} InputProps={{ readOnly: true }} />
+                <TextField disabled fullWidth label="Date of Operations" variant="outlined" value={dateOfOperations} InputProps={{ readOnly: true }} />
               </Grid>
               <Grid  size={6}>
-                <TextField fullWidth label="Email Address" variant="outlined" value={emailAddress} InputProps={{ readOnly: true }} />
+                <TextField disabled fullWidth label="Email Address" variant="outlined" value={emailAddress} InputProps={{ readOnly: true }} />
               </Grid>
               <Grid  size={6}>
                 <TextField
@@ -164,10 +169,11 @@ function ModalViewOperator({ open, onClose, operatorData }: ViewOperatorModalPro
                 InputProps={{ readOnly: true }}
                 multiline
                 rows={1}
+                disabled
               />
               </Grid>
               <Grid  size={6}>
-                <TextField fullWidth label="Phone Number" variant="outlined" value={phoneNumber} InputProps={{ readOnly: true }} />
+                <TextField disabled fullWidth label="Phone Number" variant="outlined" value={phoneNumber} InputProps={{ readOnly: true }} />
               </Grid>
             </Grid>
     
@@ -175,20 +181,21 @@ function ModalViewOperator({ open, onClose, operatorData }: ViewOperatorModalPro
               Game Type Included
             </Typography>
             <Box sx={{ display: 'flex', gap: 1, mb: 2, alignItems: 'center' }}>
-              <FormControlLabel control={<Checkbox checked={stlPares} readOnly />} label="STL Pares" />
-              <FormControlLabel control={<Checkbox checked={stlSwer2} readOnly />} label="STL Swer2" />
-              <FormControlLabel control={<Checkbox checked={stlSwer3} readOnly />} label="STL Swer3" />
-              <FormControlLabel control={<Checkbox checked={stlSwer4} readOnly />} label="STL Swer4" />
-              <FormControlLabel control={<Checkbox checked={allGamesIncluded} readOnly />} label="All Games Included" />
+              <FormControlLabel disabled control={<Checkbox checked={stlPares} readOnly />} label="STL Pares" />
+              <FormControlLabel disabled control={<Checkbox checked={stlSwer2} readOnly />} label="STL Swer2" />
+              <FormControlLabel disabled control={<Checkbox checked={stlSwer3} readOnly />} label="STL Swer3" />
+              <FormControlLabel disabled control={<Checkbox checked={stlSwer4} readOnly />} label="STL Swer4" />
+              <FormControlLabel disabled control={<Checkbox checked={allGamesIncluded} readOnly />} label="All Games Included" />
             </Box>
     
             <Typography variant="subtitle1" gutterBottom>
               History
             </Typography>
             <Box sx={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 2, mb: 3 }}>
-              <TextField fullWidth label="Created by" variant="outlined" value={createdBy} InputProps={{ readOnly: true }} />
-              <TextField fullWidth label="Latest Update by" variant="outlined" value={latestUpdateBy} InputProps={{ readOnly: true }} />
+              <TextField disabled fullWidth label="Created by" variant="outlined" value={createdBy} InputProps={{ readOnly: true }} />
+              <TextField disabled fullWidth label="Latest Update by" variant="outlined" value={latestUpdateBy} InputProps={{ readOnly: true }} />
               <TextField
+                disabled
                 fullWidth
                 label="Creation Date"
                 variant="outlined"
@@ -196,6 +203,7 @@ function ModalViewOperator({ open, onClose, operatorData }: ViewOperatorModalPro
                 InputProps={{ readOnly: true }}
               />
               <TextField
+                disabled
                 fullWidth
                 label="Latest Update Date"
                 variant="outlined"
