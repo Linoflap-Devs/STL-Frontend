@@ -37,6 +37,7 @@ export const updateOperatorSchema = z.object({
     stlSwer4: z.boolean(),
     allGames: z.boolean(),
   }),
+  // History
   createdBy: z.string().min(1, 'Complete name is required'),
   latestUpdateBy: z.string().min(1, 'Complete name is required'),
   creationDate: z.string().refine((val) => {
@@ -45,10 +46,12 @@ export const updateOperatorSchema = z.object({
   }, {
     message: "Invalid datetime format (expected YYYY/MM/DD HH:mm:ss)",
   }),
-  latesUpdateDate:  z.string().refine((val) => {
+  latestUpdateDate:  z.string().refine((val) => {
     const regex = /^\d{4}\/\d{2}\/\d{2} \d{2}:\d{2}:\d{2}$/;
     return regex.test(val);
   }, {
     message: "Invalid datetime format (expected YYYY/MM/DD HH:mm:ss)",
-  })
+  }),
+  remarks: z.string()
+  .min(1, 'Remarks is required'),
 })
