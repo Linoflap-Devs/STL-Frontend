@@ -8,7 +8,6 @@ import {
   Typography,
   Modal,
   IconButton,
-  FormControl
 } from '@mui/material';
 import Grid from '@mui/material/Grid2'
 import CloseIcon from '@mui/icons-material/Close';
@@ -45,7 +44,6 @@ const ModalAddOperator = ({ open, onClose }: AddOperatorModalProps) => {
   const {
     addOperatorForm,
     setOperatorFormData,
-    setAllGameTypes,
   } = useOperatorsStore();
   // const handleChange= (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
   //   const { name, value} = e.target;
@@ -138,7 +136,7 @@ const ModalAddOperator = ({ open, onClose }: AddOperatorModalProps) => {
           p: 4,
           borderRadius: 2,
           width: "848px",
-          height: "472px"
+          height: "560px"
       }}>
         <Box 
           sx={{ 

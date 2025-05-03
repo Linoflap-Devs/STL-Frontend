@@ -16,6 +16,7 @@ import {
 import CloseIcon from '@mui/icons-material/Close';
 import Grid from '@mui/material/Grid2'
 import AuditLogModal from './ViewSummaryModal';
+import ModalUpdateOperator from './UpdateOperatorModal';
 interface ViewOperatorModalProps {
   open: boolean;
   onClose: () => void;
@@ -42,6 +43,7 @@ interface ViewOperatorModalProps {
 function ModalViewOperator({ open, onClose, operatorData }: ViewOperatorModalProps) {
   const [viewModalOpen, setViewModalOpen] = useState(true)
   const [auditModalOpen, setAuditModalOpen] = useState(false)
+  const [updateModalOpen, setUpdateModalOpen] = useState(false)
 
    // Dummy audit logs (replace with actual data later)
   const dummyAuditLogs = [
@@ -140,8 +142,10 @@ function ModalViewOperator({ open, onClose, operatorData }: ViewOperatorModalPro
               </FormControl>
               <Button 
                   variant="contained" 
-                  onClick={() => console.log('Update Clicked')}
-                  disabled
+                  onClick={() => {
+                    setUpdateModalOpen(true)
+                    setViewModalOpen(false)
+                  }}
               >
                 Update
               </Button>
@@ -234,6 +238,12 @@ function ModalViewOperator({ open, onClose, operatorData }: ViewOperatorModalPro
             </Box>
           </Box>
         </Modal>
+    }
+    {updateModalOpen &&
+      <ModalUpdateOperator
+      onClose={()=>setUpdateModalOpen(false)}
+      open={updateModalOpen}
+      />
     }
     { auditModalOpen &&
       <AuditLogModal
