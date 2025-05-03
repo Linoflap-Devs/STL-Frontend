@@ -21,6 +21,26 @@ export type AddOperatorFormData = {
     allGames: boolean;
   }
 }
+export type UpdateOperatorFormData = {
+  status: string;
+  companyName: string;
+  email: string;
+  phone: string;
+  dateOfOperations: string;
+  areaOfOperations: string;
+  gameTypes: {
+    stlPares: boolean;
+    stlSwer2: boolean;
+    stlSwer3: boolean;
+    stlSwer4: boolean;
+    allGames: boolean;
+  }
+  createdBy: string;
+  latestUpdateBy: string;
+  creationDate: string;
+  latestUpdateDate: string;
+  remarks: string;
+}
 export type OperatorsStore = {
   //OperatorsCards Component
   operatorsData: OperatorsData;
@@ -29,6 +49,8 @@ export type OperatorsStore = {
   //Add Operator Component
   addOperatorForm: AddOperatorFormData;
   setOperatorFormData: (data:  Partial<AddOperatorFormData>) => void;
+  updateOperatorForm: UpdateOperatorFormData;
+  setUpdateOperatorFormData: (data: Partial<UpdateOperatorFormData>) => void;
   setAllGameTypes: (data: Partial<AddOperatorFormData['gameTypes']>) => void;
 };
 
