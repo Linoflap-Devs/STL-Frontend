@@ -9,29 +9,22 @@ import {
   TablePagination,
   Button,
   IconButton,
+  Menu,
+  MenuItem,
 } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
 import FilterListIcon from "@mui/icons-material/FilterList";
 import FilterListOffIcon from "@mui/icons-material/FilterListOff";
 import PersonOffIcon from "@mui/icons-material/PersonOff";
+import MoreVertIcon from "@mui/icons-material/MoreVert";
 import useDetailTableStore from "../../../../store/useTableStore";
 import { SortableTableCell, filterData, sortData } from "../../../utils/sortPaginationSearch";
-import { Column, Operator, User } from "../../../types/types";
+import { Column, Operator, User } from "../../../types/interfaces";
 import { buttonStyles } from "~/styles/theme";
-
-// Type guard to check if `row` is a `User`
-const isUser = (row: User | Operator): row is User => {
-  return (row as User).FirstName !== undefined;  // Checks if it's a User
-};
-
-// Type guard to check if `row` is an `Operator`
-const isOperator = (row: User | Operator): row is Operator => {
-  return (row as Operator).OperatorName !== undefined;  // Checks if it's an Operator
-};
 
 interface DetailedTableProps<T> {
   data: T[];
-  columns: Column[];
+  columns: Column<T>[];
   onCreate?: () => void;
   actionsRender?: (row: T) => React.ReactNode;
   pageType?: "manager" | "executive";
@@ -61,6 +54,11 @@ const DetailedTable = <T extends User | Operator>({
     handleChangePage,
     handleChangeRowsPerPage,
     setSearchQuery,
+    anchorEl,
+    selectedRow,
+    setAnchorEl,
+    setSelectedRow,
+    resetMenu,
   } = useDetailTableStore();
 
   // FILTER + SEARCH
@@ -83,8 +81,16 @@ const DetailedTable = <T extends User | Operator>({
     return sortedData.slice(start, start + rowsPerPage);
   }, [sortedData, page, rowsPerPage]);
 
+  function handleView(row: Operator | User): void {
+    throw new Error("Function not implemented.");
+  }
+
+  function handleDelete(row: Operator | User): void {
+    throw new Error("Function not implemented.");
+  }
+
   return (
-    <>
+    <React.Fragment>
       <TableContainer>
         <div className="flex justify-between items-center py-3 px-1">
           <div className="flex items-center">
@@ -106,30 +112,32 @@ const DetailedTable = <T extends User | Operator>({
           </div>
           {onCreate && (
             <Button variant="contained" onClick={onCreate} sx={buttonStyles}>
-              {pageType === "manager" ? "Add Manager" : "Add Executive"}
+              {pageType === "manager"
+                ? "Add Manager"
+                : pageType === "executive"
+                  ? "Add Executive"
+                  : "Add Operator"}
             </Button>
           )}
         </div>
-
         <Table size="small">
           <TableHead>
             <TableRow>
               {columns.map((col) =>
                 col.sortable || col.filterable ? (
                   <SortableTableCell
-                    key={col.key}
+                    key={String(col.key)}
                     label={col.label}
-                    sortKey={col.key.toString()}
+                    sortKey={String(col.key)}
                     isFilterVisible={isFilterActive && col.filterable}
                   />
                 ) : (
-                  <TableCell key={col.key}>{col.label}</TableCell>
+                  <TableCell key={String(col.key)}>{col.label}</TableCell>
                 )
               )}
-              {actionsRender && <TableCell>Actions</TableCell>}
+              <TableCell>Actions</TableCell>
             </TableRow>
           </TableHead>
-
           <TableBody>
             {paginatedData.length === 0 ? (
               <TableRow>
@@ -145,24 +153,56 @@ const DetailedTable = <T extends User | Operator>({
             ) : (
               paginatedData.map((row, rowIndex) => (
                 <TableRow key={rowIndex}>
-                  {columns.map((col) => (
-                    <TableCell key={col.key}>
-                      {col.render
-                        ? col.render(row)
-                        : isUser(row) && col.key in row
-                        ? String(row[col.key as keyof User] ?? "")
-                        : isOperator(row) && col.key in row
-                        ? String(row[col.key as keyof Operator] ?? "")
-                        : ""}
-                    </TableCell>
-                  ))}
-                  {actionsRender && <TableCell>{actionsRender(row as T)}</TableCell>}
+                  {columns.map((col) => {
+                    const key = String(col.key);
+                    const value = (row as any)[key];
+                    return (
+                      <TableCell key={key}>
+                        {col.render
+                          ? col.render(row as T)
+                          : col.filterValue
+                            ? typeof col.filterValue === "function"
+                              ? col.filterValue(row as T)
+                              : col.filterValue
+                            : typeof value === "string" || typeof value === "number"
+                              ? value.toString()
+                              : Array.isArray(value)
+                                ? value.map((v: any) => v?.CityName ?? v?.toString()).join(", ")
+                                : ""}
+                      </TableCell>
+                    );
+                  })}
+                  <TableCell>
+                    <IconButton onClick={(e) => {
+                      setAnchorEl(e.currentTarget);
+                      setSelectedRow(row as T);
+                    }}>
+                      <MoreVertIcon />
+                    </IconButton>
+                    <Menu
+                      anchorEl={anchorEl}
+                      open={Boolean(anchorEl)}
+                      onClose={resetMenu}
+                    >
+                      <MenuItem onClick={() => {
+                        handleView(selectedRow);
+                        resetMenu();
+                      }}>
+                        View
+                      </MenuItem>
+                      <MenuItem onClick={() => {
+                        handleDelete(selectedRow);
+                        resetMenu();
+                      }}>
+                        Delete
+                      </MenuItem>
+                    </Menu>
+                  </TableCell>
                 </TableRow>
               ))
             )}
           </TableBody>
         </Table>
-
         <div className="p-3">
           <TablePagination
             rowsPerPageOptions={[10, 25, 50, 100]}
@@ -182,7 +222,7 @@ const DetailedTable = <T extends User | Operator>({
           </Button>
         </div>
       )}
-    </>
+    </React.Fragment>
   );
 };
 

@@ -1,7 +1,7 @@
 import React, { useEffect } from "react";
-import DetailedTable from "~/components/ui/tables/DetailedTable"; // Reusable table component
+import DetailedTable from "~/components/ui/tables/DetailedTable";
 import { getOperatorsData } from "~/utils/api/operators/get.operators.service";
-import { Operator, GetOperatorsResponse } from "~/types/types";
+import { Operator, GetOperatorsResponse } from "~/types/interfaces";
 import dayjs from "dayjs";
 import { useOperatorsData } from "../../../../store/useOperatorStore";
 
@@ -19,15 +19,15 @@ const OperatorsPage = () => {
         const response = await getOperatorsData<GetOperatorsResponse>("/operators/getOperators");
         if (response.success && Array.isArray(response.data?.data)) {
           const fetchedOperators = response.data.data;
-          console.log("Fetched Operators:", fetchedOperators); // Debugging line
+          console.log("Fetched Operators:", fetchedOperators);
 
-          setData(fetchedOperators); // Set the operators separately
+          setData(fetchedOperators);
         } else {
-          setData([]); // Reset the operator state
+          setData([]);
         }
       } catch (error) {
         console.error("Error fetching operators:", error);
-        setData([]); // Reset the operator state in case of error
+        setData([]);
       }
     };
 
@@ -46,12 +46,17 @@ const OperatorsPage = () => {
         key: "Cities",
         label: "Approved Area of Operations",
         sortable: false,
-        filterable: false,
+        filterable: true,
+        filterKey: "Cities",
+        filterValue: (row: Operator) =>
+          Array.isArray(row.Cities)
+            ? row.Cities.map((c) => c.CityName).join(", ")
+            : "",
         render: (row: Operator) =>
           Array.isArray(row.Cities) && row.Cities.length
-            ? row.Cities.map(city => city.CityName).join(", ")
+            ? row.Cities.map((city) => city.CityName).join(", ")
             : "No cities",
-      },           
+      }, 
       {
         key: "DateOfOperation",
         label: "Date of Operations",
@@ -65,7 +70,7 @@ const OperatorsPage = () => {
         label: "Created By",
         sortable: true,
         filterable: true,
-
+        render: (operator: Operator) => operator?.Executive || "No executive",
       },
       {
         key: "Actions",
@@ -78,12 +83,13 @@ const OperatorsPage = () => {
 
   return (
     <div className="container mx-auto px-0 py-1">
-      <h1 className="text-3xl font-bold mb-4">Small Town Lottery Operators
-      </h1>
+      <h1 className="text-3xl font-bold mb-4">Small Town Lottery Operators</h1>
       <DetailedTable
-        data={data} // or data={users}
+        data={data}
         columns={columns}
-        //operatorMap={operatorMap}
+        onCreate={() => {
+          console.log(`Create new Operator`);
+        }}
       />
     </div>
   );

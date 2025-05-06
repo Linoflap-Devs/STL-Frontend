@@ -1,13 +1,12 @@
-// store/useTableStore.ts
 import { create } from 'zustand';
-import { Operator } from '~/types/types';
+import { Operator } from '~/types/interfaces';
 
 interface SortConfig {
   key: string;
   direction: 'asc' | 'desc';
 }
 
-interface TableStoreState {
+interface TableStoreState<T = any> {
   searchQuery: string;
   setSearchQuery: (query: string) => void;
 
@@ -38,6 +37,13 @@ interface TableStoreState {
   handleChangePage: (event: unknown, newPage: number) => void;
   handleChangeRowsPerPage: (event: React.ChangeEvent<HTMLInputElement>) => void;
   onSortWrapper: (key: string) => void;
+
+  // Action menu state
+  anchorEl: HTMLElement | null;
+  selectedRow: T | null;
+  setAnchorEl: (el: HTMLElement | null) => void;
+  setSelectedRow: (row: T | null) => void;
+  resetMenu: () => void;
 }
 
 const useDetailTableStore = create<TableStoreState>((set, get) => ({
@@ -58,7 +64,6 @@ const useDetailTableStore = create<TableStoreState>((set, get) => ({
   setSortConfig: (config) => set({ sortConfig: config }),
 
   filters: {},
-
   setFilters: (newFilters) =>
     set((state) => ({
       filters: typeof newFilters === 'function' ? newFilters(state.filters) : newFilters,
@@ -79,7 +84,7 @@ const useDetailTableStore = create<TableStoreState>((set, get) => ({
   handleChangePage: (event, newPage) => {
     set({ page: newPage });
   },
-  
+
   operatorMap: {},
   setOperatorMap: (operatorMap) => set({ operatorMap }),
 
@@ -93,6 +98,13 @@ const useDetailTableStore = create<TableStoreState>((set, get) => ({
     const direction = sortConfig.key === key && sortConfig.direction === 'asc' ? 'desc' : 'asc';
     set({ sortConfig: { key, direction } });
   },
+
+  // Action menu state
+  anchorEl: null,
+  selectedRow: null,
+  setAnchorEl: (el) => set({ anchorEl: el }),
+  setSelectedRow: (row) => set({ selectedRow: row }),
+  resetMenu: () => set({ anchorEl: null, selectedRow: null }),
 }));
 
 export default useDetailTableStore;

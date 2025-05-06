@@ -3,7 +3,7 @@ import { useRouter } from "next/router";
 import DetailedTable from "~/components/ui/tables/DetailedTable";
 import { getUsersData } from "~/utils/api/users/get.users.service";
 import { getOperatorsData } from "~/utils/api/operators/get.operators.service";
-import { User, Operator, GetUsersResponse, GetOperatorsResponse } from "~/types/types";
+import { User, Operator, GetUsersResponse, GetOperatorsResponse } from "~/types/interfaces";
 import useUserRoleStore from "../../../../store/useUserStore";
 import dayjs from "dayjs";
 
@@ -14,7 +14,7 @@ const roleMap: Record<string, { label: string; roleId: number }> = {
 
 const RolePage = () => {
   const router = useRouter();
-  const { role } = router.query; // dynamic route parameter
+  const { role } = router.query;
   const operatorMap = useUserRoleStore((state) => state.operatorMap);
   const setOperatorMap = useUserRoleStore((state) => state.setOperatorMap);
   const { data, setData, columns, setColumns, setRoleId } = useUserRoleStore();
@@ -65,18 +65,18 @@ const RolePage = () => {
       if (roleId) {
         try {
           const userResponse = await getUsersData<GetUsersResponse>("/users/getUsers", { roleId });
-          console.log("User Response:", userResponse); // Debugging line
+          //console.log("User Response:", userResponse);
 
           if (userResponse.success && Array.isArray(userResponse.data?.data)) {
             const filteredUsers = userResponse.data.data.filter((user: User) => user.UserTypeId === roleId);
             setData(filteredUsers.length > 0 ? filteredUsers : []);
-            console.log("Filtered Users:", filteredUsers); // Debugging line
+            //console.log("Filtered Users:", filteredUsers);
           } else {
-            setData([]); // Handle invalid or empty user data response
+            setData([]);
           }
         } catch (error) {
           console.error("Error fetching user data:", error);
-          setData([]); // Handle API errors gracefully
+          setData([]); // Handle API error case
         }
       }
     };
@@ -85,7 +85,6 @@ const RolePage = () => {
   }, [roleId, setData]);
 
   useEffect(() => {
-    // Set columns after fetching data
     if (roleId) {
       setColumns([
         { key: "FirstName", label: "Name", sortable: true, filterable: true },
@@ -122,11 +121,10 @@ const RolePage = () => {
       </div>
     );
   }
-
+  
   return (
     <div className="container mx-auto px-0 py-1">
       <h1 className="text-3xl font-bold mb-4">{roleConfig.label}</h1>
-
       <DetailedTable
         data={data}
         columns={columns}

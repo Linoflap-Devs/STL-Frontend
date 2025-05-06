@@ -9,7 +9,7 @@ import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import dayjs, { Dayjs } from 'dayjs';
 import useDetailTableStore from "../../store/useTableStore";
-import { User, SortableTableCellProps, Operator } from '../types/types';
+import { User, SortableTableCellProps, Operator } from '../types/interfaces';
 import { filterStyles } from "~/styles/theme";
 
 // SORTING + FILTERING COMPONENT
@@ -26,7 +26,7 @@ export const SortableTableCell: React.FC<SortableTableCellProps> = ({
     setSortConfig({ key: sortKey, direction });
   };
 
- // Handle filter change for text fields
+  // Handle filter change for text fields
   const handleFilterChange = (key: string) => (value: string | Dayjs | null) => {
     let filterValue: string;
 
@@ -45,7 +45,7 @@ export const SortableTableCell: React.FC<SortableTableCellProps> = ({
       return updatedFilters;
     });
   };
- 
+
   const handleDateChange = (date: dayjs.Dayjs | null) => {
     setFilters((prevFilters) => ({
       ...prevFilters,
@@ -68,10 +68,9 @@ export const SortableTableCell: React.FC<SortableTableCellProps> = ({
           </Tooltip>
         )}
         {label}
-
         {isFilterVisible && (
           <div>
-            {sortKey === 'DateOfRegistration' ? (
+            {(sortKey === 'DateOfRegistration' || sortKey === 'DateOfOperation') ? (
               <DatePicker
                 value={filters[sortKey] ? dayjs(filters[sortKey]) : null}
                 onChange={handleDateChange}
@@ -92,7 +91,6 @@ export const SortableTableCell: React.FC<SortableTableCellProps> = ({
                 value={filters[sortKey] || ''}
                 onChange={(event) => handleFilterChange(sortKey)(event.target.value)}
                 fullWidth
-                className="bg-transparent"
                 sx={filterStyles}
               />
             )}
@@ -116,18 +114,21 @@ export function sortData<T>(
       return typeof value === 'string' || value instanceof Date || dayjs(value).isValid();
     };
 
+    // Check if the values are valid dates
     if (isValidDate(valueA) && isValidDate(valueB)) {
       const dateA = dayjs(valueA).valueOf();
       const dateB = dayjs(valueB).valueOf();
       return sortConfig.direction === 'asc' ? dateA - dateB : dateB - dateA;
     }
 
+    // Check if the values are strings or numbers
     if (typeof valueA === 'string' && typeof valueB === 'string') {
       return sortConfig.direction === 'asc'
         ? valueA.localeCompare(valueB)
         : valueB.localeCompare(valueA);
     }
 
+    // Handle case where one value is a string and the other is a number
     if (typeof valueA === 'number' && typeof valueB === 'number') {
       return sortConfig.direction === 'asc' ? valueA - valueB : valueB - valueA;
     }
@@ -143,41 +144,44 @@ const getNestedValue = (obj: any, path: string) => {
 
 // FILTERING + SEARCHING FUNCTION
 export const filterData = (
-  data: (User | Operator)[],  // can you make this generic instead of using User | Operato
+  data: (User | Operator)[],
   filterKeys: string[],
   filters: { [key: string]: string },
   operatorMap: { [key: number]: Operator }
 ): (User | Operator)[] => {
   const searchValue = filters.searchQuery?.toLowerCase() || "";
 
-  // Helper function to check if the search query matches any field value
   const filterItem = (key: string, value: string | undefined) => {
     return value && value.toLowerCase().includes(searchValue);
   };
 
   return data.filter((item) => {
-    // If the item is a User or Operator, handle differently
     const operatorName = operatorMap?.[item.OperatorId]?.OperatorName
-    ? operatorMap[item.OperatorId].OperatorName.toLowerCase()
-    : "no operator";  
+      ? operatorMap[item.OperatorId].OperatorName.toLowerCase()
+      : "no operator";
 
-    // If there's a search query, check if any of the fields match the search query
     if (searchValue && !Object.values(item).some((val) => filterItem("", String(val)))) {
       const fullName = `${"FirstName" in item ? item.FirstName : ""} ${"LastName" in item ? item.LastName : ""}`.toLowerCase();
       const createdByFullName = `${"CreatedByFirstName" in item ? item.CreatedByFirstName : ""} ${"CreatedByLastName" in item ? item.CreatedByLastName : ""}`.toLowerCase();
+      const cities = (getNestedValue(item, "Cities") || []) as { CityName: string }[];
+      const cityNames = cities.map(city => city.CityName.toLowerCase()).join(", ");
 
-      // Check if the search query matches any of the name fields or operator name
-      if (![fullName, createdByFullName, operatorName].some((val) => val.includes(searchValue))) {
+      if (![fullName, createdByFullName, operatorName, cityNames].some(val => val.includes(searchValue))) {
         return false;
       }
     }
 
-    // Apply filters for all filter keys (other columns like DateOfRegistration)
     return filterKeys.every((key) => {
       const filterValue = filters[key]?.toLowerCase() || "";
       const itemValue = getNestedValue(item, key)?.toString().toLowerCase() || "";
 
-      if (!filterValue) return true; // If no filter, include the item
+      if (!filterValue) return true;
+
+      if (key === "Cities") {
+        const cities = (getNestedValue(item, "Cities") || []) as { CityName: string }[];
+        const cityNames = cities.map(city => city.CityName.toLowerCase()).join(", ");
+        return cityNames.includes(filterValue);
+      }
 
       if (key === "DateOfRegistration") {
         // Compare dates if filtering by date
@@ -195,5 +199,3 @@ export const filterData = (
     });
   });
 };
-
-
