@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import Sidebar from "./components/layout/Sidebar";
 import Header from "./components/layout/Header";
-import { Box } from "@mui/material";
 
 const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [collapsed, setCollapsed] = useState(false);
@@ -11,28 +10,26 @@ const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   };
 
   return (
-    <Box sx={{ display: "flex", }}>
-      <Sidebar
-      />
-      <Box sx={{ flexGrow: 1, display: "flex", flexDirection: "column" }}>
+    <div className="flex h-screen">
+      {/* Sidebar */}
+      <div className="flex-shrink-0 h-full">
+        <Sidebar />
+      </div>
+
+      {/* Content Area */}
+      <div className="flex flex-col flex-grow h-full">
         <Header
           handleDrawerToggle={handleDrawerToggle}
           collapsed={collapsed}
           mobileOpen={false}
         />
-        <Box
-          component="main"
-          sx={{
-            flexGrow: 1,
-            p: 3,
-            transition: "margin 0.3s ease-out",
-          }}
-        >
-          <div>{children}</div>
-        </Box>
-      </Box>
-    </Box>
+        <main className="flex-grow overflow-y-auto p-3">
+          {children}
+        </main>
+      </div>
+    </div>
   );
 };
 
 export default Layout;
+

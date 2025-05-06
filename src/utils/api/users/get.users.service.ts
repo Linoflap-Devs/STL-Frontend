@@ -1,5 +1,5 @@
 import axiosInstance from '../../axiosInstance';
-import axios, { AxiosError } from 'axios';
+import { AxiosError } from 'axios';
 
 /**
  * A service function to fetch data from the Users API endpoint.
@@ -28,14 +28,14 @@ export const getUsersData = async <T = unknown>(
       data: response.data,
     };
   } catch (error) {
-    let errorMessage = 'An unexpected error occurred';
+    let errorMessage = "An unexpected error occured";
 
-    if (axios.isAxiosError(error)) {
-      errorMessage = error.response?.data?.message || errorMessage;
-      console.error(`API Error (${endpoint}):`, errorMessage);
-    } else if (error instanceof Error) {
-      errorMessage = error.message;
-      console.error('Unexpected error:', error);
+    if(error instanceof AxiosError) {
+        errorMessage = error.response?.data?.message || error.message;
+        console.error(`API Error (${endpoint}): `, errorMessage)
+    }else if (error instanceof Error) {
+        errorMessage = error.message;
+        console.error("Unexpected error:", error);
     }
 
     return {

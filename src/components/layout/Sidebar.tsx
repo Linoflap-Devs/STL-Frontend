@@ -125,7 +125,6 @@ const Sidebar: React.FC = () => {
       else if(label === "Winning Summary") submenu = WINNING_SUBMENUS;
       else submenu = DRAW_SUBMENUS;
 
-
       return (
         <div key={label}>
           <div
@@ -210,12 +209,10 @@ const Sidebar: React.FC = () => {
       </div>
     ));
 
-
-
   return (
     <aside
       className={clsx(
-        "bg-[#171717] text-white flex flex-col transition-all duration-300",
+        "bg-[#171717] text-white flex flex-col transition-all duration-300 min-h-screen",
         collapsed ? "w-16" : "w-60"
       )}
     >
