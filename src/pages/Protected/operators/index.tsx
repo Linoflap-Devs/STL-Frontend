@@ -4,7 +4,11 @@ import { getOperatorsData } from "~/utils/api/operators/get.operators.service";
 import { Operator, GetOperatorsResponse } from "~/types/interfaces";
 import dayjs from "dayjs";
 import { useOperatorsData } from "../../../../store/useOperatorStore";
-import CardsPage from "~/components/ui/dashboardcards/CardsPage";
+import CardsPage from "~/components/ui/dashboardcards/CardsData";
+import ChartsDataPage from "~/components/ui/charts/UserChartsData";
+import { Button } from "@mui/material";
+import { getUserStatus } from "~/utils/dashboarddata";
+import FieldFormPage from "~/components/user/UserForm";
 
 const OperatorsPage = () => {
   const {
@@ -12,6 +16,7 @@ const OperatorsPage = () => {
     setData,
     columns,
     setColumns,
+    setModalOpen,
   } = useOperatorsData();
 
   const textlabel = "Operators";
@@ -59,14 +64,14 @@ const OperatorsPage = () => {
           Array.isArray(row.Cities) && row.Cities.length
             ? row.Cities.map((city) => city.CityName).join(", ")
             : "No cities",
-      }, 
+      },
       {
         key: "DateOfOperation",
         label: "Date of Operations",
         sortable: true,
         filterable: true,
         filterKey: "DateOfOperation",
-        render: (row: Operator) => row.DateOfOperation ? dayjs(row.DateOfOperation).format("YYYY-MM-DD") : "", 
+        render: (row: Operator) => row.DateOfOperation ? dayjs(row.DateOfOperation).format("YYYY-MM-DD") : "",
       },
       {
         key: "Executive",
@@ -76,30 +81,75 @@ const OperatorsPage = () => {
         render: (operator: Operator) => operator?.Executive || "No executive",
       },
       {
-        key: "Actions",
+        key: "Status",
         label: "Status",
-        sortable: false,
-        filterable: false,
+        sortable: true,
+        filterable: true,
+        render: (user: Operator) => {
+          const sevenDaysAgo = dayjs().subtract(7, "days");
+          const status = getUserStatus(user, sevenDaysAgo);
+          return (
+            <Button
+              variant="contained"
+              sx={{
+                cursor: "auto",
+                textTransform: "none",
+                borderRadius: "12px",
+                padding: "1px 13px",
+                fontSize: "12px",
+                backgroundColor:
+                  status === "Suspended"
+                    ? "#FF7A7A"
+                    : status === "Inactive"
+                      ? "#FFA726"
+                      : "#4CAF50",
+                color: "#171717",
+                "&:hover": {
+                  backgroundColor:
+                    status === "Suspended"
+                      ? "#F05252"
+                      : status === "Inactive"
+                        ? "#FFA726"
+                        : "#4CAF50",
+                },
+              }}
+            >
+              {status}
+            </Button>
+          );
+        },
       },
     ]);
   }, [setColumns]);
 
   return (
-    <div className="container mx-auto px-0 py-1">
-      <h1 className="text-3xl font-bold mb-4">Small Town Lottery Operators</h1>
+    <div className="mx-auto px-0 py-1">
+      <h1 className="text-3xl font-bold mb-3">Small Town Lottery Operators</h1>
       <CardsPage
-        dashboardData={data}  // Pass dashboardData to CardsPage
-        //roleLabel={label || ""}
-        cardData={[]}  // Optional if cardData needs to be used
-        textlabel={textlabel || ""} // Cannot find name 'textlabel'.ts(2304)
+        dashboardData={data}
+        cardData={[]}
+        textlabel={textlabel || ""}
       />
-      <DetailedTable
-        data={data}
-        columns={columns}
-        onCreate={() => {
-          console.log(`Create new Operator`);
+      <ChartsDataPage
+        dashboardData={data}
+        userType={""}
+        //getUserStatus={() => { } } 
+        regions={[]}
+        pageType={"operator"}
+        getUserStatus={function (user: Operator, sevenDaysAgo: string): string {
+          throw new Error("Function not implemented.");
         }}
       />
+      <>
+        <DetailedTable
+          data={data}
+          columns={columns}
+          onCreate={() => {
+            setModalOpen(true);
+          }}
+        />
+        <FieldFormPage />
+      </>
     </div>
   );
 };

@@ -1,6 +1,6 @@
 import { create } from "zustand";
 import { AddOperatorFormData, UpdateOperatorFormData, OperatorsStore, Operator } from '../src/types/types'
-import { Column } from "../src/types/types";
+import { Column } from "../src/types/interfaces";
 
 interface OperatorsState {
   // Store user data
@@ -8,8 +8,8 @@ interface OperatorsState {
   setData: (data: Operator[]) => void;
   
   // Store table columns configuration
-  columns: Column[]; 
-  setColumns: (columns: Column[]) => void;
+  columns: Column<Operator>[];
+  setColumns: (columns: Column<Operator>[]) => void;
 
   operators: Operator[];
   operatorMap: { [key: number]: Operator };
@@ -20,6 +20,9 @@ interface OperatorsState {
   setOperatorMap: (operatorMap: { [key: number]: Operator }) => void;
   setLoading: (loading: boolean) => void;
   setError: (error: string | null) => void;
+  
+  modalOpen: boolean;
+  setModalOpen: (open: boolean) => void; // Added setModalOpen
 }
 
 export const useOperatorsData = create<OperatorsState>((set) => ({
@@ -27,8 +30,10 @@ export const useOperatorsData = create<OperatorsState>((set) => ({
   operatorMap: {},
   loading: false,
   error: null,
-  columns: [], // Initialize columns as an empty array (you can set default columns here)
+  columns: [],
   data: [],
+  modalOpen: false,
+  setModalOpen: (modalOpen: any) => set({ modalOpen }),
   setData: (data) => set({ data }),
   setColumns: (columns) => set({ columns }),
   setOperators: (operators) => set({ operators }),
@@ -116,3 +121,5 @@ export const useOperatorsStore = create<OperatorsStore>((set) => ({
       },
     })),
 }));
+
+

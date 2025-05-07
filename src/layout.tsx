@@ -17,7 +17,7 @@ const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
       </div>
 
       {/* Content Area */}
-      <div className="flex flex-col flex-grow h-full">
+      <div className="flex flex-col flex-grow h-full pb-2">
         <Header
           handleDrawerToggle={handleDrawerToggle}
           collapsed={collapsed}

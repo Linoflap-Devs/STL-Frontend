@@ -1,3 +1,6 @@
+import { extend } from "dayjs";
+import { RegionData } from "./types";
+
 // Type for users
 export interface User {
   UserId: number;
@@ -25,6 +28,7 @@ export interface GetUsersResponse {
 
 // Define the Operator type
 export interface Operator {
+  Region: any;
   OperatorId: number;
   OperatorName: string;
   Executive: string;
@@ -78,8 +82,73 @@ export interface CardProps<T = React.ReactNode> {
 
 // types/interfaces.ts
 export interface CardsPageProps<T> {
-  dashboardData: T[]; // Dashboard data can be of any type
-  roleLabel?: string;   // Label for the role (e.g., "Manager", "Operator")
-  cardData: never[]; // if not used, you can remove this or mark optional
-  textlabel?: string; // Optional text label for the card
+  dashboardData: T[];
+  roleLabel?: string;
+  cardData: never[];
+  textlabel?: string;
+}
+
+export interface ChartDataItem<T = unknown> {
+  label: string;
+  data: number[];
+  color: string;
+  meta?: T;
+}
+
+export interface ChartCardProps<T = unknown> {
+  label: string;
+  chartData: ChartDataItem<T>[];
+  regions: string[];
+  pageType: "manager" | "executive" | "operator";
+  title?: string;
+  roleLabel?: string;
+}
+
+// Legend component props
+export interface CustomLegendProps {
+  pageType: "manager" | "executive" | "operator";
+  label: string;
+}
+
+// Define the generic interface
+export interface UseUsersChartsDataProps<T> {
+  dashboardData: T[];
+  regions: string[];
+}
+
+export interface ChartsDataPageProps<T extends { region: string }> extends UseUsersChartsDataProps<T> {
+  userType: string;
+  getUserStatus: (user: T, sevenDaysAgo: string) => string;
+  pageType: "manager" | "executive" | "operator";
+}
+
+export interface ChartBarItem {
+  label: string;
+  color: string;
+  data: number[];
+}
+
+// foorm for create modal
+export interface Field {
+  name: string;
+  label: string;
+  type: string;
+  placeholder?: string;
+}
+
+export type ReusableModalPageProps = {
+  title: string; // Add the title prop
+  endpoint: string;
+  isOpen: boolean;
+  onClose: () => void;
+  fields: Field[];
+  onSuccess?: () => void;
+  onSubmit?: (formData: Record<string, string>) => Promise<void>;
+};
+
+export interface CreateModalPageProps {
+  open?: boolean;
+  onClose?: () => void;
+  fields?: Array<{ label: string; value: string }>;
+  endpoint?: string; // Added the missing 'endpoint' property
 }

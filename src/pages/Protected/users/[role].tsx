@@ -3,10 +3,14 @@ import { useRouter } from "next/router";
 import DetailedTable from "~/components/ui/tables/DetailedTable";
 import { getUsersData } from "~/utils/api/users/get.users.service";
 import { getOperatorsData } from "~/utils/api/operators/get.operators.service";
-import { User, Operator, GetUsersResponse, GetOperatorsResponse, CardProps } from "~/types/interfaces";
+import { User, Operator, GetUsersResponse, GetOperatorsResponse } from "~/types/interfaces";
+import { getUserStatus } from "~/utils/dashboarddata";
+import { Button } from "@mui/material";
 import useUserRoleStore from "../../../../store/useUserStore";
+import CardsPage from "~/components/ui/dashboardcards/CardsData";
+import ChartsDataPage from "~/components/ui/charts/UserChartsData";
 import dayjs from "dayjs";
-import CardsPage from "~/components/ui/dashboardcards/CardsPage";
+import UserFieldFormPage from "~/components/user/UserForm";
 
 const roleMap: Record<string, { label: string; textlabel: string; roleId: number }> = {
   managers: { label: "Small Town Lottery Manager", textlabel: "Managers", roleId: 2 },
@@ -16,9 +20,11 @@ const roleMap: Record<string, { label: string; textlabel: string; roleId: number
 const RolePage = () => {
   const router = useRouter();
   const { role } = router.query;
+  const pagetype = window.location.pathname.includes("manager") ? "manager" : "executive";
+
   const operatorMap = useUserRoleStore((state) => state.operatorMap);
   const setOperatorMap = useUserRoleStore((state) => state.setOperatorMap);
-  const { data, setData, columns, setColumns, setRoleId } = useUserRoleStore();
+  const { data, setData, columns, setColumns, setRoleId, modalOpen, setModalOpen } = useUserRoleStore();
 
   const roleString = typeof role === "string" ? role : role?.[0];
   const roleConfig = roleString ? roleMap[roleString.toLowerCase()] : null;
@@ -30,6 +36,7 @@ const RolePage = () => {
     }
   }, [roleId, setRoleId]);
 
+  // fetching the operators data
   useEffect(() => {
     const fetchOperators = async () => {
       try {
@@ -51,11 +58,14 @@ const RolePage = () => {
     fetchOperators();
   }, [setOperatorMap]);
 
+  // fetching the users based on the roleId
   useEffect(() => {
     const fetchUsers = async () => {
       if (roleId) {
         try {
           const userResponse = await getUsersData<GetUsersResponse>("/users/getUsers", { roleId });
+          console.log("User Response:", userResponse);
+
           if (userResponse.success && Array.isArray(userResponse.data?.data)) {
             const filteredUsers = userResponse.data.data.filter((user: User) => user.UserTypeId === roleId);
             setData(filteredUsers.length > 0 ? filteredUsers : []);
@@ -94,7 +104,45 @@ const RolePage = () => {
           render: (row: User) => row.DateOfRegistration ? dayjs(row.DateOfRegistration).format("YYYY-MM-DD") : "",
         },
         { key: "CreatedBy", label: "Created By", sortable: true, filterable: true },
-        { key: "Status", label: "Status", sortable: true, filterable: true },
+        {
+          key: "Status",
+          label: "Status",
+          sortable: true,
+          filterable: true,
+          render: (user: User) => {
+            const sevenDaysAgo = dayjs().subtract(7, "days");
+            const status = getUserStatus(user, sevenDaysAgo);
+            return (
+              <Button
+                variant="contained"
+                sx={{
+                  cursor: "auto",
+                  textTransform: "none",
+                  borderRadius: "12px",
+                  padding: "1px 13px",
+                  fontSize: "12px",
+                  backgroundColor:
+                    status === "Suspended"
+                      ? "#FF7A7A"
+                      : status === "Inactive"
+                        ? "#FFA726"
+                        : "#4CAF50",
+                  color: "#171717",
+                  "&:hover": {
+                    backgroundColor:
+                      status === "Suspended"
+                        ? "#F05252"
+                        : status === "Inactive"
+                          ? "#FFA726"
+                          : "#4CAF50",
+                  },
+                }}
+              >
+                {status}
+              </Button>
+            );
+          },
+        },
       ]);
     }
   }, [roleId, setColumns, operatorMap]);
@@ -106,25 +154,41 @@ const RolePage = () => {
       </div>
     );
   }
-  
+
   return (
-    <div className="container mx-auto px-0 py-1">
-      <h1 className="text-3xl font-bold mb-4">{roleConfig.label}</h1>
+    <div className="mx-auto px-0 py-1">
+      <h1 className="text-3xl font-bold mb-3">{roleConfig.label}</h1>
+      {/* Dashboard Cards */}
       <CardsPage
         dashboardData={data}
         roleLabel={roleConfig.label || ""}
         cardData={[]}
         textlabel={roleConfig.textlabel || ""}
       />
-      <DetailedTable
-        data={data}
-        columns={columns}
-        operatorMap={operatorMap}
-        pageType={roleString === "managers" ? "manager" : "executive"}
-        onCreate={() => {
-          console.log(`Create new ${roleString}`);
+      {/* Charts Data */}
+      <ChartsDataPage
+        userType={""}
+        regions={[]}
+        pageType={pagetype}
+        getUserStatus={function (user: { region: string; }, sevenDaysAgo: string): string {
+          throw new Error("Function not implemented.");
         }}
+        dashboardData={[]}
       />
+      {/* Detailed Table */}
+      <>
+        <DetailedTable
+          data={data}
+          columns={columns}
+          operatorMap={operatorMap}
+          pageType={pagetype}
+          onCreate={() => {
+            setModalOpen(true);
+          }}
+        />
+        {/* Conditionally render CreateUserModalPage */}
+        <UserFieldFormPage />
+      </>
     </div>
   );
 };

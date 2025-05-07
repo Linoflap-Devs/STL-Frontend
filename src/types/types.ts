@@ -8,6 +8,27 @@ export type DashboardData = {
   newUsers: number;
 };
 
+// for dashboard charts
+export interface LegendItem {
+  color: string;
+  label: string;
+}
+
+export type User = {
+  region: string;  // Add region to User
+  LastLogin?: string;
+  LastTokenRefresh?: string;
+  DateOfRegistration?: string;
+  IsActive?: number;
+};
+
+export type RegionData = Record<
+  string,
+  {
+    users: User[];
+  }
+>;
+
 // Operators
 export type OperatorsData = {
   totalOperators: number;

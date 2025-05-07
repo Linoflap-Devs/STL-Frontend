@@ -1,0 +1,33 @@
+// this file is responsible for managing the form state using Zustand
+// and provides functions to set, update, and reset the form data.
+
+import { create } from 'zustand';
+
+type FormStore = {
+  formData: { [key: string]: string };
+  setFormData: (data: { [key: string]: string }) => void;
+  updateFormField: (key: string, value: string) => void;
+  resetFormData: () => void;
+
+  loading: boolean;
+  setLoading: (loading: boolean) => void;
+
+  error: string | null;
+  setError: (error: string | null) => void;
+};
+
+export const useFormStore = create<FormStore>((set) => ({
+  formData: {},
+  setFormData: (data) => set({ formData: data }),
+  updateFormField: (key, value) =>
+    set((state) => ({
+      formData: { ...state.formData, [key]: value },
+    })),
+  resetFormData: () => set({ formData: {} }),
+
+  loading: false,
+  setLoading: (loading) => set({ loading }),
+
+  error: null,
+  setError: (error) => set({ error }),
+}));

@@ -1,0 +1,90 @@
+import { Button } from "@mui/material";
+import { BarChart } from "@mui/x-charts/BarChart";
+import React from "react";
+import { buttonStyles } from "~/styles/theme";
+import { ChartCardProps, CustomLegendProps } from "~/types/interfaces";
+
+// Generic legend item creator
+const getLegendItems = (pageType: string, label: string) => {
+    const labelMap: Record<string, string> = {
+        manager: "Managers",
+        executive: "Executives",
+        operator: "Operators",
+    };
+    
+    return [
+        {
+            color: "#BB86FC",
+            label: `${label} ${labelMap[pageType] || "Users"}`,
+        },
+    ];
+};
+
+const CustomLegend: React.FC<CustomLegendProps> = ({ pageType, label }) => (
+    <div className="flex space-x-2 justify-start mr-2">
+        {getLegendItems(pageType, label).map((item) => ( 
+            <div key={item.label} className="flex items-center">
+                <div
+                    className="w-4 h-4 rounded-full mr-1.5"
+                    style={{ backgroundColor: item.color }}
+                />
+                <p className="text-white text-xs">{item.label}</p>
+            </div>
+        ))}
+    </div>
+);
+
+export const ChartCard = <T,>({
+    label,
+    chartData,
+    regions,
+    pageType,
+    title,
+}: ChartCardProps<T>) => {
+    return (
+        <div className="my-4">
+            <div className="p-4 bg-[#171717] rounded-lg">
+                <div className="flex justify-between items-center flex-wrap">
+                    <div>
+                        <p className="text-[#B3B3B3] text-lg">{title}</p>
+                        <div>
+                            <CustomLegend
+                                pageType={pageType}
+                                label={label} 
+                            />
+                        </div>
+                    </div>
+                    <div className="flex items-center">
+                    <Button sx={buttonStyles} variant="contained">
+                        Export as CSV
+                    </Button>
+                    </div>
+                </div>
+                <div className="h-[270px] w-full min-w-0">
+                    <BarChart
+                        xAxis={[{ scaleType: "band", data: regions }]}
+                        yAxis={[{ label: "Number of Users" }]}
+                        series={chartData.map(({ label, color, data }) => ({
+                            data,
+                            label,
+                            color,
+                        }))}
+                        slotProps={{
+                            legend: { hidden: true },
+                            bar: {
+                                style: {
+                                    borderTopLeftRadius: "0.375rem",
+                                    borderTopRightRadius: "0.375rem",
+                                    transition: "fill 0.3s ease-in-out",
+                                    cursor: "pointer",
+                                },
+                            },
+                        }}
+                    />
+                </div>
+            </div>
+        </div>
+    );
+};
+
+export default ChartCard;

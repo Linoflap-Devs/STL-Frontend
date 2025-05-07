@@ -110,15 +110,15 @@ const DetailedTable = <T extends User | Operator>({
               {isFilterActive ? <FilterListOffIcon /> : <FilterListIcon />}
             </IconButton>
           </div>
-          {onCreate && (
-            <Button variant="contained" onClick={onCreate} sx={buttonStyles}>
-              {pageType === "manager"
-                ? "Add Manager"
-                : pageType === "executive"
+            {onCreate && (
+              <Button variant="contained" onClick={onCreate} sx={buttonStyles}>
+                {pageType === "manager"
+                  ? "Add Manager"
+                  : pageType === "executive"
                   ? "Add Executive"
                   : "Add Operator"}
-            </Button>
-          )}
+              </Button>
+            )}
         </div>
         <Table size="small">
           <TableHead>
