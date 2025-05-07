@@ -23,7 +23,7 @@ const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
           collapsed={collapsed}
           mobileOpen={false}
         />
-        <main className="flex-grow overflow-y-auto p-3">
+        <main className="flex-grow overflow-y-auto p-4">
           {children}
         </main>
       </div>

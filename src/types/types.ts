@@ -1,3 +1,13 @@
+
+// for dashboard cards
+export type DashboardData = {
+  totalUsers: number;
+  activeUsers: number;
+  suspendedUsers: number;
+  inactiveUsers: number;
+  newUsers: number;
+};
+
 // Operators
 export type OperatorsData = {
   totalOperators: number;

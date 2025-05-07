@@ -4,6 +4,7 @@ import { getOperatorsData } from "~/utils/api/operators/get.operators.service";
 import { Operator, GetOperatorsResponse } from "~/types/interfaces";
 import dayjs from "dayjs";
 import { useOperatorsData } from "../../../../store/useOperatorStore";
+import CardsPage from "~/components/ui/dashboardcards/CardsPage";
 
 const OperatorsPage = () => {
   const {
@@ -12,6 +13,8 @@ const OperatorsPage = () => {
     columns,
     setColumns,
   } = useOperatorsData();
+
+  const textlabel = "Operators";
 
   useEffect(() => {
     const fetchOperators = async () => {
@@ -84,6 +87,12 @@ const OperatorsPage = () => {
   return (
     <div className="container mx-auto px-0 py-1">
       <h1 className="text-3xl font-bold mb-4">Small Town Lottery Operators</h1>
+      <CardsPage
+        dashboardData={data}  // Pass dashboardData to CardsPage
+        //roleLabel={label || ""}
+        cardData={[]}  // Optional if cardData needs to be used
+        textlabel={textlabel || ""} // Cannot find name 'textlabel'.ts(2304)
+      />
       <DetailedTable
         data={data}
         columns={columns}

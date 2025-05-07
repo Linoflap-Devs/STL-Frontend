@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import { User, Operator, Column } from '~/types/types';
+import { User, Operator, Column } from '~/types/interfaces';
 
 interface UserRoleStore {
   roleId: number | null;
@@ -10,7 +10,7 @@ interface UserRoleStore {
   setData: (data: User[]) => void;
 
   // Store table columns configuration
-  columns: Column[]; 
+  columns: Column[]; // Generic type 'Column<T>' requires 1 type argument(s).ts(2314)
   setColumns: (columns: Column[]) => void;
 
   // Operator map to fetch operator details
