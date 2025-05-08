@@ -22,6 +22,30 @@ export type User = {
   IsActive?: number;
 };
 
+// Define the Operator type
+export type Operator = {
+  Region: any;
+  OperatorId: number;
+  OperatorName: string;
+  Executive: string;
+  OperatorEmail: string | null;
+  Status: number;
+  CreatedAt: string;
+  DateOfOperation: string;
+  Cities: { CityId: number; CityName: string }[];
+  OperatorAddress: string;
+  OperatorContactNos: string;
+  Email: string | null;
+  ContactNo: string;
+  OperatorRepresentative: string;
+
+  LastLogin?: string;
+  LastTokenRefresh?: string;
+  UserStatusId?: number;
+  DateOfRegistration?: string;
+  IsActive?: number;
+}
+
 export type RegionData = Record<
   string,
   {

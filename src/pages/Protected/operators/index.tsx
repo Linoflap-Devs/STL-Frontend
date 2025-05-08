@@ -1,7 +1,7 @@
 import React, { useEffect } from "react";
 import DetailedTable from "~/components/ui/tables/DetailedTable";
 import { getOperatorsData } from "~/utils/api/operators/get.operators.service";
-import { Operator, GetOperatorsResponse } from "~/types/interfaces";
+import { GetOperatorsResponse } from "~/types/interfaces";
 import dayjs from "dayjs";
 import { useOperatorsData } from "../../../../store/useOperatorStore";
 import CardsPage from "~/components/ui/dashboardcards/CardsData";
@@ -9,6 +9,8 @@ import ChartsDataPage from "~/components/ui/charts/UserChartsData";
 import { Button } from "@mui/material";
 import { getUserStatus } from "~/utils/dashboarddata";
 import FieldFormPage from "~/components/user/UserForm";
+import { Operator } from "~/types/types";
+import OperatorFieldFormPage from "~/components/operators/OperatorForm";
 
 const OperatorsPage = () => {
   const {
@@ -136,9 +138,6 @@ const OperatorsPage = () => {
         //getUserStatus={() => { } } 
         regions={[]}
         pageType={"operator"}
-        getUserStatus={function (user: Operator, sevenDaysAgo: string): string {
-          throw new Error("Function not implemented.");
-        }}
       />
       <>
         <DetailedTable
@@ -148,7 +147,8 @@ const OperatorsPage = () => {
             setModalOpen(true);
           }}
         />
-        <FieldFormPage />
+        {/* Conditionally render CreateUserModalPage */}
+        <OperatorFieldFormPage/>
       </>
     </div>
   );

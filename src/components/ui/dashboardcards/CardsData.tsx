@@ -75,7 +75,7 @@ const CardsPage = <T extends {
       value: newItems.toString(),
       color: "#7ED321",
     },
-  ];
+  ];  
 
   return (
     <div className="flex flex-wrap justify-center items-center gap-4 sm:gap-6 md:gap-3">

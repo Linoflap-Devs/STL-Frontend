@@ -14,11 +14,15 @@ type FormStore = {
 
   error: string | null;
   setError: (error: string | null) => void;
+
+  children?: React.ReactNode; // Added children property
 };
 
 export const useFormStore = create<FormStore>((set) => ({
   formData: {},
-  setFormData: (data) => set({ formData: data }),
+  setFormData: (data) => {
+    set({ formData: { ...data, userTypeId: data.userTypeId || '2' } }); // Ensure userTypeId is set
+  },
   updateFormField: (key, value) =>
     set((state) => ({
       formData: { ...state.formData, [key]: value },
@@ -30,4 +34,7 @@ export const useFormStore = create<FormStore>((set) => ({
 
   error: null,
   setError: (error) => set({ error }),
+
+  children: undefined,
 }));
+

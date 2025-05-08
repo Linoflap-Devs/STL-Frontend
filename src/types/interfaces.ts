@@ -1,5 +1,5 @@
 import { extend } from "dayjs";
-import { RegionData } from "./types";
+import { Operator, RegionData } from "./types";
 
 // Type for users
 export interface User {
@@ -12,8 +12,6 @@ export interface User {
   phoneNumber: string;
   DateOfRegistration: string;
   OperatorId: number;
-  CreatedByFirstName?: string;
-  CreatedByLastName?: string;
   OperatorDetails?: {
     OperatorName?: string;
   };
@@ -24,24 +22,6 @@ export interface GetUsersResponse {
   success: boolean;
   message: string;
   data: User[];
-}
-
-// Define the Operator type
-export interface Operator {
-  Region: any;
-  OperatorId: number;
-  OperatorName: string;
-  Executive: string;
-  OperatorEmail: string | null;
-  Status: number;
-  CreatedAt: string;
-  DateOfOperation: string;
-  Cities: { CityId: number; CityName: string }[];
-  OperatorAddress: string;
-  OperatorContactNos: string;
-  Email: string | null;
-  ContactNo: string;
-  OperatorRepresentative: string;
 }
 
 // Define the API response structure for operators
@@ -128,27 +108,44 @@ export interface ChartBarItem {
   data: number[];
 }
 
-// foorm for create modal
 export interface Field {
   name: string;
   label: string;
-  type: string;
+  type: string; // e.g., "text", "select"
   placeholder?: string;
+  options?: FieldOption[]; // Only for 'select' fields
+  value: string;
+}
+
+export interface FieldOption {
+  label: string;
+  value: string;
 }
 
 export type ReusableModalPageProps = {
-  title: string; // Add the title prop
-  endpoint: string;
+  title: string;
+  endpoint: string; 
   isOpen: boolean;
   onClose: () => void;
   fields: Field[];
   onSuccess?: () => void;
   onSubmit?: (formData: Record<string, string>) => Promise<void>;
+  children: (props: { handleSubmit: () => void }) => React.ReactNode;
+  loading?: boolean; // Optional loading state
+  formData?: Record<string, string>; // Optional form data for pre-filling
+  setFormData?: (data: Record<string, string>) => void; // Optional setter for form data
+  additionalPayload?: Record<string, any>; // <- for things like UserTypeId
 };
 
 export interface CreateModalPageProps {
   open?: boolean;
   onClose?: () => void;
-  fields?: Array<{ label: string; value: string }>;
-  endpoint?: string; // Added the missing 'endpoint' property
+  fields?: Array<{
+    type: any;
+    name: any; label: string; value: string 
+}>;
+  endpoint?: string;
+  pageType?: string; // Declare pageType prop
+  additionalPayload?: Record<string, any>; // <- for things like UserTypeId
+  onFieldChange?: (name: string, value: string) => void; // Added onFieldChange property
 }

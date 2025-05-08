@@ -9,8 +9,9 @@ import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import dayjs, { Dayjs } from 'dayjs';
 import useDetailTableStore from "../../store/useTableStore";
-import { User, SortableTableCellProps, Operator } from '../types/interfaces';
+import { User, SortableTableCellProps } from '../types/interfaces';
 import { filterStyles } from "~/styles/theme";
+import { Operator } from '~/types/types';
 
 // SORTING + FILTERING COMPONENT
 export const SortableTableCell: React.FC<SortableTableCellProps> = ({
@@ -162,11 +163,11 @@ export const filterData = (
 
     if (searchValue && !Object.values(item).some((val) => filterItem("", String(val)))) {
       const fullName = `${"FirstName" in item ? item.FirstName : ""} ${"LastName" in item ? item.LastName : ""}`.toLowerCase();
-      const createdByFullName = `${"CreatedByFirstName" in item ? item.CreatedByFirstName : ""} ${"CreatedByLastName" in item ? item.CreatedByLastName : ""}`.toLowerCase();
+      // const createdByFullName = `${"CreatedByFirstName" in item ? item.CreatedByFirstName : ""} ${"CreatedByLastName" in item ? item.CreatedByLastName : ""}`.toLowerCase();
       const cities = (getNestedValue(item, "Cities") || []) as { CityName: string }[];
       const cityNames = cities.map(city => city.CityName.toLowerCase()).join(", ");
 
-      if (![fullName, createdByFullName, operatorName, cityNames].some(val => val.includes(searchValue))) {
+      if (![fullName, operatorName, cityNames].some(val => val.includes(searchValue))) {
         return false;
       }
     }

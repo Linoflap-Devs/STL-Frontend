@@ -1,13 +1,11 @@
 import { create } from "zustand";
 import { AddOperatorFormData, UpdateOperatorFormData, OperatorsStore, Operator } from '../src/types/types'
-import { Column } from "../src/types/interfaces";
+import { Column, Field } from "~/types/interfaces";
 
-interface OperatorsState {
-  // Store user data
+export interface OperatorsState {
   data: Operator[];
   setData: (data: Operator[]) => void;
-  
-  // Store table columns configuration
+
   columns: Column<Operator>[];
   setColumns: (columns: Column<Operator>[]) => void;
 
@@ -20,27 +18,38 @@ interface OperatorsState {
   setOperatorMap: (operatorMap: { [key: number]: Operator }) => void;
   setLoading: (loading: boolean) => void;
   setError: (error: string | null) => void;
-  
+
   modalOpen: boolean;
-  setModalOpen: (open: boolean) => void; // Added setModalOpen
+  setModalOpen: (open: boolean) => void;
+
+  fields: Field[];
+  setFields: (fields: Field[]) => void;
 }
 
 export const useOperatorsData = create<OperatorsState>((set) => ({
+  data: [],
+  setData: (data) => set({ data }),
+
+  columns: [],
+  setColumns: (columns) => set({ columns }),
+
   operators: [],
   operatorMap: {},
   loading: false,
   error: null,
-  columns: [],
-  data: [],
-  modalOpen: false,
-  setModalOpen: (modalOpen: any) => set({ modalOpen }),
-  setData: (data) => set({ data }),
-  setColumns: (columns) => set({ columns }),
+
   setOperators: (operators) => set({ operators }),
-  setOperatorMap: (operatorMap) => set({ operatorMap }),
+  setOperatorMap: (map) => set({ operatorMap: map }),
   setLoading: (loading) => set({ loading }),
   setError: (error) => set({ error }),
+
+  modalOpen: false,
+  setModalOpen: (open) => set({ modalOpen: open }),
+
+  fields: [],
+  setFields: (fields) => set({ fields }),
 }));
+
 
 const defaultOperatorForm: AddOperatorFormData = {
   companyName: '',

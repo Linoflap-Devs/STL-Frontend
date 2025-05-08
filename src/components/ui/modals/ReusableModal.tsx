@@ -1,44 +1,104 @@
-import React from 'react';
-import axios from 'axios';
-import { Field, ReusableModalPageProps } from '../../../types/interfaces';
-import { useFormStore } from '../../../../store/useFormStore';
-import CloseIcon from '@mui/icons-material/Close';
-import { IconButton, 
-  Button, FormControl, InputLabel, OutlinedInput, FormHelperText, Stack, Typography, Dialog, DialogTitle, DialogContent } from '@mui/material';
+// src\components\ui\modals\ReusableModal.tsx
 
-const ReusableModalPage: React.FC<ReusableModalPageProps> = ({ title, endpoint, isOpen, onClose, fields, onSuccess }) => {
+import React from 'react';
+import {
+  IconButton,
+  Button,
+  FormControl,
+  InputLabel,
+  OutlinedInput,
+  FormHelperText,
+  Stack,
+  Typography,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  Select,
+  MenuItem,
+  SelectChangeEvent,
+} from '@mui/material';
+import CloseIcon from '@mui/icons-material/Close';
+import { ReusableModalPageProps } from '~/types/interfaces';
+import { useFormStore } from '../../../../store/useFormStore';
+import axiosInstance from '~/utils/axiosInstance';
+import { AxiosError } from 'axios';
+import { useOperatorsData } from '../../../../store/useOperatorStore';
+
+const ReusableModalPage: React.FC<ReusableModalPageProps> = ({
+  title,
+  isOpen,
+  onClose,
+  fields,
+  children,
+  endpoint,
+}) => {
   const {
     formData,
     setFormData,
-    loading,
-    setLoading,
     error,
-    setError,
   } = useFormStore();
+  const { operatorMap, setOperatorMap } = useOperatorsData();
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
+  const handleSelectChange = (e: SelectChangeEvent<string>) => {
+    const { name, value } = e.target;
+  
+    if (name === "operatorId") {
+      const selectedOperator = Object.values(operatorMap).find(
+        (operator) => operator.OperatorId === parseInt(value, 10)
+      );
+  
+      if (selectedOperator) {
+        setFormData({
+          ...formData,
+          [name]: value, // Update the OperatorId
+          operatorName: selectedOperator.OperatorName, // Update the operatorName
+        });
+      }
+    } else {
+      setFormData({ ...formData, [name]: value });
+    }
+  };  
+  
   const handleSubmit = async () => {
     try {
-      setLoading(true);
-      setError(null);
-      await axios.post(endpoint, formData);
-      setFormData({});
-      onSuccess?.();
-      onClose();
-    } catch (err: any) {
-      setError(err.response?.data?.message || 'Something went wrong');
-    } finally {
-      setLoading(false);
+      const payload = {
+        ...formData,
+        userTypeId: formData.userTypeId ?? '2',
+      };
+
+      console.log("Submitting Payload:", payload);
+  
+      const response = await axiosInstance.post(endpoint, payload, {
+        withCredentials: true,
+      });
+  
+      console.log("Response:", response.data);
+    } catch (error) {
+      const err = error as AxiosError;
+      if (err.response) {
+        console.error("Error Response:", err.response.data);
+        console.error("Status:", err.response.status);
+      } else if (err.request) {
+        console.error("No response received:", err.request);
+      } else {
+        console.error("Error Message:", err.message);
+      }
     }
   };
+
+  const half = Math.ceil(fields.length / 2);
+  const col1Fields = fields.slice(0, half);
+  const col2Fields = fields.slice(half);
 
   if (!isOpen) return null;
 
   return (
-    <Dialog open={isOpen} onClose={onClose} fullWidth PaperProps={{
+    <Dialog open={isOpen} onClose={onClose} fullWidth
+    PaperProps={{
       sx: {
         width: "100%",
         maxWidth: {
@@ -50,65 +110,161 @@ const ReusableModalPage: React.FC<ReusableModalPageProps> = ({ title, endpoint, 
         },
       }
     }}>
-      <DialogTitle sx={{
-        display: "flex",
-        flexDirection: "column",
-        alignItems: "flex-start",
-        py: 0,
-      }}>
-        <IconButton
-          sx={{ backgroundColor: "#171717", alignSelf: "flex-end" }}
-          aria-label="close"
-          onClick={onClose}
-        >
+      <DialogTitle sx={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', py: 0 }}>
+        <IconButton sx={{ backgroundColor: '#171717', alignSelf: 'flex-end' }} onClick={onClose}>
           <CloseIcon sx={{ fontSize: 20, fontWeight: 700 }} />
         </IconButton>
-        <Typography variant="h5" sx={{ fontWeight: "bold", mt: -1 }}>
+        <Typography variant="h5" sx={{ fontWeight: 'bold', mt: -1 }}>
           {title}
         </Typography>
       </DialogTitle>
       <DialogContent>
-        <Stack spacing={2.5} sx={{ mt: 3 }}>
-          {fields.map((field) => (
-            <Stack key={field.name} spacing={1}>
-              <FormControl fullWidth error={!!error}>
-                <InputLabel htmlFor={field.name}>{field.label}</InputLabel>
-                <OutlinedInput
-                  id={field.name}
-                  name={field.name}
-                  type={field.type}
-                  placeholder={field.placeholder}
-                  value={formData[field.name] || ''}
-                  onChange={handleChange}
-                  label={field.label}
-                />
-                {error && (
-                  <FormHelperText>{error}</FormHelperText>
+        <Stack direction="row" spacing={2} sx={{ mt: 3 }}>
+          {/* Column 1 */}
+          <Stack flex={1} spacing={2}>
+            {col1Fields.map((field) => {
+              if (field.name === 'FirstName') {
+                return (
+                  <FormControl fullWidth variant="outlined" error={!!error} key={field.name}>
+                    <InputLabel id={`${field.name}-label`}>{field.label}</InputLabel>
+                    <OutlinedInput
+                      id={field.name}
+                      name={field.name}
+                      type={field.type}
+                      value={formData[field.name] || ''}
+                      onChange={handleChange}
+                      placeholder={field.placeholder}
+                      label={field.label}
+                    />
+                    {error && <FormHelperText>{error}</FormHelperText>}
+                  </FormControl>
+                );
+              }
+
+              if (field.name === 'LastName' || field.name === 'Suffix') {
+                return (
+                  <Stack direction="row" spacing={2} key={field.name} sx={{ width: '100%' }}>
+                    {field.name === 'LastName' && (
+                      <FormControl fullWidth variant="outlined" error={!!error} sx={{ flex: 1 }}>
+                        <InputLabel id={`${field.name}-label`}>{field.label}</InputLabel>
+                        <OutlinedInput
+                          id={field.name}
+                          name={field.name}
+                          type={field.type}
+                          value={formData[field.name] || ''}
+                          onChange={handleChange}
+                          placeholder={field.placeholder}
+                          label={field.label}
+                        />
+                        {error && <FormHelperText>{error}</FormHelperText>}
+                      </FormControl>
+                    )}
+
+                    {field.name === 'Suffix' && (
+                      <FormControl fullWidth variant="outlined" error={!!error} sx={{ flex: 1 }}>
+                        <InputLabel id={`${field.name}-label`}>{field.label}</InputLabel>
+                        <Select
+                          labelId={`${field.name}-label`}
+                          id={field.name}
+                          name={field.name}
+                          value={formData[field.name] || ''}
+                          onChange={handleSelectChange}
+                          label={field.label}
+                        >
+                          {field.options?.map((option) => (
+                            <MenuItem key={option.value} value={option.value}>
+                              {option.label}
+                            </MenuItem>
+                          ))}
+                        </Select>
+                        {error && <FormHelperText>{error}</FormHelperText>}
+                      </FormControl>
+                    )}
+                  </Stack>
+                );
+              }
+
+              return (
+                <FormControl key={field.name} fullWidth variant="outlined" error={!!error}>
+                  <InputLabel id={`${field.name}-label`}>{field.label}</InputLabel>
+                  {field.type === 'select' ? (
+                    <Select
+                      labelId={`${field.name}-label`}
+                      id={field.name}
+                      name={field.name}
+                      value={formData[field.name] || ''}
+                      onChange={handleSelectChange}
+                      label={field.label}
+                    >
+                      {field.options?.map((option) => (
+                        <MenuItem key={option.value} value={option.value}>
+                          {option.label}
+                        </MenuItem>
+                      ))}
+                    </Select>
+                  ) : (
+                    <OutlinedInput
+                      id={field.name}
+                      name={field.name}
+                      type={field.type}
+                      value={formData[field.name] || ''}
+                      onChange={handleChange}
+                      placeholder={field.placeholder}
+                      label={field.label}
+                    />
+                  )}
+                  {error && <FormHelperText>{error}</FormHelperText>}
+                </FormControl>
+              );
+            })}
+          </Stack>
+
+          {/* Column 2 */}
+          <Stack flex={1} spacing={2}>
+            {col2Fields.map((field) => (
+              <FormControl
+                key={field.name}
+                fullWidth
+                variant="outlined"
+                error={!!error}
+              >
+                <InputLabel id={`${field.name}-label`}>{field.label}</InputLabel>
+                {field.type === 'select' ? (
+                  <Select
+                    labelId={`${field.name}-label`}
+                    id={field.name}
+                    name={field.name}
+                    value={formData[field.name] || ''}
+                    onChange={handleSelectChange}
+                    label={field.label}
+                  >
+                    {field.options?.map((option) => (
+                      <MenuItem key={option.value} value={option.value}>
+                        {option.label}
+                      </MenuItem>
+                    ))}
+                  </Select>
+                ) : (
+                  <OutlinedInput
+                    id={field.name}
+                    name={field.name}
+                    type={field.type}
+                    value={formData[field.name] || ''}
+                    onChange={handleChange}
+                    placeholder={field.placeholder}
+                    label={field.label}
+                  />
                 )}
+                {error && <FormHelperText>{error}</FormHelperText>}
               </FormControl>
-            </Stack>
-          ))}
+            ))}
+          </Stack>
         </Stack>
 
-        <Stack direction="row" justifyContent="space-between" spacing={2} sx={{ mt: 3 }}>
-          <Button
-            onClick={handleSubmit}
-            disabled={loading}
-            sx={{
-              mt: 3,
-              width: "100%",
-              backgroundColor: "#67ABEB",
-              textTransform: "none",
-              fontSize: "12px",
-              padding: "0.6rem",
-              borderRadius: "8px",
-              color: "#181A1B",
-            }}
-            variant="contained"
-          >
-            {loading ? 'Submitting...' : 'Submit'}
-          </Button>
-        </Stack>
+        {/* Pass submit handler and loading state to button */}
+        <div className="mt-4">
+          {children({ handleSubmit })} {/* children as function */}
+        </div>
       </DialogContent>
     </Dialog>
   );

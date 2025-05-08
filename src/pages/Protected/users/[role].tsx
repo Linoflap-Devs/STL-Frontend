@@ -3,7 +3,7 @@ import { useRouter } from "next/router";
 import DetailedTable from "~/components/ui/tables/DetailedTable";
 import { getUsersData } from "~/utils/api/users/get.users.service";
 import { getOperatorsData } from "~/utils/api/operators/get.operators.service";
-import { User, Operator, GetUsersResponse, GetOperatorsResponse } from "~/types/interfaces";
+import { User, GetUsersResponse, GetOperatorsResponse } from "~/types/interfaces";
 import { getUserStatus } from "~/utils/dashboarddata";
 import { Button } from "@mui/material";
 import useUserRoleStore from "../../../../store/useUserStore";
@@ -11,6 +11,7 @@ import CardsPage from "~/components/ui/dashboardcards/CardsData";
 import ChartsDataPage from "~/components/ui/charts/UserChartsData";
 import dayjs from "dayjs";
 import UserFieldFormPage from "~/components/user/UserForm";
+import { Operator } from "~/types/types";
 
 const roleMap: Record<string, { label: string; textlabel: string; roleId: number }> = {
   managers: { label: "Small Town Lottery Manager", textlabel: "Managers", roleId: 2 },
@@ -29,12 +30,6 @@ const RolePage = () => {
   const roleString = typeof role === "string" ? role : role?.[0];
   const roleConfig = roleString ? roleMap[roleString.toLowerCase()] : null;
   const roleId = roleConfig?.roleId;
-
-  useEffect(() => {
-    if (roleId) {
-      setRoleId(roleId);
-    }
-  }, [roleId, setRoleId]);
 
   // fetching the operators data
   useEffect(() => {

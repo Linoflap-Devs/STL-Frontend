@@ -9,10 +9,10 @@ interface RegionSectionProps {
 
 const RegionSection: React.FC<RegionSectionProps> = ({ regionName }) => {
   const scrollContainerRef = useRef<HTMLDivElement>(null);
-
+  
   const handleScroll = (direction: 'left' | 'right') => {
     if (scrollContainerRef.current) {
-      const scrollAmount = 345 + 16; // Card width + gap (16px)
+      const scrollAmount = 345 + 16;
       scrollContainerRef.current.scrollBy({
         left: direction === 'left' ? -scrollAmount : scrollAmount,
         behavior: 'smooth',

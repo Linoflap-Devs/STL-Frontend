@@ -19,8 +19,9 @@ import PersonOffIcon from "@mui/icons-material/PersonOff";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
 import useDetailTableStore from "../../../../store/useTableStore";
 import { SortableTableCell, filterData, sortData } from "../../../utils/sortPaginationSearch";
-import { Column, Operator, User } from "../../../types/interfaces";
+import { Column, User } from "../../../types/interfaces";
 import { buttonStyles } from "~/styles/theme";
+import { Operator } from "~/types/types";
 
 interface DetailedTableProps<T> {
   data: T[];

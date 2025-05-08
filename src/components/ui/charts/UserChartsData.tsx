@@ -107,7 +107,7 @@ export const ChartsDataPage = <T extends { region: string }>({
       <ChartCard
         chartData={chartData}
         regions={regions}
-        label="Total"
+        label="Total   "
         title={`${(pageType).charAt(0).toUpperCase() + (pageType).slice(1)} Summary`}
         pageType={pageType}
       />

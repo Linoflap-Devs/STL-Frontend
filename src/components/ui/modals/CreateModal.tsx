@@ -1,36 +1,42 @@
-import React from 'react';
-import ReusableModal from './ReusableModal';
-import useUserRoleStore from '../../../../store/useUserStore';
-import axios from 'axios';
-import { CreateModalPageProps } from '~/types/interfaces';
+// src\components\ui\modals\CreateModal.tsx
 
-const CreateModalPage: React.FC<CreateModalPageProps> = ({ open, onClose, fields = [], endpoint = '' }) => {
-  const { modalOpen, setModalOpen } = useUserRoleStore();
+import React, { useState } from 'react';
+import { CreateModalPageProps, Field } from '../../../types/interfaces';
+import ReusableButton from "../button/ReusableSubmitButton";
+import ReusableModal from "./ReusableModal";
 
-  const isOpen = open ?? modalOpen;
-  const handleClose = onClose ?? (() => setModalOpen(false));
+const CreateModalPage: React.FC<CreateModalPageProps> = ({ open, onClose, fields = [], endpoint = '', pageType, onFieldChange }) => {
+  const [loading, setLoading] = useState(false);
+  const isOpen = open ?? true;
+  const handleClose = onClose ?? (() => { });
 
-  // Handle form submission
-  const handleSubmit = async (formData: Record<string, string>) => {
-    try {
-      await axios.post(endpoint, formData);
-      // Handle success and close the modal
-      handleClose();
-    } catch (error) {
-      console.error('Error submitting form:', error);
-    }
+  const getModalTitle = (pageType: string) => {
+    const titles: Record<string, string> = {
+      managers: "Add Manager",
+      executives: "Add Executive",
+      operators: "Add Operator",
+    };
+    return titles[pageType] || "Add User";
   };
 
-  return (    
-    <ReusableModal
-      isOpen={isOpen}
-      onClose={handleClose}
-      title={`Add New ${fields[0]?.label?.split(' ')[0]}`}
-      //fields={fields}
-      endpoint={endpoint}
-      onSubmit={handleSubmit} 
-      fields={[]}
-    />
+  return (
+    <>
+      <ReusableModal
+        isOpen={isOpen}
+        onClose={handleClose}
+        endpoint={endpoint}
+        fields={fields}
+        title={getModalTitle(pageType || '')}
+      >
+        {({ handleSubmit }) => (
+          <ReusableButton
+            handleSubmit={handleSubmit}
+            loading={loading}
+            label="Submit"
+          />
+        )}
+      </ReusableModal>
+    </>
   );
 };
 
