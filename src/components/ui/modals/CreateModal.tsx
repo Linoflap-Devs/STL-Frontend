@@ -1,22 +1,41 @@
-// src\components\ui\modals\CreateModal.tsx
-
 import React, { useState } from 'react';
-import { CreateModalPageProps, Field } from '../../../types/interfaces';
+import { ModalPageProps, Field } from '../../../types/interfaces';
 import ReusableButton from "../button/ReusableSubmitButton";
-import ReusableModal from "./ReusableModal";
+import ReusableModal from "./ReusableCreateModal";
+import useUserRoleStore from '../../../../store/useUserStore';
 
-const CreateModalPage: React.FC<CreateModalPageProps> = ({ open, onClose, fields = [], endpoint = '', pageType, onFieldChange }) => {
+export const isManager = (roleId: number) => roleId === 2;
+export const isExecutive = (roleId: number) => roleId === 3;
+
+const CreateModalPage: React.FC<ModalPageProps> = ({
+  open,
+  onClose,
+  fields = [],
+  endpoint = '',
+}) => {
   const [loading, setLoading] = useState(false);
   const isOpen = open ?? true;
-  const handleClose = onClose ?? (() => { });
+  const handleClose = onClose ?? (() => {});
+  const { roleId } = useUserRoleStore();
 
-  const getModalTitle = (pageType: string) => {
-    const titles: Record<string, string> = {
-      managers: "Add Manager",
-      executives: "Add Executive",
-      operators: "Add Operator",
-    };
-    return titles[pageType] || "Add User";
+  // getting the name
+  const getRoleName = () => {
+    if (typeof window !== 'undefined') {
+      const pathname = window.location.pathname;
+
+      if (pathname.includes('managers')) return 'Manager';
+      if (pathname.includes('executives')) return 'Executive';
+      if (pathname.includes('operators')) return 'Operator';
+    }
+
+    switch (roleId) {
+      case 2:
+        return 'Manager';
+      case 3:
+        return 'Executive';
+      default:
+        return 'Operator';
+    }
   };
 
   return (
@@ -26,7 +45,7 @@ const CreateModalPage: React.FC<CreateModalPageProps> = ({ open, onClose, fields
         onClose={handleClose}
         endpoint={endpoint}
         fields={fields}
-        title={getModalTitle(pageType || '')}
+        title={`Add ${getRoleName()}`}
       >
         {({ handleSubmit }) => (
           <ReusableButton

@@ -1,4 +1,3 @@
-
 // for dashboard cards
 export type DashboardData = {
   totalUsers: number;
@@ -24,6 +23,7 @@ export type User = {
 
 // Define the Operator type
 export type Operator = {
+  OperatorRegion: any;
   Region: any;
   OperatorId: number;
   OperatorName: string;

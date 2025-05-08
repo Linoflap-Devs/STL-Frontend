@@ -95,6 +95,7 @@ const  ModalUpdateOperator = ({ open, onClose }: UpdateOperatorModalProps) => {
         remarks: ''
       }
     })
+    
     const onSubmit: SubmitHandler<UpdateOperatorFormData> = (data: z.infer<typeof updateOperatorSchema>) => {
       console.log("Validated Data: ", data);
       // create POST request

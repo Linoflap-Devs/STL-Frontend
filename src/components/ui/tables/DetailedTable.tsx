@@ -1,4 +1,4 @@
-import React, { useMemo } from "react";
+import React, { useState, useMemo } from "react";
 import {
   Table,
   TableBody,
@@ -19,25 +19,15 @@ import PersonOffIcon from "@mui/icons-material/PersonOff";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
 import useDetailTableStore from "../../../../store/useTableStore";
 import { SortableTableCell, filterData, sortData } from "../../../utils/sortPaginationSearch";
-import { Column, User } from "../../../types/interfaces";
+import { User, DetailedTableProps } from "../../../types/interfaces";
 import { buttonStyles } from "~/styles/theme";
 import { Operator } from "~/types/types";
-
-interface DetailedTableProps<T> {
-  data: T[];
-  columns: Column<T>[];
-  onCreate?: () => void;
-  actionsRender?: (row: T) => React.ReactNode;
-  pageType?: "manager" | "executive";
-  showExportButton?: boolean;
-  onExportCSV?: () => void;
-  operatorMap?: { [key: number]: Operator };
-}
+import useUserRoleStore from "../../../../store/useUserStore";
+import { useModalStore } from "../../../../store/useModalStore";
 
 const DetailedTable = <T extends User | Operator>({
   data,
   columns,
-  onCreate,
   actionsRender,
   pageType,
   showExportButton = true,
@@ -60,7 +50,12 @@ const DetailedTable = <T extends User | Operator>({
     setAnchorEl,
     setSelectedRow,
     resetMenu,
+    setModalType
   } = useDetailTableStore();
+
+  const {
+    setModalOpen
+  } = useUserRoleStore();
 
   // FILTER + SEARCH
   const filteredData = useMemo(() => {
@@ -82,13 +77,18 @@ const DetailedTable = <T extends User | Operator>({
     return sortedData.slice(start, start + rowsPerPage);
   }, [sortedData, page, rowsPerPage]);
 
-  function handleView(row: Operator | User): void {
-    throw new Error("Function not implemented.");
-  }
+  // Function to handle opening the modal
+  const handleView = (row: any) => {
+    setSelectedRow(row);
+    setModalType("view");
+    setModalOpen(true);
+  };
 
-  function handleDelete(row: Operator | User): void {
-    throw new Error("Function not implemented.");
-  }
+  const handleDelete = (row: any) => {
+    console.log("Deleting row:", row);
+    setSelectedRow(row);
+    // Add delete functionality as needed
+  };
 
   return (
     <React.Fragment>
@@ -111,15 +111,15 @@ const DetailedTable = <T extends User | Operator>({
               {isFilterActive ? <FilterListOffIcon /> : <FilterListIcon />}
             </IconButton>
           </div>
-            {onCreate && (
-              <Button variant="contained" onClick={onCreate} sx={buttonStyles}>
-                {pageType === "manager"
-                  ? "Add Manager"
-                  : pageType === "executive"
-                  ? "Add Executive"
-                  : "Add Operator"}
-              </Button>
-            )}
+
+          <Button variant="contained" onClick={() => useModalStore.getState().openModal("create")} sx={buttonStyles}>
+            {pageType === "manager"
+              ? "Add Manager"
+              : pageType === "executive"
+                ? "Add Executive"
+                : "Add Operator"}
+          </Button>
+
         </div>
         <Table size="small">
           <TableHead>
@@ -142,8 +142,8 @@ const DetailedTable = <T extends User | Operator>({
           <TableBody>
             {paginatedData.length === 0 ? (
               <TableRow>
-                <TableCell colSpan={columns.length + (actionsRender ? 1 : 0)} align="center">
-                  <div className="flex flex-col items-center py-5">
+                <TableCell colSpan={columns.length + (actionsRender ? 1 : 1)} align="center">
+                  <div className="flex flex-col items-center py-6">
                     <PersonOffIcon className="text-gray-500" style={{ fontSize: 50 }} />
                     <h6 className="mt-2 font-medium text-gray-400 text-lg">
                       {pageType === "manager" ? "No managers available" : "No executives available"}
@@ -174,31 +174,35 @@ const DetailedTable = <T extends User | Operator>({
                     );
                   })}
                   <TableCell>
-                    <IconButton onClick={(e) => {
-                      setAnchorEl(e.currentTarget);
-                      setSelectedRow(row as T);
-                    }}>
+                    <IconButton
+                      onClick={(e) => {
+                        setAnchorEl(e.currentTarget);
+                        setSelectedRow(row as T);
+                      }}
+                    >
                       <MoreVertIcon />
                     </IconButton>
+
                     <Menu
                       anchorEl={anchorEl}
                       open={Boolean(anchorEl)}
                       onClose={resetMenu}
                     >
-                      <MenuItem onClick={() => {
-                        handleView(selectedRow);
-                        resetMenu();
-                      }}>
+                      <MenuItem
+                        onClick={() => useModalStore.getState().openModal("view", selectedRow)}>
                         View
                       </MenuItem>
-                      <MenuItem onClick={() => {
-                        handleDelete(selectedRow);
-                        resetMenu();
-                      }}>
+                      <MenuItem
+                        onClick={() => {
+                          if (selectedRow) handleDelete(selectedRow);
+                          resetMenu();
+                        }}
+                      >
                         Delete
                       </MenuItem>
                     </Menu>
                   </TableCell>
+
                 </TableRow>
               ))
             )}

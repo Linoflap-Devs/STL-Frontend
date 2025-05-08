@@ -1,5 +1,4 @@
-import { extend } from "dayjs";
-import { Operator, RegionData } from "./types";
+import { Operator } from "./types";
 
 // Type for users
 export interface User {
@@ -15,6 +14,7 @@ export interface User {
   OperatorDetails?: {
     OperatorName?: string;
   };
+  region: string;
 }
 
 // Define the API response structure for users
@@ -40,7 +40,6 @@ export interface Column<T> {
   filterable?: boolean;
   filterKey?: string;
 
-  // Custom props (optional)
   sortKey?: string;
   filterValue?: string | ((row: T) => string);
   onFilterChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
@@ -96,10 +95,24 @@ export interface UseUsersChartsDataProps<T> {
   regions: string[];
 }
 
-export interface ChartsDataPageProps<T extends { region: string }> extends UseUsersChartsDataProps<T> {
-  userType: string;
-  getUserStatus: (user: T, sevenDaysAgo: string) => string;
-  pageType: "manager" | "executive" | "operator";
+export interface ChartsDataPageProps<T extends { region: string }> {
+  dashboardData?: T[];
+  userType?: string;
+  getUserStatus?: (user: T, date: string) => string;
+  pageType?: "manager" | "executive" | "operator";
+  regions: string[];
+  operatorMap?: Record<number, Operator>;
+}
+
+export interface DetailedTableProps<T> {
+  data: T[];
+  columns: Column<T>[];
+  onCreate?: () => void;
+  actionsRender?: (row: T) => React.ReactNode;
+  pageType?: "manager" | "executive";
+  showExportButton?: boolean;
+  onExportCSV?: () => void;
+  operatorMap?: Record<number, Operator>;
 }
 
 export interface ChartBarItem {
@@ -108,12 +121,21 @@ export interface ChartBarItem {
   data: number[];
 }
 
+export interface RegionUser {
+  OperatorRegion?: {
+    RegionFull: string;
+    RegionId: number;
+    RegionName: string;
+  };
+  region: string;
+}
+
 export interface Field {
   name: string;
   label: string;
-  type: string; // e.g., "text", "select"
+  type: string;
   placeholder?: string;
-  options?: FieldOption[]; // Only for 'select' fields
+  options?: FieldOption[];
   value: string;
 }
 
@@ -124,28 +146,35 @@ export interface FieldOption {
 
 export type ReusableModalPageProps = {
   title: string;
-  endpoint: string; 
+  endpoint: string;
   isOpen: boolean;
   onClose: () => void;
   fields: Field[];
   onSuccess?: () => void;
   onSubmit?: (formData: Record<string, string>) => Promise<void>;
   children: (props: { handleSubmit: () => void }) => React.ReactNode;
-  loading?: boolean; // Optional loading state
-  formData?: Record<string, string>; // Optional form data for pre-filling
-  setFormData?: (data: Record<string, string>) => void; // Optional setter for form data
-  additionalPayload?: Record<string, any>; // <- for things like UserTypeId
+  loading?: boolean;
+  formData?: Record<string, string>;
+  setFormData?: (data: Record<string, string>) => void;
+  additionalPayload?: Record<string, any>;
+  initialUserData?: any;
+  operatorMap?: { [key: number]: Operator };
 };
 
-export interface CreateModalPageProps {
+export interface ModalPageProps {
   open?: boolean;
   onClose?: () => void;
   fields?: Array<{
     type: any;
-    name: any; label: string; value: string 
-}>;
+    name: any; label: string; value: string
+  }>;
   endpoint?: string;
   pageType?: string; // Declare pageType prop
   additionalPayload?: Record<string, any>; // <- for things like UserTypeId
   onFieldChange?: (name: string, value: string) => void; // Added onFieldChange property
+  initialUserData?: any; // <-- Add this
+  operatorMap?: { [key: number]: Operator };
 }
+
+
+

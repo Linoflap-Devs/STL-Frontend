@@ -6,6 +6,8 @@ import { useOperatorsData } from '../../../store/useOperatorStore';
 import { getOperatorsData } from '~/utils/api/operators/get.operators.service';
 import { GetOperatorsResponse } from '~/types/interfaces';
 import { Operator } from '~/types/types';
+import UpdateModalPage from '../ui/modals/UpdateModal';
+import { useModalStore } from '../../../store/useModalStore';
 
 const roleConfigs = {
   manager: {
@@ -59,8 +61,9 @@ const roleConfigs = {
 };
 
 const UserFieldFormPage: React.FC = () => {
-  const { modalOpen, setModalOpen, setFields, fields, setRoleId } = useUserRoleStore();
+  const {  setFields, fields, setRoleId } = useUserRoleStore();
   const { operatorMap, setOperatorMap } = useOperatorsData();
+  const { modalOpen, modalType, selectedData, closeModal } = useModalStore();
 
   const pathname = typeof window !== 'undefined' ? window.location.pathname : '';
   const pageType =
@@ -115,13 +118,24 @@ const UserFieldFormPage: React.FC = () => {
 
   return (
     <div className="p-4">
-      <CreateModalPage
-        open={modalOpen}
-        onClose={() => setModalOpen(false)}
-        fields={fields}
-        endpoint={roleConfig.endpoint}
-        additionalPayload={{ userTypeId: roleConfigs[pageType].userTypeId }}
+      {modalType === "create" && (
+        <CreateModalPage
+          open={modalOpen}
+          onClose={closeModal}
+          fields={fields}
+          endpoint={roleConfig.endpoint} 
       />
+      )}
+      {modalType === "view" && (
+        <UpdateModalPage
+          open={modalOpen}
+          onClose={closeModal}
+          fields={fields}
+          endpoint={roleConfig.endpoint}
+          initialUserData={selectedData}
+          operatorMap={operatorMap}
+        />
+      )}
     </div>
   );
 };

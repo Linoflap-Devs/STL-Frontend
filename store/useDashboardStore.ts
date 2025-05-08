@@ -1,45 +1,38 @@
 // store/dashboardStore.ts
 import { create } from "zustand";
 import dayjs from "dayjs";
-import { ChartBarItem } from "~/types/interfaces"; // Make sure this path is correct
+import { ChartBarItem } from "~/types/interfaces";
 
-// Define the type for dashboard data (replace with the actual type if available)
-interface DashboardData {
+export interface DashboardData {
   LastLogin?: string;
   LastTokenRefresh?: string;
   UserStatusId?: number;
   DateOfRegistration?: string;
   IsActive?: number;
-  // Add any other properties here based on your data
 }
 
-interface DashboardState {
-  dashboardData: DashboardData[];
-  setDashboardData: (data: DashboardData[]) => void;
-
+export interface DashboardState {
   roleConfig: { label: string; roleId: number } | null;
-  setRoleConfig: (config: { label: string; roleId: number } | null) => void;
-
-  sevenDaysAgo: dayjs.Dayjs;
-  updateThreshold: (days: number) => void;
-
+  dashboardData: DashboardData[];
   chartData: ChartBarItem[];
+  sevenDaysAgo: dayjs.Dayjs;
+
+  setDashboardData: (data: DashboardData[]) => void;
+  setRoleConfig: (config: { label: string; roleId: number } | null) => void;
+  updateThreshold: (days: number) => void;
   setChartData: (data: ChartBarItem[]) => void;
 }
 
-// Create the Zustand store
 const useDashboardStore = create<DashboardState>((set) => ({
   dashboardData: [],
-  setDashboardData: (data) => set({ dashboardData: data }),
-
-  roleConfig: null,
-  setRoleConfig: (config) => set({ roleConfig: config }),
-
   sevenDaysAgo: dayjs().subtract(7, "days"),
+  roleConfig: null,
+  chartData: [],
+
+  setRoleConfig: (config) => set({ roleConfig: config }),
+  setDashboardData: (data) => set({ dashboardData: data }),
   updateThreshold: (days) =>
     set({ sevenDaysAgo: dayjs().subtract(days, "days") }),
-
-  chartData: [],
   setChartData: (data) => set({ chartData: data }),
 }));
 

@@ -1,9 +1,6 @@
-// src\components\ui\modals\ReusableModal.tsx
-
 import React from 'react';
 import {
   IconButton,
-  Button,
   FormControl,
   InputLabel,
   OutlinedInput,
@@ -23,6 +20,7 @@ import { useFormStore } from '../../../../store/useFormStore';
 import axiosInstance from '~/utils/axiosInstance';
 import { AxiosError } from 'axios';
 import { useOperatorsData } from '../../../../store/useOperatorStore';
+import useUserRoleStore from '../../../../store/useUserStore';
 
 const ReusableModalPage: React.FC<ReusableModalPageProps> = ({
   title,
@@ -38,6 +36,7 @@ const ReusableModalPage: React.FC<ReusableModalPageProps> = ({
     error,
   } = useFormStore();
   const { operatorMap, setOperatorMap } = useOperatorsData();
+  const { roleId } = useUserRoleStore();
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -45,17 +44,15 @@ const ReusableModalPage: React.FC<ReusableModalPageProps> = ({
 
   const handleSelectChange = (e: SelectChangeEvent<string>) => {
     const { name, value } = e.target;
-  
     if (name === "operatorId") {
       const selectedOperator = Object.values(operatorMap).find(
         (operator) => operator.OperatorId === parseInt(value, 10)
       );
-  
       if (selectedOperator) {
         setFormData({
           ...formData,
-          [name]: value, // Update the OperatorId
-          operatorName: selectedOperator.OperatorName, // Update the operatorName
+          [name]: value,
+          operatorName: selectedOperator.OperatorName,
         });
       }
     } else {
@@ -64,29 +61,20 @@ const ReusableModalPage: React.FC<ReusableModalPageProps> = ({
   };  
   
   const handleSubmit = async () => {
+    //setIsLoading(true);
     try {
       const payload = {
         ...formData,
-        userTypeId: formData.userTypeId ?? '2',
+        ...(roleId && { userTypeId: roleId }),
       };
-
-      console.log("Submitting Payload:", payload);
-  
       const response = await axiosInstance.post(endpoint, payload, {
         withCredentials: true,
       });
-  
-      console.log("Response:", response.data);
+      //console.log("Response:", response.data);
     } catch (error) {
       const err = error as AxiosError;
-      if (err.response) {
-        console.error("Error Response:", err.response.data);
-        console.error("Status:", err.response.status);
-      } else if (err.request) {
-        console.error("No response received:", err.request);
-      } else {
-        console.error("Error Message:", err.message);
-      }
+    } finally {
+      //setIsLoading(false);
     }
   };
 
@@ -260,10 +248,8 @@ const ReusableModalPage: React.FC<ReusableModalPageProps> = ({
             ))}
           </Stack>
         </Stack>
-
-        {/* Pass submit handler and loading state to button */}
         <div className="mt-4">
-          {children({ handleSubmit })} {/* children as function */}
+          {children({ handleSubmit })}
         </div>
       </DialogContent>
     </Dialog>

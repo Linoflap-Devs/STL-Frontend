@@ -8,7 +8,6 @@ import CardsPage from "~/components/ui/dashboardcards/CardsData";
 import ChartsDataPage from "~/components/ui/charts/UserChartsData";
 import { Button } from "@mui/material";
 import { getUserStatus } from "~/utils/dashboarddata";
-import FieldFormPage from "~/components/user/UserForm";
 import { Operator } from "~/types/types";
 import OperatorFieldFormPage from "~/components/operators/OperatorForm";
 
@@ -133,11 +132,10 @@ const OperatorsPage = () => {
         textlabel={textlabel || ""}
       />
       <ChartsDataPage
-        dashboardData={data}
-        userType={""}
-        //getUserStatus={() => { } } 
+        userType="operator"
+        pageType="operator"
         regions={[]}
-        pageType={"operator"}
+        dashboardData={data.map(op => ({ ...op, region: op.OperatorRegion?.RegionName ?? "Unknown" }))}
       />
       <>
         <DetailedTable
@@ -145,7 +143,7 @@ const OperatorsPage = () => {
           columns={columns}
           onCreate={() => {
             setModalOpen(true);
-          }}
+          } } 
         />
         {/* Conditionally render CreateUserModalPage */}
         <OperatorFieldFormPage/>

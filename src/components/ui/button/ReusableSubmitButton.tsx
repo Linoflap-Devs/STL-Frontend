@@ -2,7 +2,7 @@
 import React from 'react';
 import { Button } from '@mui/material';
 
-interface ReusableButtonProps {
+export interface ReusableButtonProps {
 handleSubmit: () => void;       // The function to call on button click
   loading: boolean;          // Loading state to disable button and change text
   label: string;             // Button text

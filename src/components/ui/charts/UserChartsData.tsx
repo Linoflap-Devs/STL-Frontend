@@ -1,7 +1,8 @@
 import { useEffect, useState } from "react";
-import { ChartBarItem, ChartsDataPageProps } from "~/types/interfaces";
+import { ChartBarItem, ChartsDataPageProps, RegionUser } from "~/types/interfaces";
 import useDashboardStore from "../../../../store/useDashboardStore";
 import ChartCard from "./UserCharts";
+import { getUserStatus } from "~/utils/dashboarddata";
 
 const regionMap: Record<string, string> = {
   "I": "Region I",
@@ -28,88 +29,102 @@ const regions: string[] = [
   "IX", "X", "XI", "XII", "XIII", "BARMM", "CAR", "NCR"
 ];
 
-export const ChartsDataPage = <T extends { region: string }>({
+export const ChartsDataPage = <T extends RegionUser & { OperatorName?: string }>({
   dashboardData,
   userType,
-  getUserStatus,
   pageType,
 }: ChartsDataPageProps<T>) => {
   const { sevenDaysAgo, setChartData } = useDashboardStore();
   const [chartData, setLocalChartData] = useState<ChartBarItem[]>([]);
-  
+
   useEffect(() => {
-    if (!dashboardData || dashboardData.length === 0) {
-      return;
-    }
+    console.log(dashboardData);
+    if (!dashboardData || dashboardData.length === 0) return;
+  
+    const statsPerRegion = regions.map((regionShort) => {
+      const regionFull = regionMap[regionShort];
+  
+      const users = dashboardData.filter(
+        (user) => user.OperatorRegion?.RegionName === regionFull
+      );
+  
+      let active = 0, inactive = 0, deleted = 0, newlyRegistered = 0;
+  
+      users.forEach((user) => {
+        const status = getUserStatus(user, sevenDaysAgo) ?? "Unknown";
+        console.log("getUserStatus returned:", status);
+        console.log("User:", user.OperatorName, "| Status:", status);
 
-    const statsPerRegion = regions.map((region) => {
-      const mappedRegion = regionMap[region];
-      const users = dashboardData.filter((user) => user.region === mappedRegion);
-
-      let active = 0, inactive = 0, suspended = 0, newlyRegistered = 0;
-
-      users.forEach((user: T) => {
-        const status = getUserStatus(user, sevenDaysAgo.toISOString());
-        
         switch (status) {
-          case "Active": active++; break;
-          case "Inactive": inactive++; break;
-          case "Suspended": suspended++; break;
-          case "New": newlyRegistered++; break;
+          case "Active":
+            active++;
+            break;
+          case "Inactive":
+            inactive++;
+            break;
+          case "Deleted":
+            deleted++;
+            break;
+          case "New":
+            newlyRegistered++;
+            break;
+          default:
+          console.warn("Unmatched status:", status);
         }
       });
-
+  
       return {
-        region,
+        region: regionShort,
         total: users.length,
         active,
         inactive,
-        suspended,
+        deleted,
         new: newlyRegistered,
       };
     });
-
+  
     const newChartData: ChartBarItem[] = [
       {
-        label: `Total ${userType}s`,
+        label: `Total ${pageType}s`,
         color: "#BB86FC",
         data: statsPerRegion.map((r) => r.total),
       },
       {
-        label: `Active ${userType}s`,
+        label: `Active ${pageType}s`,
         color: "#5050A5",
         data: statsPerRegion.map((r) => r.active),
       },
       {
-        label: `Inactive ${userType}s`,
+        label: `Inactive ${pageType}s`,
         color: "#7266C9",
         data: statsPerRegion.map((r) => r.inactive),
       },
       {
-        label: `Suspended ${userType}s`,
+        label: `Deleted ${pageType}s`,
         color: "#3B3B81",
-        data: statsPerRegion.map((r) => r.suspended),
+        data: statsPerRegion.map((r) => r.deleted),
       },
       {
-        label: `New ${userType}s`,
+        label: `New ${pageType}s`,
         color: "#282A68",
         data: statsPerRegion.map((r) => r.new),
       },
     ];
-
+  
+    console.log("Regions:", regions);
+    console.log("Chart data:", newChartData.map((item) => item.data));
+  
     setLocalChartData(newChartData);
     setChartData(newChartData);
-
-  }, [dashboardData, regions, regionMap, sevenDaysAgo, setChartData, userType, getUserStatus]);
+  }, [dashboardData, userType, sevenDaysAgo, setChartData]);
 
   return (
     <div>
       <ChartCard
         chartData={chartData}
         regions={regions}
-        label="Total   "
-        title={`${(pageType).charAt(0).toUpperCase() + (pageType).slice(1)} Summary`}
-        pageType={pageType}
+        title={`${(pageType ?? "Unknown").charAt(0).toUpperCase() + (pageType ?? "Unknown").slice(1)} Summary`}
+        pageType={pageType ?? "operator"}
       />
     </div>
   );

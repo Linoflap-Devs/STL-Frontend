@@ -20,7 +20,7 @@ export const getUserStatus = (user: any, sevenDaysAgo: dayjs.Dayjs): string => {
   ) {
     status = "New";
   } else {
-    console.log("Status remains Active");
+    //console.log("Status remains Active");
   }
 
   return status;

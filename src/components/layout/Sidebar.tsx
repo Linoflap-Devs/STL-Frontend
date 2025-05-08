@@ -49,28 +49,27 @@ const Sidebar: React.FC = () => {
   //  if the current URL path(currentPath) starts with a certain group path (groupPath)
   const isGroupActive = (groupPath: string) => currentPath.startsWith(groupPath);
 
-
   const [collapsed, setCollapsed] = useState(false);
   // State whether open the submenu for Betting and Winning or not
   const [openSubmenu, setOpenSubmenu] = useState<string | null>(null);
   const toggleCollapse = () => setCollapsed(!collapsed);
 
-
   // Date Time
   const [dateTime, setDateTime] = useState<Date | null>(null);
   const formattedDate =
-  dateTime?.toLocaleDateString("en-PH", {
-    month: "long",
-    day: "numeric",
-    year: "numeric",
-  }) ?? "N/A";
+    dateTime?.toLocaleDateString("en-PH", {
+      month: "long",
+      day: "numeric",
+      year: "numeric",
+    }) ?? "N/A";
   const formattedTime =
-  dateTime?.toLocaleTimeString("en-PH", {
-    hour: "2-digit",
-    minute: "2-digit",
-    second: "2-digit",
-    hour12: true,
-  }) ?? "N/A";
+    dateTime?.toLocaleTimeString("en-PH", {
+      hour: "2-digit",
+      minute: "2-digit",
+      second: "2-digit",
+      hour12: true,
+    }) ?? "N/A";
+
   useEffect(() => {
     const updateDateTime = () => setDateTime(new Date());
     updateDateTime();
@@ -82,7 +81,7 @@ const Sidebar: React.FC = () => {
     setSideBarActiveGameType(subItem.name as gameType);
     router.push(subItem.path);
   };
-  
+
   // Menu
   const renderMenuItem = (label: string) => {
     const iconSize = 20;
@@ -115,21 +114,21 @@ const Sidebar: React.FC = () => {
       routeMap[label] ?? `/${label.toLowerCase().replace(/\s+/g, "-")}`;
 
     if (
-      label === "Betting Summary" || 
+      label === "Betting Summary" ||
       label === "Winning Summary" ||
       label === "Draw Summary"
     ) {
       // Object we'll referencing on creating divs
       let submenu;
       if (label === "Betting Summary") submenu = BETTING_SUBMENUS;
-      else if(label === "Winning Summary") submenu = WINNING_SUBMENUS;
+      else if (label === "Winning Summary") submenu = WINNING_SUBMENUS;
       else submenu = DRAW_SUBMENUS;
 
       return (
         <div key={label}>
           <div
             onClick={() => {
-              {/* openSubmenu === current label */}
+              {/* openSubmenu === current label */ }
               setOpenSubmenu(openSubmenu === label ? null : label);
               {/* 
                 if user is not already inside the sidebar group
@@ -140,13 +139,13 @@ const Sidebar: React.FC = () => {
                 Inly direct to dashboard if available
               */}
               if (!isGroupActive(path)) {
-                if(label === "Betting Summary" || label === "Winning Summary"){
+                if (label === "Betting Summary" || label === "Winning Summary") {
                   setSideBarActiveGameType("Dashboard");
                   router.push(`${path}/dashboard`);
                 } else {
                   // For Draw Summary, just navigate to the first submenu path
                   const firstPath = submenu[0]?.path;
-                  if(firstPath) {
+                  if (firstPath) {
                     setSideBarActiveGameType(submenu[0].name as gameType)
                     // router.push(`${path}/${firstPath}`)
                     router.push(firstPath)
@@ -219,41 +218,51 @@ const Sidebar: React.FC = () => {
       <div
         className={clsx(
           "px-4 py-4 flex items-center",
-          collapsed ? "flex-col justify-center" : "flex-row justify-between"
+          collapsed ? "flex-col justify-center" : "flex-row justify-center"
         )}
       >
-        <button
-          onClick={toggleCollapse}
-          className="mb-2 flex items-center justify-center bg-[#D5D5D5] text-[#171717] rounded-full w-8 h-8 p-1 hover:bg-gray-300 transition-colors duration-200"
-        >
-          {collapsed ? (
-            <FaChevronRight size={16} />
-          ) : (
-            <FaChevronLeft size={16} />
-          )}
-        </button>
+        {/* User Section */}
+        <div className="p-0 pt-1 border border-gray-300 rounded-md w-full">
+          <div className="flex justify-between px-3 p-3 w-full">
+            {/* Toggle Collapse Icon (Left Corner) */}
+            <button
+              onClick={toggleCollapse}
+              className="flex justify-center items-center bg-[#D5D5D5] text-[#171717] rounded-full w-6 h-6 p-1 hover:bg-gray-300 transition-colors duration-200"
+            >
+              {collapsed ? (
+                <FaChevronRight size={12} />
+              ) : (
+                <FaChevronLeft size={12} />
+              )}
+            </button>
 
-        <div className="flex items-center">
-          <img
-            src={UserSectionData.image}
-            alt="Logo"
-            className={clsx(
-              "transition-all duration-300",
-              collapsed ? "w-10 mt-4" : "w-14"
-            )}
-          />
+            {/* Logo (Right Corner) */}
+            <div className="flex ml-auto">
+              <img
+                src={UserSectionData.image}
+                alt="Logo"
+                className={clsx(
+                  "transition-all duration-300",
+                  collapsed ? "w-10" : "max-w-[8rem]"
+                )}
+              />
+            </div>
+          </div>
+
+          {/* Time and Date */}
+          {!collapsed && (
+            <div className="px-3 py-2">
+              <div className="text-xs md:text-sm lg:text-2xl font-bold">
+                {formattedTime}
+              </div>
+              <div className="text-xs text-[#D5D5D5]">{formattedDate}</div>
+            </div>
+          )}
         </div>
+
       </div>
 
-      {!collapsed && (
-        <div className="bg-[#2F2F2F] rounded-md mx-4 p-4 mb-4">
-          <div className="text-xs text-[#D5D5D5]">{formattedDate}</div>
-          <div className="text-xs md:text-sm lg:text-2xl font-bold">
-            {formattedTime}
-          </div>
-        </div>
-      )}
-
+      {/* Navigation Menu */}
       <nav className="flex-1 px-2 space-y-4">
         {UserSectionData.pages.map(renderMenuItem)}
       </nav>

@@ -19,14 +19,20 @@ const roleMap: Record<string, { label: string; textlabel: string; roleId: number
 };
 
 const RolePage = () => {
+  const { 
+    data, 
+    setData, 
+    columns, 
+    setColumns, 
+    setRoleId, 
+    modalOpen, 
+    setModalOpen 
+  } = useUserRoleStore();
   const router = useRouter();
   const { role } = router.query;
   const pagetype = window.location.pathname.includes("manager") ? "manager" : "executive";
-
   const operatorMap = useUserRoleStore((state) => state.operatorMap);
   const setOperatorMap = useUserRoleStore((state) => state.setOperatorMap);
-  const { data, setData, columns, setColumns, setRoleId, modalOpen, setModalOpen } = useUserRoleStore();
-
   const roleString = typeof role === "string" ? role : role?.[0];
   const roleConfig = roleString ? roleMap[roleString.toLowerCase()] : null;
   const roleId = roleConfig?.roleId;
@@ -41,7 +47,7 @@ const RolePage = () => {
             map[operator.OperatorId] = operator;
             return map;
           }, {});
-          setOperatorMap(operatorMap);
+          setOperatorMap({ ...operatorMap });
         } else {
           setOperatorMap({});
         }
@@ -165,22 +171,16 @@ const RolePage = () => {
         userType={""}
         regions={[]}
         pageType={pagetype}
-        getUserStatus={function (user: { region: string; }, sevenDaysAgo: string): string {
-          throw new Error("Function not implemented.");
-        }}
-        dashboardData={[]}
+        dashboardData={data}
       />
       {/* Detailed Table */}
       <>
         <DetailedTable
           data={data}
           columns={columns}
-          operatorMap={operatorMap}
           pageType={pagetype}
-          onCreate={() => {
-            setModalOpen(true);
-          }}
-        />
+          operatorMap={operatorMap}
+          />
         {/* Conditionally render CreateUserModalPage */}
         <UserFieldFormPage />
       </>

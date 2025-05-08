@@ -16,9 +16,7 @@ const CardsPage = <T extends {
   IsActive?: number;
 }>({
   dashboardData,
-  roleLabel,
   textlabel,
-  cardData,
 }: CardsPageProps<T>) => {
   
   // Get the date for seven days ago
@@ -76,7 +74,7 @@ const CardsPage = <T extends {
       color: "#7ED321",
     },
   ];  
-
+  
   return (
     <div className="flex flex-wrap justify-center items-center gap-4 sm:gap-6 md:gap-3">
       {calculatedCardData.map((item, index) => (

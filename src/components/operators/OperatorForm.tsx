@@ -1,4 +1,3 @@
-// src/components/user/UserForm.tsx
 import React, { useEffect } from 'react';
 import CreateModalPage from '~/components/ui/modals/CreateModal';
 import { useOperatorsData } from '../../../store/useOperatorStore';

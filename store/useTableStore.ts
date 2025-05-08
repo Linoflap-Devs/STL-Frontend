@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import { Operator } from '~/types/interfaces';
+import { Operator } from '~/types/types';
 
 interface SortConfig {
   key: string;
@@ -19,6 +19,12 @@ interface TableStoreState<T = any> {
 
   rowsPerPage: number;
   setRowsPerPage: (rows: number) => void;
+
+  modalOpen: boolean;
+  setModalOpen: (val: boolean) => void;
+  
+  modalType: 'create' | 'view' | null;
+  setModalType: (type: 'create' | 'view' | null) => void;
 
   sortConfig: SortConfig;
   setSortConfig: (config: SortConfig) => void;
@@ -56,6 +62,11 @@ const useDetailTableStore = create<TableStoreState>((set, get) => ({
 
   page: 0,
   setPage: (page) => set({ page }),
+  modalOpen: false,
+  setModalOpen: (val) => set({ modalOpen: val }),
+
+  modalType: null,
+  setModalType: (type) => set({ modalType: type }),
 
   rowsPerPage: 10,
   setRowsPerPage: (rows) => set({ rowsPerPage: rows }),
