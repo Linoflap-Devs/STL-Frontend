@@ -16,7 +16,7 @@ import SearchIcon from "@mui/icons-material/Search";
 import FilterListIcon from "@mui/icons-material/FilterList";
 import FilterListOffIcon from "@mui/icons-material/FilterListOff";
 import PersonOffIcon from "@mui/icons-material/PersonOff";
-import MoreVertIcon from "@mui/icons-material/MoreVert";
+import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
 import useDetailTableStore from "../../../../store/useTableStore";
 import { SortableTableCell, filterData, sortData } from "../../../utils/sortPaginationSearch";
 import { User, DetailedTableProps } from "../../../types/interfaces";
@@ -101,25 +101,27 @@ const DetailedTable = <T extends User | Operator>({
                 placeholder="Search"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full pl-9 pr-3 py-[10px] bg-transparent border border-gray-300 rounded-md text-sm focus:outline-none"
+                className="w-full pl-9 pr-3 py-[10px] bg-transparent border border-[#0038A8] rounded-md text-sm focus:outline-none"
               />
               <div className="absolute left-2 top-1/2 transform -translate-y-1/2 text-gray-400">
                 <SearchIcon style={{ fontSize: 20 }} />
               </div>
             </div>
-            <IconButton onClick={() => setIsFilterActive(!isFilterActive)} className="ml-2">
-              {isFilterActive ? <FilterListOffIcon /> : <FilterListIcon />}
-            </IconButton>
+              <IconButton onClick={() => setIsFilterActive(!isFilterActive)} className="ml-2">
+                {isFilterActive ? (
+                  <FilterListOffIcon sx={{ color: "#ACA993" }} />
+                ) : (
+                  <FilterListIcon sx={{ color: "#ACA993" }} />
+                )}
+              </IconButton>
           </div>
-
           <Button variant="contained" onClick={() => useModalStore.getState().openModal("create")} sx={buttonStyles}>
             {pageType === "manager"
-              ? "Add Manager"
+              ? "Add Manager" 
               : pageType === "executive"
                 ? "Add Executive"
                 : "Add Operator"}
           </Button>
-
         </div>
         <Table size="small">
           <TableHead>
@@ -143,9 +145,9 @@ const DetailedTable = <T extends User | Operator>({
             {paginatedData.length === 0 ? (
               <TableRow>
                 <TableCell colSpan={columns.length + (actionsRender ? 1 : 1)} align="center">
-                  <div className="flex flex-col items-center py-6">
-                    <PersonOffIcon className="text-gray-500" style={{ fontSize: 50 }} />
-                    <h6 className="mt-2 font-medium text-gray-400 text-lg">
+                  <div className="flex flex-col items-center py-7 text-[#0038A8]">
+                    <PersonOffIcon style={{ fontSize: 50 }} />
+                    <h6 className="mt-2 font-sm  text-lg">
                       {pageType === "manager" ? "No managers available" : "No executives available"}
                     </h6>
                   </div>
@@ -180,7 +182,7 @@ const DetailedTable = <T extends User | Operator>({
                         setSelectedRow(row as T);
                       }}
                     >
-                      <MoreVertIcon />
+                      <MoreHorizIcon sx={{ color: "#0038A8" }}/>
                     </IconButton>
 
                     <Menu

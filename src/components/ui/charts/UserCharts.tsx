@@ -42,7 +42,7 @@ const CustomLegend: React.FC<{ pageType: string }> = ({ pageType }) => (
           className="w-4 h-4 rounded-full mr-1.5"
           style={{ backgroundColor: item.color }}
         />
-        <p className="text-white text-xs">{item.label}</p>
+        <p className=" text-xs">{item.label}</p>
       </div>
     ))}
   </div>
@@ -55,11 +55,11 @@ export const ChartCard = <T,>({
   title,
 }: Omit<ChartCardProps<T>, "label">) => {
   return (
-    <div className="my-4">
-      <div className="p-4 bg-[#171717] rounded-lg">
-        <div className="flex justify-between items-center flex-wrap">
+    <div className="mt-3 mb-5">
+      <div className="p-4 bg-[transparent] rounded-lg border border-[#0038A8]">
+        <div className="pt-1 flex justify-between items-center flex-wrap">
           <div>
-            <p className="text-[#B3B3B3] text-lg">{title}</p>
+            <p className="text-lg">{title}</p>
             <CustomLegend pageType={pageType} />
           </div>
           <div className="flex items-center">

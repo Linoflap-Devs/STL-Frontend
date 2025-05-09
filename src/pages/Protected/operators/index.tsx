@@ -96,22 +96,22 @@ const OperatorsPage = () => {
                 cursor: "auto",
                 textTransform: "none",
                 borderRadius: "12px",
-                padding: "1px 13px",
+                padding: "2px 13px",
                 fontSize: "12px",
                 backgroundColor:
                   status === "Suspended"
                     ? "#FF7A7A"
                     : status === "Inactive"
                       ? "#FFA726"
-                      : "#4CAF50",
-                color: "#171717",
+                      : "#046115",
+                color: "#ffff",
                 "&:hover": {
                   backgroundColor:
                     status === "Suspended"
                       ? "#F05252"
                       : status === "Inactive"
                         ? "#FFA726"
-                        : "#4CAF50",
+                        : "#046115",
                 },
               }}
             >
@@ -143,10 +143,10 @@ const OperatorsPage = () => {
           columns={columns}
           onCreate={() => {
             setModalOpen(true);
-          } } 
+          }}
         />
         {/* Conditionally render CreateUserModalPage */}
-        <OperatorFieldFormPage/>
+        <OperatorFieldFormPage />
       </>
     </div>
   );

@@ -2,13 +2,13 @@ import { createTheme } from "@mui/material/styles";
 
 const darkTheme = createTheme({
   palette: {
-    mode: "dark",
+    mode: "light",
     background: {
-      default: "#212121",
+      default: "#F8F0E3",
     },
     text: {
-      primary: "#FFFFFF",
-      secondary: "#b0b0b0",
+      primary: "#0038A8",
+      secondary: "#0038A8",
     },
   },
   typography: {
@@ -18,9 +18,9 @@ const darkTheme = createTheme({
     MuiButton: {
       styleOverrides: {
         contained: {
-          color: "#181A1B",
+          color: "#FFFFFF",
           borderRadius: 5,
-          backgroundColor: "#67ABEB",
+          backgroundColor: "#0038A8",
           "&:hover": {
             backgroundColor: "#559AD6",
           },
@@ -62,15 +62,17 @@ const darkTheme = createTheme({
       styleOverrides: {
         root: {
           borderRadius: "10px",
-          backgroundColor: "#171717",
-          padding: '5px 12px',
+          backgroundColor: "#F8F0E3",
+          padding: "5px 12px",
+          border: "1px solid",           // Add this line
+          borderColor: "#0038A8",        // Keep your desired color
         },
       },
     },
     MuiTable: {
       styleOverrides: {
         root: {
-          backgroundColor: "#171717",
+          backgroundColor: "#F8F0E3",
           borderRadius: 5,
           borderCollapse: "collapse",
         },
@@ -79,9 +81,8 @@ const darkTheme = createTheme({
     MuiTableCell: {
       styleOverrides: {
         root: {
-          color: "#D1D5D8",
           fontSize: "13px",
-          borderBottom: "1px solid #3F3F3F",
+          borderBottom: "2px solid #E0DCBD",
           //padding: '12px 16px !important',
         },
         head: {
@@ -94,19 +95,22 @@ const darkTheme = createTheme({
     MuiTableHead: {
       styleOverrides: {
         root: {
-          backgroundColor: "#2F2F2F",
+          backgroundColor: "#E97451",
           lineHeight: "1.5rem",
           textTransform: "uppercase",
           fontWeight: "bold",
+          "&:hover": {
+            backgroundColor: "#E97451 !important",
+          },
         },
       },
     },
     MuiTableRow: {
       styleOverrides: {
         root: {
-          borderBottom: "0.5px solid #2F2F2F",
+          borderBottom: "0.5px solid #E0DCBD",
           "&:hover": {
-            backgroundColor: "#212121",
+            backgroundColor: "#E0DCBD",
           },
           "&.Mui-selected": {
             backgroundColor: "#2F2F2F",
@@ -114,30 +118,7 @@ const darkTheme = createTheme({
         },
       },
     },
-    // checkbox
-    MuiCheckbox: {
-      styleOverrides: {
-        root: {
-          color: "#D1D5D8",
-          "&.Mui-checked": {
-            color: "#e5e7eb",
-          },
-          "&:hover": {
-            backgroundColor: "#3F3F3F",
-          },
-          "& .MuiSvgIcon-root": {
-            fill: "#6C7480",
-            padding: 0,
-            margin: 0,
-            fontSize: "21px",
-            backgroundColor: "#3F3F3F !important",
-            borderRadius: "5px",
-            height: "20px",
-            width: "20px",
-          },
-        },
-      },
-    },
+
     MuiList: {
       styleOverrides: {
         root: {
@@ -160,11 +141,14 @@ const darkTheme = createTheme({
     MuiMenuItem: {
       styleOverrides: {
         root: {
-          backgroundColor: "transparent",
-          color: "#ffffff",
+          backgroundColor: "#E0DCBD",
           padding: "17px 55px 17px 12px",
           borderRadius: "0px",
           fontSize: 14,
+          "&.Mui-selected": {
+            backgroundColor: "#E0DCBD",
+            color: "#0038A8",
+          },
         },
       },
     },
@@ -173,9 +157,6 @@ const darkTheme = createTheme({
         root: {
           overflow: "hidden",
           maxHeight: "48px",
-        },
-        displayedRows: {
-          color: "#D1D5D8",
         },
       },
     },
@@ -227,7 +208,7 @@ const darkTheme = createTheme({
         },
         input: {
           "::placeholder": {
-            color: "#9CA3AF",
+            color: "#E0DCBD",
           },
         },
       },
@@ -270,7 +251,7 @@ export const buttonStyles = {
   fontSize: 12,
   borderRadius: "8px",
   width: "auto",
-  color: '#181A1B',
+  fontWeight: 1,
 };
 
 export const deleteStyles = {
@@ -294,7 +275,7 @@ export const inputStyles = {
     },
     "& fieldset": {
       borderColor: "#D1D5DB",
-       padding: "10px 16px !important",
+      padding: "10px 16px !important",
     },
     "&.Mui-error fieldset": { borderColor: "#FF7A7A" },
   },
@@ -320,6 +301,7 @@ export const inputErrorStyles = {
 export const filterStyles = {
   marginTop: 0,
   marginBottom: 0,
+  color: '#E0DCBD',
   padding: "4px",
   fontSize: "12px",
   backgroundColor: "none",
