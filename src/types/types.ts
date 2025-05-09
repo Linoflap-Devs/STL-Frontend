@@ -1,3 +1,57 @@
+// for dashboard cards
+export type DashboardData = {
+  totalUsers: number;
+  activeUsers: number;
+  suspendedUsers: number;
+  inactiveUsers: number;
+  newUsers: number;
+};
+
+// for dashboard charts
+export interface LegendItem {
+  color: string;
+  label: string;
+}
+
+export type User = {
+  region: string;  // Add region to User
+  LastLogin?: string;
+  LastTokenRefresh?: string;
+  DateOfRegistration?: string;
+  IsActive?: number;
+};
+
+// Define the Operator type
+export type Operator = {
+  OperatorRegion: any;
+  Region: any;
+  OperatorId: number;
+  OperatorName: string;
+  Executive: string;
+  OperatorEmail: string | null;
+  Status: number;
+  CreatedAt: string;
+  DateOfOperation: string;
+  Cities: { CityId: number; CityName: string }[];
+  OperatorAddress: string;
+  OperatorContactNos: string;
+  Email: string | null;
+  ContactNo: string;
+  OperatorRepresentative: string;
+
+  LastLogin?: string;
+  LastTokenRefresh?: string;
+  UserStatusId?: number;
+  DateOfRegistration?: string;
+  IsActive?: number;
+}
+
+export type RegionData = Record<
+  string,
+  {
+    users: User[];
+  }
+>;
 
 // Operators
 export type OperatorsData = {
@@ -7,6 +61,8 @@ export type OperatorsData = {
   totalInactiveOperators: number;
   totalNewOperators: number;
 };
+
+// Operators Add Form
 export type AddOperatorFormData = {
   companyName: string;
   email: string;
@@ -53,4 +109,6 @@ export type OperatorsStore = {
   setUpdateOperatorFormData: (data: Partial<UpdateOperatorFormData>) => void;
   setAllGameTypes: (data: Partial<AddOperatorFormData['gameTypes']>) => void;
 };
+
+
 

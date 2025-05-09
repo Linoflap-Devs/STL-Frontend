@@ -11,7 +11,6 @@ import { AxiosError } from "axios";
  * @returns Promise with success/error response.
  */
 
-
 /*
  * Basic Usage
   const result = await patchUsersData<{ updated: boolean}> (
@@ -56,13 +55,6 @@ const patchUserData = async <T = unknown>(
     message?: string;
     data: T | null;
 }> => {
-    const token = localStorage.getItem("authToken");
-
-    if(!token){
-        const errorMsg = "No authentication token found";
-        console.error(errorMsg);
-        return {success: false, message: errorMsg, data: null}
-    }
 
     try {
         const response = await axiosInstance.patch<T>(
@@ -70,10 +62,6 @@ const patchUserData = async <T = unknown>(
             patchData, 
             {
             params: queryParams,
-            headers: {
-                Authorization: `Bearer ${token}`,
-                'Content-Type': 'application/json'
-            }
         });
 
         return {

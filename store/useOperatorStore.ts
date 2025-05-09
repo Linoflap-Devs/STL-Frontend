@@ -1,27 +1,56 @@
 import { create } from "zustand";
-import { AddOperatorFormData,UpdateOperatorFormData, OperatorsStore} from '../src/types/types'
+import { AddOperatorFormData, UpdateOperatorFormData, OperatorsStore, Operator } from '../src/types/types'
+import { Column, Field } from "~/types/interfaces";
 
-// type OperatorsData = {
-//   totalOperators: number;
-//   totalActiveOperators: number;
-//   totalDeletedOperators: number;
-//   totalInactiveOperators: number;
-//   totalNewOperators: number;
-// };
-// type AddOperatorFormData = {
-//   companyName: string;
-//   email: string;
-//   phone: string;
-//   dateOfOperations: string;
-//   areaOfOperations: string;
-//   gameTypes: {
-//     stlPares: boolean;
-//     stlSwer2: boolean;
-//     stlSwer3: boolean;
-//     stlSwer4: boolean;
-//     allGames: boolean;
-//   }
-// }
+export interface OperatorsState {
+  data: Operator[];
+  setData: (data: Operator[]) => void;
+
+  columns: Column<Operator>[];
+  setColumns: (columns: Column<Operator>[]) => void;
+
+  operators: Operator[];
+  operatorMap: { [key: number]: Operator };
+  loading: boolean;
+  error: string | null;
+
+  setOperators: (operators: Operator[]) => void;
+  setOperatorMap: (operatorMap: { [key: number]: Operator }) => void;
+  setLoading: (loading: boolean) => void;
+  setError: (error: string | null) => void;
+
+  modalOpen: boolean;
+  setModalOpen: (open: boolean) => void;
+
+  fields: Field[];
+  setFields: (fields: Field[]) => void;
+}
+
+export const useOperatorsData = create<OperatorsState>((set) => ({
+  data: [],
+  setData: (data) => set({ data }),
+
+  columns: [],
+  setColumns: (columns) => set({ columns }),
+
+  operators: [],
+  operatorMap: {},
+  loading: false,
+  error: null,
+
+  setOperators: (operators) => set({ operators }),
+  setOperatorMap: (map) => set({ operatorMap: map }),
+  setLoading: (loading) => set({ loading }),
+  setError: (error) => set({ error }),
+
+  modalOpen: false,
+  setModalOpen: (open) => set({ modalOpen: open }),
+
+  fields: [],
+  setFields: (fields) => set({ fields }),
+}));
+
+
 const defaultOperatorForm: AddOperatorFormData = {
   companyName: '',
   email: '',
@@ -35,10 +64,11 @@ const defaultOperatorForm: AddOperatorFormData = {
     stlSwer4: false,
     allGames: false,
   }
-}
+};
+
 const defaultUpdateOperatorForm: UpdateOperatorFormData = {
   status: ' ',
-  companyName:' ',
+  companyName: ' ',
   email: ' ',
   phone: ' ',
   dateOfOperations: ' ',
@@ -55,20 +85,7 @@ const defaultUpdateOperatorForm: UpdateOperatorFormData = {
   creationDate: ' ',
   latestUpdateDate: ' ',
   remarks: '',
-}
-// type OperatorsStore = {
-//   //OperatorsCards Component
-//   operatorsData: OperatorsData;
-//   // Partial<T> - typescript utility makes all fields of T optional
-//   setOperatorsData: (data: Partial<OperatorsData>) => void;
-//   //Add Operator Component
-//   addOperatorForm: AddOperatorFormData;
-//   setOperatorFormData: (data:  Partial<AddOperatorFormData>) => void;
-//   setAllGameTypes: (data: Partial<AddOperatorFormData['gameTypes']>) => void;
-
-// };
-
-
+};
 
 export const useOperatorsStore = create<OperatorsStore>((set) => ({
   // OperatorsCards Component
@@ -82,33 +99,36 @@ export const useOperatorsStore = create<OperatorsStore>((set) => ({
   setOperatorsData: (data) =>
     set((state) => ({
       operatorsData: { ...state.operatorsData, ...data },
-    })
-  ),
+    })),
+
   // Add Operator Component
   addOperatorForm: defaultOperatorForm,
-  setOperatorFormData: (data)=>
-    set((state)=> ({
+  setOperatorFormData: (data) =>
+    set((state) => ({
       addOperatorForm: {
-        ...state.addOperatorForm, 
-        ...data},
-    })
-  ),
+        ...state.addOperatorForm,
+        ...data,
+      },
+    })),
+
   // Update Operator Component
   updateOperatorForm: defaultUpdateOperatorForm,
   setUpdateOperatorFormData: (data) =>
-    set((state)=>({
+    set((state) => ({
       updateOperatorForm: {
         ...state.updateOperatorForm,
-        ...data},
-      })
-  ),
-  setAllGameTypes: (data)=>
-    set((state)=> ({
+        ...data,
+      },
+    })),
+
+  // Update game types for the Add Operator form
+  setAllGameTypes: (data) =>
+    set((state) => ({
       addOperatorForm: {
         ...state.addOperatorForm,
-        gameTypes: {...state.addOperatorForm.gameTypes, ...data},
-      }
-    })
-  )
-
+        gameTypes: { ...state.addOperatorForm.gameTypes, ...data },
+      },
+    })),
 }));
+
+

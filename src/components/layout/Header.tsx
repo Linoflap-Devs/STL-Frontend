@@ -35,33 +35,6 @@ const Header: React.FC<HeaderProps> = () => {
     userTypeId: number;
   } | null>(null);
 
-  useEffect(() => {
-    (async () => {
-      try {
-        const response = await getCurrentUser({});
-        if (response.success && response.data) {
-          setUser({
-            firstName: response.data.FirstName,
-            lastName: response.data.LastName,
-            userTypeId: response.data.UserTypeId,
-          });
-        } else {
-          console.error("Failed to fetch user:", response.message);
-        }
-      } catch (error) {
-        console.error("Error fetching user:", error);
-      }
-    })();
-  }, []);
-
-  const handleLogout = async () => {
-    try {
-      await logoutUser();
-      router.push("/auth/login");
-    } catch (error) {
-      console.error("Logout failed:", error);
-    }
-  };
 
   return (
     <header className="w-full bg-[#2F2F2F]">
@@ -79,7 +52,7 @@ const Header: React.FC<HeaderProps> = () => {
               {user ? getUserRole(user.userTypeId) : ""}
             </div>
           </div>
-          <div className="cursor-pointer flex" onClick={handleLogout}>
+          <div className="cursor-pointer flex">
             <div title="Logout User">
               <button className="p-2 bg-[#D9D9D9] rounded-full text-[#171717]">
                 <FaSignOutAlt size={16} />

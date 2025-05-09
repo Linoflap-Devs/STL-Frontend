@@ -13,8 +13,8 @@ import Grid from '@mui/material/Grid2'
 import CloseIcon from '@mui/icons-material/Close';
 import { useOperatorsStore } from '../../../store/useOperatorStore';
 
-import { useForm,SubmitHandler } from 'react-hook-form'; // manage form state
-import { zodResolver } from '@hookform/resolvers/zod';// validate the form based my zod rules.
+import { useForm,SubmitHandler } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
 import { operatorSchema } from '~/schemas/operatorSchema';
 import { z } from 'zod';
 import { AddOperatorFormData } from '~/types/types';

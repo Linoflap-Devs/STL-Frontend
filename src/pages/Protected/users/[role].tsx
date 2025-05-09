@@ -1,252 +1,191 @@
-import React, { Suspense, useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import { useRouter } from "next/router";
-import { Box, Typography } from "@mui/material";
-import CreateManager from "~/components/user/CreateUser";
-import UpdateManager from "~/components/user/UpdateUser";
-import { fetchUsers } from "~/utils/api/users";
-import { fetchOperators } from "~/utils/api/operators";
-import dynamic from "next/dynamic";
+import DetailedTable from "~/components/ui/tables/DetailedTable";
+import { getUsersData } from "~/utils/api/users/get.users.service";
+import { getOperatorsData } from "~/utils/api/operators/get.operators.service";
+import { User, GetUsersResponse, GetOperatorsResponse } from "~/types/interfaces";
+import { getUserStatus } from "~/utils/dashboarddata";
+import { Button } from "@mui/material";
+import useUserRoleStore from "../../../../store/useUserStore";
+import CardsPage from "~/components/ui/dashboardcards/CardsData";
+import ChartsDataPage from "~/components/ui/charts/UserChartsData";
 import dayjs from "dayjs";
-import UsersTablePage from "~/components/user/UsersTable";
+import UserFieldFormPage from "~/components/user/UserForm";
+import { Operator } from "~/types/types";
 
-const UsersSkeletonPage = dynamic(() =>
-  import("~/components/user/UsersSkeleton").then((mod) => ({
-    default: mod.UsersSkeletonPage,
-  }))
-);
-
-const UserDashboardPage = React.lazy(
-  () => import("~/components/user/UsersDashboard")
-);
-
-export interface User {
-  UserId: number | null;
-  firstName: string;
-  lastName: string;
-  phoneNumber: string;
-  email: string;
-  suffix: string;
-  Status?: any;
-  remarks?: string;
-  OperatorId?: number | null;
-  OperatorName?: any;
-  LastUpdatedDate?: string | null;
-  [key: string]: any;
-}
-
-const roleMap: Record<string, { label: string; roleId: number }> = {
-  managers: { label: "Small Town Lottery Manager", roleId: 2 },
-  executive: { label: "Small Town Lottery Executive", roleId: 3 },
+const roleMap: Record<string, { label: string; textlabel: string; roleId: number }> = {
+  managers: { label: "Small Town Lottery Manager", textlabel: "Managers", roleId: 2 },
+  executive: { label: "Small Town Lottery Executive", textlabel: "Executives", roleId: 3 },
 };
 
-const UsersPage = () => {
+const RolePage = () => {
+  const { 
+    data, 
+    setData, 
+    columns, 
+    setColumns, 
+    setRoleId, 
+    modalOpen, 
+    setModalOpen 
+  } = useUserRoleStore();
   const router = useRouter();
   const { role } = router.query;
-  const [users, setUsers] = useState<User[]>([]);
-  const [isModalOpen, setModalOpen] = useState(false);
-  const [isUpdateModalOpen, setUpdateModalOpen] = useState(false);
-  const [selectedUser, setSelectedUser] = useState<User | null>(null);
-  const [selectedManager, setSelectedManager] = useState<User | null>(null);
-  const [refresh, setRefresh] = useState(false);
-  const [operators, setOperators] = useState<any[]>([]);
-  const [loading, setLoading] = useState(false);
-
-  // Determine the configuration for the role based on the `role` string
-  const roleConfig =
-    typeof role === "string" ? roleMap[role.toLowerCase()] : null;
-
-  // Extract the `roleId` from the `roleConfig` if available
+  const pagetype = window.location.pathname.includes("manager") ? "manager" : "executive";
+  const operatorMap = useUserRoleStore((state) => state.operatorMap);
+  const setOperatorMap = useUserRoleStore((state) => state.setOperatorMap);
+  const roleString = typeof role === "string" ? role : role?.[0];
+  const roleConfig = roleString ? roleMap[roleString.toLowerCase()] : null;
   const roleId = roleConfig?.roleId;
 
-  const fallback = (value: any, defaultValue: string | null) => {
-    return value !== null && value !== undefined ? value : defaultValue;
-  };
-
-  // fetching of data
-  const loadData = async () => {
-    if (!roleId) return;
-
-    setLoading(true); // Start loading
-
-    try {
-      const [userResponse, operatorResponse] = await Promise.all([
-        fetchUsers({}),
-        fetchOperators(),
-      ]);
-
-      if (userResponse.success && operatorResponse.success) {
-        const operatorMap = operatorResponse.data.reduce(
-          (map: any, operator: any) => {
+  // fetching the operators data
+  useEffect(() => {
+    const fetchOperators = async () => {
+      try {
+        const operatorResponse = await getOperatorsData<GetOperatorsResponse>("/operators/getOperators");
+        if (operatorResponse.success && Array.isArray(operatorResponse.data?.data)) {
+          const operatorMap = operatorResponse.data.data.reduce((map: { [key: number]: Operator }, operator: Operator) => {
             map[operator.OperatorId] = operator;
             return map;
-          },
-          {}
-        );
-
-        const filteredUsers = userResponse.data
-          .filter((user: any) => user.UserTypeId === roleId)
-          .map((user: any) => ({
-            userId: fallback(user.UserId, null),
-            FirstName: fallback(user.FirstName, "N/A"),
-            LastName: fallback(user.LastName, "N/A"),
-            Suffix: fallback(user.Suffix, ""),
-            Email: fallback(user.Email, "N/A"),
-            DateOfRegistration: fallback(user.DateOfRegistration, "N/A"),
-            CreatedBy: fallback(user.CreatedBy, "N/A"),
-            OperatorDetails: fallback(operatorMap[user.OperatorId], null),
-            LastLogin: fallback(user.LastLogin, "N/A"),
-            LastTokenRefresh: fallback(user.LastTokenRefresh, "N/A"),
-          }));
-
-        setUsers(filteredUsers);
-        setOperators(operatorResponse.data);
+          }, {});
+          setOperatorMap({ ...operatorMap });
+        } else {
+          setOperatorMap({});
+        }
+      } catch (error) {
+        console.error("Error fetching operator data:", error);
       }
-    } catch (error) {
-      console.error("Error fetching users/operators:", error);
-    } finally {
-      setLoading(false); // Finish loading regardless of success/failure
-    }
-  };
+    };
+
+    fetchOperators();
+  }, [setOperatorMap]);
+
+  // fetching the users based on the roleId
+  useEffect(() => {
+    const fetchUsers = async () => {
+      if (roleId) {
+        try {
+          const userResponse = await getUsersData<GetUsersResponse>("/users/getUsers", { roleId });
+          console.log("User Response:", userResponse);
+
+          if (userResponse.success && Array.isArray(userResponse.data?.data)) {
+            const filteredUsers = userResponse.data.data.filter((user: User) => user.UserTypeId === roleId);
+            setData(filteredUsers.length > 0 ? filteredUsers : []);
+          } else {
+            setData([]);
+          }
+        } catch (error) {
+          console.error("Error fetching user data:", error);
+          setData([]);
+        }
+      }
+    };
+
+    fetchUsers();
+  }, [roleId, setData]);
 
   useEffect(() => {
-    if (roleId) loadData();
-  }, [roleId, refresh]);
-
-  const getUserStatus = (user: any, sevenDaysAgo: dayjs.Dayjs): string => {
-    let status = "Active";
-
-    if (user.IsActive === 0) {
-      status = "Suspended";
-    } else if (
-      user.LastLogin &&
-      dayjs(user.LastLogin).isBefore(sevenDaysAgo) &&
-      user.LastTokenRefresh &&
-      dayjs(user.LastTokenRefresh).isBefore(sevenDaysAgo)
-    ) {
-      status = "Inactive";
-    } else if (
-      user.DateOfRegistration &&
-      dayjs(user.DateOfRegistration).isAfter(sevenDaysAgo)
-    ) {
-      status = "New";
-    } else {
-      console.log("Status remains Active");
+    if (roleId) {
+      setColumns([
+        { key: "FirstName", label: "Name", sortable: true, filterable: true },
+        {
+          key: "OperatorDetails.OperatorName",
+          label: "Company Name",
+          sortable: true,
+          filterable: true,
+          render: (user: User) => {
+            const operator = operatorMap[user.OperatorId];
+            return operator ? operator.OperatorName : "No operator assigned";
+          },
+        },
+        {
+          key: "DateOfRegistration",
+          label: "Creation Date",
+          sortable: true,
+          filterable: true,
+          render: (row: User) => row.DateOfRegistration ? dayjs(row.DateOfRegistration).format("YYYY-MM-DD") : "",
+        },
+        { key: "CreatedBy", label: "Created By", sortable: true, filterable: true },
+        {
+          key: "Status",
+          label: "Status",
+          sortable: true,
+          filterable: true,
+          render: (user: User) => {
+            const sevenDaysAgo = dayjs().subtract(7, "days");
+            const status = getUserStatus(user, sevenDaysAgo);
+            return (
+              <Button
+                variant="contained"
+                sx={{
+                  cursor: "auto",
+                  textTransform: "none",
+                  borderRadius: "12px",
+                  padding: "2px 13px",
+                  fontSize: "12px",
+                  backgroundColor:
+                    status === "Suspended"
+                      ? "#FF7A7A"
+                      : status === "Inactive"
+                        ? "#FFA726"
+                        : "#046115",
+                  color: "#ffff",
+                  "&:hover": {
+                    backgroundColor:
+                      status === "Suspended"
+                        ? "#F05252"
+                        : status === "Inactive"
+                          ? "#FFA726"
+                          : "#046115",
+                  },
+                }}
+              >
+                {status}
+              </Button>
+            );
+          },
+        },
+      ]);
     }
+  }, [roleId, setColumns, operatorMap]);
 
-    return status;
-  };
-
-  const sevenDaysAgo = dayjs().subtract(7, "days");
-
-  const handleUserCreate = () => {
-    setSelectedUser(null);
-    setUpdateModalOpen(false);
-    setModalOpen(true);
-  };
-
-  const handleUserEdit = (user: User) => {
-    setSelectedManager(user);
-    setUpdateModalOpen(true);
-  };
-
-  const closeUpdateModal = () => {
-    setUpdateModalOpen(false);
-    setSelectedManager(null);
-  };
-
-  const handleSubmitUser = async (userData: User | null) => {
-    if (userData) setRefresh((prev) => !prev);
-    setSelectedUser(null);
-    setModalOpen(false);
-  };
-
-  const handleSaveUpdatedUser = (updatedUser: User) => {
-    setUsers((prev) =>
-      prev.map((user) =>
-        user.userId === updatedUser.userId ? updatedUser : user
-      )
-    );
-    setSelectedManager(null);
-    setUpdateModalOpen(false);
-    setRefresh((prev) => !prev);
-  };
-
-  const handleDeleteManager = (ids: number[]) => {
-    setUsers((prev) => prev.filter((user) => !ids.includes(user.userId!)));
-    setRefresh((prev) => !prev);
-  };
-
-  // Error case
-  if (!roleId) {
+  if (!roleConfig) {
     return (
-      <Typography variant="h6" color="error">
-        Invalid role route.
-      </Typography>
+      <div className="container mx-auto px-0 py-1">
+        <h1 className="text-2xl font-semibold mb-4">Role not found</h1>
+      </div>
     );
-  }
-
-  if (loading) {
-    return <UsersSkeletonPage />;
   }
 
   return (
-    <Suspense fallback={<UsersSkeletonPage />}>
-      <React.Fragment>
-        <div className="space-y-4">
-          <div className="flex justify-between items-center my-2">
-            <h4 className="font-bold text-4xl">{roleConfig?.label}</h4>
-          </div>
-
-          {/* User Dashboard Page */}
-          <div>
-            <UserDashboardPage
-              roleId={roleId}
-              getUserStatus={getUserStatus}
-              users={users}
-              sevenDaysAgo={sevenDaysAgo}
-            />
-          </div>
-
-          {/* Manager Table Section */}
-          <div>
-            <UsersTablePage
-              onCreate={handleUserCreate}
-              onEdit={handleUserEdit}
-              users={users}
-              onDelete={handleDeleteManager}
-              onSubmit={handleSubmitUser}
-              getUserStatus={getUserStatus}
-              sevenDaysAgo={sevenDaysAgo}
-            />
-          </div>
-
-          {/* Create Manager Modal */}
-          <CreateManager
-            open={isModalOpen}
-            onClose={() => setModalOpen(false)}
-            onSubmit={handleSubmitUser}
-            userData={selectedUser}
-            operators={operators}
+    <div className="mx-auto px-0 py-1">
+      <h1 className="text-3xl font-bold mb-3">{roleConfig.label}</h1>
+      {/* Dashboard Cards */}
+      <CardsPage
+        dashboardData={data}
+        roleLabel={roleConfig.label || ""}
+        cardData={[]}
+        textlabel={roleConfig.textlabel || ""}
+      />
+      {/* Charts Data */}
+      <ChartsDataPage
+        userType={""}
+        regions={[]}
+        pageType={pagetype}
+        dashboardData={data}
+      />
+      {/* Detailed Table */}
+      <>
+        <DetailedTable
+          data={data}
+          columns={columns}
+          pageType={pagetype}
+          operatorMap={operatorMap}
           />
-
-          {/* Update Manager Modal */}
-          {isUpdateModalOpen && (
-            <UpdateManager
-              open={isUpdateModalOpen}
-              onClose={closeUpdateModal}
-              onSubmit={handleSaveUpdatedUser}
-              users={selectedManager}
-              getUserStatus={getUserStatus}
-              sevenDaysAgo={sevenDaysAgo}
-              fallback={(value, defaultValue) =>
-                value != null ? value : defaultValue
-              }
-            />
-          )}
-        </div>
-      </React.Fragment>
-    </Suspense>
+        {/* Conditionally render CreateUserModalPage */}
+        <UserFieldFormPage />
+      </>
+    </div>
   );
 };
 
-export default UsersPage;
+export default RolePage;
