@@ -135,7 +135,8 @@ const OperatorsPage = () => {
         userType="operator"
         pageType="operator"
         regions={[]}
-        dashboardData={data.map(op => ({ ...op, region: op.OperatorRegion?.RegionName ?? "Unknown" }))}
+        dashboardData={data.map(op => 
+          ({ ...op, region: op.OperatorRegion?.RegionName ?? "Unknown" }))}
       />
       <>
         <DetailedTable

@@ -128,6 +128,7 @@ export interface RegionUser {
     RegionName: string;
   };
   region: string;
+  Region: string;
 }
 
 export interface Field {

@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from "react";
+import React, { useMemo } from "react";
 import {
   Table,
   TableBody,
@@ -140,6 +140,7 @@ const DetailedTable = <T extends User | Operator>({
               )}
               <TableCell>Actions</TableCell>
             </TableRow>
+
           </TableHead>
           <TableBody>
             {paginatedData.length === 0 ? (

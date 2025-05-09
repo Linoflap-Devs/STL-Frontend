@@ -59,7 +59,6 @@ const RolePage = () => {
     fetchOperators();
   }, [setOperatorMap]);
 
-  // fetching the users based on the roleId
   useEffect(() => {
     const fetchUsers = async () => {
       if (roleId) {
@@ -68,7 +67,13 @@ const RolePage = () => {
           console.log("User Response:", userResponse);
 
           if (userResponse.success && Array.isArray(userResponse.data?.data)) {
-            const filteredUsers = userResponse.data.data.filter((user: User) => user.UserTypeId === roleId);
+            const filteredUsers = userResponse.data.data
+              .filter((user: User) => user.UserTypeId === roleId)
+              .map((user) => ({
+                ...user,
+                fullName: `${user.FirstName} ${user.LastName}`,
+              }));
+
             setData(filteredUsers.length > 0 ? filteredUsers : []);
           } else {
             setData([]);
@@ -86,12 +91,12 @@ const RolePage = () => {
   useEffect(() => {
     if (roleId) {
       setColumns([
-        { key: "FirstName", label: "Name", sortable: true, filterable: true },
+        { key: "fullName", label: "Name", sortable: true, filterable: false },
         {
           key: "OperatorDetails.OperatorName",
           label: "Company Name",
           sortable: true,
-          filterable: true,
+          filterable: false,
           render: (user: User) => {
             const operator = operatorMap[user.OperatorId];
             return operator ? operator.OperatorName : "No operator assigned";
@@ -104,7 +109,7 @@ const RolePage = () => {
           filterable: true,
           render: (row: User) => row.DateOfRegistration ? dayjs(row.DateOfRegistration).format("YYYY-MM-DD") : "",
         },
-        { key: "CreatedBy", label: "Created By", sortable: true, filterable: true },
+        { key: "CreatedBy", label: "Created By", sortable: true, filterable: false },
         {
           key: "Status",
           label: "Status",

@@ -38,22 +38,43 @@ export const ChartsDataPage = <T extends RegionUser & { OperatorName?: string }>
   const [chartData, setLocalChartData] = useState<ChartBarItem[]>([]);
 
   useEffect(() => {
-    console.log(dashboardData);
     if (!dashboardData || dashboardData.length === 0) return;
-  
+
     const statsPerRegion = regions.map((regionShort) => {
       const regionFull = regionMap[regionShort];
-  
-      const users = dashboardData.filter(
-        (user) => user.OperatorRegion?.RegionName === regionFull
-      );
-  
+      //console.log(`\n=== Processing region: ${regionShort} (${regionFull}) ===`);
+
+      const users = dashboardData.filter((user) => {
+        let userRegionName = "";
+
+        // Check user.Region first, if not available fallback to user.OperatorRegion?.RegionName
+        if (user.Region) {
+          // Access the Region object and get the RegionName
+          const regionData = user.Region as any;
+
+          if (typeof regionData.RegionName === "string") {
+            userRegionName = regionData.RegionName;
+          } else {
+            console.warn("RegionName is not a string:", regionData.RegionName);
+          }
+        } else if (user.OperatorRegion?.RegionName) {
+          userRegionName = user.OperatorRegion.RegionName;
+        }
+
+        const matches = userRegionName === regionFull;
+        // console.log(
+        //   `User: ${user.OperatorName} | RegionName: ${userRegionName} | Match: ${matches}`
+        // );
+        return matches;
+      });
+
+      //console.log(`Matched ${users.length} users in region ${regionShort}`);
+
       let active = 0, inactive = 0, deleted = 0, newlyRegistered = 0;
-  
+
       users.forEach((user) => {
         const status = getUserStatus(user, sevenDaysAgo) ?? "Unknown";
-        console.log("getUserStatus returned:", status);
-        console.log("User:", user.OperatorName, "| Status:", status);
+        //console.log("→ getUserStatus returned:", status, "| For user:", user.OperatorName);
 
         switch (status) {
           case "Active":
@@ -69,10 +90,10 @@ export const ChartsDataPage = <T extends RegionUser & { OperatorName?: string }>
             newlyRegistered++;
             break;
           default:
-          console.warn("Unmatched status:", status);
+          //console.warn("⚠️ Unmatched status:", status);
         }
       });
-  
+
       return {
         region: regionShort,
         total: users.length,
@@ -82,7 +103,7 @@ export const ChartsDataPage = <T extends RegionUser & { OperatorName?: string }>
         new: newlyRegistered,
       };
     });
-  
+
     const newChartData: ChartBarItem[] = [
       {
         label: `Total ${pageType}s`,
@@ -110,10 +131,10 @@ export const ChartsDataPage = <T extends RegionUser & { OperatorName?: string }>
         data: statsPerRegion.map((r) => r.new),
       },
     ];
-  
-    console.log("Regions:", regions);
-    console.log("Chart data:", newChartData.map((item) => item.data));
-  
+
+    //console.log("Regions Processed:", regions);
+    //console.log("Chart data per label:", newChartData.map((item) => ({ label: item.label, data: item.data })));
+
     setLocalChartData(newChartData);
     setChartData(newChartData);
   }, [dashboardData, userType, sevenDaysAgo, setChartData]);

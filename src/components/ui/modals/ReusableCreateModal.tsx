@@ -87,22 +87,42 @@ const ReusableModalPage: React.FC<ReusableModalPageProps> = ({
   return (
     <Dialog open={isOpen} onClose={onClose} fullWidth
     PaperProps={{
-      sx: {
-        width: "100%",
-        maxWidth: {
-          xs: "90%",
-          sm: "80%",
-          md: "600px",
-          lg: "650px",
-          xl: "800px",
-        },
-      }
-    }}>
-      <DialogTitle sx={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', py: 0 }}>
-        <IconButton sx={{ backgroundColor: '#171717', alignSelf: 'flex-end' }} onClick={onClose}>
-          <CloseIcon sx={{ fontSize: 20, fontWeight: 700 }} />
+        sx: {
+          width: "100%",
+          maxWidth: {
+            xs: "90%",
+            sm: "80%",
+            md: "600px",
+            lg: "650px",
+            xl: "800px",
+          },
+        }
+      }}>
+      <DialogTitle
+        sx={{
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'flex-start',
+          py: 0
+        }}>
+        <IconButton
+          sx={{
+            alignSelf: 'flex-end'
+          }}
+          onClick={onClose}
+        >
+          <CloseIcon
+            sx={{
+              fontSize: 28,
+              fontWeight: 700,
+              backgroundColor: '#ACA993',
+              borderRadius: '50%',
+              padding: '4px',
+              color: '#FFFFFF',
+            }}
+          />
         </IconButton>
-        <Typography variant="h5" sx={{ fontWeight: 'bold', mt: -1 }}>
+        <Typography variant="h5" sx={{ fontWeight: 'bold', mt: -2 }}>
           {title}
         </Typography>
       </DialogTitle>

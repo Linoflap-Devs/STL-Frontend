@@ -53,7 +53,7 @@ const darkTheme = createTheme({
             fontSize: 14,
           },
           "&.Mui-error .MuiOutlinedInput-notchedOutline": {
-            borderColor: "#d32f2f", // Default MUI error color (red)
+            borderColor: "#d32f2f",
           },
         },
       },
@@ -64,8 +64,8 @@ const darkTheme = createTheme({
           borderRadius: "10px",
           backgroundColor: "#F8F0E3",
           padding: "5px 12px",
-          border: "1px solid",           // Add this line
-          borderColor: "#0038A8",        // Keep your desired color
+          border: "1px solid",
+          borderColor: "#0038A8",
         },
       },
     },
@@ -118,7 +118,6 @@ const darkTheme = createTheme({
         },
       },
     },
-
     MuiList: {
       styleOverrides: {
         root: {
@@ -163,11 +162,8 @@ const darkTheme = createTheme({
     MuiDialog: {
       styleOverrides: {
         paper: {
-          boxShadow: "none",
-          backgroundImage: "none",
           borderRadius: "6px",
           padding: "25px 8px 27px 8px",
-          backgroundColor: '#212121',
         },
       },
     },
@@ -226,7 +222,6 @@ const darkTheme = createTheme({
     MuiOutlinedInput: {
       styleOverrides: {
         input: {
-          color: "#ffffff",
           //padding: "10px 16px",
           width: "100% !important",
         },
