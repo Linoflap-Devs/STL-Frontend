@@ -31,32 +31,6 @@ const darkTheme = createTheme({
       defaultProps: {
         variant: "outlined",
       },
-      styleOverrides: {
-        root: {
-          "& .MuiOutlinedInput-root": {
-            border: "none",
-            borderRadius: 5,
-            backgroundColor: "#282828",
-            transition: "background-color 0.3s ease, border-color 0.3s ease",
-            "&:hover .MuiOutlinedInput-notchedOutline": {
-              borderColor: "#FFFFFF",
-            },
-            "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
-              borderColor: "#FFFFFF",
-            },
-          },
-          "& .MuiOutlinedInput-notchedOutline": {
-            borderColor: "#3F3F3F",
-            transition: "border-color 0.3s ease",
-          },
-          "& .MuiOutlinedInput-input": {
-            fontSize: 14,
-          },
-          "&.Mui-error .MuiOutlinedInput-notchedOutline": {
-            borderColor: "#d32f2f", // Default MUI error color (red)
-          },
-        },
-      },
     },
     MuiTableContainer: {
       styleOverrides: {
@@ -64,8 +38,8 @@ const darkTheme = createTheme({
           borderRadius: "10px",
           backgroundColor: "#F8F0E3",
           padding: "5px 12px",
-          border: "1px solid",           // Add this line
-          borderColor: "#0038A8",        // Keep your desired color
+          border: "1px solid",
+          borderColor: "#0038A8",
         },
       },
     },
@@ -83,10 +57,10 @@ const darkTheme = createTheme({
         root: {
           fontSize: "13px",
           borderBottom: "2px solid #E0DCBD",
-          //padding: '12px 16px !important',
+          padding: "2px",
         },
         head: {
-          padding: "13px",
+          padding: "10px",
           color: "#FFFFFF",
           fontWeight: "bold",
         },
@@ -118,7 +92,6 @@ const darkTheme = createTheme({
         },
       },
     },
-
     MuiList: {
       styleOverrides: {
         root: {
@@ -163,11 +136,9 @@ const darkTheme = createTheme({
     MuiDialog: {
       styleOverrides: {
         paper: {
-          boxShadow: "none",
-          backgroundImage: "none",
+          backgroundColor: '#F8F0E3',
           borderRadius: "6px",
           padding: "25px 8px 27px 8px",
-          backgroundColor: '#212121',
         },
       },
     },
@@ -226,7 +197,6 @@ const darkTheme = createTheme({
     MuiOutlinedInput: {
       styleOverrides: {
         input: {
-          color: "#ffffff",
           //padding: "10px 16px",
           width: "100% !important",
         },
@@ -318,8 +288,8 @@ export const filterStyles = {
 export const cardDashboardStyles = {
   height: "auto",
   border: "1px solid",
-  borderColor: "#171717",
-  backgroundColor: "#171717",
+  borderColor: "#0038A8",
+  backgroundColor: "transparent",
   borderRadius: "8px",
   paddingY: "1.9rem",
   paddingX: "1rem",

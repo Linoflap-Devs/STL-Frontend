@@ -1,4 +1,4 @@
-import z from "zod";
+import { z } from "zod";
 
 // forms validation
 export const userSchema = z.object({
@@ -56,4 +56,9 @@ export const userSchema = z.object({
   suffix: z.string().optional(),
   street: z.string().optional(),
   CreatedBy: z.string().optional(),
+
+  // Add the OperatorName field and make it required
+  operatorId: z
+    .number()
+    .refine((val) => !isNaN(val), { message: "Operator Name is required" }),
 });

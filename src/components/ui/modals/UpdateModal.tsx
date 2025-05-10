@@ -3,6 +3,7 @@ import { ModalPageProps, Field } from '../../../types/interfaces';
 import useUserRoleStore from '../../../../store/useUserStore';
 import ReusableUpdateModalPage from './ReusableUpdateModal';
 import ReusableButton from '../button/ReusableSubmitButton';
+import EditModalDataPage from './EditLogModal';
 
 export const isManager = (roleId: number) => roleId === 2;
 export const isExecutive = (roleId: number) => roleId === 3;
@@ -17,13 +18,18 @@ const UpdateModalPage: React.FC<ModalPageProps> = ({
 }) => {
 
   useEffect(() => {
-    console.log("Initial Data received by UpdateModalPage:", initialUserData);
   }, [initialUserData]);
 
   const [loading, setLoading] = useState(false);
   const isOpen = open ?? true;
   const handleClose = onClose ?? (() => { });
   const { roleId } = useUserRoleStore();
+
+  // Transform endpoint to the required type
+  const formattedEndpoint =
+    typeof endpoint === 'string'
+      ? { create: endpoint, update: endpoint }
+      : endpoint;
 
   const getRoleName = () => {
     if (typeof window !== 'undefined') {
@@ -47,7 +53,7 @@ const UpdateModalPage: React.FC<ModalPageProps> = ({
       <ReusableUpdateModalPage
         isOpen={isOpen}
         onClose={handleClose}
-        endpoint={endpoint}
+        endpoint={formattedEndpoint}
         fields={fields}
         title={`View ${getRoleName()}`}
         initialUserData={initialUserData}
@@ -66,3 +72,4 @@ const UpdateModalPage: React.FC<ModalPageProps> = ({
 };
 
 export default UpdateModalPage;
+

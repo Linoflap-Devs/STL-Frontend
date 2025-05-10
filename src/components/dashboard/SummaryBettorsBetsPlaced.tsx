@@ -8,11 +8,11 @@ const CustomLegend = () => (
   <div className="flex flex-row space-x-8 justify-start mt-1 mr-4">
     <div className="flex items-center">
       <div className="w-3.5 h-3.5 rounded-full bg-[#BB86FC] mr-1.5" />
-      <p className="text-white">Bettors</p>
+      <p>Bettors</p>
     </div>
     <div className="flex items-center">
       <div className="w-3.5 h-3.5 rounded-full bg-[#5050A5] mr-1.5" />
-      <p className="text-white">Bets</p>
+      <p>Bets</p>
     </div>
   </div>
 );
@@ -101,19 +101,11 @@ const SummaryBettorsBetsPlacedPage = () => {
   };
 
   return (
-    <div className="bg-[#171717] p-4 rounded-lg pb-8">
+  <div className="bg-transparent p-4 rounded-xl border border-[#0038A8]">
       <div>
         <div className="flex justify-between items-center w-full">
-          <p className="text-white text-xl">
+          <p className="text-xl">
             Summary of Bettors and Bets Placed Today
-          </p>
-          <p
-            className="hover:text-[#67ABEB] text-xs cursor-pointer text-right mr-12 mt-4 bg-[#212121] px-4 py-2 rounded-md"
-            onClick={() => {
-              moveToBetSummary();
-            }}
-          >
-            View Bet Summary
           </p>
         </div>
         <CustomLegend />
@@ -121,12 +113,10 @@ const SummaryBettorsBetsPlacedPage = () => {
 
       <div className="h-full w-full">
         <BarChart
-          className="w-full h-full"
-          height={400}
-          width={1000}
+          height={300}
           grid={{ vertical: true }}
-          margin={{ left: 90, right: 20, top: 20, bottom: 70 }}
           layout="horizontal"
+          margin={{ left: 90, right: 20, top: 20, bottom: 40 }}
           slotProps={{ legend: { hidden: true } }}
           series={[
             {

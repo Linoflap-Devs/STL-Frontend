@@ -1,4 +1,7 @@
-import React, { useEffect } from "react";
+// this is a reusable update component
+// that needed to customize the fields
+
+import React, { useState, useEffect } from "react";
 import {
   Dialog,
   DialogContent,
@@ -21,18 +24,23 @@ import { ReusableModalPageProps } from "~/types/interfaces";
 import { buttonUpdateStyles, selectStyles } from "~/styles/theme";
 import { useUpdateModalState } from "../../../../store/useUpdateModalStore";
 import { formatKey } from "~/utils/format";
+import { useOperatorsData } from "../../../../store/useOperatorStore";
+import { getUserStatus } from "~/utils/dashboarddata";
+import dayjs from "dayjs";
 import axiosInstance from "~/utils/axiosInstance";
-import { useOperatorsData, useOperatorsStore } from "../../../../store/useOperatorStore";
+import { AxiosError } from "axios";
+import EditModalDataPage from "./EditLogModal";
+import { useModalStore } from "../../../../store/useModalStore";
 
 const ReusableUpdateModal: React.FC<ReusableModalPageProps> = ({
   title,
   isOpen,
   onClose,
   fields,
-  children,
   endpoint,
   initialUserData,
   operatorMap,
+  children
 }) => {
   const {
     user,
@@ -44,8 +52,6 @@ const ReusableUpdateModal: React.FC<ReusableModalPageProps> = ({
     isDisabled,
     isLoading,
     isViewMode,
-    areaOfOperations,
-    isVerifyModalOpen,
     setIsVerifyModalOpen,
     selectedUserId,
     setSelectedUserId,
@@ -53,57 +59,53 @@ const ReusableUpdateModal: React.FC<ReusableModalPageProps> = ({
     setOpenEditLogModal,
     handleManagerChange,
   } = useUpdateModalState();
-  //const { roleId } = useUserRoleStore();
-  const { operators, setOperators } = useOperatorsData();
 
+  const { operators, setOperators } = useOperatorsData();
+  const [originalUserData, setOriginalUserData] = useState(null);
+  const { openModal, modalOpen, modalType, selectedData, closeModal } = useModalStore();
+
+  // fetching of initial data
   useEffect(() => {
     if (!initialUserData || !operatorMap) return;
 
-    // Transform user data with fallbacks
+    const sevenDaysAgo = dayjs().subtract(7, "day");
+
     const transformedUser = {
       ...initialUserData,
-      lastName: initialUserData.lastName || "N/A",
-      suffix: initialUserData.suffix || "N/A",
+      userId: initialUserData.UserId || "N/A",
+      phoneNumber: initialUserData.PhoneNumber || "N/A",
+      email: initialUserData.Email || "N/A",
       LastUpdatedBy: initialUserData.LastUpdatedBy || "N/A",
       LastUpdatedDate: initialUserData.LastUpdatedDate || "N/A",
-      Status: initialUserData.Status || "N/A",
-      // Add more fallbacks as needed
     };
-    setUser(transformedUser);
 
-    // Get the operator data based on OperatorId
+    setUser(transformedUser);
+    setOriginalUserData(transformedUser);
+
     const operatorId = Number(initialUserData.OperatorId);
     const operator = operatorMap[operatorId] ?? null;
-
-    // Update operator state
     setOperators(operator ? [operator] : []);
 
-    // Debugging logs
-    console.log("operatorMap:", operatorMap);
-    console.log("initialUserData.OperatorId:", initialUserData.OperatorId);
-    console.log("Resolved Operator ID (number):", operatorId);
-    console.log("Fetched Operator for User:", operator);
+    const userStatus = getUserStatus(initialUserData, sevenDaysAgo);
+    setStatus(userStatus);
   }, [initialUserData, operatorMap]);
 
-
+  // keys will not update
   const alwaysDisabledKeys = [
-    "firstName",
+    "FirstName",
+    "OperatorName",
     "CreatedBy",
     "DateOfRegistration",
-    "OperatorName",
     "DateOfOperation",
     "LastUpdatedBy",
     "LastUpdatedDate",
   ];
 
-  const handleOpenEditLogModal = (userId: number) => {
+  const handleCloseEditLogModal = () => setOpenEditLogModal(false);
+
+  const handleOpenEditLogModal = (userId: number | null) => {
     setSelectedUserId(userId);
     setOpenEditLogModal(true);
-  };
-
-  const handleCloseEditLogModal = () => {
-    setSelectedUserId(null);
-    setOpenEditLogModal(false);
   };
 
   const handleDisable = () => {
@@ -112,8 +114,63 @@ const ReusableUpdateModal: React.FC<ReusableModalPageProps> = ({
     }));
   };
 
-  const handleSubmit = () => {
-    setIsVerifyModalOpen(true); // Opens confirmation modal
+  const handleSubmit = async () => {
+    try {
+      if (!endpoint) throw new Error("Endpoint is missing.");
+      if (typeof endpoint === 'object' && !endpoint.update) {
+        throw new Error("Invalid endpoint: 'update' endpoint is required.");
+      }
+
+      const endpointUrl = typeof endpoint === 'string' ? endpoint : endpoint.update;
+      console.log("Using endpoint:", endpointUrl);
+
+      if (!originalUserData) throw new Error("Original user data is missing.");
+
+      // Only include fields that changed
+      const updatedFields: Record<string, any> = {
+        userId: user.UserId,
+      };
+
+      Object.entries(user).forEach(([key, value]) => {
+        const originalValue = originalUserData[key];
+        if (key !== 'UserId' && value !== originalValue) {
+          // Normalize casing for API
+          const normalizedKey = key.charAt(0).toLowerCase() + key.slice(1);
+          updatedFields[normalizedKey] = value;
+        }
+      });
+
+      console.log("Final payload (only changed fields):", updatedFields);
+
+      if (!updatedFields.userId) {
+        throw new Error("userId is missing from the payload.");
+      }
+
+      const response = await axiosInstance.patch(endpointUrl, updatedFields, {
+        withCredentials: true,
+      });
+
+      console.log("Update success:", response.data);
+    } catch (error) {
+      const err = error as AxiosError;
+
+      console.error("Error object:", err);
+      console.error("Error message:", err.message);
+
+      if (err.response) {
+        console.error("Error response:", err.response);
+        console.error("Error status code:", err.response.status);
+        console.error("Error response data:", err.response.data);
+      }
+
+      if (err.request) {
+        console.error("Error request:", err.request);
+      }
+
+      if (err.stack) {
+        console.error("Error stack:", err.stack);
+      }
+    }
   };
 
   const handleVerifySubmit = async () => {
@@ -138,37 +195,43 @@ const ReusableUpdateModal: React.FC<ReusableModalPageProps> = ({
             sm: "80%",
             md: "600px",
             lg: "650px",
-            xl: "800px",
+            xl: "720px",
           },
         },
       }}
     >
       <DialogTitle sx={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', py: 0 }}>
-        <IconButton sx={{ backgroundColor: '#171717', alignSelf: 'flex-end' }} onClick={onClose}>
-          <CloseIcon sx={{ fontSize: 20, fontWeight: 700 }} />
+        <IconButton
+          sx={{ alignSelf: 'flex-end' }}
+          onClick={onClose}
+        >
+          <CloseIcon
+            sx={{
+              fontSize: 28,
+              fontWeight: 700,
+              backgroundColor: '#ACA993',
+              borderRadius: '50%',
+              padding: '4px',
+              color: '#FFFFFF',
+            }}
+          />
         </IconButton>
-        <Typography variant="h5" sx={{ fontWeight: 'bold', mt: -1 }}>
+        <Typography sx={{ fontSize: 26, fontWeight: 'bold', mt: -1 }}>
           {title}
         </Typography>
       </DialogTitle>
+
       <DialogContent>
         <Stack spacing={2} key={status} sx={{ my: 1.5 }}>
-          <Box
-            sx={{
-              display: "flex",
-              justifyContent: "space-between",
-              alignItems: "center",
-              width: "100%",
-            }}
-          >
+          {/* Status & Toggle Button */}
+          <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", width: "100%" }}>
             <Box sx={{ flex: 1, maxWidth: 100 }}>
               <FormControl fullWidth sx={selectStyles}>
                 <InputLabel id="status-label">Status</InputLabel>
                 <Select
                   labelId="status-label"
                   id="status"
-                  value={status
-                    || (isLoading ? "Loading..." : "")}
+                  value={status}
                   onChange={(e) => setStatus(e.target.value)}
                   label="Status"
                   disabled={isDisabled}
@@ -178,7 +241,6 @@ const ReusableUpdateModal: React.FC<ReusableModalPageProps> = ({
                   <MenuItem value="Active">Active</MenuItem>
                   <MenuItem value="Inactive">Inactive</MenuItem>
                   <MenuItem value="New">New</MenuItem>
-                  <MenuItem value="Inactive">Inactive</MenuItem>
                   <MenuItem value="Suspended">Suspended</MenuItem>
                 </Select>
               </FormControl>
@@ -187,12 +249,7 @@ const ReusableUpdateModal: React.FC<ReusableModalPageProps> = ({
             <Box>
               <Button
                 onClick={handleDisable}
-                sx={{
-                  ...buttonUpdateStyles,
-                  mt: 1,
-                  fontSize: "14px",
-                  px: "1.7rem",
-                }}
+                sx={{ ...buttonUpdateStyles, mt: 1, fontSize: "14px", px: "1.7rem" }}
                 variant="contained"
               >
                 {isViewMode ? "View" : "Update"}
@@ -298,15 +355,15 @@ const ReusableUpdateModal: React.FC<ReusableModalPageProps> = ({
                     value={
                       isLoading
                         ? "Loading..."
-                        : key === "DateOfRegistration"
-                        ? (() => {
+                        : key === "DateOfRegistration" || key === "LastUpdatedDate"
+                          ? (() => {
                             const date = user?.[key as keyof typeof user];
                             return date && !isNaN(new Date(date as string).getTime())
                               ? new Date(date as string).toISOString().split("T")[0].replace(/-/g, "/")
                               : "N/A";
                           })()
-                        : user?.[key as keyof typeof user] ?? "N/A"
-                    }                    
+                          : user?.[key as keyof typeof user] ?? "N/A"
+                    }
                     onChange={handleManagerChange}
                     disabled={
                       alwaysDisabledKeys.includes(key) ||
@@ -341,13 +398,13 @@ const ReusableUpdateModal: React.FC<ReusableModalPageProps> = ({
                 >
                   View Summary
                 </Typography>
-                {/* {openEditLogModal && selectedUserId !== null && (
-                  <EditLogModalPage
-                    open={openEditLogModal}
-                    onClose={handleCloseEditLogModal}
+                {/* open edit modal */}
+                {openEditLogModal && selectedUserId != null && (
+                  <EditModalDataPage
                     userId={selectedUserId}
+                    onClose={handleCloseEditLogModal}
                   />
-                )} */}
+                )}
               </Box>
             </Stack>
           </Stack>
@@ -371,14 +428,14 @@ const ReusableUpdateModal: React.FC<ReusableModalPageProps> = ({
                         isLoading
                           ? "Loading..."
                           : key === "DateOfOperation"
-                          ? (() => {
+                            ? (() => {
                               const date = operators?.[0]?.DateOfOperation;
                               return date && !isNaN(new Date(date).getTime())
                                 ? new Date(date).toISOString().split("T")[0].replace(/-/g, "/")
                                 : "N/A";
                             })()
-                          : operators?.[0]?.[key as keyof typeof operators[0]] ?? "N/A"
-                      }                      
+                            : operators?.[0]?.[key as keyof typeof operators[0]] ?? "N/A"
+                      }
                       onChange={handleManagerChange}
                       label={formatKey(key)}
                       disabled={alwaysDisabledKeys.includes(key) || isDisabled}
@@ -417,7 +474,6 @@ const ReusableUpdateModal: React.FC<ReusableModalPageProps> = ({
                 />
               </FormControl>
             </Stack>
-
           </Stack>
 
           {/* Remarks Field */}
@@ -440,26 +496,11 @@ const ReusableUpdateModal: React.FC<ReusableModalPageProps> = ({
               )}
             </FormControl>
           )}
-
           {!isDisabled && (
             <div className="mt-4">
               {children({ handleSubmit })}
             </div>
           )}
-          {/* {isVerifyModalOpen && (
-            <ConfirmUserActionModalPage
-              open={isVerifyModalOpen}
-              onClose={() => setIsVerifyModalOpen(false)}
-              onVerified={() => setIsVerifyModalOpen(false)}
-              onSubmit={onSubmit}
-              selectedUser={user}
-              setSelectedUser={setSelectedUser}
-              actionType="update"
-              user={user}
-              setUser={setUser}
-              setErrors={setErrors}
-            />
-          )} */}
         </Stack>
       </DialogContent>
     </Dialog>

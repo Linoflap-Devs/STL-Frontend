@@ -9,9 +9,9 @@ import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import dayjs, { Dayjs } from 'dayjs';
 import useDetailTableStore from "../../store/useTableStore";
-import { User, SortableTableCellProps } from '../types/interfaces';
+import { SortableTableCellProps } from '../types/interfaces';
 import { filterStyles } from "~/styles/theme";
-import { Operator } from '~/types/types';
+import { User, Operator } from '~/types/types';
 
 // SORTING + FILTERING COMPONENT
 export const SortableTableCell: React.FC<SortableTableCellProps> = ({
@@ -115,21 +115,28 @@ export function sortData<T>(
       return typeof value === 'string' || value instanceof Date || dayjs(value).isValid();
     };
 
-    // Check if the values are valid dates
+    // Handle null or undefined values
+    if (valueA == null && valueB == null) return 0;
+    if (valueA == null) return sortConfig.direction === 'asc' ? -1 : 1;
+    if (valueB == null) return sortConfig.direction === 'asc' ? 1 : -1;
+
+    // Sort dates
     if (isValidDate(valueA) && isValidDate(valueB)) {
       const dateA = dayjs(valueA).valueOf();
       const dateB = dayjs(valueB).valueOf();
       return sortConfig.direction === 'asc' ? dateA - dateB : dateB - dateA;
     }
 
-    // Check if the values are strings or numbers
+    // Sort strings (e.g., fullName)
     if (typeof valueA === 'string' && typeof valueB === 'string') {
+      const stringA = valueA.trim().toLowerCase();
+      const stringB = valueB.trim().toLowerCase();
       return sortConfig.direction === 'asc'
-        ? valueA.localeCompare(valueB)
-        : valueB.localeCompare(valueA);
+        ? stringA.localeCompare(stringB)
+        : stringB.localeCompare(stringA);
     }
 
-    // Handle case where one value is a string and the other is a number
+    // Sort numbers
     if (typeof valueA === 'number' && typeof valueB === 'number') {
       return sortConfig.direction === 'asc' ? valueA - valueB : valueB - valueA;
     }

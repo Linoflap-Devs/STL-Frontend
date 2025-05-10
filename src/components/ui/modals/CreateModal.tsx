@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import { ModalPageProps, Field } from '../../../types/interfaces';
 import ReusableButton from "../button/ReusableSubmitButton";
-import ReusableModal from "./ReusableCreateModal";
 import useUserRoleStore from '../../../../store/useUserStore';
+import ReusableCreateModalPage from './ReusableCreateModal';
 
 export const isManager = (roleId: number) => roleId === 2;
 export const isExecutive = (roleId: number) => roleId === 3;
@@ -18,11 +18,15 @@ const CreateModalPage: React.FC<ModalPageProps> = ({
   const handleClose = onClose ?? (() => {});
   const { roleId } = useUserRoleStore();
 
+  const formattedEndpoint =
+    typeof endpoint === 'string'
+      ? { create: endpoint, update: endpoint }
+      : endpoint;
+
   // getting the name
   const getRoleName = () => {
     if (typeof window !== 'undefined') {
       const pathname = window.location.pathname;
-
       if (pathname.includes('managers')) return 'Manager';
       if (pathname.includes('executives')) return 'Executive';
       if (pathname.includes('operators')) return 'Operator';
@@ -40,10 +44,10 @@ const CreateModalPage: React.FC<ModalPageProps> = ({
 
   return (
     <>
-      <ReusableModal
+      <ReusableCreateModalPage
         isOpen={isOpen}
         onClose={handleClose}
-        endpoint={endpoint}
+        endpoint={formattedEndpoint}
         fields={fields}
         title={`Add ${getRoleName()}`}
       >
@@ -54,7 +58,7 @@ const CreateModalPage: React.FC<ModalPageProps> = ({
             label="Submit"
           />
         )}
-      </ReusableModal>
+      </ReusableCreateModalPage>
     </>
   );
 };

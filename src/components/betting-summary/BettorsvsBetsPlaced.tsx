@@ -138,7 +138,6 @@ const BettorsvsBetsPlacedPage: React.FC<BettorsvsBetsPlacedPageProps> = ({ data 
                 />
             </Box>
 
-
             <Box sx={{ display: "flex", justifyContent: "flex-end", pr: 3, mt: 2 }}>
                 <Button
                     sx={{

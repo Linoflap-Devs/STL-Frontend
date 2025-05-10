@@ -1,72 +1,53 @@
-import { Operator } from "./types";
+import { User, Operator } from "./types";
 
-// Type for users
-export interface User {
-  UserId: number;
-  FirstName: string;
-  LastName: string;
-  Suffix: string | null;
-  UserTypeId: number;
-  email: string;
-  phoneNumber: string;
-  DateOfRegistration: string;
-  OperatorId: number;
-  OperatorDetails?: {
-    OperatorName?: string;
-  };
-  region: string;
-}
-
-// Define the API response structure for users
-export interface GetUsersResponse {
-  success: boolean;
-  message: string;
-  data: User[];
-}
-
-// Define the API response structure for operators
-export interface GetOperatorsResponse {
+// Generic API response interface
+export interface ApiResponse<T> {
   success: boolean;
   message?: string;
-  data: Operator[];
+  data: T;
 }
 
-// for the table component
+export type GetUsersResponse = ApiResponse<User[]>;
+export type GetOperatorsResponse = ApiResponse<Operator[]>;
+
+// Table column interface
 export interface Column<T> {
   key: keyof T | string;
   label: string;
-  render?: (row: T) => React.ReactNode;
+  render?: (row: T) => React.ReactNode; // Add render function to the Column interface
   sortable?: boolean;
   filterable?: boolean;
-  filterKey?: string;
-
-  sortKey?: string;
+  filterKey?: keyof T | string;
+  sortKey?: keyof T | string;
   filterValue?: string | ((row: T) => string);
   onFilterChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
 }
 
+// Sortable table header cell
 export interface SortableTableCellProps {
   label: string;
   sortKey: string;
   isFilterVisible?: boolean;
 }
 
+// Generic card props
 export interface CardProps<T = React.ReactNode> {
-  label: string; // The label that will be displayed in the card
+  label: string;
   textlabel?: string;
-  value: T; // The value to display on the card, which will be of generic type T
-  color?: string; // The background color for the card
+  value: T;
+  color?: string;
   style?: React.CSSProperties;
 }
 
-// types/interfaces.ts
+// Cards page props
 export interface CardsPageProps<T> {
   dashboardData: T[];
   roleLabel?: string;
-  cardData: never[];
+  cardData: CardProps[];
   textlabel?: string;
 }
 
+// Chart types
 export interface ChartDataItem<T = unknown> {
   label: string;
   data: number[];
@@ -83,27 +64,28 @@ export interface ChartCardProps<T = unknown> {
   roleLabel?: string;
 }
 
-// Legend component props
 export interface CustomLegendProps {
   pageType: "manager" | "executive" | "operator";
   label: string;
 }
 
-// Define the generic interface
 export interface UseUsersChartsDataProps<T> {
   dashboardData: T[];
   regions: string[];
+  Region: string;
 }
 
 export interface ChartsDataPageProps<T extends { region: string }> {
-  dashboardData?: T[];
+  dashboardData: T[];
   userType?: string;
   getUserStatus?: (user: T, date: string) => string;
   pageType?: "manager" | "executive" | "operator";
-  regions: string[];
   operatorMap?: Record<number, Operator>;
+  Region?: string;
+  regions: string[];
 }
 
+// Generic table props
 export interface DetailedTableProps<T> {
   data: T[];
   columns: Column<T>[];
@@ -121,6 +103,7 @@ export interface ChartBarItem {
   data: number[];
 }
 
+// Region user object
 export interface RegionUser {
   OperatorRegion?: {
     RegionFull: string;
@@ -128,8 +111,10 @@ export interface RegionUser {
     RegionName: string;
   };
   region: string;
+  Region?: string;
 }
 
+// Form field definitions
 export interface Field {
   name: string;
   label: string;
@@ -137,6 +122,8 @@ export interface Field {
   placeholder?: string;
   options?: FieldOption[];
   value: string;
+  gridSpan?: 1 | 2;  // Add the gridSpan property here
+  required?: boolean; // Add this line
 }
 
 export interface FieldOption {
@@ -144,9 +131,13 @@ export interface FieldOption {
   value: string;
 }
 
-export type ReusableModalPageProps = {
+// Reusable modal
+export interface ReusableModalPageProps {
   title: string;
-  endpoint: string;
+  endpoint?: {
+    create: string;
+    update: string;
+  };
   isOpen: boolean;
   onClose: () => void;
   fields: Field[];
@@ -158,23 +149,31 @@ export type ReusableModalPageProps = {
   setFormData?: (data: Record<string, string>) => void;
   additionalPayload?: Record<string, any>;
   initialUserData?: any;
-  operatorMap?: { [key: number]: Operator };
-};
+  operatorMap?: Record<number, Operator>;
+  layout?: 'single' | 'double'; // Add layout property
+}
 
 export interface ModalPageProps {
   open?: boolean;
   onClose?: () => void;
-  fields?: Array<{
-    type: any;
-    name: any; label: string; value: string
-  }>;
-  endpoint?: string;
-  pageType?: string; // Declare pageType prop
-  additionalPayload?: Record<string, any>; // <- for things like UserTypeId
-  onFieldChange?: (name: string, value: string) => void; // Added onFieldChange property
-  initialUserData?: any; // <-- Add this
+  fields?: Field[];
+  endpoint?: {
+    create: string;
+    update: string;
+  };
+  pageType?: "manager" | "executive" | "operator";
+  additionalPayload?: Record<string, any>;
+  onFieldChange?: (name: string, value: string) => void;
+  initialUserData?: any;
   operatorMap?: { [key: number]: Operator };
 }
 
+export interface UserFieldFormPageProps {
+  operatorMap: { [key: number]: Operator };
+  setOperatorMap: (operatorMap: { [key: number]: Operator }) => void;
+}
 
-
+export interface EditModalPageProps {
+  userId: number;
+  onClose: () => void;
+} 
