@@ -1,27 +1,26 @@
 // NOTE: While this aims to follow the reusable table pattern,
 // the Edit Log component requires customized behavior and data structure
-// (e.g., unique columns, filtering logic, and value formatting),
-// so it deviates from the shared implementation.
 
 import React, { useEffect, useMemo, useState } from "react";
-import { Table, TableHead, TableRow, TableCell, TableBody, TablePagination, IconButton, TableContainer } from "@mui/material";
-import SearchIcon from "@mui/icons-material/Search";
+import {IconButton,Table,TableBody,TableCell,TableContainer,TableHead,TablePagination,TableRow} from "@mui/material";
+import ArrowBackIosIcon from "@mui/icons-material/ArrowBackIos";
 import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
 import ArrowDropUpIcon from "@mui/icons-material/ArrowDropUp";
-import useUserRoleStore from "../../../../store/useUserStore";
-import { getUsersData } from "~/utils/api/users/get.users.service";
-import { getOperatorsData } from "~/utils/api/operators/get.operators.service";
-import { EditLogFields, Operator, User } from "~/types/types";
+import EditIcon from "@mui/icons-material/Edit";
+import SearchIcon from "@mui/icons-material/Search";
 import useDetailTableStore from "../../../../store/useTableStore";
-import { EditModalPageProps } from "~/types/interfaces";
+import useUserRoleStore from "../../../../store/useUserStore";
+import { getOperatorsData } from "~/utils/api/operators/get.operators.service";
+import { getUsersData } from "~/utils/api/users/get.users.service";
 import { filterDataEditLog, sortDataEditLog } from "~/utils/sortPaginationSearch";
-import EditIcon from '@mui/icons-material/Edit';
-import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
 import { getRoleName } from "~/utils/dashboarddata";
+import { EditLogFields, Operator, User } from "~/types/types";
+import { EditModalPageProps } from "~/types/interfaces";
+import dayjs from "dayjs";
 
 const EditModalPage: React.FC<EditModalPageProps> = ({ userId, onClose }) => {
   const { editLogColumns: columns, modalData, setModalData, setOperatorMap, setEditLogColumns } = useUserRoleStore();
-  const { page, rowsPerPage, sortConfig, filters, setSortConfig } = useDetailTableStore();
+  const { page, setPage, rowsPerPage, setRowsPerPage, sortConfig, filters, setSortConfig, } = useDetailTableStore();
   const { roleId } = useUserRoleStore();
   const [searchQuery, setSearchQuery] = useState("");
 
@@ -63,7 +62,12 @@ const EditModalPage: React.FC<EditModalPageProps> = ({ userId, onClose }) => {
 
     setEditLogColumns([
       { key: "EditedBy", label: "Edited By", sortable: true, filterable: true },
-      { key: "CreatedAt", label: "Time Edited", sortable: true, filterable: true },
+      {
+        key: "CreatedAt",
+        label: "Time Edited",
+        sortable: true,
+        filterable: true,
+      },
       { key: "OldValue", label: "Previous Value", sortable: true, filterable: true },
       { key: "NewValue", label: "New Value", sortable: true, filterable: true },
       { key: "Remarks", label: "Remarks", sortable: true, filterable: true },
@@ -83,7 +87,7 @@ const EditModalPage: React.FC<EditModalPageProps> = ({ userId, onClose }) => {
           onClick={onClose}
           sx={{
             backgroundColor: "#ACA993",
-            left: 5,
+            left: 2,
             padding: 0,
             minWidth: 0,
             width: 26,
@@ -121,7 +125,6 @@ const EditModalPage: React.FC<EditModalPageProps> = ({ userId, onClose }) => {
                 <SearchIcon style={{ fontSize: 20 }} />
               </div>
             </div>
-
             {sortedAndFilteredData.length === 0 ? (
               <div className="flex flex-col items-center py-7 text-[#0038A8]">
                 <EditIcon style={{ fontSize: 50 }} />
@@ -130,7 +133,6 @@ const EditModalPage: React.FC<EditModalPageProps> = ({ userId, onClose }) => {
                 </h6>
               </div>
             ) : (
-
               <Table>
                 <TableHead>
                   <TableRow>
@@ -157,35 +159,45 @@ const EditModalPage: React.FC<EditModalPageProps> = ({ userId, onClose }) => {
                   </TableRow>
                 </TableHead>
                 <TableBody>
-                  {sortedAndFilteredData.map((row, rowIndex) => (
-                    <TableRow key={rowIndex}>
-                      {columns.map((col) => {
-                        const key = String(col.key);
-                        const value = row[key as keyof EditLogFields];
-                        return <TableCell key={key}>{value}</TableCell>;
-                      })}
-                    </TableRow>
-                  ))}
+                  {sortedAndFilteredData
+                    .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                    .map((row, rowIndex) => (
+                      <TableRow key={rowIndex}>
+                        {columns.map((col) => {
+                          const key = String(col.key);
+                          const value = row[key as keyof EditLogFields];
+
+                          // Format the date field if it's the CreatedAt field
+                          if (key === "CreatedAt" && value) {
+                            return <TableCell key={key}>{dayjs(value).format("YYYY/MM/DD")}</TableCell>;
+                          }
+
+                          return <TableCell key={key}>{value}</TableCell>;
+                        })}
+                      </TableRow>
+                    ))}
                 </TableBody>
+
               </Table>
             )}
           </TableContainer>
         </div>
-
         <div className="p-3">
           <TablePagination
             rowsPerPageOptions={[10, 25, 50, 100]}
             component="div"
-            count={modalData.length}
+            count={sortedAndFilteredData.length}
             rowsPerPage={rowsPerPage}
             page={page}
-            onPageChange={() => { }}
-            onRowsPerPageChange={() => { }}
+            onPageChange={(_, newPage) => setPage(newPage)}
+            onRowsPerPageChange={(e) => {
+              setRowsPerPage(parseInt(e.target.value, 10));
+              setPage(0);
+            }}
           />
         </div>
       </div>
     </div>
-
   );
 };
 

@@ -1,17 +1,5 @@
 import React, { useState, useMemo, useEffect } from "react";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow,
-  TablePagination,
-  Button,
-  IconButton,
-  Menu,
-  MenuItem,
-} from "@mui/material";
+import {Table,TableBody,TableCell,TableContainer,TableHead,TableRow,TablePagination,Button,IconButton,Menu,MenuItem} from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
 import FilterListIcon from "@mui/icons-material/FilterList";
 import FilterListOffIcon from "@mui/icons-material/FilterListOff";
@@ -35,23 +23,7 @@ const DetailedTable = <T extends User | Operator>({
   onExportCSV,
   operatorMap,
 }: DetailedTableProps<T>) => {
-  const {
-    searchQuery,
-    setIsFilterActive,
-    isFilterActive,
-    page,
-    rowsPerPage,
-    sortConfig,
-    filters,
-    handleChangePage,
-    handleChangeRowsPerPage,
-    setSearchQuery,
-    anchorEl,
-    selectedRow,
-    setAnchorEl,
-    setSelectedRow,
-    resetMenu,
-  } = useDetailTableStore();
+  const {searchQuery,setIsFilterActive,isFilterActive,page,rowsPerPage,sortConfig,filters,handleChangePage,handleChangeRowsPerPage,setSearchQuery,anchorEl,selectedRow,setAnchorEl,setSelectedRow,resetMenu} = useDetailTableStore();
   const [openEditLogModal, setOpenEditLogModal] = useState(false);
   const sevenDaysAgo = useMemo(() => dayjs().subtract(7, "day"), []);
 
@@ -59,40 +31,40 @@ const DetailedTable = <T extends User | Operator>({
   const filteredData = useMemo(() => {
     const filterKeys = columns
       .filter((col) => col.filterable)
-      .map((col) => col.filterKey || col.key.toString())
-      .filter((key): key is string => typeof key === "string");
-
-    const updatedFilters = { ...filters, searchQuery };
+      .map((col) => col.filterKey ?? col.key?.toString())
+      .filter((key): key is string => !!key);
 
     const enrichedData = data.map((item) => {
       const operator = operatorMap?.[item.OperatorId];
-      const Status = getUserStatus(item, sevenDaysAgo);
       return {
         ...item,
         OperatorDetails: {
           OperatorName: operator?.OperatorName || "",
         },
-        Status,
+        Status: getUserStatus(item, sevenDaysAgo),
       };
     });
 
     return filterData(
       enrichedData,
       filterKeys,
-      updatedFilters,
-      operatorMap as { [key: number]: Operator }
+      { ...filters, searchQuery },
+      operatorMap as Record<number, Operator>
     );
   }, [data, filters, searchQuery, columns, operatorMap, sevenDaysAgo]);
 
-  // SORT
+  // SORTING
   const sortedData = useMemo(() => {
-    console.log('Filtered Data before Sorting:', filteredData);  // Log filteredData
-    console.log('Sort Config:', sortConfig);  // Log sortConfig
+    if (!filteredData || !sortConfig) {
+      return [];
+    }
 
-    // Ensure the correct typing for sortConfig
-    const result = sortData(filteredData, sortConfig as SortConfig<User | Operator>);  // Casting sortConfig
+    // console.log('Filtered Data before Sorting:', filteredData);
+    // console.log('Sort Config:', sortConfig);
 
-    console.log('Sorted Data:', result);  // Log the sorted data
+    // Perform sorting operation
+    const result = sortData(filteredData, sortConfig as SortConfig<User | Operator>);
+    // console.log('Sorted Data:', result);
 
     return result;
   }, [filteredData, sortConfig]);
@@ -100,13 +72,14 @@ const DetailedTable = <T extends User | Operator>({
   // PAGINATION
   const paginatedData = useMemo(() => {
     const start = page * rowsPerPage;
-    return sortedData.slice(start, start + rowsPerPage);
+    const end = start + rowsPerPage;
+    return sortedData.slice(start, end);
   }, [sortedData, page, rowsPerPage]);
 
   // Function to handle opening the modal
   const handleOpenViewModal = () => {
     useModalStore.getState().openModal("view", selectedRow);
-    setOpenEditLogModal(false); // Close Edit modal explicitly
+    setOpenEditLogModal(false);
   };
 
   const handleDelete = (row: any) => {
@@ -165,21 +138,19 @@ const DetailedTable = <T extends User | Operator>({
         </div>
         <Table size="small">
           <TableHead>
-            <TableRow>
-              {columns.map((col) =>
-                col.sortable || col.filterable ? (
-                  <SortableTableCell
-                    key={String(col.key)}
-                    label={col.label}
-                    sortKey={String(col.key)}
-                    isFilterVisible={isFilterActive && col.filterable}
-                  />
-                ) : (
-                  <TableCell key={String(col.key)}>{col.label}</TableCell>
-                )
-              )}
-              <TableCell>Actions</TableCell>
-            </TableRow>
+            {columns.map((col) =>
+              col.sortable || col.filterable ? (
+                <SortableTableCell
+                  key={String(col.key)}
+                  label={col.label}
+                  sortKey={String(col.key)}
+                  isFilterVisible={isFilterActive && col.filterable}
+                />
+              ) : (
+                <TableCell key={String(col.key)}>{col.label}</TableCell>
+              )
+            )}
+            <TableCell>Actions</TableCell>
           </TableHead>
           <TableBody>
             {paginatedData.length === 0 ? (

@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
-import { ModalPageProps } from '../../../types/interfaces';
-import ReusableButton from "../button/ReusableSubmitButton";
-import useUserRoleStore from '../../../../store/useUserStore';
+import ReusableButton from '../button/ReusableSubmitButton';
 import ReusableCreateModalPage from './ReusableCreateModal';
+import useUserRoleStore from '../../../../store/useUserStore';
 import { getRoleName } from '~/utils/dashboarddata';
+import { ModalPageProps } from '../../../types/interfaces';
 
 export const isManager = (roleId: number) => roleId === 2;
 export const isExecutive = (roleId: number) => roleId === 3;
@@ -23,7 +23,6 @@ const CreateModalPage: React.FC<ModalPageProps> = ({
     typeof endpoint === 'string'
       ? { create: endpoint, update: endpoint }
       : endpoint;
-
 
   return (
     <>

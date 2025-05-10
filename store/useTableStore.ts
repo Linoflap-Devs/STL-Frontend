@@ -1,7 +1,7 @@
 import { create } from 'zustand';
 import { Operator } from '~/types/types';
 
-interface SortConfig {
+interface SortConfig<T> {
   key: string;
   direction: 'asc' | 'desc';
 }
@@ -26,8 +26,8 @@ interface TableStoreState<T = any> {
   modalType: 'create' | 'view' | null;
   setModalType: (type: 'create' | 'view' | null) => void;
 
-  sortConfig: SortConfig;
-  setSortConfig: (config: SortConfig) => void;
+  sortConfig: SortConfig<T>;
+  setSortConfig: (config: SortConfig<T>) => void;
 
   operatorMap: { [key: number]: Operator };
   setOperatorMap: (operatorMap: { [key: number]: Operator }) => void;

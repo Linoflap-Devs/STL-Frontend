@@ -57,7 +57,7 @@ const darkTheme = createTheme({
         root: {
           fontSize: "13px",
           borderBottom: "2px solid #E0DCBD",
-          padding: "3px",
+          padding: "2px",
         },
         head: {
           padding: "10px",
