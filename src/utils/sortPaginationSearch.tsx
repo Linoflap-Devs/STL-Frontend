@@ -11,7 +11,7 @@ import dayjs, { Dayjs } from 'dayjs';
 import useDetailTableStore from "../../store/useTableStore";
 import { SortableTableCellProps } from '../types/interfaces';
 import { filterStyles } from "~/styles/theme";
-import { User, Operator } from '~/types/types';
+import { User, Operator, SortConfig } from '~/types/types';
 
 // SORTING + FILTERING COMPONENT
 export const SortableTableCell: React.FC<SortableTableCellProps> = ({
@@ -103,42 +103,55 @@ export const SortableTableCell: React.FC<SortableTableCellProps> = ({
 };
 
 // SORTING FUNCTION
-export function sortData<T>(
+export function sortData<T extends User | Operator>(
   data: T[],
-  sortConfig: { key: string; direction: 'asc' | 'desc' }
+  sortConfig: SortConfig<T>
 ): T[] {
   return [...data].sort((a, b) => {
-    const valueA = getNestedValue(a, sortConfig.key);
-    const valueB = getNestedValue(b, sortConfig.key);
+    let valueA: any;
+    let valueB: any;
 
-    const isValidDate = (value: any): boolean => {
-      return typeof value === 'string' || value instanceof Date || dayjs(value).isValid();
-    };
+    // Custom logic for fullName
+    if (sortConfig.key === "fullName") {
+      valueA = `${(a as User).FirstName} ${(a as User).LastName} ${(a as User).Suffix || ""}`.trim().toLowerCase();
+      valueB = `${(b as User).FirstName} ${(b as User).LastName} ${(b as User).Suffix || ""}`.trim().toLowerCase();
+    } else {
+      valueA = getNestedValue(a, sortConfig.key as string);
+      valueB = getNestedValue(b, sortConfig.key as string);
 
-    // Handle null or undefined values
+      // Special handling if sorting key is "Cities" (which is an array)
+      if (sortConfig.key === "Cities") {
+        const getCityNames = (cities: any) =>
+          Array.isArray(cities)
+            ? cities.map((c) => c.CityName).join(", ").toLowerCase()
+            : "";
+        valueA = getCityNames((a as any).Cities);
+        valueB = getCityNames((b as any).Cities);
+      }
+    }
+
+    // Handle null or undefined
     if (valueA == null && valueB == null) return 0;
-    if (valueA == null) return sortConfig.direction === 'asc' ? -1 : 1;
-    if (valueB == null) return sortConfig.direction === 'asc' ? 1 : -1;
+    if (valueA == null) return sortConfig.direction === "asc" ? -1 : 1;
+    if (valueB == null) return sortConfig.direction === "asc" ? 1 : -1;
 
-    // Sort dates
-    if (isValidDate(valueA) && isValidDate(valueB)) {
+    // Handle valid date strings
+    if (dayjs(valueA).isValid() && dayjs(valueB).isValid()) {
       const dateA = dayjs(valueA).valueOf();
       const dateB = dayjs(valueB).valueOf();
-      return sortConfig.direction === 'asc' ? dateA - dateB : dateB - dateA;
+      return sortConfig.direction === "asc" ? dateA - dateB : dateB - dateA;
     }
 
-    // Sort strings (e.g., fullName)
-    if (typeof valueA === 'string' && typeof valueB === 'string') {
-      const stringA = valueA.trim().toLowerCase();
-      const stringB = valueB.trim().toLowerCase();
-      return sortConfig.direction === 'asc'
-        ? stringA.localeCompare(stringB)
-        : stringB.localeCompare(stringA);
+    // Handle strings
+    if (typeof valueA === "string" && typeof valueB === "string") {
+      return sortConfig.direction === "asc"
+        ? valueA.localeCompare(valueB)
+        : valueB.localeCompare(valueA);
     }
 
-    // Sort numbers
-    if (typeof valueA === 'number' && typeof valueB === 'number') {
-      return sortConfig.direction === 'asc' ? valueA - valueB : valueB - valueA;
+    // Handle numbers
+    if (typeof valueA === "number" && typeof valueB === "number") {
+      return sortConfig.direction === "asc" ? valueA - valueB : valueB - valueA;
     }
 
     return 0;

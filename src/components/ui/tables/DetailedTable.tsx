@@ -21,9 +21,10 @@ import useDetailTableStore from "../../../../store/useTableStore";
 import { SortableTableCell, filterData, sortData } from "../../../utils/sortPaginationSearch";
 import { DetailedTableProps } from "../../../types/interfaces";
 import { buttonStyles } from "~/styles/theme";
-import { User, Operator } from "~/types/types";
-import useUserRoleStore from "../../../../store/useUserStore";
+import { User, Operator, SortConfig } from "~/types/types";
 import { useModalStore } from "../../../../store/useModalStore";
+import { getUserStatus } from "~/utils/dashboarddata";
+import dayjs from "dayjs";
 
 const DetailedTable = <T extends User | Operator>({
   data,
@@ -52,25 +53,49 @@ const DetailedTable = <T extends User | Operator>({
     resetMenu,
   } = useDetailTableStore();
   const [openEditLogModal, setOpenEditLogModal] = useState(false);
-  const {
-    setModalOpen
-  } = useUserRoleStore();
+  const sevenDaysAgo = useMemo(() => dayjs().subtract(7, "day"), []);
 
   // FILTER + SEARCH
   const filteredData = useMemo(() => {
     const filterKeys = columns
       .filter((col) => col.filterable)
-      .map((col) => (col.filterKey || col.key.toString()))
+      .map((col) => col.filterKey || col.key.toString())
       .filter((key): key is string => typeof key === "string");
-
 
     const updatedFilters = { ...filters, searchQuery };
 
-    return filterData(data, filterKeys, updatedFilters, operatorMap as { [key: number]: Operator });
-  }, [data, filters, searchQuery, columns, operatorMap]);
+    const enrichedData = data.map((item) => {
+      const operator = operatorMap?.[item.OperatorId];
+      const Status = getUserStatus(item, sevenDaysAgo);
+      return {
+        ...item,
+        OperatorDetails: {
+          OperatorName: operator?.OperatorName || "",
+        },
+        Status,
+      };
+    });
+
+    return filterData(
+      enrichedData,
+      filterKeys,
+      updatedFilters,
+      operatorMap as { [key: number]: Operator }
+    );
+  }, [data, filters, searchQuery, columns, operatorMap, sevenDaysAgo]);
 
   // SORT
-  const sortedData = useMemo(() => sortData(filteredData, sortConfig), [filteredData, sortConfig]);
+  const sortedData = useMemo(() => {
+    console.log('Filtered Data before Sorting:', filteredData);  // Log filteredData
+    console.log('Sort Config:', sortConfig);  // Log sortConfig
+
+    // Ensure the correct typing for sortConfig
+    const result = sortData(filteredData, sortConfig as SortConfig<User | Operator>);  // Casting sortConfig
+
+    console.log('Sorted Data:', result);  // Log the sorted data
+
+    return result;
+  }, [filteredData, sortConfig]);
 
   // PAGINATION
   const paginatedData = useMemo(() => {
@@ -82,7 +107,6 @@ const DetailedTable = <T extends User | Operator>({
   const handleOpenViewModal = () => {
     useModalStore.getState().openModal("view", selectedRow);
     setOpenEditLogModal(false); // Close Edit modal explicitly
-    console.log("Edit Log Modal is now closed.");
   };
 
   const handleDelete = (row: any) => {

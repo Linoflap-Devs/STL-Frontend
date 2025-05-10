@@ -16,6 +16,7 @@ export interface LegendItem {
 export interface User {
   UserId: number;
   FirstName: string;
+  fullName: string;
   LastName: string;
   Suffix: string | null;
   UserTypeId: number;
@@ -26,12 +27,13 @@ export interface User {
   OperatorDetails?: {
     OperatorName?: string;
   };
-  region: string;
   Region?: string;
+  region: string; // Add region here
 
   LastLogin?: string;
   LastTokenRefresh?: string;
   IsActive?: number;
+  Cities: { CityId: number; CityName: string }[];
 }
 
 // Define the Operator type
@@ -92,5 +94,10 @@ export interface operatorConfig {
     options?: { value: string; label: string }[];
   }[];
 }
+
+export type SortConfig<T> = {
+  key: keyof T;  // Restrict 'key' to a valid key of the passed type
+  direction: "asc" | "desc";  // Sorting direction
+};
 
 
