@@ -176,4 +176,4 @@ export interface UserFieldFormPageProps {
 export interface EditModalPageProps {
   userId: number;
   onClose: () => void;
-} 
+}

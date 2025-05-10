@@ -61,6 +61,19 @@ export type Operator = {
   IsActive?: number;
 }
 
+export type EditLogFields = {
+  logField: string;
+  EditLogDetailsId: number;
+  User: string;
+  EditedBy: string;
+  CreatedAt: string;
+  OldValue: string;
+  NewValue: string;
+  Remarks: string;
+  
+  OperatorId?: number;
+}
+
 export interface RoleConfig {
   userTypeId: number;
   endpoint: {

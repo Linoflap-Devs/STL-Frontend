@@ -11,7 +11,7 @@ import dayjs, { Dayjs } from 'dayjs';
 import useDetailTableStore from "../../store/useTableStore";
 import { SortableTableCellProps } from '../types/interfaces';
 import { filterStyles } from "~/styles/theme";
-import { User, Operator, SortConfig } from '~/types/types';
+import { User, Operator, SortConfig, EditLogFields } from '~/types/types';
 
 // SORTING + FILTERING COMPONENT
 export const SortableTableCell: React.FC<SortableTableCellProps> = ({
@@ -218,5 +218,44 @@ export const filterData = (
 
       return itemValue.includes(filterValue);
     });
+  });
+};
+
+// ======================================================= FOR EDIT LOGS
+
+// Filter function with search and additional filters for Edit Log
+export const filterDataEditLog = (
+  data: EditLogFields[], filterKeys: string[], filters: Record<string, any>, searchQuery: string
+) => {
+  return data.filter((row) => {
+    // Search filter logic
+    const matchesSearch = filterKeys.some((key) => {
+      const value = row[key as keyof EditLogFields];
+      return value && value.toString().toLowerCase().includes(searchQuery.toLowerCase());
+    });
+
+    // Other filters logic
+    const matchesFilters = filterKeys.every((key) => {
+      const filterValue = filters[key];
+      if (!filterValue) return true;
+      const value = row[key as keyof EditLogFields];
+      return value?.toString().toLowerCase().includes(filterValue.toLowerCase());
+    });
+
+    return matchesSearch && matchesFilters;
+  });
+};
+
+// Sorting function for Edit Log
+export const sortDataEditLog = (data: EditLogFields[], sortConfig: { key: string, direction: 'asc' | 'desc' }) => {
+  const { key, direction } = sortConfig;
+
+  return data.sort((a, b) => {
+    const aValue = a[key as keyof EditLogFields];
+    const bValue = b[key as keyof EditLogFields];
+
+    if ((aValue ?? '') < (bValue ?? '')) return direction === 'asc' ? -1 : 1;
+    if ((aValue ?? '') > (bValue ?? '')) return direction === 'asc' ? 1 : -1;
+    return 0;
   });
 };
