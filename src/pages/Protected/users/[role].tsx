@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect } from "react"; 
 import { useRouter } from "next/router";
 import DetailedTable from "~/components/ui/tables/DetailedTable";
 import { getUsersData } from "~/utils/api/users/get.users.service";
@@ -23,8 +23,9 @@ const RolePage = () => {
     data,
     setData,
     columns,
-    setColumns,
+    setColumns, 
   } = useUserRoleStore();
+  
   const router = useRouter();
   const { role } = router.query;
   const pagetype = window.location.pathname.includes("manager") ? "manager" : "executive";
@@ -34,7 +35,7 @@ const RolePage = () => {
   const roleConfig = roleString ? roleMap[roleString.toLowerCase()] : null;
   const roleId = roleConfig?.roleId;
 
-const fetchOperators = async () => {
+  const fetchOperators = async () => {
     try {
       const operatorResponse = await getOperatorsData<GetOperatorsResponse>("/operators/getOperators");
       if (operatorResponse.success && Array.isArray(operatorResponse.data?.data)) {
@@ -158,7 +159,7 @@ const fetchOperators = async () => {
   return (
     <div className="mx-auto px-0 py-1">
       <h1 className="text-3xl font-bold mb-3">{roleConfig.label}</h1>
-      =      <CardsPage
+      <CardsPage
         dashboardData={data}
         roleLabel={roleConfig.label || ""}
         cardData={[]}
@@ -173,7 +174,7 @@ const fetchOperators = async () => {
       <>
         <DetailedTable
           data={data}
-          columns={columns}
+          columns={columns} // Use userSummaryColumns here
           pageType={pagetype}
           operatorMap={operatorMap}
         />

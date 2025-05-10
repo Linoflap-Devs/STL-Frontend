@@ -43,7 +43,7 @@ const BetSummaryTodayPage = () => {
       <Box sx={{ display: "flex" }}>
         <Box
           sx={{
-            backgroundColor: "#383838",
+            backgroundColor: "#F8F0E3",
             padding: "1rem",
             paddingBottom: "0px",
             borderRadius: "8px",

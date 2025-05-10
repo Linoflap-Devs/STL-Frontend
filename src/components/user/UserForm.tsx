@@ -36,7 +36,6 @@ const roleConfigs: Record<string, { userTypeId: number; endpoint: { create: stri
       { name: 'operatorId', label: 'Assigned Company', type: 'text', placeholder: 'Enter assigned company', value: '', gridSpan: 2 },
       { name: 'email', label: 'Email Address', type: 'email', placeholder: 'Enter email address', value: '', gridSpan: 2 },
       { name: 'password', label: 'Password', type: 'password', placeholder: 'Enter password', value: '', gridSpan: 2, required: true },
-      //{ name: 'userId', label: 'User ID', type: 'text', placeholder: 'Enter user ID', value: '', gridSpan: 1 },
     ],
   },
   executive: {
@@ -151,6 +150,7 @@ const UserFieldFormPage: React.FC = () => {
           operatorMap={operatorMap}
         />
       )}
+
     </div>
   );
 };

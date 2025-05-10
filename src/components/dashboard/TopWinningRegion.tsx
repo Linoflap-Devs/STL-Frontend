@@ -55,7 +55,7 @@ const TopWinningRegionPage = () => {
   }, []);
 
   return (
-    <div className="bg-[#171717] p-4 rounded-xl">
+  <div className="bg-transparent p-4 rounded-xl border border-[#0038A8]">
       <div className="flex mb-2">
         <div className="bg-[#2F2F2F] p-1 rounded-lg">
           <FaMoneyBillAlt size={24} color={"#67ABEB"}/>

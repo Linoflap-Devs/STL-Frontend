@@ -1,4 +1,7 @@
-import React, { useEffect } from "react";
+// this is a reusable update component
+// that needed to customize the fields
+
+import React, { useState, useEffect } from "react";
 import {
   Dialog,
   DialogContent,
@@ -26,6 +29,8 @@ import { getUserStatus } from "~/utils/dashboarddata";
 import dayjs from "dayjs";
 import axiosInstance from "~/utils/axiosInstance";
 import { AxiosError } from "axios";
+import EditModalDataPage from "./EditLogModal";
+import { useModalStore } from "../../../../store/useModalStore";
 
 const ReusableUpdateModal: React.FC<ReusableModalPageProps> = ({
   title,
@@ -47,8 +52,6 @@ const ReusableUpdateModal: React.FC<ReusableModalPageProps> = ({
     isDisabled,
     isLoading,
     isViewMode,
-    areaOfOperations,
-    isVerifyModalOpen,
     setIsVerifyModalOpen,
     selectedUserId,
     setSelectedUserId,
@@ -58,7 +61,10 @@ const ReusableUpdateModal: React.FC<ReusableModalPageProps> = ({
   } = useUpdateModalState();
 
   const { operators, setOperators } = useOperatorsData();
+  const [originalUserData, setOriginalUserData] = useState(null);
+  const { openModal, modalOpen, modalType, selectedData, closeModal } = useModalStore();
 
+  // fetching of initial data
   useEffect(() => {
     if (!initialUserData || !operatorMap) return;
 
@@ -67,18 +73,14 @@ const ReusableUpdateModal: React.FC<ReusableModalPageProps> = ({
     const transformedUser = {
       ...initialUserData,
       userId: initialUserData.UserId || "N/A",
-      firstName: initialUserData.FirstName || "N/A",
-
-      lastName: initialUserData.LastName || "N/A",
       phoneNumber: initialUserData.PhoneNumber || "N/A",
       email: initialUserData.Email || "N/A",
-
-      suffix: initialUserData.suffix || "N/A",
       LastUpdatedBy: initialUserData.LastUpdatedBy || "N/A",
       LastUpdatedDate: initialUserData.LastUpdatedDate || "N/A",
     };
 
     setUser(transformedUser);
+    setOriginalUserData(transformedUser);
 
     const operatorId = Number(initialUserData.OperatorId);
     const operator = operatorMap[operatorId] ?? null;
@@ -88,6 +90,7 @@ const ReusableUpdateModal: React.FC<ReusableModalPageProps> = ({
     setStatus(userStatus);
   }, [initialUserData, operatorMap]);
 
+  // keys will not update
   const alwaysDisabledKeys = [
     "FirstName",
     "LastName",
@@ -99,14 +102,11 @@ const ReusableUpdateModal: React.FC<ReusableModalPageProps> = ({
     "LastUpdatedDate",
   ];
 
-  const handleOpenEditLogModal = (userId: number) => {
+  const handleCloseEditLogModal = () => setOpenEditLogModal(false);
+  
+  const handleOpenEditLogModal = (userId: number | null) => {
     setSelectedUserId(userId);
     setOpenEditLogModal(true);
-  };
-
-  const handleCloseEditLogModal = () => {
-    setSelectedUserId(null);
-    setOpenEditLogModal(false);
   };
 
   const handleDisable = () => {
@@ -117,36 +117,37 @@ const ReusableUpdateModal: React.FC<ReusableModalPageProps> = ({
 
   const handleSubmit = async () => {
     try {
-      if (!endpoint) {
-        throw new Error("Endpoint is missing.");
-      }
-
+      if (!endpoint) throw new Error("Endpoint is missing.");
       if (typeof endpoint === 'object' && !endpoint.update) {
         throw new Error("Invalid endpoint: 'update' endpoint is required.");
       }
 
-      // Extract the correct endpoint URL
       const endpointUrl = typeof endpoint === 'string' ? endpoint : endpoint.update;
       console.log("Using endpoint:", endpointUrl);
 
-      // Prepare the payload and rename UserId to userId
-      const payload = {
-        ...user,
+      if (!originalUserData) throw new Error("Original user data is missing.");
+
+      // Only include fields that changed
+      const updatedFields: Record<string, any> = {
         userId: user.UserId,
       };
-      delete payload.UserId; // optional: clean up old casing if needed
 
-      // Ensure userId is part of the payload
-      console.log("userId in payload:", payload.userId);
-      console.log("Full Payload:", payload);
+      Object.entries(user).forEach(([key, value]) => {
+        const originalValue = originalUserData[key];
+        if (key !== 'UserId' && value !== originalValue) {
+          // Normalize casing for API
+          const normalizedKey = key.charAt(0).toLowerCase() + key.slice(1);
+          updatedFields[normalizedKey] = value;
+        }
+      });
 
-      // Check if userId is missing or undefined
-      if (!payload.userId) {
+      console.log("Final payload (only changed fields):", updatedFields);
+
+      if (!updatedFields.userId) {
         throw new Error("userId is missing from the payload.");
       }
 
-      // Make the API request
-      const response = await axiosInstance.patch(endpointUrl, payload, {
+      const response = await axiosInstance.patch(endpointUrl, updatedFields, {
         withCredentials: true,
       });
 
@@ -195,7 +196,7 @@ const ReusableUpdateModal: React.FC<ReusableModalPageProps> = ({
             sm: "80%",
             md: "600px",
             lg: "650px",
-            xl: "740px",
+            xl: "720px",
           },
         },
       }}
@@ -261,7 +262,7 @@ const ReusableUpdateModal: React.FC<ReusableModalPageProps> = ({
           <Stack direction="row" spacing={3}>
             <Stack spacing={3} sx={{ flex: 1 }}>
               <Typography>Personal Information</Typography>
-              {["firstName", "lastName", "phoneNumber", "email"].map(
+              {["FirstName", "LastName", "PhoneNumber", "Email"].map(
                 (key) => (
                   <Stack key={key} spacing={0}>
                     {key === "lastName" ? (
@@ -341,7 +342,7 @@ const ReusableUpdateModal: React.FC<ReusableModalPageProps> = ({
             <Stack spacing={3} sx={{ flex: 1 }}>
               <Typography sx={{ mb: 0 }}>History</Typography>
               {[
-                "createdBy",
+                "CreatedBy",
                 "DateOfRegistration",
                 "LastUpdatedBy",
                 "LastUpdatedDate",
@@ -398,6 +399,13 @@ const ReusableUpdateModal: React.FC<ReusableModalPageProps> = ({
                 >
                   View Summary
                 </Typography>
+                {/* open edit modal */}
+                  {openEditLogModal && selectedUserId != null && (
+                    <EditModalDataPage
+                      userId={selectedUserId}
+                      onClose={handleCloseEditLogModal}
+                    />
+                  )}
               </Box>
             </Stack>
           </Stack>
@@ -409,7 +417,7 @@ const ReusableUpdateModal: React.FC<ReusableModalPageProps> = ({
 
           <Stack direction="row" spacing={3}>
             <Stack spacing={3} sx={{ flex: 1 }}>
-              {["operatorName", "DateOfOperation"].map((key) => (
+              {["OperatorName", "DateOfOperation"].map((key) => (
                 <Stack key={key} spacing={3}>
                   <FormControl fullWidth error={!!errors[key]}>
                     <InputLabel htmlFor={key}>{formatKey(key)}</InputLabel>

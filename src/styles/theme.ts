@@ -57,10 +57,10 @@ const darkTheme = createTheme({
         root: {
           fontSize: "13px",
           borderBottom: "2px solid #E0DCBD",
-          //padding: '12px 16px !important',
+          padding: "2px",
         },
         head: {
-          padding: "13px",
+          padding: "10px",
           color: "#FFFFFF",
           fontWeight: "bold",
         },
@@ -136,6 +136,7 @@ const darkTheme = createTheme({
     MuiDialog: {
       styleOverrides: {
         paper: {
+          backgroundColor: '#F8F0E3',
           borderRadius: "6px",
           padding: "25px 8px 27px 8px",
         },
@@ -287,8 +288,8 @@ export const filterStyles = {
 export const cardDashboardStyles = {
   height: "auto",
   border: "1px solid",
-  borderColor: "#171717",
-  backgroundColor: "#171717",
+  borderColor: "#0038A8",
+  backgroundColor: "transparent",
   borderRadius: "8px",
   paddingY: "1.9rem",
   paddingX: "1rem",

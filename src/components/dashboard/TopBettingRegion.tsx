@@ -72,7 +72,7 @@ const TopBettingRegionPage = () => {
   }, []);
 
   return (
-    <div className="bg-[#171717] p-4 rounded-xl">
+  <div className="bg-transparent p-4 rounded-xl border border-[#0038A8]">
       <div className="flex mb-2">
         <div className="bg-[#2F2F2F] p-1 rounded-lg">
           <FaDiceSix size={24} className="text-[#67ABEB]" />

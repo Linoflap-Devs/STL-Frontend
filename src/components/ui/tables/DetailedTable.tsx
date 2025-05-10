@@ -1,4 +1,4 @@
-import React, { useMemo } from "react";
+import React, { useState, useMemo, useEffect } from "react";
 import {
   Table,
   TableBody,
@@ -50,9 +50,8 @@ const DetailedTable = <T extends User | Operator>({
     setAnchorEl,
     setSelectedRow,
     resetMenu,
-    setModalType
   } = useDetailTableStore();
-
+  const [openEditLogModal, setOpenEditLogModal] = useState(false);
   const {
     setModalOpen
   } = useUserRoleStore();
@@ -61,7 +60,9 @@ const DetailedTable = <T extends User | Operator>({
   const filteredData = useMemo(() => {
     const filterKeys = columns
       .filter((col) => col.filterable)
-      .map((col) => col.filterKey || col.key.toString());
+      .map((col) => (col.filterKey || col.key.toString()))
+      .filter((key): key is string => typeof key === "string");
+
 
     const updatedFilters = { ...filters, searchQuery };
 
@@ -78,10 +79,10 @@ const DetailedTable = <T extends User | Operator>({
   }, [sortedData, page, rowsPerPage]);
 
   // Function to handle opening the modal
-  const handleView = (row: any) => {
-    setSelectedRow(row);
-    setModalType("view");
-    setModalOpen(true);
+  const handleOpenViewModal = () => {
+    useModalStore.getState().openModal("view", selectedRow);
+    setOpenEditLogModal(false); // Close Edit modal explicitly
+    console.log("Edit Log Modal is now closed.");
   };
 
   const handleDelete = (row: any) => {
@@ -89,6 +90,21 @@ const DetailedTable = <T extends User | Operator>({
     setSelectedRow(row);
     // Add delete functionality as needed
   };
+
+  // Close Edit Modal on ESC press
+  useEffect(() => {
+    const handleEscape = (event: KeyboardEvent) => {
+      if (event.key === "Escape" && openEditLogModal) {
+        setOpenEditLogModal(false); // Close modal on ESC
+        console.log("Edit Log Modal is now closed (ESC key).");
+      }
+    };
+
+    window.addEventListener("keydown", handleEscape);
+    return () => {
+      window.removeEventListener("keydown", handleEscape);
+    };
+  }, [openEditLogModal]);
 
   return (
     <React.Fragment>
@@ -107,17 +123,17 @@ const DetailedTable = <T extends User | Operator>({
                 <SearchIcon style={{ fontSize: 20 }} />
               </div>
             </div>
-              <IconButton onClick={() => setIsFilterActive(!isFilterActive)} className="ml-2">
-                {isFilterActive ? (
-                  <FilterListOffIcon sx={{ color: "#ACA993" }} />
-                ) : (
-                  <FilterListIcon sx={{ color: "#ACA993" }} />
-                )}
-              </IconButton>
+            <IconButton onClick={() => setIsFilterActive(!isFilterActive)} className="ml-2">
+              {isFilterActive ? (
+                <FilterListOffIcon sx={{ color: "#ACA993" }} />
+              ) : (
+                <FilterListIcon sx={{ color: "#ACA993" }} />
+              )}
+            </IconButton>
           </div>
           <Button variant="contained" onClick={() => useModalStore.getState().openModal("create")} sx={buttonStyles}>
             {pageType === "manager"
-              ? "Add Manager" 
+              ? "Add Manager"
               : pageType === "executive"
                 ? "Add Executive"
                 : "Add Operator"}
@@ -140,7 +156,6 @@ const DetailedTable = <T extends User | Operator>({
               )}
               <TableCell>Actions</TableCell>
             </TableRow>
-
           </TableHead>
           <TableBody>
             {paginatedData.length === 0 ? (
@@ -148,7 +163,7 @@ const DetailedTable = <T extends User | Operator>({
                 <TableCell colSpan={columns.length + (actionsRender ? 1 : 1)} align="center">
                   <div className="flex flex-col items-center py-7 text-[#0038A8]">
                     <PersonOffIcon style={{ fontSize: 50 }} />
-                    <h6 className="mt-2 font-sm  text-lg">
+                    <h6 className="mt-2 font-sm text-lg">
                       {pageType === "manager" ? "No managers available" : "No executives available"}
                     </h6>
                   </div>
@@ -183,7 +198,7 @@ const DetailedTable = <T extends User | Operator>({
                         setSelectedRow(row as T);
                       }}
                     >
-                      <MoreHorizIcon sx={{ color: "#0038A8" }}/>
+                      <MoreHorizIcon sx={{ color: "#0038A8" }} />
                     </IconButton>
 
                     <Menu
@@ -191,8 +206,7 @@ const DetailedTable = <T extends User | Operator>({
                       open={Boolean(anchorEl)}
                       onClose={resetMenu}
                     >
-                      <MenuItem
-                        onClick={() => useModalStore.getState().openModal("view", selectedRow)}>
+                      <MenuItem onClick={handleOpenViewModal}>
                         View
                       </MenuItem>
                       <MenuItem
@@ -205,7 +219,6 @@ const DetailedTable = <T extends User | Operator>({
                       </MenuItem>
                     </Menu>
                   </TableCell>
-
                 </TableRow>
               ))
             )}

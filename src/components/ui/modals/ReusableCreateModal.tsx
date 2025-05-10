@@ -61,8 +61,8 @@ const ReusableCreateModalPage: React.FC<ReusableModalPageProps> = ({
     } else {
       setFormData({ ...formData, [name]: value });
     }
-  };  
-  
+  };
+
   const handleSubmit = async () => {
     try {
       if (!endpoint || typeof endpoint === 'object' && !endpoint.create) {
@@ -122,9 +122,9 @@ const ReusableCreateModalPage: React.FC<ReusableModalPageProps> = ({
         </Typography>
       </DialogTitle>
 
-      
+
       <DialogContent>
-        <Stack spacing={2} sx={{pt:1}}>
+        <Stack spacing={2} sx={{ pt: 1 }}>
           <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2}>
             {/* Column 1 */}
             <Stack spacing={2} flex={1}>
@@ -155,7 +155,7 @@ const ReusableCreateModalPage: React.FC<ReusableModalPageProps> = ({
                       fullWidth
                       key={index}
                       sx={{
-                        flex: field.name === 'lastName' ? 2 : 1, // Give more space to 'lastName'
+                        flex: field.name === 'lastName' ? 2 : 1, // more space for last name
                       }}
                     >
                       <InputLabel id={`${field.name}-label`}>{field.label}</InputLabel>
@@ -217,12 +217,12 @@ const ReusableCreateModalPage: React.FC<ReusableModalPageProps> = ({
                     <InputLabel id={`${field.name}-label`}>{field.label}</InputLabel>
                     {field.type === 'select' ? (
                       <Select
-                          labelId={`${field.name}-label`}
-                          id={field.name}
-                          name={field.name}
-                          value={formData[field.name] || ''}
-                          onChange={handleSelectChange}
-                          label={field.label}
+                        labelId={`${field.name}-label`}
+                        id={field.name}
+                        name={field.name}
+                        value={formData[field.name] || ''}
+                        onChange={handleSelectChange}
+                        label={field.label}
                       >
                         {field.options?.map((option, idx) => (
                           <MenuItem key={idx} value={option.value}>
@@ -232,13 +232,13 @@ const ReusableCreateModalPage: React.FC<ReusableModalPageProps> = ({
                       </Select>
                     ) : (
                       <OutlinedInput
-                      id={field.name}
-                      name={field.name}
-                      type={field.type}
-                      value={formData[field.name] || ''}
-                      onChange={handleChange}
-                      placeholder={field.placeholder}
-                      label={field.label}
+                        id={field.name}
+                        name={field.name}
+                        type={field.type}
+                        value={formData[field.name] || ''}
+                        onChange={handleChange}
+                        placeholder={field.placeholder}
+                        label={field.label}
                       />
                     )}
                   </FormControl>
@@ -246,9 +246,9 @@ const ReusableCreateModalPage: React.FC<ReusableModalPageProps> = ({
             </Stack>
           </Stack>
 
-        <div className="mt-4">
-          {children({ handleSubmit })}
-        </div>
+          <div className="mt-4">
+            {children({ handleSubmit })}
+          </div>
         </Stack>
       </DialogContent>
 

@@ -14,7 +14,7 @@ export type GetOperatorsResponse = ApiResponse<Operator[]>;
 export interface Column<T> {
   key: keyof T | string;
   label: string;
-  render?: (row: T) => React.ReactNode;
+  render?: (row: T) => React.ReactNode; // Add render function to the Column interface
   sortable?: boolean;
   filterable?: boolean;
   filterKey?: keyof T | string;
@@ -165,10 +165,15 @@ export interface ModalPageProps {
   additionalPayload?: Record<string, any>;
   onFieldChange?: (name: string, value: string) => void;
   initialUserData?: any;
-  operatorMap?: { [key: number]: Operator }; // ✅ Add this line
+  operatorMap?: { [key: number]: Operator };
 }
 
 export interface UserFieldFormPageProps {
   operatorMap: { [key: number]: Operator };
   setOperatorMap: (operatorMap: { [key: number]: Operator }) => void;
 }
+
+export interface EditModalPageProps {
+  userId: number;
+  onClose: () => void;
+} 
