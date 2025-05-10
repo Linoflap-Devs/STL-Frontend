@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
   IconButton,
   FormControl,
@@ -12,6 +12,7 @@ import {
   Select,
   MenuItem,
   SelectChangeEvent,
+  FormHelperText,
 } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
 import { ReusableModalPageProps } from '~/types/interfaces';
@@ -20,6 +21,7 @@ import axiosInstance from '~/utils/axiosInstance';
 import { AxiosError } from 'axios';
 import { useOperatorsData } from '../../../../store/useOperatorStore';
 import useUserRoleStore from '../../../../store/useUserStore';
+import { userSchema } from '~/utils/validation';
 
 const ReusableCreateModalPage: React.FC<ReusableModalPageProps> = ({
   title,
@@ -32,6 +34,7 @@ const ReusableCreateModalPage: React.FC<ReusableModalPageProps> = ({
 }) => {
   // Convert layout to a number if it's a string
   const numericLayout = typeof layout === 'number' ? layout : layout === 'single' ? 1 : layout === 'double' ? 2 : 2;
+  const [errors, setErrors] = useState<Record<string, string[]>>({});
 
   const {
     formData,
@@ -65,11 +68,26 @@ const ReusableCreateModalPage: React.FC<ReusableModalPageProps> = ({
 
   const handleSubmit = async () => {
     try {
-      if (!endpoint || typeof endpoint === 'object' && !endpoint.create) {
+      if (!endpoint || (typeof endpoint === 'object' && !endpoint.create)) {
         throw new Error("Invalid endpoint: 'create' endpoint is required.");
       }
 
       const endpointUrl = typeof endpoint === 'string' ? endpoint : endpoint.create;
+
+      // ✅ Validate formData using Zod
+      const result = userSchema.safeParse(formData);
+      if (!result.success) {
+        const fieldErrors = result.error.flatten().fieldErrors;
+        console.error("Validation errors:", fieldErrors);
+
+        // Set errors to show in UI
+        setErrors(fieldErrors);
+
+        return;
+      }
+
+      // Clear previous errors if validation passes
+      setErrors({});
 
       const payload = {
         ...formData,
@@ -80,10 +98,23 @@ const ReusableCreateModalPage: React.FC<ReusableModalPageProps> = ({
         withCredentials: true,
       });
 
+      console.log("User created:", response.data);
       // Handle success (e.g., close modal, show success message)
+
     } catch (error) {
       const err = error as AxiosError;
-      // Handle error (e.g., show error message)
+
+      console.error("Error creating user:", err.message);
+
+      if (err.response) {
+        console.error("Response error:", err.response.data);
+      }
+
+      // Optionally set a general error
+      setErrors(prev => ({
+        ...prev,
+        general: [err.message || "An unexpected error occurred"],
+      }));
     }
   };
 
@@ -132,7 +163,11 @@ const ReusableCreateModalPage: React.FC<ReusableModalPageProps> = ({
               {fields
                 .filter((field) => field.name === 'firstName')
                 .map((field, index) => (
-                  <FormControl fullWidth key={index}>
+                  <FormControl
+                    fullWidth
+                    key={index}
+                    error={Boolean(errors[field.name]?.length)}
+                  >
                     <InputLabel id={`${field.name}-label`}>{field.label}</InputLabel>
                     <OutlinedInput
                       id={field.name}
@@ -143,20 +178,24 @@ const ReusableCreateModalPage: React.FC<ReusableModalPageProps> = ({
                       placeholder={field.placeholder}
                       label={field.label}
                     />
+                    {errors[field.name]?.[0] && (
+                      <FormHelperText>{errors[field.name][0]}</FormHelperText>
+                    )}
                   </FormControl>
                 ))}
 
               {/* Last Name and Suffix side by side */}
               <Stack direction="row" spacing={2}>
                 {fields
-                  .filter((field) => field.name === 'lastName' || field.name === 'suffix')
+                  .filter(
+                    (field) => field.name === 'lastName' || field.name === 'suffix'
+                  )
                   .map((field, index) => (
                     <FormControl
                       fullWidth
                       key={index}
-                      sx={{
-                        flex: field.name === 'lastName' ? 2 : 1, // more space for last name
-                      }}
+                      sx={{ flex: field.name === 'lastName' ? 2 : 1 }}
+                      error={Boolean(errors[field.name]?.length)}
                     >
                       <InputLabel id={`${field.name}-label`}>{field.label}</InputLabel>
                       {field.type === 'select' ? (
@@ -185,6 +224,9 @@ const ReusableCreateModalPage: React.FC<ReusableModalPageProps> = ({
                           label={field.label}
                         />
                       )}
+                      {errors[field.name]?.[0] && (
+                        <FormHelperText>{errors[field.name][0]}</FormHelperText>
+                      )}
                     </FormControl>
                   ))}
               </Stack>
@@ -193,7 +235,11 @@ const ReusableCreateModalPage: React.FC<ReusableModalPageProps> = ({
               {fields
                 .filter((field) => field.name === 'phoneNumber')
                 .map((field, index) => (
-                  <FormControl fullWidth key={index}>
+                  <FormControl
+                    fullWidth
+                    key={index}
+                    error={Boolean(errors[field.name]?.length)}
+                  >
                     <InputLabel id={`${field.name}-label`}>{field.label}</InputLabel>
                     <OutlinedInput
                       id={field.name}
@@ -204,6 +250,9 @@ const ReusableCreateModalPage: React.FC<ReusableModalPageProps> = ({
                       placeholder={field.placeholder}
                       label={field.label}
                     />
+                    {errors[field.name]?.[0] && (
+                      <FormHelperText>{errors[field.name][0]}</FormHelperText>
+                    )}
                   </FormControl>
                 ))}
             </Stack>
@@ -213,7 +262,11 @@ const ReusableCreateModalPage: React.FC<ReusableModalPageProps> = ({
               {fields
                 .filter((field) => field.gridSpan === 2)
                 .map((field, index) => (
-                  <FormControl fullWidth key={index}>
+                  <FormControl
+                    fullWidth
+                    key={index}
+                    error={Boolean(errors[field.name]?.length)}
+                  >
                     <InputLabel id={`${field.name}-label`}>{field.label}</InputLabel>
                     {field.type === 'select' ? (
                       <Select
@@ -241,16 +294,18 @@ const ReusableCreateModalPage: React.FC<ReusableModalPageProps> = ({
                         label={field.label}
                       />
                     )}
+                    {errors[field.name]?.[0] && (
+                      <FormHelperText>{errors[field.name][0]}</FormHelperText>
+                    )}
                   </FormControl>
                 ))}
             </Stack>
           </Stack>
 
-          <div className="mt-4">
-            {children({ handleSubmit })}
-          </div>
+          <div className="mt-4">{children({ handleSubmit })}</div>
         </Stack>
       </DialogContent>
+
 
     </Dialog>
   );

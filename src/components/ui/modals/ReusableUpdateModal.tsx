@@ -93,7 +93,6 @@ const ReusableUpdateModal: React.FC<ReusableModalPageProps> = ({
   // keys will not update
   const alwaysDisabledKeys = [
     "FirstName",
-    "LastName",
     "OperatorName",
     "CreatedBy",
     "DateOfRegistration",
@@ -103,7 +102,7 @@ const ReusableUpdateModal: React.FC<ReusableModalPageProps> = ({
   ];
 
   const handleCloseEditLogModal = () => setOpenEditLogModal(false);
-  
+
   const handleOpenEditLogModal = (userId: number | null) => {
     setSelectedUserId(userId);
     setOpenEditLogModal(true);
@@ -356,7 +355,7 @@ const ReusableUpdateModal: React.FC<ReusableModalPageProps> = ({
                     value={
                       isLoading
                         ? "Loading..."
-                        : key === "DateOfRegistration"
+                        : key === "DateOfRegistration" || key === "LastUpdatedDate"
                           ? (() => {
                             const date = user?.[key as keyof typeof user];
                             return date && !isNaN(new Date(date as string).getTime())
@@ -400,12 +399,12 @@ const ReusableUpdateModal: React.FC<ReusableModalPageProps> = ({
                   View Summary
                 </Typography>
                 {/* open edit modal */}
-                  {openEditLogModal && selectedUserId != null && (
-                    <EditModalDataPage
-                      userId={selectedUserId}
-                      onClose={handleCloseEditLogModal}
-                    />
-                  )}
+                {openEditLogModal && selectedUserId != null && (
+                  <EditModalDataPage
+                    userId={selectedUserId}
+                    onClose={handleCloseEditLogModal}
+                  />
+                )}
               </Box>
             </Stack>
           </Stack>

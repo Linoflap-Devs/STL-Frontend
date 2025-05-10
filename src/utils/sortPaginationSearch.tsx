@@ -9,9 +9,9 @@ import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import dayjs, { Dayjs } from 'dayjs';
 import useDetailTableStore from "../../store/useTableStore";
-import { User, SortableTableCellProps } from '../types/interfaces';
+import { SortableTableCellProps } from '../types/interfaces';
 import { filterStyles } from "~/styles/theme";
-import { Operator } from '~/types/types';
+import { User, Operator } from '~/types/types';
 
 // SORTING + FILTERING COMPONENT
 export const SortableTableCell: React.FC<SortableTableCellProps> = ({
