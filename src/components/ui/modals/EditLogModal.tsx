@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
 import CloseIcon from "@mui/icons-material/Close";
-import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
 import PersonOffIcon from "@mui/icons-material/PersonOff";
 import {
   Table,

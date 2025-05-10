@@ -76,5 +76,21 @@ export interface RoleConfig {
   }[];
 }
 
+export interface operatorConfig {
+  userTypeId: number;
+  endpoint: {
+    create: string;
+    update: string;
+  };
+  fields: {
+    name: string;
+    label: string;
+    type: string;
+    placeholder: string;
+    value: string;
+    gridSpan: number;
+    options?: { value: string; label: string }[];
+  }[];
+}
 
 

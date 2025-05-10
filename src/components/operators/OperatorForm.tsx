@@ -1,20 +1,42 @@
 import React, { useEffect } from 'react';
 import CreateModalPage from '~/components/ui/modals/CreateModal';
+import UpdateModalPage from '../ui/modals/UpdateModal';
 import { useOperatorsData } from '../../../store/useOperatorStore';
+import { useModalStore } from '../../../store/useModalStore';
+import { Field } from '~/types/interfaces';
 
-const operatorConfig = {
-  endpoint: '/operators/addOperator',
+const operatorConfig: {
+  endpoint: { create: string; update: string };
+  fields: Field[];
+} = {
+  endpoint: {
+    create: '/operators/addOperator',
+    update: '/operators/editOperator',
+  },
   fields: [
-    { name: 'OperatorName', label: 'Given Name', type: 'text', placeholder: 'Given name', value: '' },
-    { name: 'OperatorEmail', label: 'Email', type: 'email', placeholder: 'Enter email', value: '' },
-    { name: 'ContactNo', label: 'Phone Number', type: 'tel', placeholder: 'Enter phone number', value: '' },
-    { name: 'DateOfOperation', label: 'Assigned Company', type: 'text', placeholder: 'Enter assigned company', value: '' },
-    { name: 'AreaOfOperations', label: 'Area of Operations', type: 'text', placeholder: 'Enter area of Operations', value: '' },
+    { name: 'name', label: 'Operators Name', type: 'text', placeholder: 'Given name', value: '', gridSpan: 1 },
+    { name: 'address', label: 'Operators Address', type: 'text', placeholder: 'Address', value: '', gridSpan: 'full', },
+    { name: 'email', label: 'Email', type: 'email', placeholder: 'Enter email', value: '', gridSpan: 1 },
+
+    { name: 'contactNumber', label: 'Phone Number', type: 'tel', placeholder: 'Enter phone number', value: '', gridSpan: 2 },
+    {
+      name: 'DateOfOperations',
+      label: 'Date of Operations',
+      type: 'date',
+      placeholder: '',
+      value: '',
+      gridSpan: 2,
+    },
+    { name: 'GamesProvided', label: 'Games Provided', type: 'text', placeholder: 'Enter Games Provided', value: '', gridSpan: 1 },
+
+
+    { name: 'AreaOfOperations', label: 'Area of Operations', type: 'text', placeholder: 'Enter area of Operations', value: '', gridSpan: 2 },
   ],
 };
 
 const OperatorFieldFormPage: React.FC = () => {
-  const { modalOpen, setModalOpen, fields, setFields, } = useOperatorsData();
+  const { fields, setFields } = useOperatorsData();
+  const { modalOpen, modalType, selectedData, closeModal } = useModalStore();
 
   useEffect(() => {
     setFields(operatorConfig.fields);
@@ -22,12 +44,24 @@ const OperatorFieldFormPage: React.FC = () => {
 
   return (
     <div className="p-4">
-      <CreateModalPage
-        open={modalOpen}
-        onClose={() => setModalOpen(false)}
-        fields={fields}
-        endpoint={operatorConfig.endpoint}
-      />
+      {modalType === 'create' && (
+        <CreateModalPage
+          open={modalOpen}
+          onClose={closeModal}
+          fields={fields}
+          endpoint={operatorConfig.endpoint}
+        />
+      )}
+      {modalType === 'view' && (
+        <UpdateModalPage
+          open={modalOpen}
+          onClose={closeModal}
+          fields={fields}
+          endpoint={operatorConfig.endpoint}
+          initialUserData={selectedData}
+          operatorMap={{}}
+        />
+      )}
     </div>
   );
 };

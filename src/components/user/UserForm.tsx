@@ -3,8 +3,8 @@ import CreateModalPage from '~/components/ui/modals/CreateModal';
 import useUserRoleStore from '../../../store/useUserStore';
 import { useOperatorsData } from '../../../store/useOperatorStore';
 import { getOperatorsData } from '~/utils/api/operators/get.operators.service';
-import { Field, GetOperatorsResponse, UserFieldFormPageProps } from '~/types/interfaces';
-import { Operator, RoleConfig } from '~/types/types';
+import { Field, GetOperatorsResponse } from '~/types/interfaces';
+import { Operator } from '~/types/types';
 import UpdateModalPage from '../ui/modals/UpdateModal';
 import { useModalStore } from '../../../store/useModalStore';
 

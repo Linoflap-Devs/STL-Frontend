@@ -1,4 +1,4 @@
-import React, { useEffect } from "react"; 
+import React, { useEffect } from "react";
 import { useRouter } from "next/router";
 import DetailedTable from "~/components/ui/tables/DetailedTable";
 import { getUsersData } from "~/utils/api/users/get.users.service";
@@ -23,9 +23,9 @@ const RolePage = () => {
     data,
     setData,
     columns,
-    setColumns, 
+    setColumns,
   } = useUserRoleStore();
-  
+
   const router = useRouter();
   const { role } = router.query;
   const pagetype = window.location.pathname.includes("manager") ? "manager" : "executive";
@@ -66,7 +66,7 @@ const RolePage = () => {
               .filter((user: User) => user.UserTypeId === roleId)
               .map((user) => ({
                 ...user,
-                fullName: `${user.FirstName} ${user.LastName}`,
+                fullName: [user.FirstName, user.LastName].filter(Boolean).join(" "),
               }));
 
             setData(filteredUsers.length > 0 ? filteredUsers : []);
@@ -174,11 +174,10 @@ const RolePage = () => {
       <>
         <DetailedTable
           data={data}
-          columns={columns} // Use userSummaryColumns here
+          columns={columns}
           pageType={pagetype}
           operatorMap={operatorMap}
         />
-        {/* Conditionally render CreateUserModalPage */}
         <UserFieldFormPage />
       </>
     </div>

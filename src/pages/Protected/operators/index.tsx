@@ -142,9 +142,6 @@ const OperatorsPage = () => {
         <DetailedTable
           data={data}
           columns={columns}
-          onCreate={() => {
-            setModalOpen(true);
-          }}
         />
         {/* Conditionally render CreateUserModalPage */}
         <OperatorFieldFormPage />

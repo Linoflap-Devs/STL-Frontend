@@ -122,7 +122,7 @@ export interface Field {
   placeholder?: string;
   options?: FieldOption[];
   value: string;
-  gridSpan?: 1 | 2;  // Add the gridSpan property here
+  gridSpan?: 1 | 2 | 'full';  // Add the gridSpan property here
   required?: boolean; // Add this line
 }
 
