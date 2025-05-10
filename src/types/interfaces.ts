@@ -62,6 +62,7 @@ export interface ChartCardProps<T = unknown> {
   pageType: "manager" | "executive" | "operator";
   title?: string;
   roleLabel?: string;
+  statsPerRegion: any[];
 }
 
 export interface CustomLegendProps {

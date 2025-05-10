@@ -1,10 +1,9 @@
 // reusable ui charts
 
-import { Button } from "@mui/material";
 import { BarChart } from "@mui/x-charts/BarChart";
 import React from "react";
-import { buttonStyles } from "~/styles/theme";
-import { ChartCardProps, CustomLegendProps } from "~/types/interfaces";
+import { ChartCardProps } from "~/types/interfaces";
+import CSVExportButton from "../button/CSVExportButtonDashboard";
 
 const getLegendItems = (pageType: string) => {
   const labelMap: Record<string, string> = {
@@ -55,6 +54,7 @@ export const ChartCard = <T,>({
   regions,
   pageType,
   title,
+  statsPerRegion,
 }: Omit<ChartCardProps<T>, "label">) => {
   return (
     <div className="mt-3 mb-5">
@@ -65,9 +65,7 @@ export const ChartCard = <T,>({
             <CustomLegend pageType={pageType} />
           </div>
           <div className="flex items-center">
-            <Button sx={buttonStyles} variant="contained">
-              Export as CSV
-            </Button>
+            <CSVExportButton statsPerRegion={statsPerRegion} pageType={pageType} />
           </div>
         </div>
         <div className="h-[270px] w-full min-w-0">

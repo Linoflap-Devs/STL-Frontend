@@ -3,6 +3,7 @@ import { ChartBarItem, ChartsDataPageProps, RegionUser } from "~/types/interface
 import useDashboardStore from "../../../../store/useDashboardStore";
 import ChartCard from "./UserCharts";
 import { getUserStatus } from "~/utils/dashboarddata";
+import CSVExportButton from "../button/CSVExportButtonDashboard";
 
 const regionMap: Record<string, string> = {
   "I": "Region I",
@@ -36,13 +37,13 @@ export const ChartsDataPage = <T extends RegionUser & { OperatorName?: string }>
 }: ChartsDataPageProps<T>) => {
   const { sevenDaysAgo, setChartData } = useDashboardStore();
   const [chartData, setLocalChartData] = useState<ChartBarItem[]>([]);
+  const [statsPerRegion, setStatsPerRegion] = useState<any[]>([]);  // Declare statsPerRegion state
 
   useEffect(() => {
     if (!dashboardData || dashboardData.length === 0) return;
 
-    const statsPerRegion = regions.map((regionShort) => {
+    const stats = regions.map((regionShort) => {
       const regionFull = regionMap[regionShort];
-      //console.log(`\n=== Processing region: ${regionShort} (${regionFull}) ===`);
 
       const users = dashboardData.filter((user) => {
         let userRegionName = "";
@@ -64,13 +65,10 @@ export const ChartsDataPage = <T extends RegionUser & { OperatorName?: string }>
         return matches;
       });
 
-      //console.log(`Matched ${users.length} users in region ${regionShort}`);
-
       let active = 0, inactive = 0, deleted = 0, newlyRegistered = 0;
 
       users.forEach((user) => {
         const status = getUserStatus(user, sevenDaysAgo) ?? "Unknown";
-        //console.log("→ getUserStatus returned:", status, "| For user:", user.OperatorName);
 
         switch (status) {
           case "Active":
@@ -86,7 +84,6 @@ export const ChartsDataPage = <T extends RegionUser & { OperatorName?: string }>
             newlyRegistered++;
             break;
           default:
-          //console.warn("Unmatched status:", status);
         }
       });
 
@@ -104,33 +101,31 @@ export const ChartsDataPage = <T extends RegionUser & { OperatorName?: string }>
       {
         label: `Total ${pageType}s`,
         color: "#BB86FC",
-        data: statsPerRegion.map((r) => r.total),
+        data: stats.map((r) => r.total),
       },
       {
         label: `Active ${pageType}s`,
         color: "#5050A5",
-        data: statsPerRegion.map((r) => r.active),
+        data: stats.map((r) => r.active),
       },
       {
         label: `Inactive ${pageType}s`,
         color: "#7266C9",
-        data: statsPerRegion.map((r) => r.inactive),
+        data: stats.map((r) => r.inactive),
       },
       {
         label: `Deleted ${pageType}s`,
         color: "#3B3B81",
-        data: statsPerRegion.map((r) => r.deleted),
+        data: stats.map((r) => r.deleted),
       },
       {
         label: `New ${pageType}s`,
         color: "#282A68",
-        data: statsPerRegion.map((r) => r.new),
+        data: stats.map((r) => r.new),
       },
     ];
 
-    //console.log("Regions Processed:", regions);
-    //console.log("Chart data per label:", newChartData.map((item) => ({ label: item.label, data: item.data })));
-
+    setStatsPerRegion(stats);  // Set the statsPerRegion state
     setLocalChartData(newChartData);
     setChartData(newChartData);
   }, [dashboardData, userType, sevenDaysAgo, setChartData]);
@@ -142,6 +137,7 @@ export const ChartsDataPage = <T extends RegionUser & { OperatorName?: string }>
         regions={regions}
         title={`${(pageType ?? "Unknown").charAt(0).toUpperCase() + (pageType ?? "Unknown").slice(1)} Summary`}
         pageType={pageType ?? "operator"}
+        statsPerRegion={statsPerRegion} // for csv button
       />
     </div>
   );

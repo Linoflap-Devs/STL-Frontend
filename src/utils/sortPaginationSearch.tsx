@@ -184,10 +184,8 @@ export const filterData = (
     if (searchValue && !Object.values(item).some((val) => filterItem("", String(val)))) {
       const fullName = `${"FirstName" in item ? item.FirstName : ""} ${"LastName" in item ? item.LastName : ""}`.toLowerCase();
       // const createdByFullName = `${"CreatedByFirstName" in item ? item.CreatedByFirstName : ""} ${"CreatedByLastName" in item ? item.CreatedByLastName : ""}`.toLowerCase();
-      const cities = (getNestedValue(item, "Cities") || []) as { CityName: string }[];
-      const cityNames = cities.map(city => city.CityName.toLowerCase()).join(", ");
 
-      if (![fullName, operatorName, cityNames].some(val => val.includes(searchValue))) {
+      if (![fullName, operatorName].some(val => val.includes(searchValue))) {
         return false;
       }
     }
@@ -197,24 +195,6 @@ export const filterData = (
       const itemValue = getNestedValue(item, key)?.toString().toLowerCase() || "";
 
       if (!filterValue) return true;
-
-      if (key === "Cities") {
-        const cities = (getNestedValue(item, "Cities") || []) as { CityName: string }[];
-        const cityNames = cities.map(city => city.CityName.toLowerCase()).join(", ");
-        return cityNames.includes(filterValue);
-      }
-
-      if (key === "DateOfRegistration") {
-        // Compare dates if filtering by date
-        const itemDate = dayjs(getNestedValue(item, key)).format("YYYY-MM-DD");
-        const filterDate = dayjs(filterValue).format("YYYY-MM-DD");
-        return itemDate === filterDate;
-      }
-
-      // Handle the 'OperatorName' filtering logic for Users
-      if (key === "OperatorDetails.OperatorName" && "OperatorId" in item) {
-        return operatorName.includes(filterValue);
-      }
 
       return itemValue.includes(filterValue);
     });
