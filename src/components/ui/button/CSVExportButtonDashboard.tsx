@@ -1,6 +1,7 @@
 import React from "react";
-import { Button, ButtonProps } from "@mui/material";
+import { Button } from "@mui/material";
 import { buttonStyles } from "~/styles/theme";
+import { CSVExportButtonProps } from "~/types/interfaces";
 
 const convertToCSV = (data: any[]) => {
   const headers = ["Region", "Total", "Active", "Inactive", "Deleted", "New"];
@@ -23,18 +24,13 @@ const convertToCSV = (data: any[]) => {
   return csvContent;
 };
 
-interface CSVExportButtonProps {
-  statsPerRegion: any[];
-  pageType: string;
-}
-
 const CSVExportButton: React.FC<CSVExportButtonProps> = ({ statsPerRegion, pageType }) => {
   const downloadCSV = (data: any[], pageType: string) => {
     const csvContent = convertToCSV(data);
     const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
     const link = document.createElement("a");
     link.href = URL.createObjectURL(blob);
-    link.download = `${pageType}_data.csv`;
+    link.download = `${pageType}_dashboard_data.csv`;
     link.click();
   };
 

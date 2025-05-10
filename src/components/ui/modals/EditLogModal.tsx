@@ -2,7 +2,7 @@
 // the Edit Log component requires customized behavior and data structure
 
 import React, { useEffect, useMemo, useState } from "react";
-import {IconButton,Table,TableBody,TableCell,TableContainer,TableHead,TablePagination,TableRow} from "@mui/material";
+import { IconButton, Table, TableBody, TableCell, TableContainer, TableHead, TablePagination, TableRow } from "@mui/material";
 import ArrowBackIosIcon from "@mui/icons-material/ArrowBackIos";
 import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
 import ArrowDropUpIcon from "@mui/icons-material/ArrowDropUp";
@@ -59,7 +59,7 @@ const EditModalPage: React.FC<EditModalPageProps> = ({ userId, onClose }) => {
     if (userId) {
       fetchData();
     }
-
+    
     setEditLogColumns([
       { key: "EditedBy", label: "Edited By", sortable: true, filterable: true },
       {
@@ -81,7 +81,7 @@ const EditModalPage: React.FC<EditModalPageProps> = ({ userId, onClose }) => {
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-55 backdrop-blur-sm">
-      <div className="bg-[#F8F0E3] w-full max-w-4xl mx-auto rounded-lg shadow-lg p-4 pb-2 pt-2 relative overflow-hidden max-h-[90vh]">
+      <div className="bg-[#F8F0E3] w-full max-w-4xl mx-auto rounded-lg shadow-lg p-4 pb-0 pt-1 relative overflow-hidden max-h-[90vh]">
         <IconButton
           aria-label="back"
           onClick={onClose}
@@ -135,28 +135,26 @@ const EditModalPage: React.FC<EditModalPageProps> = ({ userId, onClose }) => {
             ) : (
               <Table>
                 <TableHead>
-                  <TableRow>
-                    {columns.map((col) => (
-                      <TableCell
-                        key={String(col.key)}
-                        onClick={() => col.sortable && handleSort(String(col.key))}
-                        className="cursor-pointer"
-                      >
-                        <div className="flex items-center">
-                          {col.label}
-                          {sortConfig.key === String(col.key) && (
-                            <span className="ml-2">
-                              {sortConfig.direction === 'asc' ? (
-                                <ArrowDropUpIcon fontSize="small" />
-                              ) : (
-                                <ArrowDropDownIcon fontSize="small" />
-                              )}
-                            </span>
-                          )}
-                        </div>
-                      </TableCell>
-                    ))}
-                  </TableRow>
+                  {columns.map((col) => (
+                    <TableCell
+                      key={String(col.key)}
+                      onClick={() => col.sortable && handleSort(String(col.key))}
+                      className="cursor-pointer"
+                    >
+                      <div className="flex items-center">
+                        {col.label}
+                        {sortConfig.key === String(col.key) && (
+                          <span className="ml-2">
+                            {sortConfig.direction === 'asc' ? (
+                              <ArrowDropUpIcon fontSize="small" />
+                            ) : (
+                              <ArrowDropDownIcon fontSize="small" />
+                            )}
+                          </span>
+                        )}
+                      </div>
+                    </TableCell>
+                  ))}
                 </TableHead>
                 <TableBody>
                   {sortedAndFilteredData
@@ -177,7 +175,6 @@ const EditModalPage: React.FC<EditModalPageProps> = ({ userId, onClose }) => {
                       </TableRow>
                     ))}
                 </TableBody>
-
               </Table>
             )}
           </TableContainer>

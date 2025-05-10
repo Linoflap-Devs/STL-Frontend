@@ -178,3 +178,8 @@ export interface EditModalPageProps {
   userId: number;
   onClose: () => void;
 }
+
+export interface CSVExportButtonProps {
+  statsPerRegion: any[];
+  pageType: string;
+}
