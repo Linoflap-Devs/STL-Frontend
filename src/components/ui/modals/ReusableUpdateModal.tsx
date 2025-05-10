@@ -17,20 +17,20 @@ import {
   Box,
   Stack,
   IconButton,
-  FormHelperText,
+  FormHelperText
 } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
+import dayjs from "dayjs";
+import { AxiosError } from "axios";
 import { ReusableModalPageProps } from "~/types/interfaces";
 import { buttonUpdateStyles, selectStyles } from "~/styles/theme";
-import { useUpdateModalState } from "../../../../store/useUpdateModalStore";
 import { formatKey } from "~/utils/format";
-import { useOperatorsData } from "../../../../store/useOperatorStore";
 import { getUserStatus } from "~/utils/dashboarddata";
-import dayjs from "dayjs";
 import axiosInstance from "~/utils/axiosInstance";
-import { AxiosError } from "axios";
-import EditModalDataPage from "./EditLogModal";
+import { useUpdateModalState } from "../../../../store/useUpdateModalStore";
+import { useOperatorsData } from "../../../../store/useOperatorStore";
 import { useModalStore } from "../../../../store/useModalStore";
+import EditModalDataPage from "./EditLogModal";
 
 const ReusableUpdateModal: React.FC<ReusableModalPageProps> = ({
   title,

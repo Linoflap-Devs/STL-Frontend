@@ -1,27 +1,13 @@
 import React, { useState } from 'react';
-import {
-  IconButton,
-  FormControl,
-  InputLabel,
-  OutlinedInput,
-  Stack,
-  Typography,
-  Dialog,
-  DialogTitle,
-  DialogContent,
-  Select,
-  MenuItem,
-  SelectChangeEvent,
-  FormHelperText,
-} from '@mui/material';
+import { Dialog, DialogContent, DialogTitle, FormControl, FormHelperText, IconButton, InputLabel, MenuItem, OutlinedInput, Select, SelectChangeEvent, Stack, Typography } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
-import { ReusableModalPageProps } from '~/types/interfaces';
-import { useFormStore } from '../../../../store/useFormStore';
-import axiosInstance from '~/utils/axiosInstance';
 import { AxiosError } from 'axios';
-import { useOperatorsData } from '../../../../store/useOperatorStore';
-import useUserRoleStore from '../../../../store/useUserStore';
+import { ReusableModalPageProps } from '~/types/interfaces';
+import axiosInstance from '~/utils/axiosInstance';
 import { userSchema } from '~/utils/validation';
+import { useOperatorsData } from '../../../../store/useOperatorStore';
+import { useFormStore } from '../../../../store/useFormStore';
+import useUserRoleStore from '../../../../store/useUserStore';
 
 const ReusableCreateModalPage: React.FC<ReusableModalPageProps> = ({
   title,
@@ -30,12 +16,9 @@ const ReusableCreateModalPage: React.FC<ReusableModalPageProps> = ({
   fields,
   children,
   endpoint,
-  layout = 2, // Default to 2 columns layout
 }) => {
-  // Convert layout to a number if it's a string
-  const numericLayout = typeof layout === 'number' ? layout : layout === 'single' ? 1 : layout === 'double' ? 2 : 2;
-  const [errors, setErrors] = useState<Record<string, string[]>>({});
 
+  const [errors, setErrors] = useState<Record<string, string[]>>({});
   const {
     formData,
     setFormData,
@@ -74,7 +57,7 @@ const ReusableCreateModalPage: React.FC<ReusableModalPageProps> = ({
 
       const endpointUrl = typeof endpoint === 'string' ? endpoint : endpoint.create;
 
-      // ✅ Validate formData using Zod
+      // Validate formData using Zod
       const result = userSchema.safeParse(formData);
       if (!result.success) {
         const fieldErrors = result.error.flatten().fieldErrors;
@@ -118,15 +101,6 @@ const ReusableCreateModalPage: React.FC<ReusableModalPageProps> = ({
     }
   };
 
-  // Break the fields array into columns based on numericLayout (number of columns)
-  const columnCount = numericLayout;
-  const fieldsPerColumn = Math.ceil(fields.length / columnCount);
-
-  const columns: Array<Array<typeof fields[0]>> = Array.from(
-    { length: columnCount },
-    (_, index) => fields.slice(index * fieldsPerColumn, (index + 1) * fieldsPerColumn)
-  );
-
   if (!isOpen) return null;
 
   return (
@@ -144,76 +118,80 @@ const ReusableCreateModalPage: React.FC<ReusableModalPageProps> = ({
           pt: 1,
         }
       }}>
-      <DialogTitle sx={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
+      <DialogTitle sx={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', pb: 0, }}>
         <IconButton sx={{ alignSelf: 'flex-end' }} onClick={onClose}>
-          <CloseIcon sx={{ fontSize: 28, fontWeight: 700, backgroundColor: '#ACA993', borderRadius: '50%', padding: '4px', color: '#FFFFFF' }} />
+          <CloseIcon sx={{
+            fontSize: 28, fontWeight: 700, backgroundColor: '#ACA993',
+            borderRadius: '50%', padding: '4px', color: '#FFFFFF'
+          }} />
         </IconButton>
-        <Typography sx={{ fontSize: 26, fontWeight: 'bold', mt: -2 }}>
+        <Typography sx={{ fontSize: 26, fontWeight: 'bold', mt: -4 }}>
           {title}
         </Typography>
       </DialogTitle>
 
-
       <DialogContent>
-        <Stack spacing={2} sx={{ pt: 1 }}>
-          <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2}>
-            {/* Column 1 */}
-            <Stack spacing={2} flex={1}>
-              {/* Given Name */}
-              {fields
-                .filter((field) => field.name === 'firstName')
-                .map((field, index) => (
-                  <FormControl
-                    fullWidth
-                    key={index}
-                    error={Boolean(errors[field.name]?.length)}
-                  >
-                    <InputLabel id={`${field.name}-label`}>{field.label}</InputLabel>
-                    <OutlinedInput
-                      id={field.name}
-                      name={field.name}
-                      type={field.type}
-                      value={formData[field.name] || ''}
-                      onChange={handleChange}
-                      placeholder={field.placeholder}
-                      label={field.label}
-                    />
-                    {errors[field.name]?.[0] && (
-                      <FormHelperText>{errors[field.name][0]}</FormHelperText>
-                    )}
-                  </FormControl>
-                ))}
-
-              {/* Last Name and Suffix side by side */}
+        <Stack spacing={2} sx={{ mt: 2 }}>
+          {/* 1 row with 2 columns for operators */}
+          {
+            fields.some((field) => field.name === 'name') &&
+            fields.some((field) => field.name === 'contactNumber') && (
               <Stack direction="row" spacing={2}>
-                {fields
-                  .filter(
-                    (field) => field.name === 'lastName' || field.name === 'suffix'
-                  )
-                  .map((field, index) => (
-                    <FormControl
-                      fullWidth
-                      key={index}
-                      sx={{ flex: field.name === 'lastName' ? 2 : 1 }}
-                      error={Boolean(errors[field.name]?.length)}
-                    >
-                      <InputLabel id={`${field.name}-label`}>{field.label}</InputLabel>
-                      {field.type === 'select' ? (
-                        <Select
-                          labelId={`${field.name}-label`}
-                          id={field.name}
-                          name={field.name}
-                          value={formData[field.name] || ''}
-                          onChange={handleSelectChange}
-                          label={field.label}
-                        >
-                          {field.options?.map((option) => (
-                            <MenuItem key={option.value} value={option.value}>
-                              {option.label}
-                            </MenuItem>
-                          ))}
-                        </Select>
-                      ) : (
+                {/* Column 1 */}
+                <Stack spacing={2} flex={1}>
+                  {fields
+                    .filter((field) => field.name === 'name')
+                    .map((field, index) => (
+                      <FormControl
+                        fullWidth
+                        key={index}
+                        error={Boolean(errors[field.name]?.length)}
+                      >
+                        <InputLabel id={`${field.name}-label`}>{field.label}</InputLabel>
+                        {field.type === 'select' ? (
+                          <Select
+                            labelId={`${field.name}-label`}
+                            id={field.name}
+                            name={field.name}
+                            value={formData[field.name] || ''}
+                            onChange={handleSelectChange}
+                            label={field.label}
+                          >
+                            {field.options?.map((option) => (
+                              <MenuItem key={option.value} value={option.value}>
+                                {option.label}
+                              </MenuItem>
+                            ))}
+                          </Select>
+                        ) : (
+                          <OutlinedInput
+                            id={field.name}
+                            name={field.name}
+                            type={field.type}
+                            value={formData[field.name] || ''}
+                            onChange={handleChange}
+                            placeholder={field.placeholder}
+                            label={field.label}
+                          />
+                        )}
+                        {errors[field.name]?.[0] && (
+                          <FormHelperText>{errors[field.name][0]}</FormHelperText>
+                        )}
+                      </FormControl>
+                    ))}
+                </Stack>
+
+                {/* Column 2 */}
+                <Stack spacing={2} flex={1}>
+                  {fields
+                    .filter((field) => field.name === 'contactNumber')
+                    .map((field, index) => (
+                      <FormControl
+                        fullWidth
+                        key={index}
+                        error={Boolean(errors[field.name]?.length)}
+                      >
+                        <InputLabel htmlFor={field.name}>{field.label}</InputLabel>
                         <OutlinedInput
                           id={field.name}
                           name={field.name}
@@ -223,17 +201,47 @@ const ReusableCreateModalPage: React.FC<ReusableModalPageProps> = ({
                           placeholder={field.placeholder}
                           label={field.label}
                         />
-                      )}
-                      {errors[field.name]?.[0] && (
-                        <FormHelperText>{errors[field.name][0]}</FormHelperText>
-                      )}
-                    </FormControl>
-                  ))}
+                        {errors[field.name]?.[0] && (
+                          <FormHelperText>{errors[field.name][0]}</FormHelperText>
+                        )}
+                      </FormControl>
+                    ))}
+                </Stack>
               </Stack>
+            )
+          }
 
-              {/* Phone Number */}
+          {/* Full address */}
+          {fields
+            .filter((field) => field.name === 'address')
+            .map((field, index) => (
+              <FormControl
+                fullWidth
+                key={index}
+                error={Boolean(errors[field.name]?.length)}
+              >
+                <InputLabel htmlFor={field.name}>{field.label}</InputLabel>
+                <OutlinedInput
+                  id={field.name}
+                  name={field.name}
+                  type={field.type}
+                  value={formData[field.name] || ''}
+                  onChange={handleChange}
+                  placeholder={field.placeholder}
+                  label={field.label}
+                />
+                {errors[field.name]?.[0] && (
+                  <FormHelperText>{errors[field.name][0]}</FormHelperText>
+                )}
+              </FormControl>
+            ))}
+
+          <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2}>
+            {/* Column 1 */}
+            <Stack spacing={2} flex={1} >
+              {/* Render firstName field separately */}
               {fields
-                .filter((field) => field.name === 'phoneNumber')
+                .filter((field) => field.name === 'firstName')
                 .map((field, index) => (
                   <FormControl
                     fullWidth
@@ -241,15 +249,132 @@ const ReusableCreateModalPage: React.FC<ReusableModalPageProps> = ({
                     error={Boolean(errors[field.name]?.length)}
                   >
                     <InputLabel id={`${field.name}-label`}>{field.label}</InputLabel>
-                    <OutlinedInput
-                      id={field.name}
-                      name={field.name}
-                      type={field.type}
-                      value={formData[field.name] || ''}
-                      onChange={handleChange}
-                      placeholder={field.placeholder}
-                      label={field.label}
-                    />
+                    {field.type === 'select' ? (
+                      <Select
+                        labelId={`${field.name}-label`}
+                        id={field.name}
+                        name={field.name}
+                        value={formData[field.name] || ''}
+                        onChange={handleSelectChange}
+                        label={field.label}
+                      >
+                        {field.options?.map((option) => (
+                          <MenuItem key={option.value} value={option.value}>
+                            {option.label}
+                          </MenuItem>
+                        ))}
+                      </Select>
+                    ) : (
+                      <OutlinedInput
+                        id={field.name}
+                        name={field.name}
+                        type={field.type}
+                        value={formData[field.name] || ''}
+                        onChange={handleChange}
+                        placeholder={field.placeholder}
+                        label={field.label}
+                      />
+                    )}
+                    {errors[field.name]?.[0] && (
+                      <FormHelperText>{errors[field.name][0]}</FormHelperText>
+                    )}
+                  </FormControl>
+                ))}
+
+              {/* lastName and suffix side-by-side */}
+              {fields.some((field) => field.name === 'lastName' || field.name === 'suffix') && (
+                <Stack direction="row" spacing={2}>
+                  {fields
+                    .filter(
+                      (field) => field.name === 'lastName' || field.name === 'suffix'
+                    )
+                    .map((field, index) => (
+                      <FormControl
+                        fullWidth
+                        key={index}
+                        sx={{ flex: field.name === 'lastName' ? 2 : 1 }}
+                        error={Boolean(errors[field.name]?.length)}
+                      >
+                        <InputLabel id={`${field.name}-label`}>{field.label}</InputLabel>
+                        {field.type === 'select' ? (
+                          <Select
+                            labelId={`${field.name}-label`}
+                            id={field.name}
+                            name={field.name}
+                            value={formData[field.name] || ''}
+                            onChange={handleSelectChange}
+                            label={field.label}
+                          >
+                            {field.options?.map((option) => (
+                              <MenuItem key={option.value} value={option.value}>
+                                {option.label}
+                              </MenuItem>
+                            ))}
+                          </Select>
+                        ) : (
+                          <OutlinedInput
+                            id={field.name}
+                            name={field.name}
+                            type={field.type}
+                            value={formData[field.name] || ''}
+                            onChange={handleChange}
+                            placeholder={field.placeholder}
+                            label={field.label}
+                          />
+                        )}
+                        {errors[field.name]?.[0] && (
+                          <FormHelperText>{errors[field.name][0]}</FormHelperText>
+                        )}
+                      </FormControl>
+                    ))}
+                </Stack>
+              )}
+
+              {/* Other fields that are not explicitly displayed, excluding some fields*/}
+              {fields
+                .filter(
+                  (field) =>
+                    field.gridSpan !== 2 &&
+                    field.name !== 'firstName' &&
+                    field.name !== 'lastName' &&
+                    field.name !== 'suffix' &&
+                    field.name !== 'name' &&
+                    field.name !== 'address' &&
+                    field.name !== 'contactNumber'
+                )
+                .map((field, index) => (
+                  <FormControl
+                    fullWidth
+                    key={index}
+                    error={Boolean(errors[field.name]?.length)}
+                  >
+                    <InputLabel id={`${field.name}-label`}>{field.label}</InputLabel>
+                    {field.type === 'select' ? (
+                      <Select
+                        labelId={`${field.name}-label`}
+                        id={field.name}
+                        name={field.name}
+                        value={formData[field.name] || ''}
+                        onChange={handleSelectChange}
+                        label={field.label}
+                      >
+                        {field.options?.map((option) => (
+                          <MenuItem key={option.value} value={option.value}>
+                            {option.label}
+                          </MenuItem>
+                        ))}
+                      </Select>
+                    ) : (
+                      <OutlinedInput
+                        id={field.name}
+                        name={field.name}
+                        type={field.type}
+                        value={formData[field.name] || ''}
+                        onChange={handleChange}
+                        placeholder={field.placeholder}
+                        label={field.label}
+                      />
+                    )}
                     {errors[field.name]?.[0] && (
                       <FormHelperText>{errors[field.name][0]}</FormHelperText>
                     )}
@@ -259,8 +384,15 @@ const ReusableCreateModalPage: React.FC<ReusableModalPageProps> = ({
 
             {/* Column 2 */}
             <Stack spacing={2} flex={1}>
+              {/* Fields that span 2 columns (gridSpan === 2) */}
               {fields
-                .filter((field) => field.gridSpan === 2)
+                .filter(
+                  (field) =>
+                    field.gridSpan === 2 &&
+                    field.name !== 'name' &&
+                    field.name !== 'address' &&
+                    field.name !== 'contactNumber'
+                )
                 .map((field, index) => (
                   <FormControl
                     fullWidth
@@ -305,7 +437,6 @@ const ReusableCreateModalPage: React.FC<ReusableModalPageProps> = ({
           <div className="mt-4">{children({ handleSubmit })}</div>
         </Stack>
       </DialogContent>
-
 
     </Dialog>
   );

@@ -49,13 +49,13 @@ const OperatorsPage = () => {
         key: "OperatorName",
         label: "Name",
         sortable: true,
-        filterable: true,
+        filterable: false,
       },
       {
         key: "Cities",
         label: "Approved Area of Operations",
-        sortable: false,
-        filterable: true,
+        sortable: true,
+        filterable: false,
         filterKey: "Cities",
         filterValue: (row: Operator) =>
           Array.isArray(row.Cities)
@@ -78,7 +78,7 @@ const OperatorsPage = () => {
         key: "Executive",
         label: "Created By",
         sortable: true,
-        filterable: true,
+        filterable: false,
         render: (operator: Operator) => operator?.Executive || "No executive",
       },
       {
@@ -142,9 +142,6 @@ const OperatorsPage = () => {
         <DetailedTable
           data={data}
           columns={columns}
-          onCreate={() => {
-            setModalOpen(true);
-          }}
         />
         {/* Conditionally render CreateUserModalPage */}
         <OperatorFieldFormPage />

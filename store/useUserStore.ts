@@ -26,6 +26,7 @@ interface UserRoleStore {
     label: string;
     type: string;
     placeholder: string;
+  
   }[];
 
   // Modal-related state and setter

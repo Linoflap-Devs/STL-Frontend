@@ -25,3 +25,26 @@ export const getUserStatus = (user: any, sevenDaysAgo: dayjs.Dayjs): string => {
 
   return status;
 };
+
+// getting the name
+
+export const isManager = (roleId: number) => roleId === 2;
+export const isExecutive = (roleId: number) => roleId === 3;
+
+export const getRoleName = (roleId: number) => {
+    if (typeof window !== 'undefined') {
+      const pathname = window.location.pathname;
+      if (pathname.includes('managers')) return 'Manager';
+      if (pathname.includes('executives')) return 'Executive';
+      if (pathname.includes('operators')) return 'Operator';
+    }
+
+    switch (roleId) {
+      case 2:
+        return 'Manager';
+      case 3:
+        return 'Executive';
+      default:
+        return 'Operator';
+    }
+  };

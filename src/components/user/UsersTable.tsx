@@ -31,7 +31,7 @@ import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
 import dayjs, { Dayjs } from "dayjs";
 import { EditLogFields } from "./EditLogModal";
 import Swal from "sweetalert2";
-import ConfirmUserActionModalPage from "./ConfirmUserActionModal";
+import ConfirmUserActionModalPage from "../ui/modals/ConfirmUserActionModal";
 import { User } from "~/pages/Protected/users/[role]";
 
 interface UsersTableProps {

@@ -4,7 +4,7 @@ import { IconButton } from "@mui/material";
 import { verifyPass } from "~/utils/api/auth";
 import { addUser, updateUser } from "~/utils/api/users";
 import Swal from "sweetalert2";
-import { LoginSectionData } from "../../data/LoginSectionData";
+import { LoginSectionData } from "../../../data/LoginSectionData";
 import ArrowBackIosNewIcon from "@mui/icons-material/ArrowBackIosNew";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
 import { useRouter } from "next/router";

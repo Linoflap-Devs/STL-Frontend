@@ -16,6 +16,7 @@ export interface LegendItem {
 export interface User {
   UserId: number;
   FirstName: string;
+  fullName: string;
   LastName: string;
   Suffix: string | null;
   UserTypeId: number;
@@ -26,12 +27,13 @@ export interface User {
   OperatorDetails?: {
     OperatorName?: string;
   };
-  region: string;
   Region?: string;
+  region: string; // Add region here
 
   LastLogin?: string;
   LastTokenRefresh?: string;
   IsActive?: number;
+  Cities: { CityId: number; CityName: string }[];
 }
 
 // Define the Operator type
@@ -59,6 +61,19 @@ export type Operator = {
   IsActive?: number;
 }
 
+export type EditLogFields = {
+  logField: string;
+  EditLogDetailsId: number;
+  User: string;
+  EditedBy: string;
+  CreatedAt: string;
+  OldValue: string;
+  NewValue: string;
+  Remarks: string;
+  
+  OperatorId?: number;
+}
+
 export interface RoleConfig {
   userTypeId: number;
   endpoint: {
@@ -76,5 +91,26 @@ export interface RoleConfig {
   }[];
 }
 
+export interface operatorConfig {
+  userTypeId: number;
+  endpoint: {
+    create: string;
+    update: string;
+  };
+  fields: {
+    name: string;
+    label: string;
+    type: string;
+    placeholder: string;
+    value: string;
+    gridSpan: number;
+    options?: { value: string; label: string }[];
+  }[];
+}
+
+export type SortConfig<T> = {
+  key: keyof T;  // Restrict 'key' to a valid key of the passed type
+  direction: "asc" | "desc";  // Sorting direction
+};
 
 
