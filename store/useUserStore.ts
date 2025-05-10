@@ -1,6 +1,6 @@
 import { create } from 'zustand';
-import { User, Column } from '~/types/interfaces';
-import { Operator } from '~/types/types';
+import { Column } from '~/types/interfaces';
+import { User, Operator } from '~/types/types';
 
 interface UserRoleStore {
   roleId: number | null;
@@ -41,7 +41,7 @@ const useUserRoleStore = create<UserRoleStore>((set) => ({
     set({
       fields: fields.map(field => ({
         ...field,
-        value: field.value || '', // Set default value to empty string if it's missing
+        value: field.value || '',
       }))
     });
   }

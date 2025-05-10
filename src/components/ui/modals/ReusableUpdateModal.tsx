@@ -21,18 +21,21 @@ import { ReusableModalPageProps } from "~/types/interfaces";
 import { buttonUpdateStyles, selectStyles } from "~/styles/theme";
 import { useUpdateModalState } from "../../../../store/useUpdateModalStore";
 import { formatKey } from "~/utils/format";
+import { useOperatorsData } from "../../../../store/useOperatorStore";
+import { getUserStatus } from "~/utils/dashboarddata";
+import dayjs from "dayjs";
 import axiosInstance from "~/utils/axiosInstance";
-import { useOperatorsData, useOperatorsStore } from "../../../../store/useOperatorStore";
+import { AxiosError } from "axios";
 
 const ReusableUpdateModal: React.FC<ReusableModalPageProps> = ({
   title,
   isOpen,
   onClose,
   fields,
-  children,
   endpoint,
   initialUserData,
   operatorMap,
+  children
 }) => {
   const {
     user,
@@ -53,44 +56,44 @@ const ReusableUpdateModal: React.FC<ReusableModalPageProps> = ({
     setOpenEditLogModal,
     handleManagerChange,
   } = useUpdateModalState();
-  //const { roleId } = useUserRoleStore();
+
   const { operators, setOperators } = useOperatorsData();
 
   useEffect(() => {
     if (!initialUserData || !operatorMap) return;
 
-    // Transform user data with fallbacks
+    const sevenDaysAgo = dayjs().subtract(7, "day");
+
     const transformedUser = {
       ...initialUserData,
-      lastName: initialUserData.lastName || "N/A",
+      userId: initialUserData.UserId || "N/A",
+      firstName: initialUserData.FirstName || "N/A",
+
+      lastName: initialUserData.LastName || "N/A",
+      phoneNumber: initialUserData.PhoneNumber || "N/A",
+      email: initialUserData.Email || "N/A",
+
       suffix: initialUserData.suffix || "N/A",
       LastUpdatedBy: initialUserData.LastUpdatedBy || "N/A",
       LastUpdatedDate: initialUserData.LastUpdatedDate || "N/A",
-      Status: initialUserData.Status || "N/A",
-      // Add more fallbacks as needed
     };
+
     setUser(transformedUser);
 
-    // Get the operator data based on OperatorId
     const operatorId = Number(initialUserData.OperatorId);
     const operator = operatorMap[operatorId] ?? null;
-
-    // Update operator state
     setOperators(operator ? [operator] : []);
 
-    // Debugging logs
-    console.log("operatorMap:", operatorMap);
-    console.log("initialUserData.OperatorId:", initialUserData.OperatorId);
-    console.log("Resolved Operator ID (number):", operatorId);
-    console.log("Fetched Operator for User:", operator);
+    const userStatus = getUserStatus(initialUserData, sevenDaysAgo);
+    setStatus(userStatus);
   }, [initialUserData, operatorMap]);
 
-
   const alwaysDisabledKeys = [
-    "firstName",
+    "FirstName",
+    "LastName",
+    "OperatorName",
     "CreatedBy",
     "DateOfRegistration",
-    "OperatorName",
     "DateOfOperation",
     "LastUpdatedBy",
     "LastUpdatedDate",
@@ -112,8 +115,62 @@ const ReusableUpdateModal: React.FC<ReusableModalPageProps> = ({
     }));
   };
 
-  const handleSubmit = () => {
-    setIsVerifyModalOpen(true); // Opens confirmation modal
+  const handleSubmit = async () => {
+    try {
+      if (!endpoint) {
+        throw new Error("Endpoint is missing.");
+      }
+
+      if (typeof endpoint === 'object' && !endpoint.update) {
+        throw new Error("Invalid endpoint: 'update' endpoint is required.");
+      }
+
+      // Extract the correct endpoint URL
+      const endpointUrl = typeof endpoint === 'string' ? endpoint : endpoint.update;
+      console.log("Using endpoint:", endpointUrl);
+
+      // Prepare the payload and rename UserId to userId
+      const payload = {
+        ...user,
+        userId: user.UserId,
+      };
+      delete payload.UserId; // optional: clean up old casing if needed
+
+      // Ensure userId is part of the payload
+      console.log("userId in payload:", payload.userId);
+      console.log("Full Payload:", payload);
+
+      // Check if userId is missing or undefined
+      if (!payload.userId) {
+        throw new Error("userId is missing from the payload.");
+      }
+
+      // Make the API request
+      const response = await axiosInstance.patch(endpointUrl, payload, {
+        withCredentials: true,
+      });
+
+      console.log("Update success:", response.data);
+    } catch (error) {
+      const err = error as AxiosError;
+
+      console.error("Error object:", err);
+      console.error("Error message:", err.message);
+
+      if (err.response) {
+        console.error("Error response:", err.response);
+        console.error("Error status code:", err.response.status);
+        console.error("Error response data:", err.response.data);
+      }
+
+      if (err.request) {
+        console.error("Error request:", err.request);
+      }
+
+      if (err.stack) {
+        console.error("Error stack:", err.stack);
+      }
+    }
   };
 
   const handleVerifySubmit = async () => {
@@ -138,37 +195,43 @@ const ReusableUpdateModal: React.FC<ReusableModalPageProps> = ({
             sm: "80%",
             md: "600px",
             lg: "650px",
-            xl: "800px",
+            xl: "740px",
           },
         },
       }}
     >
       <DialogTitle sx={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', py: 0 }}>
-        <IconButton sx={{ backgroundColor: '#171717', alignSelf: 'flex-end' }} onClick={onClose}>
-          <CloseIcon sx={{ fontSize: 20, fontWeight: 700 }} />
+        <IconButton
+          sx={{ alignSelf: 'flex-end' }}
+          onClick={onClose}
+        >
+          <CloseIcon
+            sx={{
+              fontSize: 28,
+              fontWeight: 700,
+              backgroundColor: '#ACA993',
+              borderRadius: '50%',
+              padding: '4px',
+              color: '#FFFFFF',
+            }}
+          />
         </IconButton>
-        <Typography variant="h5" sx={{ fontWeight: 'bold', mt: -1 }}>
+        <Typography sx={{ fontSize: 26, fontWeight: 'bold', mt: -1 }}>
           {title}
         </Typography>
       </DialogTitle>
+
       <DialogContent>
         <Stack spacing={2} key={status} sx={{ my: 1.5 }}>
-          <Box
-            sx={{
-              display: "flex",
-              justifyContent: "space-between",
-              alignItems: "center",
-              width: "100%",
-            }}
-          >
+          {/* Status & Toggle Button */}
+          <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", width: "100%" }}>
             <Box sx={{ flex: 1, maxWidth: 100 }}>
               <FormControl fullWidth sx={selectStyles}>
                 <InputLabel id="status-label">Status</InputLabel>
                 <Select
                   labelId="status-label"
                   id="status"
-                  value={status
-                    || (isLoading ? "Loading..." : "")}
+                  value={status}
                   onChange={(e) => setStatus(e.target.value)}
                   label="Status"
                   disabled={isDisabled}
@@ -178,7 +241,6 @@ const ReusableUpdateModal: React.FC<ReusableModalPageProps> = ({
                   <MenuItem value="Active">Active</MenuItem>
                   <MenuItem value="Inactive">Inactive</MenuItem>
                   <MenuItem value="New">New</MenuItem>
-                  <MenuItem value="Inactive">Inactive</MenuItem>
                   <MenuItem value="Suspended">Suspended</MenuItem>
                 </Select>
               </FormControl>
@@ -187,12 +249,7 @@ const ReusableUpdateModal: React.FC<ReusableModalPageProps> = ({
             <Box>
               <Button
                 onClick={handleDisable}
-                sx={{
-                  ...buttonUpdateStyles,
-                  mt: 1,
-                  fontSize: "14px",
-                  px: "1.7rem",
-                }}
+                sx={{ ...buttonUpdateStyles, mt: 1, fontSize: "14px", px: "1.7rem" }}
                 variant="contained"
               >
                 {isViewMode ? "View" : "Update"}
@@ -204,7 +261,7 @@ const ReusableUpdateModal: React.FC<ReusableModalPageProps> = ({
           <Stack direction="row" spacing={3}>
             <Stack spacing={3} sx={{ flex: 1 }}>
               <Typography>Personal Information</Typography>
-              {["FirstName", "LastName", "PhoneNumber", "Email"].map(
+              {["firstName", "lastName", "phoneNumber", "email"].map(
                 (key) => (
                   <Stack key={key} spacing={0}>
                     {key === "lastName" ? (
@@ -284,7 +341,7 @@ const ReusableUpdateModal: React.FC<ReusableModalPageProps> = ({
             <Stack spacing={3} sx={{ flex: 1 }}>
               <Typography sx={{ mb: 0 }}>History</Typography>
               {[
-                "CreatedBy",
+                "createdBy",
                 "DateOfRegistration",
                 "LastUpdatedBy",
                 "LastUpdatedDate",
@@ -299,14 +356,14 @@ const ReusableUpdateModal: React.FC<ReusableModalPageProps> = ({
                       isLoading
                         ? "Loading..."
                         : key === "DateOfRegistration"
-                        ? (() => {
+                          ? (() => {
                             const date = user?.[key as keyof typeof user];
                             return date && !isNaN(new Date(date as string).getTime())
                               ? new Date(date as string).toISOString().split("T")[0].replace(/-/g, "/")
                               : "N/A";
                           })()
-                        : user?.[key as keyof typeof user] ?? "N/A"
-                    }                    
+                          : user?.[key as keyof typeof user] ?? "N/A"
+                    }
                     onChange={handleManagerChange}
                     disabled={
                       alwaysDisabledKeys.includes(key) ||
@@ -341,13 +398,6 @@ const ReusableUpdateModal: React.FC<ReusableModalPageProps> = ({
                 >
                   View Summary
                 </Typography>
-                {/* {openEditLogModal && selectedUserId !== null && (
-                  <EditLogModalPage
-                    open={openEditLogModal}
-                    onClose={handleCloseEditLogModal}
-                    userId={selectedUserId}
-                  />
-                )} */}
               </Box>
             </Stack>
           </Stack>
@@ -359,7 +409,7 @@ const ReusableUpdateModal: React.FC<ReusableModalPageProps> = ({
 
           <Stack direction="row" spacing={3}>
             <Stack spacing={3} sx={{ flex: 1 }}>
-              {["OperatorName", "DateOfOperation"].map((key) => (
+              {["operatorName", "DateOfOperation"].map((key) => (
                 <Stack key={key} spacing={3}>
                   <FormControl fullWidth error={!!errors[key]}>
                     <InputLabel htmlFor={key}>{formatKey(key)}</InputLabel>
@@ -371,14 +421,14 @@ const ReusableUpdateModal: React.FC<ReusableModalPageProps> = ({
                         isLoading
                           ? "Loading..."
                           : key === "DateOfOperation"
-                          ? (() => {
+                            ? (() => {
                               const date = operators?.[0]?.DateOfOperation;
                               return date && !isNaN(new Date(date).getTime())
                                 ? new Date(date).toISOString().split("T")[0].replace(/-/g, "/")
                                 : "N/A";
                             })()
-                          : operators?.[0]?.[key as keyof typeof operators[0]] ?? "N/A"
-                      }                      
+                            : operators?.[0]?.[key as keyof typeof operators[0]] ?? "N/A"
+                      }
                       onChange={handleManagerChange}
                       label={formatKey(key)}
                       disabled={alwaysDisabledKeys.includes(key) || isDisabled}
@@ -417,7 +467,6 @@ const ReusableUpdateModal: React.FC<ReusableModalPageProps> = ({
                 />
               </FormControl>
             </Stack>
-
           </Stack>
 
           {/* Remarks Field */}
@@ -440,26 +489,11 @@ const ReusableUpdateModal: React.FC<ReusableModalPageProps> = ({
               )}
             </FormControl>
           )}
-
           {!isDisabled && (
             <div className="mt-4">
               {children({ handleSubmit })}
             </div>
           )}
-          {/* {isVerifyModalOpen && (
-            <ConfirmUserActionModalPage
-              open={isVerifyModalOpen}
-              onClose={() => setIsVerifyModalOpen(false)}
-              onVerified={() => setIsVerifyModalOpen(false)}
-              onSubmit={onSubmit}
-              selectedUser={user}
-              setSelectedUser={setSelectedUser}
-              actionType="update"
-              user={user}
-              setUser={setUser}
-              setErrors={setErrors}
-            />
-          )} */}
         </Stack>
       </DialogContent>
     </Dialog>

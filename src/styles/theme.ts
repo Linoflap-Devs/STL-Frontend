@@ -31,32 +31,6 @@ const darkTheme = createTheme({
       defaultProps: {
         variant: "outlined",
       },
-      styleOverrides: {
-        root: {
-          "& .MuiOutlinedInput-root": {
-            border: "none",
-            borderRadius: 5,
-            backgroundColor: "#282828",
-            transition: "background-color 0.3s ease, border-color 0.3s ease",
-            "&:hover .MuiOutlinedInput-notchedOutline": {
-              borderColor: "#FFFFFF",
-            },
-            "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
-              borderColor: "#FFFFFF",
-            },
-          },
-          "& .MuiOutlinedInput-notchedOutline": {
-            borderColor: "#3F3F3F",
-            transition: "border-color 0.3s ease",
-          },
-          "& .MuiOutlinedInput-input": {
-            fontSize: 14,
-          },
-          "&.Mui-error .MuiOutlinedInput-notchedOutline": {
-            borderColor: "#d32f2f",
-          },
-        },
-      },
     },
     MuiTableContainer: {
       styleOverrides: {

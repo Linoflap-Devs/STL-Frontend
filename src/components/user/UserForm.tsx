@@ -1,21 +1,23 @@
-// src\components\user\UserForm.tsx
 import React, { useEffect } from 'react';
 import CreateModalPage from '~/components/ui/modals/CreateModal';
 import useUserRoleStore from '../../../store/useUserStore';
 import { useOperatorsData } from '../../../store/useOperatorStore';
 import { getOperatorsData } from '~/utils/api/operators/get.operators.service';
-import { GetOperatorsResponse } from '~/types/interfaces';
-import { Operator } from '~/types/types';
+import { Field, GetOperatorsResponse, UserFieldFormPageProps } from '~/types/interfaces';
+import { Operator, RoleConfig } from '~/types/types';
 import UpdateModalPage from '../ui/modals/UpdateModal';
 import { useModalStore } from '../../../store/useModalStore';
 
-const roleConfigs = {
+const roleConfigs: Record<string, { userTypeId: number; endpoint: { create: string; update: string }; fields: Field[] }> = {
   manager: {
     userTypeId: 2,
-    endpoint: '/users/addUser',
-    fields: [
-      { name: 'firstName', label: 'Given Name', type: 'text', placeholder: 'Given name', value: '' },
-      { name: 'lastName', label: 'Last Name', type: 'text', placeholder: 'Last name', value: '' },
+    endpoint: {
+      create: '/users/addUser',
+      update: '/users/edituser',
+    },
+    fields:  [
+      { name: 'firstName', label: 'Given Name', type: 'text', placeholder: 'Given name', value: '', gridSpan: 1 },
+      { name: 'lastName', label: 'Last Name', type: 'text', placeholder: 'Last name', value: '', gridSpan: 1 },
       {
         name: 'suffix',
         label: 'Suffix',
@@ -27,44 +29,51 @@ const roleConfigs = {
           { value: 'None', label: 'None' },
         ],
         placeholder: 'Select suffix',
+        value: '',
+        gridSpan: 1,
       },
-      { name: 'phoneNumber', label: 'Phone Number', type: 'tel', placeholder: 'Enter phone number', value: '' },
-      { name: 'operatorId', label: 'Assigned Company', type: 'text', placeholder: 'Enter assigned company', value: '' },
-      { name: 'email', label: 'Email Address', type: 'email', placeholder: 'Enter email address', value: '' },
-      { name: 'password', label: 'Password', type: 'password', placeholder: 'Enter password', value: '' },
+      { name: 'phoneNumber', label: 'Phone Number', type: 'tel', placeholder: 'Enter phone number', value: '', gridSpan: 1 },
+      { name: 'operatorId', label: 'Assigned Company', type: 'text', placeholder: 'Enter assigned company', value: '', gridSpan: 2 },
+      { name: 'email', label: 'Email Address', type: 'email', placeholder: 'Enter email address', value: '', gridSpan: 2 },
+      { name: 'password', label: 'Password', type: 'password', placeholder: 'Enter password', value: '', gridSpan: 2, required: true },
+      //{ name: 'userId', label: 'User ID', type: 'text', placeholder: 'Enter user ID', value: '', gridSpan: 1 },
     ],
   },
-
   executive: {
     userTypeId: 3,
-    endpoint: '/users/addUser',
+    endpoint: {
+      create: '/users/addUser',
+      update: '/users/edituser',
+    },
     fields: [
-      { name: 'firstName', label: 'Given Name', type: 'text', placeholder: 'Given name', value: '' },
-      { name: 'lastName', label: 'Last Name', type: 'text', placeholder: 'Last name', value: '' },
+      { name: 'firstName', label: 'Given Name', type: 'text', placeholder: 'Given name', value: '', gridSpan: 1 },
+      { name: 'lastName', label: 'Last Name', type: 'text', placeholder: 'Last name', value: '', gridSpan: 1 },
       {
         name: 'suffix',
         label: 'Suffix',
         type: 'select',
-        placeholder: 'Select Suffix',
         options: [
-          { label: 'Mr.', value: 'mr' },
-          { label: 'Mrs.', value: 'mrs' },
-          { label: 'Dr.', value: 'dr' },
+          { value: 'Jr.', label: 'Jr.' },
+          { value: 'Sr.', label: 'Sr.' },
+          { value: 'III', label: 'III' },
+          { value: 'None', label: 'None' },
         ],
+        placeholder: 'Select suffix',
+        value: '',
+        gridSpan: 1,
       },
-      { name: 'phoneNumber', label: 'Phone Number', type: 'tel', placeholder: 'Enter phone number', value: '' },
-      { name: 'operatorId', label: 'Assigned Company', type: 'text', placeholder: 'Enter assigned company', value: '' },
-      { name: 'email', label: 'Email Address', type: 'email', placeholder: 'Enter email address', value: '' },
-      { name: 'password', label: 'Password', type: 'password', placeholder: 'Enter password', value: '' },
+      { name: 'phoneNumber', label: 'Phone Number', type: 'tel', placeholder: 'Enter phone number', value: '', gridSpan: 1 },
+      { name: 'operatorId', label: 'Assigned Company', type: 'text', placeholder: 'Enter assigned company', value: '', gridSpan: 2 },
+      { name: 'email', label: 'Email Address', type: 'email', placeholder: 'Enter email address', value: '', gridSpan: 2 },
+      { name: 'password', label: 'Password', type: 'password', placeholder: 'Enter password', value: '', gridSpan: 2 },
     ],
   },
 };
 
 const UserFieldFormPage: React.FC = () => {
-  const {  setFields, fields, setRoleId } = useUserRoleStore();
+  const { setFields, fields, setRoleId } = useUserRoleStore();
   const { operatorMap, setOperatorMap } = useOperatorsData();
   const { modalOpen, modalType, selectedData, closeModal } = useModalStore();
-
   const pathname = typeof window !== 'undefined' ? window.location.pathname : '';
   const pageType =
     pathname.includes('manager') ? 'manager' :
@@ -72,8 +81,14 @@ const UserFieldFormPage: React.FC = () => {
     null;
 
   if (!pageType) return null;
-
+  
   const roleConfig = roleConfigs[pageType];
+  
+  // Calculate isUpdateMode after roleConfig is available
+  const isUpdateMode = !!selectedData?.id;
+  const endpoint = isUpdateMode
+    ? roleConfig.endpoint.update
+    : roleConfig.endpoint.create;
 
   useEffect(() => {
     const fetchOperators = async () => {
@@ -85,7 +100,7 @@ const UserFieldFormPage: React.FC = () => {
             return acc;
           }, {} as { [key: number]: Operator });
           setOperatorMap(map);
-          console.log("Fetched and set Operator Map:", map);
+          // console.log("Fetched and set Operator Map:", map);
         } else {
           setOperatorMap({});
         }
@@ -114,7 +129,7 @@ const UserFieldFormPage: React.FC = () => {
 
     setFields(updatedFields);
     setOperatorMap(operatorMap);
-  }, [pageType, setFields, setRoleId, operatorMap, setOperatorMap]);
+  }, [pageType, setFields, setRoleId, operatorMap, setOperatorMap, roleConfig]);
 
   return (
     <div className="p-4">
@@ -123,8 +138,8 @@ const UserFieldFormPage: React.FC = () => {
           open={modalOpen}
           onClose={closeModal}
           fields={fields}
-          endpoint={roleConfig.endpoint} 
-      />
+          endpoint={roleConfig.endpoint}
+        />
       )}
       {modalType === "view" && (
         <UpdateModalPage

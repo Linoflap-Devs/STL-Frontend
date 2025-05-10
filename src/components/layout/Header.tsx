@@ -35,7 +35,6 @@ const Header: React.FC<HeaderProps> = () => {
     userTypeId: number;
   } | null>(null);
 
-
   return (
     <header className="w-full bg-[#2F2F2F]">
       <div className="flex items-center p-4">

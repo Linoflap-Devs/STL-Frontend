@@ -15,15 +15,20 @@ const UpdateModalPage: React.FC<ModalPageProps> = ({
   initialUserData,
   operatorMap,
 }) => {
-
   useEffect(() => {
     console.log("Initial Data received by UpdateModalPage:", initialUserData);
   }, [initialUserData]);
 
   const [loading, setLoading] = useState(false);
   const isOpen = open ?? true;
-  const handleClose = onClose ?? (() => { });
+  const handleClose = onClose ?? (() => {});
   const { roleId } = useUserRoleStore();
+
+  // Transform endpoint to the required type
+  const formattedEndpoint =
+    typeof endpoint === 'string'
+      ? { create: endpoint, update: endpoint }
+      : endpoint;
 
   const getRoleName = () => {
     if (typeof window !== 'undefined') {
@@ -47,7 +52,7 @@ const UpdateModalPage: React.FC<ModalPageProps> = ({
       <ReusableUpdateModalPage
         isOpen={isOpen}
         onClose={handleClose}
-        endpoint={endpoint}
+        endpoint={formattedEndpoint}
         fields={fields}
         title={`View ${getRoleName()}`}
         initialUserData={initialUserData}

@@ -19,9 +19,9 @@ import PersonOffIcon from "@mui/icons-material/PersonOff";
 import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
 import useDetailTableStore from "../../../../store/useTableStore";
 import { SortableTableCell, filterData, sortData } from "../../../utils/sortPaginationSearch";
-import { User, DetailedTableProps } from "../../../types/interfaces";
+import { DetailedTableProps } from "../../../types/interfaces";
 import { buttonStyles } from "~/styles/theme";
-import { Operator } from "~/types/types";
+import { User, Operator } from "~/types/types";
 import useUserRoleStore from "../../../../store/useUserStore";
 import { useModalStore } from "../../../../store/useModalStore";
 

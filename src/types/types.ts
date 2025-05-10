@@ -13,18 +13,31 @@ export interface LegendItem {
   label: string;
 }
 
-export type User = {
-  region: string;  // Add region to User
+export interface User {
+  UserId: number;
+  FirstName: string;
+  LastName: string;
+  Suffix: string | null;
+  UserTypeId: number;
+  email: string;
+  phoneNumber: string;
+  DateOfRegistration: string;
+  OperatorId: number;
+  OperatorDetails?: {
+    OperatorName?: string;
+  };
+  region: string;
+  Region?: string;
+
   LastLogin?: string;
   LastTokenRefresh?: string;
-  DateOfRegistration?: string;
   IsActive?: number;
-};
+}
 
 // Define the Operator type
 export type Operator = {
   OperatorRegion: any;
-  Region: any;
+  Region?: any;
   OperatorId: number;
   OperatorName: string;
   Executive: string;
@@ -46,69 +59,22 @@ export type Operator = {
   IsActive?: number;
 }
 
-export type RegionData = Record<
-  string,
-  {
-    users: User[];
-  }
->;
-
-// Operators
-export type OperatorsData = {
-  totalOperators: number;
-  totalActiveOperators: number;
-  totalDeletedOperators: number;
-  totalInactiveOperators: number;
-  totalNewOperators: number;
-};
-
-// Operators Add Form
-export type AddOperatorFormData = {
-  companyName: string;
-  email: string;
-  phone: string;
-  dateOfOperations: string;
-  areaOfOperations: string;
-  gameTypes: {
-    stlPares: boolean;
-    stlSwer2: boolean;
-    stlSwer3: boolean;
-    stlSwer4: boolean;
-    allGames: boolean;
-  }
+export interface RoleConfig {
+  userTypeId: number;
+  endpoint: {
+    create: string;
+    update: string;
+  };
+  fields: {
+    name: string;
+    label: string;
+    type: string;
+    placeholder: string;
+    value: string;
+    gridSpan: number;
+    options?: { value: string; label: string }[];
+  }[];
 }
-export type UpdateOperatorFormData = {
-  status: string;
-  companyName: string;
-  email: string;
-  phone: string;
-  dateOfOperations: string;
-  areaOfOperations: string;
-  gameTypes: {
-    stlPares: boolean;
-    stlSwer2: boolean;
-    stlSwer3: boolean;
-    stlSwer4: boolean;
-    allGames: boolean;
-  }
-  createdBy: string;
-  latestUpdateBy: string;
-  creationDate: string;
-  latestUpdateDate: string;
-  remarks: string;
-}
-export type OperatorsStore = {
-  //OperatorsCards Component
-  operatorsData: OperatorsData;
-  // Partial<T> - typescript utility makes all fields of T optional
-  setOperatorsData: (data: Partial<OperatorsData>) => void;
-  //Add Operator Component
-  addOperatorForm: AddOperatorFormData;
-  setOperatorFormData: (data:  Partial<AddOperatorFormData>) => void;
-  updateOperatorForm: UpdateOperatorFormData;
-  setUpdateOperatorFormData: (data: Partial<UpdateOperatorFormData>) => void;
-  setAllGameTypes: (data: Partial<AddOperatorFormData['gameTypes']>) => void;
-};
 
 
 

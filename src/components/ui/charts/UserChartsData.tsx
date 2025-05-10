@@ -47,24 +47,20 @@ export const ChartsDataPage = <T extends RegionUser & { OperatorName?: string }>
       const users = dashboardData.filter((user) => {
         let userRegionName = "";
 
-        // Check user.Region first, if not available fallback to user.OperatorRegion?.RegionName
-        if (user.Region) {
-          // Access the Region object and get the RegionName
-          const regionData = user.Region as any;
-
-          if (typeof regionData.RegionName === "string") {
-            userRegionName = regionData.RegionName;
-          } else {
-            console.warn("RegionName is not a string:", regionData.RegionName);
-          }
-        } else if (user.OperatorRegion?.RegionName) {
+        // If Region is an object with RegionName
+        if (typeof user.Region === "object" && "RegionName" in user.Region) {
+          userRegionName = (user.Region as { RegionName: string }).RegionName;
+        }
+        // If Region is a string (already transformed) use it directly
+        else if (typeof user.Region === "string") {
+          userRegionName = user.Region;
+        }
+        // Fallback: Try OperatorRegion
+        else if (user.OperatorRegion?.RegionName) {
           userRegionName = user.OperatorRegion.RegionName;
         }
 
         const matches = userRegionName === regionFull;
-        // console.log(
-        //   `User: ${user.OperatorName} | RegionName: ${userRegionName} | Match: ${matches}`
-        // );
         return matches;
       });
 
@@ -90,7 +86,7 @@ export const ChartsDataPage = <T extends RegionUser & { OperatorName?: string }>
             newlyRegistered++;
             break;
           default:
-          //console.warn("⚠️ Unmatched status:", status);
+          //console.warn("Unmatched status:", status);
         }
       });
 
