@@ -22,7 +22,7 @@ const darkTheme = createTheme({
           borderRadius: 5,
           backgroundColor: "#0038A8",
           "&:hover": {
-            backgroundColor: "#559AD6",
+            backgroundColor: "#0066CC",
           },
         },
       },

@@ -1,9 +1,6 @@
 import React, { useEffect } from "react";
 import { useRouter } from "next/router";
 import DetailedTable from "~/components/ui/tables/DetailedTable";
-import { getUsersData } from "~/utils/api/users/get.users.service";
-import { getOperatorsData } from "~/utils/api/operators/get.operators.service";
-import { GetUsersResponse, GetOperatorsResponse } from "~/types/interfaces";
 import { getUserStatus } from "~/utils/dashboarddata";
 import { Button } from "@mui/material";
 import useUserRoleStore from "../../../../store/useUserStore";
@@ -11,8 +8,8 @@ import CardsPage from "~/components/ui/dashboardcards/CardsData";
 import ChartsDataPage from "~/components/ui/charts/UserChartsData";
 import dayjs from "dayjs";
 import UserFieldFormPage from "~/components/user/UserForm";
-import { User, Operator } from "~/types/types";
-import CSVExportButton from "~/components/ui/button/CSVExportButtonDashboard";
+import { User } from "~/types/types";
+import { fetchOperators, fetchUsers } from "~/services/userService";
 
 const roleMap: Record<string, { label: string; textlabel: string; roleId: number }> = {
   managers: { label: "Small Town Lottery Manager", textlabel: "Managers", roleId: 2 },
@@ -36,54 +33,17 @@ const RolePage = () => {
   const roleConfig = roleString ? roleMap[roleString.toLowerCase()] : null;
   const roleId = roleConfig?.roleId;
 
-  const fetchOperators = async () => {
-    try {
-      const operatorResponse = await getOperatorsData<GetOperatorsResponse>("/operators/getOperators");
-      if (operatorResponse.success && Array.isArray(operatorResponse.data?.data)) {
-        const operatorMap = operatorResponse.data.data.reduce((map: { [key: number]: Operator }, operator: Operator) => {
-          map[operator.OperatorId] = operator;
-          return map;
-        }, {});
-        setOperatorMap({ ...operatorMap });
-      } else {
-        setOperatorMap({});
-      }
-    } catch (error) {
-      console.error("Error fetching operator data:", error);
+  useEffect(() => {
+    fetchOperators(setOperatorMap);
+  }, [setOperatorMap]);
+
+  useEffect(() => {
+    if (roleId !== undefined) {
+      fetchUsers(roleId, setData); // Fetch users when roleId changes
     }
-  };
-
-  useEffect(() => {
-    fetchOperators();
-  }, []);
-
-  useEffect(() => {
-    const fetchUsers = async () => {
-      if (roleId) {
-        try {
-          const userResponse = await getUsersData<GetUsersResponse>("/users/getUsers", { roleId });
-          if (userResponse.success && Array.isArray(userResponse.data?.data)) {
-            const filteredUsers = userResponse.data.data
-              .filter((user: User) => user.UserTypeId === roleId)
-              .map((user) => ({
-                ...user,
-                fullName: [user.FirstName, user.LastName].filter(Boolean).join(" "),
-              }));
-
-            setData(filteredUsers.length > 0 ? filteredUsers : []);
-          } else {
-            setData([]);
-          }
-        } catch (error) {
-          console.error("Error fetching user data:", error);
-          setData([]);
-        }
-      }
-    };
-
-    fetchUsers();
   }, [roleId, setData]);
 
+  // columns
   useEffect(() => {
     if (roleId) {
       setColumns([
@@ -173,22 +133,18 @@ const RolePage = () => {
         dashboardData={data}
       />
       <>
-        <CSVExportButton
-          statsPerRegion={data}
-          pageType={pagetype}
-          roleId={roleId}
-          
-        />
         <DetailedTable
           data={data}
           columns={columns}
           pageType={pagetype}
           operatorMap={operatorMap}
 
-          roleId={roleId} 
+          roleId={roleId}
           statsPerRegion={data}
         />
-        <UserFieldFormPage />
+        <UserFieldFormPage
+          operatorMap={operatorMap}
+          setOperatorMap={setOperatorMap} />
       </>
     </div>
   );

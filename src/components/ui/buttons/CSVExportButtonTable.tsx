@@ -9,46 +9,22 @@ import dayjs from "dayjs";
 const convertToCSV = (data: any[], columns: any[], title: string, operatorMap: any[]) => {
   const headers = columns.map((col) => col.label);
 
-  // Calculate column widths based on the longest content in each column
-  const colWidths = columns.map((col, index) => {
-    const key = col.key;
-    const maxDataWidth = Math.max(
-      ...data.map((item) => {
-        if (key === "OperatorDetails.OperatorName") {
-          return (operatorMap[item.OperatorId]?.OperatorName ?? "No operator assigned").length;
-        }
-        if (key === "Status") {
-          const sevenDaysAgo = dayjs().subtract(7, "days");
-          return getUserStatus(item, sevenDaysAgo).length;
-        }
-        const value = key.split('.').reduce((obj: { [x: string]: any; }, k: string | number) => obj?.[k], item);
-        return String(value ?? "").length;
-      }),
-      headers[index].length
-    );
-    return maxDataWidth + 2; // Add padding for spacing
-  });
-
-  // Format cell data to match the calculated column width
-  const formatCell = (text: string, index: number) =>
-    text.padEnd(colWidths[index]);
-
   // Function to create each row of the CSV
   const createRow = (item: any, isHeader: boolean = false) => {
     return headers.map((header, index) => {
       const columnKey = columns[index].key;
 
-      if (isHeader) return formatCell(header, index);
+      if (isHeader) return header; // No formatting for headers
 
       if (columnKey === "OperatorDetails.OperatorName") {
         const name = operatorMap[item.OperatorId]?.OperatorName ?? "No operator assigned";
-        return formatCell(name, index);
+        return name;
       }
 
       if (columnKey === "Status") {
         const sevenDaysAgo = dayjs().subtract(7, "days");
         const status = getUserStatus(item, sevenDaysAgo);
-        return formatCell(status, index);
+        return status;
       }
 
       // Special case: Cities array
@@ -56,12 +32,12 @@ const convertToCSV = (data: any[], columns: any[], title: string, operatorMap: a
         const cityNames = Array.isArray(item.Cities)
           ? item.Cities.map((c: any) => c.CityName).join(", ")
           : "No cities";
-        return formatCell(cityNames, index);
+        return cityNames;
       }
 
       const value = columnKey.split('.').reduce((obj: { [x: string]: any; }, key: string | number) => obj?.[key], item);
-      return formatCell(String(value ?? ""), index);
-    }).join(" ");
+      return String(value ?? "");
+    }).join(","); // Use comma as separator instead of spaces
   };
 
   const titleRow = `${title}\n\n`; // Add title with a newline
@@ -85,7 +61,7 @@ const CSVExportButtonTable: React.FC<CSVExportButtonProps> = ({ statsPerRegion, 
     const link = document.createElement("a");
 
     link.href = URL.createObjectURL(blob);
-    link.download = `${pageType}_dashboard_data.csv`; // Set the file name dynamically
+    link.download = `${pageType}_summary_data.csv`; // Set the file name dynamically
     link.click(); // Trigger the file download
   };
 

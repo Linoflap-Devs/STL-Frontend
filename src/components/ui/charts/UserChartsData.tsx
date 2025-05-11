@@ -3,7 +3,6 @@ import { ChartBarItem, ChartsDataPageProps, RegionUser } from "~/types/interface
 import useDashboardStore from "../../../../store/useDashboardStore";
 import ChartCard from "./UserCharts";
 import { getUserStatus } from "~/utils/dashboarddata";
-import CSVExportButton from "../button/CSVExportButtonDashboard";
 
 const regionMap: Record<string, string> = {
   "I": "Region I",
@@ -36,8 +35,8 @@ export const ChartsDataPage = <T extends RegionUser & { OperatorName?: string }>
   pageType,
 }: ChartsDataPageProps<T>) => {
   const { sevenDaysAgo, setChartData } = useDashboardStore();
-  const [chartData, setLocalChartData] = useState<ChartBarItem[]>([]);
-  const [statsPerRegion, setStatsPerRegion] = useState<any[]>([]);  // Declare statsPerRegion state
+  const [ chartData, setLocalChartData ] = useState<ChartBarItem[]>([]);
+  const [ statsPerRegion, setStatsPerRegion ] = useState<any[]>([]);  // Declare statsPerRegion state
 
   useEffect(() => {
     if (!dashboardData || dashboardData.length === 0) return;
@@ -125,7 +124,7 @@ export const ChartsDataPage = <T extends RegionUser & { OperatorName?: string }>
       },
     ];
 
-    setStatsPerRegion(stats);  // Set the statsPerRegion state
+    setStatsPerRegion(stats);
     setLocalChartData(newChartData);
     setChartData(newChartData);
   }, [dashboardData, userType, sevenDaysAgo, setChartData]);

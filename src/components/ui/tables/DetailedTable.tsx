@@ -13,7 +13,7 @@ import { User, Operator, SortConfig } from "~/types/types";
 import { useModalStore } from "../../../../store/useModalStore";
 import { getUserStatus } from "~/utils/dashboarddata";
 import dayjs from "dayjs";
-import CSVExportButtonTable from "../button/CSVExportButtonTable";
+import CSVExportButtonTable from "../buttons/CSVExportButtonTable";
 
 const DetailedTable = <T extends User | Operator>({
   data,
@@ -139,19 +139,21 @@ const DetailedTable = <T extends User | Operator>({
         </div>
         <Table size="small">
           <TableHead>
-            {columns.map((col) =>
-              col.sortable || col.filterable ? (
-                <SortableTableCell
-                  key={String(col.key)}
-                  label={col.label}
-                  sortKey={String(col.key)}
-                  isFilterVisible={isFilterActive && col.filterable}
-                />
-              ) : (
-                <TableCell key={String(col.key)}>{col.label}</TableCell>
-              )
-            )}
-            <TableCell>Actions</TableCell>
+            <TableRow sx={{ '&:hover': { backgroundColor: '#F08060' } }}>
+              {columns.map((col) =>
+                col.sortable || col.filterable ? (
+                  <SortableTableCell
+                    key={String(col.key)}
+                    label={col.label}
+                    sortKey={String(col.key)}
+                    isFilterVisible={isFilterActive && col.filterable}
+                  />
+                ) : (
+                  <TableCell key={String(col.key)}>{col.label}</TableCell>
+                )
+              )}
+              <TableCell>Actions</TableCell>
+            </TableRow>
           </TableHead>
           <TableBody>
             {paginatedData.length === 0 ? (

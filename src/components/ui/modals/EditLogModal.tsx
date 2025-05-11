@@ -59,7 +59,7 @@ const EditModalPage: React.FC<EditModalPageProps> = ({ userId, onClose }) => {
     if (userId) {
       fetchData();
     }
-    
+
     setEditLogColumns([
       { key: "EditedBy", label: "Edited By", sortable: true, filterable: true },
       {
@@ -135,26 +135,28 @@ const EditModalPage: React.FC<EditModalPageProps> = ({ userId, onClose }) => {
             ) : (
               <Table>
                 <TableHead>
-                  {columns.map((col) => (
-                    <TableCell
-                      key={String(col.key)}
-                      onClick={() => col.sortable && handleSort(String(col.key))}
-                      className="cursor-pointer"
-                    >
-                      <div className="flex items-center">
-                        {col.label}
-                        {sortConfig.key === String(col.key) && (
-                          <span className="ml-2">
-                            {sortConfig.direction === 'asc' ? (
-                              <ArrowDropUpIcon fontSize="small" />
-                            ) : (
-                              <ArrowDropDownIcon fontSize="small" />
-                            )}
-                          </span>
-                        )}
-                      </div>
-                    </TableCell>
-                  ))}
+                  <TableRow sx={{ '&:hover': { backgroundColor: '#F08060' } }}>
+                    {columns.map((col) => (
+                      <TableCell
+                        key={String(col.key)}
+                        onClick={() => col.sortable && handleSort(String(col.key))}
+                        className="cursor-pointer"
+                      >
+                        <div className="flex items-center">
+                          {col.label}
+                          {sortConfig.key === String(col.key) && (
+                            <span className="ml-2">
+                              {sortConfig.direction === 'asc' ? (
+                                <ArrowDropUpIcon fontSize="small" />
+                              ) : (
+                                <ArrowDropDownIcon fontSize="small" />
+                              )}
+                            </span>
+                          )}
+                        </div>
+                      </TableCell>
+                    ))}
+                  </TableRow>
                 </TableHead>
                 <TableBody>
                   {sortedAndFilteredData

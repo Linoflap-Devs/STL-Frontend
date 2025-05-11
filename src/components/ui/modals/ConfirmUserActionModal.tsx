@@ -1,38 +1,23 @@
-import React from "react";
-import { useState, useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { IconButton } from "@mui/material";
-import { verifyPass } from "~/utils/api/auth";
-import { addUser, updateUser } from "~/utils/api/users";
+import { Visibility, VisibilityOff, Close as CloseIcon } from "@mui/icons-material";
 import Swal from "sweetalert2";
-import { LoginSectionData } from "../../../data/LoginSectionData";
-import ArrowBackIosNewIcon from "@mui/icons-material/ArrowBackIosNew";
-import { Visibility, VisibilityOff } from "@mui/icons-material";
 import { useRouter } from "next/router";
-import { User } from "~/pages/Protected/users/[role]";
-
-interface ConfirmUserActionModalProps {
-  open: boolean;
-  onClose: () => void;
-  onVerified: () => void;
-  user: any;
-  onSubmit: (newUser: any) => void;
-  setUser: React.Dispatch<React.SetStateAction<any>>;
-  setErrors: React.Dispatch<React.SetStateAction<any>>;
-  selectedUser?: User | null; // for remarks
-  setSelectedUser?: React.Dispatch<React.SetStateAction<User | null>>; // for remarks
-  actionType: "create" | "update" | "suspend";
-}
+import { verifyPass } from "~/utils/api/auth";
+import { LoginSectionData } from "../../../data/LoginSectionData";
+import { ConfirmUserActionModalProps } from "~/types/interfaces";
+import axiosInstance from "~/utils/axiosInstance";
+import useUserRoleStore from "../../../../store/useUserStore";
+import { fetchUsers } from "~/services/userService";
 
 const ConfirmUserActionModalPage: React.FC<ConfirmUserActionModalProps> = ({
-  open,
-  onClose,
-  user,
-  setUser,
-  onSubmit,
+  formData,
+  setFormData,
   setErrors,
   actionType,
-  selectedUser,
-  setSelectedUser,
+  open,
+  endpoint,
+  onClose
 }) => {
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
@@ -40,22 +25,14 @@ const ConfirmUserActionModalPage: React.FC<ConfirmUserActionModalProps> = ({
   const handleTogglePasswordVisibility = () => setShowPassword((prev) => !prev);
   const [userType, setUserType] = useState("");
   const router = useRouter();
+  const { roleId, data, setData } = useUserRoleStore();
 
   useEffect(() => {
-    const pageType = router.asPath.includes("managers")
-      ? "manager"
-      : "executive";
+    const pageType = router.asPath.includes("managers") ? "manager" : "executive";
     setUserType(pageType);
   }, [router.asPath]);
 
-  // Dynamically set userTypeId based on userType
-  const userTypeId = userType === "manager" ? 2 : 3;
-
-  const handleManagerChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-    if (selectedUser && setSelectedUser) {
-      setSelectedUser((prevUser) => prevUser ? { ...prevUser, remarks: e.target.value } : null);
-    }
-  };
+  //const userTypeId = userType === "manager" ? 2 : 3;
 
   const handleVerifyUserAction = async () => {
     if (!password) {
@@ -72,96 +49,49 @@ const ConfirmUserActionModalPage: React.FC<ConfirmUserActionModalProps> = ({
 
       setError("");
 
-      let updatedUser = {
-        ...user,
-        ...(userTypeId && { userTypeId }), // Only needed for create
+      // Conditionally add `userTypeId` to formData if roleId exists
+      const dataToSend = {
+        ...formData,
+        ...(roleId && { userTypeId: roleId }),
       };
 
-      let response: { success: boolean; data: User | null; message: string };
+      // Create user via the API
+      const response = await axiosInstance.post(endpoint.create, dataToSend, {
+        withCredentials: true,
+      });
 
-      if (actionType === "create") {
-        response = await addUser(updatedUser);
-        if (!response.success) throw new Error(response.message);
-      }
-      else if (actionType === "update") {
-        if (!user?.UserId) {
-          console.error("UserId is null");
-          return;
-        }
-
-        response = await updateUser(user.UserId, user);
-        if (!response.success) throw new Error(response.message);
-
-        if (setUser && response.data) {
-          setUser((prevUser: any) => ({
-            ...prevUser,
-            ...response.data,
-            remarks: response.data?.remarks ?? prevUser.remarks ?? "",
-          }));
-        }
-      }
-      else if (actionType === "suspend") {
-        if (!user?.userId) {
-          console.error("UserId is null");
-          return;
-        }
-
-        const suspendPayload = {
-          isActive: 0,
-          remarks: user.remarks || "",
-        };
-
-        response = await updateUser(user.userId, suspendPayload);
-        if (!response.success) {
-          const errMsg = response.message || "Failed to suspend user.";
-          setError(errMsg);
-          await Swal.fire({
-            icon: "error",
-            title: "Error!",
-            text: errMsg,
-            confirmButtonColor: "#D32F2F",
-          });
-          return;
-        }
-
-        if (setSelectedUser && response.data) {
-          setSelectedUser((prevUser) =>
-            prevUser
-              ? {
-                ...prevUser,
-                ...response.data,
-                remarks: response.data?.remarks ?? prevUser.remarks ?? "",
-              }
-              : null
-          );
-        }
+      if (!response?.data?.success) {
+        const errMsg = response?.data?.message || `Failed to ${actionType} user.`;
+        setError(errMsg);
+        await Swal.fire({
+          icon: "error",
+          title: "Error!",
+          text: errMsg,
+          confirmButtonColor: "#D32F2F",
+        });
+        return;
       }
 
-      onClose();
-
-      // Show success modal
+      onClose(); // Close modal
       await Swal.fire({
         icon: "success",
-        title:
-          actionType === "create"
-            ? `${userTypeId === 2 ? "Manager" : "Executive"} Created!`
-            : actionType === "update"
-              ? `${userTypeId === 2 ? "Manager" : "Executive"} Updated!`
-              : "User Suspended!",
-        text:
-          actionType === "create"
-            ? `The ${userTypeId === 2 ? "manager" : "executive"} has been added successfully.`
-            : actionType === "update"
-              ? `The ${userTypeId === 2 ? "manager" : "executive"} details have been updated successfully.`
-              : `User suspended successfully.`,
+        title: "User Created!",
+        text: "The user has been created successfully.",
         confirmButtonColor: "#67ABEB",
       });
 
-      onSubmit(updatedUser);
-      setUser({});
+      // Reset form and states
+      setFormData({});
+      setPassword("");
       setErrors({});
-    } catch (error: any) {
-      console.error(`Error during ${actionType}:`, error);
+      onClose();
+
+      if (roleId !== null) {
+        fetchUsers(roleId, setData);
+      } // to refresh without refreshing
+
+    } catch (error) {
+      console.error("Error during user action:", error);
       Swal.fire({
         icon: "error",
         title: "Unexpected Error!",
@@ -171,18 +101,40 @@ const ConfirmUserActionModalPage: React.FC<ConfirmUserActionModalProps> = ({
   };
 
   return (
-    <React.Fragment>
+    <>
       {open && (
         <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-black bg-opacity-75">
           <div className="relative z-20 flex w-full justify-center items-center">
-            <div className="w-[90%] sm:w-[60%] md:w-[40%] max-w-[500px] px-6 pt-5 pb-12 bg-[#181A1B] rounded-lg relative">
+            <div className="w-[60%] sm:w-[60%] md:w-[40%] max-w-[430px] py-12 px-6 bg-[#F8F0E3] rounded-lg relative">
+
               {/* Close Button */}
               <IconButton
+                aria-label="close"
                 onClick={onClose}
-                className="absolute top-2 left-2 text-gray-400 hover:text-white z-30"
-                style={{ backgroundColor: "#171717" }}
+                sx={{
+                  position: 'absolute',
+                  top: 20,
+                  right: 20,
+                  backgroundColor: "#ACA993",
+                  padding: 0,
+                  minWidth: 0,
+                  width: 34,
+                  height: 34,
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  '&:hover': {
+                    backgroundColor: "#928F7F",
+                  },
+                }}
               >
-                <ArrowBackIosNewIcon />
+                <CloseIcon
+                  style={{
+                    fontWeight: 'bold',
+                    fontSize: 22,
+                    color: "#F8F0E3",
+                  }}
+                />
               </IconButton>
 
               {/* Logo + Title */}
@@ -193,68 +145,33 @@ const ConfirmUserActionModalPage: React.FC<ConfirmUserActionModalProps> = ({
                   className="max-w-[35%] mx-auto mb-3"
                   loading="lazy"
                 />
-                <h1 className="text-3xl font-bold text-white">
+                <h1 className="text-3xl font-bold">
                   {LoginSectionData.ConfirmIdentity}
                 </h1>
-                <p className="text-gray-400 text-xs">
+                <p className="text-xs">
                   {LoginSectionData.ConfirmIdentityDescription}
                 </p>
               </div>
 
               <div className="px-5 mt-7">
-                {/* Remarks Field */}
-                <div className="w-full mb-2">
-                  <label
-                    htmlFor="remarks"
-                    className="block text-sm font-medium text-white mb-1.5"
-                  >
-                    Remarks
-                  </label>
-                  <textarea
-                    id="remarks"
-                    name="remarks"
-                    placeholder="Enter Remarks"
-                    rows={3}
-                    value={selectedUser?.remarks || ""}
-                    onChange={handleManagerChange}
-                    onKeyDown={(e) => {
-                      if (e.key === "Tab") {
-                        e.stopPropagation();
-                      }
-                    }}
-                    className="w-full px-4 py-3 text-sm rounded-md border border-gray-600 bg-[#1F1F1F] text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-white-200"
-                  />
-                </div>
-
-                {/* Password Field */}
+                {/* Password Input */}
                 <div className="relative w-full mb-2">
-                  <label
-                    htmlFor="password"
-                    className="block text-sm font-medium text-white mb-1.5"
-                  >
-                    Password
-                  </label>
                   <input
                     id="password"
                     type={showPassword ? "text" : "password"}
                     placeholder="Enter your Password"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
-                    className={`w-full px-4 py-3 pr-10 text-sm rounded-md border ${error ? "border-red-500" : "border-gray-600"
-                      } bg-[#1F1F1F] text-white placeholder-gray-400 focus:outline-none focus:ring-2 ${error ? "focus:ring-red-500" : "focus:ring-white-200"
-                      }`}
+                    className={`w-full px-4 py-2.5 pr-10 text-sm rounded-md border ${error ? "border-red-500" : "border-gray-600"} bg-[#1F1F1F] placeholder-gray-400 focus:outline-none focus:ring-2 ${error ? "focus:ring-red-500" : "focus:ring-white-200"}`}
                     autoFocus
                   />
                   <button
                     type="button"
                     onClick={handleTogglePasswordVisibility}
-                    className="absolute top-9 right-3 text-gray-400 hover:text-white focus:outline-none"
+                    className="absolute right-2 top-1/2 transform -translate-y-1/2 text-sm text-gray-600"
+                    tabIndex={-1}
                   >
-                    {showPassword ? (
-                      <VisibilityOff className="text-lg" />
-                    ) : (
-                      <Visibility className="text-lg" />
-                    )}
+                    {showPassword ? <VisibilityOff fontSize="small" /> : <Visibility fontSize="small" />}
                   </button>
                   {error && (
                     <p className="text-red-500 text-xs mt-1">{error}</p>
@@ -265,8 +182,7 @@ const ConfirmUserActionModalPage: React.FC<ConfirmUserActionModalProps> = ({
                 <button
                   type="submit"
                   onClick={handleVerifyUserAction}
-                  className="w-full py-2.5 mt-5 bg-[#67ABEB] hover:bg-[#A5C9ED] text-[#212121] rounded-lg text-sm font-medium disabled:opacity-50"
-                  disabled={false}
+                  className="w-full py-2.5 mt-5 bg-[#F6BA12] hover:bg-[#FFD100] text-[#212121] rounded-lg text-sm font-medium disabled:opacity-50"
                 >
                   Confirm
                 </button>
@@ -275,7 +191,7 @@ const ConfirmUserActionModalPage: React.FC<ConfirmUserActionModalProps> = ({
           </div>
         </div>
       )}
-    </React.Fragment>
+    </>
   );
 };
 

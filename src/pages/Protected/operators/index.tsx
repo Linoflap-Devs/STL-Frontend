@@ -17,7 +17,6 @@ const OperatorsPage = () => {
     setData,
     columns,
     setColumns,
-    setModalOpen,
   } = useOperatorsData();
 
   const textlabel = "Operators";
@@ -128,7 +127,6 @@ const OperatorsPage = () => {
       <h1 className="text-3xl font-bold mb-3">Small Town Lottery Operators</h1>
       <CardsPage
         dashboardData={data}
-        cardData={[]}
         textlabel={textlabel || ""}
       />
       <ChartsDataPage
@@ -143,6 +141,7 @@ const OperatorsPage = () => {
           data={data}
           columns={columns}
           statsPerRegion={[]}
+          pageType="operator"
         />
         {/* Conditionally render CreateUserModalPage */}
         <OperatorFieldFormPage />

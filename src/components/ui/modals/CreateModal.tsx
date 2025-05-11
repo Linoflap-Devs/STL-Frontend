@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import ReusableButton from '../button/ReusableSubmitButton';
+import ReusableButton from '../buttons/ReusableSubmitButton';
 import ReusableCreateModalPage from './ReusableCreateModal';
 import useUserRoleStore from '../../../../store/useUserStore';
 import { getRoleName } from '~/utils/dashboarddata';
@@ -13,6 +13,7 @@ const CreateModalPage: React.FC<ModalPageProps> = ({
   onClose,
   fields = [],
   endpoint = '',
+  operatorMap,
 }) => {
   const [loading, setLoading] = useState(false);
   const isOpen = open ?? true;
@@ -32,6 +33,7 @@ const CreateModalPage: React.FC<ModalPageProps> = ({
         endpoint={formattedEndpoint}
         fields={fields}
         title={`Add ${getRoleName(roleId ?? 0)}`}
+        operatorMap={operatorMap ?? {}}
       >
         {({ handleSubmit }) => (
           <ReusableButton

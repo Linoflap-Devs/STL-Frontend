@@ -1,19 +1,17 @@
-// ReusableButton.tsx
 import React from 'react';
 import { Button } from '@mui/material';
 
 export interface ReusableButtonProps {
-handleSubmit: () => void;       // The function to call on button click
-  loading: boolean;          // Loading state to disable button and change text
-  label: string;             // Button text
-  style?: React.CSSProperties;  // Optional custom style for the button
+  handleSubmit: () => void;
+  loading: boolean;
+  label: string;
+  style?: React.CSSProperties;
 }
 
 const ReusableButton: React.FC<ReusableButtonProps> = ({
   handleSubmit,
   loading,
   label,
-  style,
 }) => {
   return (
     <Button
@@ -22,13 +20,15 @@ const ReusableButton: React.FC<ReusableButtonProps> = ({
       sx={{
         mt: 1,
         width: '100%',
-        backgroundColor: '#F6BA12',
+        backgroundColor: '#F6BA12',  // Default color
         textTransform: 'none',
         fontSize: '12px',
         padding: '0.6rem',
         borderRadius: '8px',
         color: '#181A1B',
-        ...style,
+        '&:hover': {
+          backgroundColor: '#FFD100', // Hover color
+        },
       }}
       variant="contained"
     >

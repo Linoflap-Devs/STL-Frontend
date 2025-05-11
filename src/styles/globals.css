@@ -8,14 +8,6 @@ html, body {
   font-family: 'Montserrat', sans-serif;
 }
 
-/* for input types in login */
-input:-webkit-autofill {
-  background-color: #282828 !important; 
-  color: white !important;
-  -webkit-box-shadow: 0 0 0 30px #282828 inset !important;
-  -webkit-text-fill-color: white !important;
-} 
-
 .swal2-backdrop-show {
   z-index: 999999 !important;
 }
@@ -32,3 +24,15 @@ input:-webkit-autofill {
 .MuiFormLabel-root.MuiInputLabel-root.Mui-error {
   color: #FF7A7A !important;
 }
+
+input, select {
+  border-radius: 0.5rem !important;       /* Rounded corners */
+  background-color: transparent !important; /* Transparent fill */
+  color: inherit;                          /* Inherit text color from parent */
+}
+
+select option:disabled {
+  color: #9CA3AF !important; /* Tailwind's text-gray-400 */
+}
+
+

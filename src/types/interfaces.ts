@@ -1,4 +1,6 @@
+import { z } from "zod";
 import { User, Operator } from "./types";
+import { userSchema } from "~/utils/validation";
 
 // Generic API response interface
 export interface ApiResponse<T> {
@@ -43,7 +45,7 @@ export interface CardProps<T = React.ReactNode> {
 export interface CardsPageProps<T> {
   dashboardData: T[];
   roleLabel?: string;
-  cardData: CardProps[];
+  cardData?: CardProps[];
   textlabel?: string;
 }
 
@@ -83,7 +85,7 @@ export interface ChartsDataPageProps<T extends { region: string }> {
   pageType?: "manager" | "executive" | "operator";
   operatorMap?: Record<number, Operator>;
   Region?: string;
-  regions: string[];
+  regions?: string[];
 }
 
 // Generic table props
@@ -92,12 +94,12 @@ export interface DetailedTableProps<T> {
   columns: Column<T>[];
   onCreate?: () => void;
   actionsRender?: (row: T) => React.ReactNode;
-  pageType?: "manager" | "executive";
+  pageType?: "manager" | "executive" | "operator";
   showExportButton?: boolean;
   onExportCSV?: () => void;
   operatorMap?: Record<number, Operator>;
-  statsPerRegion: any[]; // Array of statistics for each region (could be strongly typed based on the data structure)
-  roleId?: number; // Role ID (manager or executive)
+  statsPerRegion: any[];
+  roleId?: number;
 }
 
 export interface ChartBarItem {
@@ -124,9 +126,9 @@ export interface Field {
   type: string;
   placeholder?: string;
   options?: FieldOption[];
-  value: string;
-  gridSpan?: 1 | 2 | 'full';  // Add the gridSpan property here
-  required?: boolean; // Add this line
+  value: string | number; // Allowing both string and number
+  gridSpan?: 1 | 2 | 'full';
+  required?: boolean;
 }
 
 export interface FieldOption {
@@ -188,4 +190,33 @@ export interface CSVExportButtonProps {
   fileName?: string;
   columns?: any[];
   operatorMap?: any[];
+}
+
+export type UserFormData = z.infer<typeof userSchema>;
+
+export const defaultValues: UserFormData = {
+  firstName: "",
+  lastName: "",
+  email: "",
+  password: "",
+  phoneNumber: "",
+  operatorId: 0,
+};
+
+export interface ConfirmUserActionModalProps {
+  open: boolean;
+  onClose: () => void;
+  onVerified?: () => void;
+  user?: any;
+  errors: any;
+  setErrors: React.Dispatch<React.SetStateAction<any>>;
+  selectedUser?: User | null;
+  setSelectedUser?: React.Dispatch<React.SetStateAction<User | null>>;
+  actionType: "create" | "suspend";
+  formData: { [key: string]: string | number };
+  setFormData: (data: { [key: string]: string | number }) => void;
+  endpoint: {
+    create: string;
+    update: string;
+  };
 }

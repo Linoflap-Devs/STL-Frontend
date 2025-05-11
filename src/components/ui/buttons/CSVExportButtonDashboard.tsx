@@ -31,8 +31,7 @@ const convertToCSV = (data: any[], title: string) => {
   return csvContent;
 };
 
-
-const CSVExportButton: React.FC<CSVExportButtonProps> = ({ statsPerRegion, pageType, roleId }) => {
+const CSVExportButtonDashboard: React.FC<CSVExportButtonProps> = ({ statsPerRegion, pageType, roleId }) => {
   const downloadCSV = (data: any[], pageType: string) => {
     
   const baseRole = getRoleName(roleId ?? 0);
@@ -59,4 +58,4 @@ const CSVExportButton: React.FC<CSVExportButtonProps> = ({ statsPerRegion, pageT
   );
 };
 
-export default CSVExportButton;
+export default CSVExportButtonDashboard;
