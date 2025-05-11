@@ -3,7 +3,6 @@ import {
   Box,
   Typography,
   Grid,
-  TextField,
   Select,
   MenuItem,
   InputLabel,
@@ -382,7 +381,8 @@ const formattedSecondDateDuration = secondDateDuration
         
         {/* Conditionally Render Components Based on categoryFilter */}
         {categoryFilter === "Top Betting Region by Total Bets" || categoryFilter === "Top Betting Region by Total Bettors"  ? (
-          <ChartTopRegionByBetsandBettors 
+          <ChartTopRegionByBetsandBettors
+            activeGameType={activeGameType}
             categoryFilter={categoryFilter}
             dateFilter={dateFilter}
             firstDateSpecific={formattedFirstDateSpecific}
@@ -394,6 +394,7 @@ const formattedSecondDateDuration = secondDateDuration
           <>
             {/* Summary of Total Bettors and Bets Barchart */}
             <ChartBettorsAndBetsSummary
+              activeGameType={activeGameType}
               categoryFilter={categoryFilter}
               dateFilter={dateFilter}
               firstDateSpecific={formattedFirstDateSpecific}
@@ -403,6 +404,7 @@ const formattedSecondDateDuration = secondDateDuration
             />
             {/* Regional Summary of Total Bettors and Bets Barchart */}
             <ChartBettorsAndBetsRegionalSummary
+              activeGameType={activeGameType}
               categoryFilter={categoryFilter}
               dateFilter={dateFilter}
               firstDateSpecific={formattedFirstDateSpecific}
