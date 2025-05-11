@@ -1,15 +1,15 @@
 import React, { useEffect } from "react";
 import { useRouter } from "next/router";
 import DetailedTable from "~/components/ui/tables/DetailedTable";
-import { getUserStatus } from "~/utils/dashboarddata";
-import { Button } from "@mui/material";
 import useUserRoleStore from "../../../../store/useUserStore";
 import CardsPage from "~/components/ui/dashboardcards/CardsData";
 import ChartsDataPage from "~/components/ui/charts/UserChartsData";
 import dayjs from "dayjs";
 import UserFieldFormPage from "~/components/user/UserForm";
+import { fetchMapOperators, fetchUsers } from "~/services/userService";
 import { User } from "~/types/types";
-import { fetchOperators, fetchUsers } from "~/services/userService";
+import { getUserStatus } from "~/utils/dashboarddata";
+import { Button } from "@mui/material";
 
 const roleMap: Record<string, { label: string; textlabel: string; roleId: number }> = {
   managers: { label: "Small Town Lottery Manager", textlabel: "Managers", roleId: 2 },
@@ -34,16 +34,16 @@ const RolePage = () => {
   const roleId = roleConfig?.roleId;
 
   useEffect(() => {
-    fetchOperators(setOperatorMap);
+    fetchMapOperators(setOperatorMap);
   }, [setOperatorMap]);
 
   useEffect(() => {
     if (roleId !== undefined) {
-      fetchUsers(roleId, setData); // Fetch users when roleId changes
+      fetchUsers(roleId, setData);
     }
   }, [roleId, setData]);
 
-  // columns
+  // columns in the table
   useEffect(() => {
     if (roleId) {
       setColumns([
@@ -123,12 +123,9 @@ const RolePage = () => {
       <CardsPage
         dashboardData={data}
         roleLabel={roleConfig.label || ""}
-        cardData={[]}
         textlabel={roleConfig.textlabel || ""}
       />
       <ChartsDataPage
-        userType={""}
-        regions={[]}
         pageType={pagetype}
         dashboardData={data}
       />

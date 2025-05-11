@@ -30,7 +30,7 @@ export const fetchUsers = async (
   }
 };
 
-export const fetchOperators = async (
+export const fetchMapOperators = async (
   setOperatorMap: React.Dispatch<React.SetStateAction<any>>
 ) => {
   try {
@@ -49,3 +49,21 @@ export const fetchOperators = async (
     setOperatorMap({});
   }
 };
+
+export const fetchOperators = async (setData: React.Dispatch<React.SetStateAction<any>>) => {
+  try {
+    const response = await getOperatorsData<GetOperatorsResponse>("/operators/getOperators");
+    if (response.success && Array.isArray(response.data?.data)) {
+      const fetchedOperators = response.data.data;
+      console.log("Fetched Operators:", fetchedOperators);
+
+      setData(fetchedOperators);
+    } else {
+      setData([]);
+    }
+  } catch (error) {
+    console.error("Error fetching operators:", error);
+    setData([]);
+  }
+};
+

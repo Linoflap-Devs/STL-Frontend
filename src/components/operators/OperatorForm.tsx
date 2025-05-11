@@ -27,10 +27,21 @@ const operatorConfig: {
       value: '',
       gridSpan: 2,
     },
-    { name: 'GamesProvided', label: 'Games Provided', type: 'text', placeholder: 'Enter Games Provided', value: '', gridSpan: 1 },
+    {
+      name: 'GamesProvided',
+      label: 'Games Provided',
+      type: 'multiselect',
+      options: [
+        { value: 'STLPares1', label: 'STL Pares 1' },
+        { value: 'STLSwer2', label: 'STL Swer 2' },
+        { value: 'STLSwer3', label: 'STL Swer 3' },
+        { value: 'STLSwer4', label: 'STL Swer 4' }
+      ],
+      placeholder: 'Select Games Provided',
+      value: '',  // <-- Must be an array
+      gridSpan: 1
+    },
 
-
-    { name: 'AreaOfOperations', label: 'Area of Operations', type: 'text', placeholder: 'Enter area of Operations', value: '', gridSpan: 2 },
   ],
 };
 

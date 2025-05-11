@@ -35,8 +35,8 @@ export const ChartsDataPage = <T extends RegionUser & { OperatorName?: string }>
   pageType,
 }: ChartsDataPageProps<T>) => {
   const { sevenDaysAgo, setChartData } = useDashboardStore();
-  const [ chartData, setLocalChartData ] = useState<ChartBarItem[]>([]);
-  const [ statsPerRegion, setStatsPerRegion ] = useState<any[]>([]);  // Declare statsPerRegion state
+  const [chartData, setLocalChartData] = useState<ChartBarItem[]>([]);
+  const [statsPerRegion, setStatsPerRegion] = useState<any[]>([]);  // Declare statsPerRegion state
 
   useEffect(() => {
     if (!dashboardData || dashboardData.length === 0) return;
@@ -136,7 +136,7 @@ export const ChartsDataPage = <T extends RegionUser & { OperatorName?: string }>
         regions={regions}
         title={`${(pageType ?? "Unknown").charAt(0).toUpperCase() + (pageType ?? "Unknown").slice(1)} Summary`}
         pageType={pageType ?? "operator"}
-        statsPerRegion={statsPerRegion} // for csv button
+        statsPerRegion={statsPerRegion}
       />
     </div>
   );

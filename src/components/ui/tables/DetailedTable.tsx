@@ -1,5 +1,5 @@
 import React, { useState, useMemo, useEffect } from "react";
-import {Table,TableBody,TableCell,TableContainer,TableHead,TableRow,TablePagination,Button,IconButton,Menu,MenuItem} from "@mui/material";
+import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TablePagination, Button, IconButton, Menu, MenuItem } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
 import FilterListIcon from "@mui/icons-material/FilterList";
 import FilterListOffIcon from "@mui/icons-material/FilterListOff";
@@ -20,11 +20,9 @@ const DetailedTable = <T extends User | Operator>({
   columns,
   actionsRender,
   pageType,
-  onExportCSV,
   operatorMap,
-  statsPerRegion, 
 }: DetailedTableProps<T>) => {
-  const {searchQuery,setIsFilterActive,isFilterActive,page,rowsPerPage,sortConfig,filters,handleChangePage,handleChangeRowsPerPage,setSearchQuery,anchorEl,selectedRow,setAnchorEl,setSelectedRow,resetMenu} = useDetailTableStore();
+  const { searchQuery, setIsFilterActive, isFilterActive, page, rowsPerPage, sortConfig, filters, handleChangePage, handleChangeRowsPerPage, setSearchQuery, anchorEl, selectedRow, setAnchorEl, setSelectedRow, resetMenu } = useDetailTableStore();
   const [openEditLogModal, setOpenEditLogModal] = useState(false);
   const sevenDaysAgo = useMemo(() => dayjs().subtract(7, "day"), []);
 
@@ -88,21 +86,6 @@ const DetailedTable = <T extends User | Operator>({
     setSelectedRow(row);
     // Add delete functionality as needed
   };
-
-  // Close Edit Modal on ESC press
-  useEffect(() => {
-    const handleEscape = (event: KeyboardEvent) => {
-      if (event.key === "Escape" && openEditLogModal) {
-        setOpenEditLogModal(false); // Close modal on ESC
-        console.log("Edit Log Modal is now closed (ESC key).");
-      }
-    };
-
-    window.addEventListener("keydown", handleEscape);
-    return () => {
-      window.removeEventListener("keydown", handleEscape);
-    };
-  }, [openEditLogModal]);
 
   return (
     <React.Fragment>
@@ -198,24 +181,29 @@ const DetailedTable = <T extends User | Operator>({
                     >
                       <MoreHorizIcon sx={{ color: "#0038A8" }} />
                     </IconButton>
-
                     <Menu
                       anchorEl={anchorEl}
                       open={Boolean(anchorEl)}
                       onClose={resetMenu}
                     >
-                      <MenuItem onClick={handleOpenViewModal}>
+                      <MenuItem
+                        onClick={() => {
+                          resetMenu(); // close menu first
+                          handleOpenViewModal(); // then handle action
+                        }}
+                      >
                         View
                       </MenuItem>
                       <MenuItem
                         onClick={() => {
                           if (selectedRow) handleDelete(selectedRow);
-                          resetMenu();
+                          resetMenu(); // close menu after delete
                         }}
                       >
                         Delete
                       </MenuItem>
                     </Menu>
+
                   </TableCell>
                 </TableRow>
               ))
@@ -234,14 +222,14 @@ const DetailedTable = <T extends User | Operator>({
           />
         </div>
       </TableContainer>
-        <div className="flex justify-end pt-2">
-            <CSVExportButtonTable 
-              pageType={pageType ?? "unknown"} 
-              columns={columns} 
-              statsPerRegion={data} 
-              operatorMap={operatorMap ? Object.values(operatorMap) : []}
-            />
-        </div>
+      <div className="flex justify-end pt-2">
+        <CSVExportButtonTable
+          pageType={pageType ?? "unknown"}
+          columns={columns}
+          statsPerRegion={data}
+          operatorMap={operatorMap ? Object.values(operatorMap) : []}
+        />
+      </div>
     </React.Fragment>
   );
 };

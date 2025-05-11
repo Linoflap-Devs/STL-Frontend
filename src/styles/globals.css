@@ -26,7 +26,7 @@ html, body {
 }
 
 input, select {
-  border-radius: 0.5rem !important;       /* Rounded corners */
+  border-radius: 0.4rem !important;       /* Rounded corners */
   background-color: transparent !important; /* Transparent fill */
   color: inherit;                          /* Inherit text color from parent */
 }
@@ -34,5 +34,57 @@ input, select {
 select option:disabled {
   color: #9CA3AF !important; /* Tailwind's text-gray-400 */
 }
+
+/* Target react-select control for transparency */
+.react-select__control {
+  background-color: transparent !important;  /* Transparent background */
+  border-radius: 0.4rem !important;          /* Rounded corners */
+  border: 1px solid #0038A8 !important;      /* Set border color */
+}
+
+/* Handle the hover state for react-select control */
+.react-select__control:hover {
+  background-color: transparent !important;  /* Ensure background stays transparent on hover */
+  border-color: #0038A8 !important;          /* Border color on hover */
+}
+
+/* Handle focus state for react-select control */
+.react-select__control--is-focused {
+  background-color: transparent !important;  /* Keep transparent background on focus */
+  border-color: #0038A8 !important;          /* Set focus border color */
+}
+
+/* Error state for react-select */
+.react-select__control--is-invalid {
+  border-color: #CE1126 !important;          /* Red border on error */
+}
+
+/* Adjust dropdown option styles */
+.react-select__option {
+  background-color: transparent !important;  /* Transparent background for options */
+  color: inherit !important;                  /* Inherit text color */
+}
+
+.react-select__option--is-selected {
+  background-color: #0038A8 !important;      /* Highlight color when selected */
+  color: white !important;
+}
+
+/* Target the multi-value label (the label of the selected items in multi-select) */
+.react-select__multi-value__label {
+  background-color: #0038A8 !important;  /* Transparent background */
+  color: white !important;                 /* Inherit text color */
+  border-radius: 0.4rem !important;          /* Rounded corners */
+  font-size: 12px !important;
+  padding: 1px 6px !important; /* Top/Bottom 10px, Left/Right 5px */
+}
+
+.react-select__multi-value {
+  background-color: #0038A8 !important;      /* Highlight color when selected */
+  color: white !important;
+}
+
+
+
 
 

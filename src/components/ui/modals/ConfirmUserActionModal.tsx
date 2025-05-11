@@ -2,7 +2,6 @@ import React, { useEffect, useState } from "react";
 import { IconButton } from "@mui/material";
 import { Visibility, VisibilityOff, Close as CloseIcon } from "@mui/icons-material";
 import Swal from "sweetalert2";
-import { useRouter } from "next/router";
 import { verifyPass } from "~/utils/api/auth";
 import { LoginSectionData } from "../../../data/LoginSectionData";
 import { ConfirmUserActionModalProps } from "~/types/interfaces";
@@ -23,16 +22,7 @@ const ConfirmUserActionModalPage: React.FC<ConfirmUserActionModalProps> = ({
   const [error, setError] = useState("");
   const [showPassword, setShowPassword] = useState<boolean>(false);
   const handleTogglePasswordVisibility = () => setShowPassword((prev) => !prev);
-  const [userType, setUserType] = useState("");
-  const router = useRouter();
-  const { roleId, data, setData } = useUserRoleStore();
-
-  useEffect(() => {
-    const pageType = router.asPath.includes("managers") ? "manager" : "executive";
-    setUserType(pageType);
-  }, [router.asPath]);
-
-  //const userTypeId = userType === "manager" ? 2 : 3;
+  const { roleId, setData } = useUserRoleStore();
 
   const handleVerifyUserAction = async () => {
     if (!password) {
@@ -47,9 +37,9 @@ const ConfirmUserActionModalPage: React.FC<ConfirmUserActionModalProps> = ({
         return;
       }
 
-      setError("");
+      setError(""); // Clear any previous errors
 
-      // Conditionally add `userTypeId` to formData if roleId exists
+      // Conditionally add `userTypeId` if roleId exists
       const dataToSend = {
         ...formData,
         ...(roleId && { userTypeId: roleId }),
@@ -60,6 +50,7 @@ const ConfirmUserActionModalPage: React.FC<ConfirmUserActionModalProps> = ({
         withCredentials: true,
       });
 
+      // Handle API response success or failure
       if (!response?.data?.success) {
         const errMsg = response?.data?.message || `Failed to ${actionType} user.`;
         setError(errMsg);
@@ -72,27 +63,28 @@ const ConfirmUserActionModalPage: React.FC<ConfirmUserActionModalProps> = ({
         return;
       }
 
-      onClose(); // Close modal
+      // On success, show confirmation and reset form
       await Swal.fire({
         icon: "success",
-        title: "User Created!",
-        text: "The user has been created successfully.",
+        title: `${actionType === "create" ? "User Created!" : "Action Successful!"}`,
+        text: `${actionType === "create" ? "The user has been created successfully." : "The user action was successful."}`,
         confirmButtonColor: "#67ABEB",
       });
 
-      // Reset form and states
+      // Close modal and reset states
       setFormData({});
       setPassword("");
       setErrors({});
       onClose();
 
-      if (roleId !== null) {
+      // Refresh users if roleId is set
+      if (roleId) {
         fetchUsers(roleId, setData);
-      } // to refresh without refreshing
-
+      }
     } catch (error) {
       console.error("Error during user action:", error);
-      Swal.fire({
+      setError("An unexpected error occurred.");
+      await Swal.fire({
         icon: "error",
         title: "Unexpected Error!",
         text: `An error occurred while trying to ${actionType} user.`,

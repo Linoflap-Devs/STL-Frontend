@@ -45,7 +45,6 @@ export interface CardProps<T = React.ReactNode> {
 export interface CardsPageProps<T> {
   dashboardData: T[];
   roleLabel?: string;
-  cardData?: CardProps[];
   textlabel?: string;
 }
 
@@ -84,8 +83,6 @@ export interface ChartsDataPageProps<T extends { region: string }> {
   getUserStatus?: (user: T, date: string) => string;
   pageType?: "manager" | "executive" | "operator";
   operatorMap?: Record<number, Operator>;
-  Region?: string;
-  regions?: string[];
 }
 
 // Generic table props
@@ -98,7 +95,7 @@ export interface DetailedTableProps<T> {
   showExportButton?: boolean;
   onExportCSV?: () => void;
   operatorMap?: Record<number, Operator>;
-  statsPerRegion: any[];
+  statsPerRegion?: any[];
   roleId?: number;
 }
 
@@ -120,20 +117,20 @@ export interface RegionUser {
 }
 
 // Form field definitions
+export interface FieldOption {
+  value: string;
+  label: string;
+}
+
 export interface Field {
   name: string;
   label: string;
   type: string;
   placeholder?: string;
-  options?: FieldOption[];
-  value: string | number; // Allowing both string and number
-  gridSpan?: 1 | 2 | 'full';
-  required?: boolean;
-}
-
-export interface FieldOption {
-  label: string;
-  value: string;
+  options?: FieldOption[]; // Used only for 'select' and 'multiselect' types
+  value: string | number | string[]; // Allowing string, number, or array of strings (for multiselect)
+  gridSpan?: 1 | 2 | 'full'; // Grid span for layout
+  required?: boolean; // Indicates if the field is required
 }
 
 // Reusable modal
@@ -213,7 +210,7 @@ export interface ConfirmUserActionModalProps {
   selectedUser?: User | null;
   setSelectedUser?: React.Dispatch<React.SetStateAction<User | null>>;
   actionType: "create" | "suspend";
-  formData: { [key: string]: string | number };
+  formData: { [key: string]: string | number | string[] };
   setFormData: (data: { [key: string]: string | number }) => void;
   endpoint: {
     create: string;

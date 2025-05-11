@@ -122,6 +122,7 @@ const UserFieldFormPage: React.FC<UserFieldFormPageProps> = ({ operatorMap, setO
           fields={fields}
           endpoint={roleConfig.endpoint}
           operatorMap={operatorMap}
+
         />
       )}
       {modalType === "view" && (

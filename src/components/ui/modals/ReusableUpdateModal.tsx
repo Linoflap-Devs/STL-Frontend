@@ -31,6 +31,7 @@ import { useUpdateModalState } from "../../../../store/useUpdateModalStore";
 import { useOperatorsData } from "../../../../store/useOperatorStore";
 import { useModalStore } from "../../../../store/useModalStore";
 import EditModalDataPage from "./EditLogModal";
+import Swal from "sweetalert2";
 
 const ReusableUpdateModal: React.FC<ReusableModalPageProps> = ({
   title,
@@ -62,7 +63,6 @@ const ReusableUpdateModal: React.FC<ReusableModalPageProps> = ({
 
   const { operators, setOperators } = useOperatorsData();
   const [originalUserData, setOriginalUserData] = useState(null);
-  const { openModal, modalOpen, modalType, selectedData, closeModal } = useModalStore();
 
   // fetching of initial data
   useEffect(() => {
@@ -93,6 +93,7 @@ const ReusableUpdateModal: React.FC<ReusableModalPageProps> = ({
   // keys will not update
   const alwaysDisabledKeys = [
     "FirstName",
+    "LastName",
     "OperatorName",
     "CreatedBy",
     "DateOfRegistration",
@@ -114,65 +115,83 @@ const ReusableUpdateModal: React.FC<ReusableModalPageProps> = ({
     }));
   };
 
-  const handleSubmit = async () => {
-    try {
-      if (!endpoint) throw new Error("Endpoint is missing.");
-      if (typeof endpoint === 'object' && !endpoint.update) {
-        throw new Error("Invalid endpoint: 'update' endpoint is required.");
-      }
-
-      const endpointUrl = typeof endpoint === 'string' ? endpoint : endpoint.update;
-      console.log("Using endpoint:", endpointUrl);
-
-      if (!originalUserData) throw new Error("Original user data is missing.");
-
-      // Only include fields that changed
-      const updatedFields: Record<string, any> = {
-        userId: user.UserId,
-      };
-
-      Object.entries(user).forEach(([key, value]) => {
-        const originalValue = originalUserData[key];
-        if (key !== 'UserId' && value !== originalValue) {
-          // Normalize casing for API
-          const normalizedKey = key.charAt(0).toLowerCase() + key.slice(1);
-          updatedFields[normalizedKey] = value;
-        }
-      });
-
-      console.log("Final payload (only changed fields):", updatedFields);
-
-      if (!updatedFields.userId) {
-        throw new Error("userId is missing from the payload.");
-      }
-
-      const response = await axiosInstance.patch(endpointUrl, updatedFields, {
-        withCredentials: true,
-      });
-
-      console.log("Update success:", response.data);
-    } catch (error) {
-      const err = error as AxiosError;
-
-      console.error("Error object:", err);
-      console.error("Error message:", err.message);
-
-      if (err.response) {
-        console.error("Error response:", err.response);
-        console.error("Error status code:", err.response.status);
-        console.error("Error response data:", err.response.data);
-      }
-
-      if (err.request) {
-        console.error("Error request:", err.request);
-      }
-
-      if (err.stack) {
-        console.error("Error stack:", err.stack);
-      }
+const handleSubmit = async () => {
+  try {
+    if (!endpoint) throw new Error("Endpoint is missing.");
+    if (typeof endpoint === 'object' && !endpoint.update) {
+      throw new Error("Invalid endpoint: 'update' endpoint is required.");
     }
-  };
 
+    const endpointUrl = typeof endpoint === 'string' ? endpoint : endpoint.update;
+    console.log("Using endpoint:", endpointUrl);
+
+    if (!originalUserData) throw new Error("Original user data is missing.");
+
+    const updatedFields: Record<string, any> = {
+      userId: user.UserId,
+    };
+
+    Object.entries(user).forEach(([key, value]) => {
+      const originalValue = originalUserData[key];
+      if (key !== 'UserId' && value !== originalValue) {
+        const normalizedKey = key.charAt(0).toLowerCase() + key.slice(1);
+        updatedFields[normalizedKey] = value;
+      }
+    });
+
+    console.log("Final payload (only changed fields):", updatedFields);
+
+    if (!updatedFields.userId) {
+      throw new Error("userId is missing from the payload.");
+    }
+
+    const response = await axiosInstance.patch(endpointUrl, updatedFields, {
+      withCredentials: true,
+    });
+
+    console.log("Update success:", response.data);
+
+    // SUCCESS ALERT
+    Swal.fire({
+      icon: 'success',
+      title: 'Success',
+      text: 'User updated successfully!',
+      timer: 2000,
+      showConfirmButton: false,
+    });
+
+    onClose();
+
+  } catch (error) {
+    const err = error as AxiosError;
+
+    console.error("Error object:", err);
+    console.error("Error message:", err.message);
+
+    if (err.response) {
+      console.error("Error response:", err.response);
+      console.error("Error status code:", err.response.status);
+      console.error("Error response data:", err.response.data);
+    }
+
+    if (err.request) {
+      console.error("Error request:", err.request);
+    }
+
+    if (err.stack) {
+      console.error("Error stack:", err.stack);
+    }
+
+    // ERROR ALERT
+    Swal.fire({
+      icon: 'error',
+      title: 'Update Failed',
+      text: (err.response?.data as { message?: string })?.message || err.message || 'An unexpected error occurred.',
+    });
+  }
+};
+
+  
   const handleVerifySubmit = async () => {
     try {
       console.log("Submitting update to endpoint:", endpoint, user);
