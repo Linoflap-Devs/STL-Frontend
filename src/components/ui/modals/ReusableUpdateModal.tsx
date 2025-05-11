@@ -24,14 +24,13 @@ import dayjs from "dayjs";
 import { AxiosError } from "axios";
 import { ReusableModalPageProps } from "~/types/interfaces";
 import { buttonUpdateStyles, selectStyles } from "~/styles/theme";
-import { formatKey } from "~/utils/format";
 import { getUserStatus } from "~/utils/dashboarddata";
 import axiosInstance from "~/utils/axiosInstance";
 import { useUpdateModalState } from "../../../../store/useUpdateModalStore";
 import { useOperatorsData } from "../../../../store/useOperatorStore";
-import { useModalStore } from "../../../../store/useModalStore";
 import EditModalDataPage from "./EditLogModal";
 import Swal from "sweetalert2";
+import { updateSchema } from "~/utils/validation";
 
 const ReusableUpdateModal: React.FC<ReusableModalPageProps> = ({
   title,
@@ -53,7 +52,6 @@ const ReusableUpdateModal: React.FC<ReusableModalPageProps> = ({
     isDisabled,
     isLoading,
     isViewMode,
-    setIsVerifyModalOpen,
     selectedUserId,
     setSelectedUserId,
     openEditLogModal,
@@ -90,7 +88,7 @@ const ReusableUpdateModal: React.FC<ReusableModalPageProps> = ({
     setStatus(userStatus);
   }, [initialUserData, operatorMap]);
 
-  // keys will not update
+  // keys that will not update
   const alwaysDisabledKeys = [
     "FirstName",
     "LastName",
@@ -115,89 +113,88 @@ const ReusableUpdateModal: React.FC<ReusableModalPageProps> = ({
     }));
   };
 
-const handleSubmit = async () => {
-  try {
-    if (!endpoint) throw new Error("Endpoint is missing.");
-    if (typeof endpoint === 'object' && !endpoint.update) {
-      throw new Error("Invalid endpoint: 'update' endpoint is required.");
-    }
+  const formatKey = (key: string) => {
+    // Insert space before capital letters (e.g. "FirstName" → "First Name")
+    return key.replace(/([a-z])([A-Z])/g, "$1 $2");
+  };
 
-    const endpointUrl = typeof endpoint === 'string' ? endpoint : endpoint.update;
-    console.log("Using endpoint:", endpointUrl);
-
-    if (!originalUserData) throw new Error("Original user data is missing.");
-
-    const updatedFields: Record<string, any> = {
-      userId: user.UserId,
-    };
-
-    Object.entries(user).forEach(([key, value]) => {
-      const originalValue = originalUserData[key];
-      if (key !== 'UserId' && value !== originalValue) {
-        const normalizedKey = key.charAt(0).toLowerCase() + key.slice(1);
-        updatedFields[normalizedKey] = value;
-      }
-    });
-
-    console.log("Final payload (only changed fields):", updatedFields);
-
-    if (!updatedFields.userId) {
-      throw new Error("userId is missing from the payload.");
-    }
-
-    const response = await axiosInstance.patch(endpointUrl, updatedFields, {
-      withCredentials: true,
-    });
-
-    console.log("Update success:", response.data);
-
-    // SUCCESS ALERT
-    Swal.fire({
-      icon: 'success',
-      title: 'Success',
-      text: 'User updated successfully!',
-      timer: 2000,
-      showConfirmButton: false,
-    });
-
-    onClose();
-
-  } catch (error) {
-    const err = error as AxiosError;
-
-    console.error("Error object:", err);
-    console.error("Error message:", err.message);
-
-    if (err.response) {
-      console.error("Error response:", err.response);
-      console.error("Error status code:", err.response.status);
-      console.error("Error response data:", err.response.data);
-    }
-
-    if (err.request) {
-      console.error("Error request:", err.request);
-    }
-
-    if (err.stack) {
-      console.error("Error stack:", err.stack);
-    }
-
-    // ERROR ALERT
-    Swal.fire({
-      icon: 'error',
-      title: 'Update Failed',
-      text: (err.response?.data as { message?: string })?.message || err.message || 'An unexpected error occurred.',
-    });
-  }
-};
-
-  
-  const handleVerifySubmit = async () => {
+  const handleSubmit = async () => {
     try {
-      console.log("Submitting update to endpoint:", endpoint, user);
-      setIsVerifyModalOpen(false);
-    } catch (err) {
-      console.error(err);
+      if (!endpoint) throw new Error("Endpoint is missing.");
+      if (typeof endpoint === 'object' && !endpoint.update) {
+        throw new Error("Invalid endpoint: 'update' endpoint is required.");
+      }
+
+      const endpointUrl = typeof endpoint === 'string' ? endpoint : endpoint.update;
+
+      if (!originalUserData) throw new Error("Original user data is missing.");
+
+      const parsed = updateSchema.safeParse(user);
+      if (!parsed.success) {
+        const fieldErrors: Record<string, string> = {};
+        parsed.error.errors.forEach((err) => {
+          const key = err.path[0] as string;
+          fieldErrors[key] = err.message;
+        });
+
+        setErrors(fieldErrors);  // Show inline errors only
+        return; // Don't show a Swal popup here
+      }
+
+      const updatedFields: Record<string, any> = { userId: user.UserId };
+      Object.entries(user).forEach(([key, value]) => {
+        const originalValue = originalUserData[key];
+        if (key !== 'UserId' && value !== originalValue) {
+          const normalizedKey = key.charAt(0).toLowerCase() + key.slice(1);
+          updatedFields[normalizedKey] = value;
+        }
+      });
+
+      if (!updatedFields.userId) {
+        throw new Error("userId is missing from the payload.");
+      }
+
+      // Add confirmation prompt before making the API call
+      const confirmationResult = await Swal.fire({
+        title: "Update Confirmation",
+        text: "Did you enter the correct details?",
+        icon: "question",
+        showCancelButton: true,
+        confirmButtonText: '<span style="color: #212121;">Yes, I did.</span>',
+        cancelButtonText: '<span style="color: #212121;">No, let me check</span>',
+        confirmButtonColor: "#67ABEB",
+        cancelButtonColor: "#f0f0f0",
+        customClass: {
+          cancelButton: "no-hover",
+        },
+      });
+
+      if (!confirmationResult.isConfirmed) {
+        // User canceled, exit function
+        return;
+      }
+
+      const response = await axiosInstance.patch(endpointUrl, updatedFields, {
+        withCredentials: true,
+      });
+
+      Swal.fire({
+        icon: 'success',
+        title: 'Success',
+        text: 'User updated successfully!',
+        timer: 2000,
+        showConfirmButton: false,
+      });
+
+      onClose();
+    } catch (error) {
+      const err = error as AxiosError;
+
+      Swal.fire({
+        icon: 'error',
+        title: 'Update Failed',
+        text: (err.response?.data as { message?: string })?.message || err.message || 'An unexpected error occurred.',
+      });
     }
   };
 
@@ -245,12 +242,12 @@ const handleSubmit = async () => {
           {/* Status & Toggle Button */}
           <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", width: "100%" }}>
             <Box sx={{ flex: 1, maxWidth: 100 }}>
-              <FormControl fullWidth sx={selectStyles}>
+              <FormControl fullWidth sx={selectStyles} error={!status && !isDisabled}>
                 <InputLabel id="status-label">Status</InputLabel>
                 <Select
                   labelId="status-label"
                   id="status"
-                  value={status}
+                  value={status || ""}
                   onChange={(e) => setStatus(e.target.value)}
                   label="Status"
                   disabled={isDisabled}
@@ -327,27 +324,19 @@ const handleSubmit = async () => {
                         </FormControl>
                       </Stack>
                     ) : (
-                      <FormControl fullWidth error={!!errors[key]}>
-                        <InputLabel htmlFor={key}>
-                          {formatKey(key)}
-                        </InputLabel>
+                      <FormControl fullWidth error={Boolean(errors[key])} size="small">
+                        <InputLabel htmlFor={key}>{formatKey(key)}</InputLabel>
                         <OutlinedInput
                           id={key}
                           name={key}
-                          placeholder={`Enter ${formatKey(key)}`}
-                          value={user[key as keyof typeof user] ||
-                            (isLoading ? "Loading..." : "")}
-                          onChange={handleManagerChange}
                           label={formatKey(key)}
-                          disabled={
-                            alwaysDisabledKeys.includes(key) || isDisabled
-                          }
-                          size="small"
+                          placeholder={`Enter ${formatKey(key)}`}
+                          value={user[key as keyof typeof user] || ""}
+                          onChange={handleManagerChange}
+                          disabled={alwaysDisabledKeys.includes(key) || isDisabled}
                         />
                         {errors[key] && (
-                          <FormHelperText error>
-                            {errors[key]}
-                          </FormHelperText>
+                          <FormHelperText>{errors[key]}</FormHelperText>
                         )}
                       </FormControl>
                     )}
@@ -365,35 +354,32 @@ const handleSubmit = async () => {
                 "LastUpdatedBy",
                 "LastUpdatedDate",
               ].map((key) => (
-                <FormControl key={key} fullWidth error={!!errors[key]}>
+                <FormControl key={key} fullWidth error={!!errors[key]} size="small">
                   <InputLabel htmlFor={key}>{formatKey(key)}</InputLabel>
                   <OutlinedInput
                     id={key}
                     name={key}
+                    label={formatKey(key)}
                     placeholder={`Enter ${formatKey(key)}`}
                     value={
                       isLoading
-                        ? "Loading..."
+                        ? ""
                         : key === "DateOfRegistration" || key === "LastUpdatedDate"
                           ? (() => {
-                            const date = user?.[key as keyof typeof user];
-                            return date && !isNaN(new Date(date as string).getTime())
-                              ? new Date(date as string).toISOString().split("T")[0].replace(/-/g, "/")
-                              : "N/A";
+                            const dateValue = user?.[key as keyof typeof user];
+                            return dateValue && !isNaN(Date.parse(dateValue as string))
+                              ? new Date(dateValue as string).toISOString().split("T")[0]
+                              : "";
                           })()
-                          : user?.[key as keyof typeof user] ?? "N/A"
+                          : (user?.[key as keyof typeof user] ?? "")
                     }
                     onChange={handleManagerChange}
                     disabled={
-                      alwaysDisabledKeys.includes(key) ||
-                      isDisabled ||
-                      isLoading
+                      alwaysDisabledKeys.includes(key) || isDisabled || isLoading
                     }
-                    label={formatKey(key)}
-                    size="small"
                   />
                   {errors[key] && (
-                    <FormHelperText error>{errors[key]}</FormHelperText>
+                    <FormHelperText>{errors[key]}</FormHelperText>
                   )}
                 </FormControl>
               ))}
@@ -435,37 +421,41 @@ const handleSubmit = async () => {
 
           <Stack direction="row" spacing={3}>
             <Stack spacing={3} sx={{ flex: 1 }}>
-              {["OperatorName", "DateOfOperation"].map((key) => (
-                <Stack key={key} spacing={3}>
-                  <FormControl fullWidth error={!!errors[key]}>
+              {["OperatorName", "DateOfOperation"].map((key) => {
+                const value =
+                  isLoading
+                    ? ""
+                    : key === "DateOfOperation"
+                      ? (() => {
+                        const date = operators?.[0]?.DateOfOperation;
+                        return date && !isNaN(new Date(date).getTime())
+                          ? new Date(date).toISOString().split("T")[0]
+                          : "";
+                      })()
+                      : operators?.[0]?.[key as keyof typeof operators[0]] ?? "";
+
+                return (
+                  <FormControl key={key} fullWidth error={!!errors[key]}>
                     <InputLabel htmlFor={key}>{formatKey(key)}</InputLabel>
                     <OutlinedInput
                       id={key}
                       name={key}
-                      placeholder={`Enter ${formatKey(key)}`}
-                      value={
-                        isLoading
-                          ? "Loading..."
-                          : key === "DateOfOperation"
-                            ? (() => {
-                              const date = operators?.[0]?.DateOfOperation;
-                              return date && !isNaN(new Date(date).getTime())
-                                ? new Date(date).toISOString().split("T")[0].replace(/-/g, "/")
-                                : "N/A";
-                            })()
-                            : operators?.[0]?.[key as keyof typeof operators[0]] ?? "N/A"
-                      }
-                      onChange={handleManagerChange}
                       label={formatKey(key)}
-                      disabled={alwaysDisabledKeys.includes(key) || isDisabled}
+                      placeholder={`Enter ${formatKey(key)}`}
+                      value={value}
+                      type={key === "DateOfOperation" ? "date" : "text"}
+                      onChange={handleManagerChange}
+                      disabled={alwaysDisabledKeys.includes(key) || isDisabled || isLoading}
                       size="small"
                     />
-                    {errors[key] && <FormHelperText error>{errors[key]}</FormHelperText>}
+                    {errors[key] && (
+                      <FormHelperText error>{errors[key]}</FormHelperText>
+                    )}
                   </FormControl>
-                </Stack>
-              ))}
-            </Stack>
+                );
+              })}
 
+            </Stack>
             <Stack spacing={3} sx={{ flex: 1 }}>
               <FormControl fullWidth>
                 <TextField
@@ -477,16 +467,15 @@ const handleSubmit = async () => {
                   minRows={4}
                   value={
                     isLoading
-                      ? "Loading..."
+                      ? ""
                       : operators && operators.length > 0
-                        ? (() => {
-                          const cities = operators.flatMap((operator) => operator?.Cities || []);
-                          return cities.length > 0
-                            ? cities.map((city: any) => city.CityName).join(", ")
-                            : "N/A";
-                        })()
-                        : "N/A"
+                        ? operators
+                          .flatMap((operator) => operator?.Cities || [])
+                          .map((city) => city.CityName)
+                          .join(", ")
+                        : ""
                   }
+                  placeholder={isLoading ? "Loading..." : "No cities available"}
                   variant="outlined"
                   disabled
                   size="small"
@@ -503,8 +492,8 @@ const handleSubmit = async () => {
                 id="remarks"
                 name="remarks"
                 label="Remarks"
-                placeholder={`Enter Remarks`}
-                value={user.remarks || ""}
+                placeholder="Enter Remarks"
+                value={typeof user.remarks === "string" ? user.remarks : ""}
                 onChange={handleManagerChange}
                 size="small"
                 multiline
