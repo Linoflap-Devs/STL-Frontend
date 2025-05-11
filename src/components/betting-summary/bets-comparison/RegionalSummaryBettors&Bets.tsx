@@ -82,26 +82,10 @@ const ChartBettorsAndBetsRegionalSummary: React.FC<BettorsandBetsSummaryProps> =
 }) => {
 
   const philippineRegions = [
-        "I",
-        "II",
-        "III",
-        "IV-A",
-        "IV-B",
-        "V",
-        "VI",
-        "VII",
-        "VIII",
-        "IX",
-        "X",
-        "XI",
-        "XII",
-        "XIII",
-        "BARMM",
-        "CAR",
-        "NCR"
-      ];
-    // const yAxisTicks = [0, 1, 5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 55, 60, 65, 70, 75, 80, 85, 90, 95, 100];
-
+    "NCR", "CAR", "I", "II", "III", "IV-A", "IV-B",
+    "V", "VI", "VII", "VIII", "IX", "X", "XI",
+    "XII", "XIII", "BARMM"
+  ];
   return (
       <Box
       sx={{
