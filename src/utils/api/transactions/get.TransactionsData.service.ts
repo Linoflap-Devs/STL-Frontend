@@ -1,77 +1,71 @@
-import axiosInstance from '../../axiosInstance';
-import { AxiosError } from 'axios';
+import axiosInstance from "../../axiosInstance";
+import { AxiosError } from "axios";
 
 /**
  * A service function to fetch data from the Transactions API endpoint.
-
- * @template T - the expected response data type (defaults to unknown if not provided).
- * @param endpoint - The API endpoint to fetch data from.
- * @param queryParams - Optional query parameters (remain loosely typed for now)
- * @returns Promise containing either properly typed response or erro object.
-
+ *
+ * @template T - Expected response type.
+ * @param baseEndpoint - Base endpoint (e.g. '/api/transactions').
+ * @param pathParams - Optional array of path segments to append (e.g. ['chart1', 'chart2']).
+ * @param queryParams - Optional query parameters (as an object).
+ * @returns Promise<T | null>
  */
 
-
-/*
-    * Add type gradually as our API respose become clearer:
-
-    Early usage (no type specified):
-    const response = await fetchTransactionsData('/some/endpoint');
-
-    Later usage (with type):
-    interface MyResponseType {
-        items: Array<{id: string, value: number}>;
-        total: number;
-    }
-    const typedResponse = await fetchTransactionsData<MyResponseType>('/typed/endpoint');
-*/
-
-// <T> generic type parameter, placeholder for the actual type that will be provided when the function is called, unknown = default
 const getTransactionsData = async <T = unknown>(
-    endpoint: string,
-    queryParams: Record<string, unknown> = {}
-): Promise <T | null> => {
-    // const token = localStorage.getItem('authToken');
+  baseEndpoint: string,
+  urlParam: string | number,
+  queryParams: Record<string, unknown> = {}
+): Promise<T | null> => {
+  try {
+    const fullPath = urlParam
+      ? `${baseEndpoint}/${urlParam}`.replace(/\/+/g, "/")
+      : baseEndpoint.replace(/\/+/g, "/");
 
-    // if(!token) {
-    //     const errorMsg = "No authentication token found";
-    //     console.error(errorMsg);
-    //     return {success: false, message: errorMsg, data: null}
-    // }
-
-    try {
-        const response = await axiosInstance.get<{
-            success: boolean;
-            message: string;
-            data: T;
-        }>(endpoint, {
-            params: queryParams,
-            headers: {
-                // Authorization: `Bearer ${token}`,
-                'Content-Type': 'application/json'
-            },
-            withCredentials: true,
-        })
-
-        if(response.data.success) {
-            return response.data.data;
-        } else {
-            console.error(`API Error (${endpoint}):`, response.data.message);
-            return null;
-        }
-    } catch (error) {
-        let errorMessage = "An unexpected error occured";
-
-        if(error instanceof AxiosError) {
-            errorMessage = error.response?.data?.message || errorMessage;
-            console.error(`API Error (${endpoint}):`, errorMessage)
-        }else if (error instanceof Error) {
-            errorMessage = error.message;
-            console.error("Unexpected error:", error);
-        }
-
-        return null
+    const response = await axiosInstance.get<{
+      success: boolean;
+      message: string;
+      data: T;
+    }>(fullPath, {
+      params: queryParams,
+    });
+    console.log(
+      `Full Path: ${fullPath} ${queryParams.first}  ${queryParams.second}`
+    );
+    if (response.data.success) {
+      return response.data.data;
+    } else {
+      console.error(`API Error (${fullPath}):`, response.data.message);
+      return null;
     }
+  } catch (error) {
+    let errorMessage = "An unexpected error occurred";
+
+    if (error instanceof AxiosError) {
+      errorMessage = error.response?.data?.message || errorMessage;
+      console.error(`API Error:`, errorMessage);
+    } else if (error instanceof Error) {
+      errorMessage = error.message;
+      console.error("Unexpected error:", error);
+    }
+
+    return null;
+  }
 };
 
 export default getTransactionsData;
+
+/*
+// Simple request (no path or query params)
+await getTransactionsData('/api/transactions');
+
+// With one optional path param
+await getTransactionsData('/api/transactions', "1");
+
+
+// With query params
+await getTransactionsData('/api/transactions', ['1'], {
+  first: 'USD',
+  second: 'EUR',
+});
+
+*/
