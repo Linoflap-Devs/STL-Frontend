@@ -96,6 +96,8 @@ export interface DetailedTableProps<T> {
   showExportButton?: boolean;
   onExportCSV?: () => void;
   operatorMap?: Record<number, Operator>;
+  statsPerRegion: any[]; // Array of statistics for each region (could be strongly typed based on the data structure)
+  roleId?: number; // Role ID (manager or executive)
 }
 
 export interface ChartBarItem {
@@ -182,4 +184,8 @@ export interface EditModalPageProps {
 export interface CSVExportButtonProps {
   statsPerRegion: any[];
   pageType: string;
+  roleId?: number;
+  fileName?: string;
+  columns?: any[];
+  operatorMap?: any[];
 }

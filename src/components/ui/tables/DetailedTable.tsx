@@ -13,15 +13,16 @@ import { User, Operator, SortConfig } from "~/types/types";
 import { useModalStore } from "../../../../store/useModalStore";
 import { getUserStatus } from "~/utils/dashboarddata";
 import dayjs from "dayjs";
+import CSVExportButtonTable from "../button/CSVExportButtonTable";
 
 const DetailedTable = <T extends User | Operator>({
   data,
   columns,
   actionsRender,
   pageType,
-  showExportButton = true,
   onExportCSV,
   operatorMap,
+  statsPerRegion, 
 }: DetailedTableProps<T>) => {
   const {searchQuery,setIsFilterActive,isFilterActive,page,rowsPerPage,sortConfig,filters,handleChangePage,handleChangeRowsPerPage,setSearchQuery,anchorEl,selectedRow,setAnchorEl,setSelectedRow,resetMenu} = useDetailTableStore();
   const [openEditLogModal, setOpenEditLogModal] = useState(false);
@@ -231,13 +232,14 @@ const DetailedTable = <T extends User | Operator>({
           />
         </div>
       </TableContainer>
-      {showExportButton && (
         <div className="flex justify-end pt-2">
-          <Button variant="contained" onClick={onExportCSV} sx={[buttonStyles, { marginTop: "0.5rem" }]}>
-            Export as CSV
-          </Button>
+            <CSVExportButtonTable 
+              pageType={pageType ?? "unknown"} 
+              columns={columns} 
+              statsPerRegion={data} 
+              operatorMap={operatorMap ? Object.values(operatorMap) : []}
+            />
         </div>
-      )}
     </React.Fragment>
   );
 };

@@ -12,6 +12,7 @@ import ChartsDataPage from "~/components/ui/charts/UserChartsData";
 import dayjs from "dayjs";
 import UserFieldFormPage from "~/components/user/UserForm";
 import { User, Operator } from "~/types/types";
+import CSVExportButton from "~/components/ui/button/CSVExportButtonDashboard";
 
 const roleMap: Record<string, { label: string; textlabel: string; roleId: number }> = {
   managers: { label: "Small Town Lottery Manager", textlabel: "Managers", roleId: 2 },
@@ -172,11 +173,20 @@ const RolePage = () => {
         dashboardData={data}
       />
       <>
+        <CSVExportButton
+          statsPerRegion={data}
+          pageType={pagetype}
+          roleId={roleId}
+          
+        />
         <DetailedTable
           data={data}
           columns={columns}
           pageType={pagetype}
           operatorMap={operatorMap}
+
+          roleId={roleId} 
+          statsPerRegion={data}
         />
         <UserFieldFormPage />
       </>

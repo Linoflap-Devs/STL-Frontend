@@ -135,13 +135,14 @@ const OperatorsPage = () => {
         userType="operator"
         pageType="operator"
         regions={[]}
-        dashboardData={data.map(op => 
+        dashboardData={data.map(op =>
           ({ ...op, region: op.OperatorRegion?.RegionName ?? "Unknown" }))}
       />
       <>
         <DetailedTable
           data={data}
           columns={columns}
+          statsPerRegion={[]}
         />
         {/* Conditionally render CreateUserModalPage */}
         <OperatorFieldFormPage />
