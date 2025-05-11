@@ -1,17 +1,17 @@
 import React from 'react';
+import dayjs, { Dayjs } from 'dayjs';
 import TableCell from '@mui/material/TableCell';
-import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
-import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import TextField from '@mui/material/TextField';
 import { Tooltip } from '@mui/material';
+import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
+import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
-import dayjs, { Dayjs } from 'dayjs';
-import useDetailTableStore from "../../store/useTableStore";
+import useDetailTableStore from '../../store/useTableStore';
 import { SortableTableCellProps } from '../types/interfaces';
-import { filterStyles } from "~/styles/theme";
 import { User, Operator, SortConfig, EditLogFields } from '~/types/types';
+import { filterStyles } from '~/styles/theme';
 
 // SORTING + FILTERING COMPONENT
 export const SortableTableCell: React.FC<SortableTableCellProps> = ({
@@ -184,8 +184,10 @@ export const filterData = (
     if (searchValue && !Object.values(item).some((val) => filterItem("", String(val)))) {
       const fullName = `${"FirstName" in item ? item.FirstName : ""} ${"LastName" in item ? item.LastName : ""}`.toLowerCase();
       // const createdByFullName = `${"CreatedByFirstName" in item ? item.CreatedByFirstName : ""} ${"CreatedByLastName" in item ? item.CreatedByLastName : ""}`.toLowerCase();
+      const cities = (getNestedValue(item, "Cities") || []) as { CityName: string }[];
+      const cityNames = cities.map(city => city.CityName.toLowerCase()).join(", ");
 
-      if (![fullName, operatorName].some(val => val.includes(searchValue))) {
+      if (![fullName, operatorName, cityNames].some(val => val.includes(searchValue))) {
         return false;
       }
     }
@@ -196,12 +198,30 @@ export const filterData = (
 
       if (!filterValue) return true;
 
+      if (key === "Cities") {
+        const cities = (getNestedValue(item, "Cities") || []) as { CityName: string }[];
+        const cityNames = cities.map(city => city.CityName.toLowerCase()).join(", ");
+        return cityNames.includes(filterValue);
+      }
+
+      if (key === "DateOfRegistration") {
+        // Compare dates if filtering by date
+        const itemDate = dayjs(getNestedValue(item, key)).format("YYYY-MM-DD");
+        const filterDate = dayjs(filterValue).format("YYYY-MM-DD");
+        return itemDate === filterDate;
+      }
+
+      // Handle the 'OperatorName' filtering logic for Users
+      if (key === "OperatorDetails.OperatorName" && "OperatorId" in item) {
+        return operatorName.includes(filterValue);
+      }
+
       return itemValue.includes(filterValue);
     });
   });
 };
 
-// ======================================================= FOR EDIT LOGS
+// ======================================================= FOR EDIT LOGS MODAL
 
 // Filter function with search and additional filters for Edit Log
 export const filterDataEditLog = (

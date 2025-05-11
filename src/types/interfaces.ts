@@ -1,4 +1,6 @@
+import { z } from "zod";
 import { User, Operator } from "./types";
+import { userSchema } from "~/utils/validation";
 
 // Generic API response interface
 export interface ApiResponse<T> {
@@ -43,7 +45,6 @@ export interface CardProps<T = React.ReactNode> {
 export interface CardsPageProps<T> {
   dashboardData: T[];
   roleLabel?: string;
-  cardData: CardProps[];
   textlabel?: string;
 }
 
@@ -82,8 +83,6 @@ export interface ChartsDataPageProps<T extends { region: string }> {
   getUserStatus?: (user: T, date: string) => string;
   pageType?: "manager" | "executive" | "operator";
   operatorMap?: Record<number, Operator>;
-  Region?: string;
-  regions: string[];
 }
 
 // Generic table props
@@ -92,10 +91,12 @@ export interface DetailedTableProps<T> {
   columns: Column<T>[];
   onCreate?: () => void;
   actionsRender?: (row: T) => React.ReactNode;
-  pageType?: "manager" | "executive";
+  pageType?: "manager" | "executive" | "operator";
   showExportButton?: boolean;
   onExportCSV?: () => void;
   operatorMap?: Record<number, Operator>;
+  statsPerRegion?: any[];
+  roleId?: number;
 }
 
 export interface ChartBarItem {
@@ -116,20 +117,20 @@ export interface RegionUser {
 }
 
 // Form field definitions
+export interface FieldOption {
+  value: string;
+  label: string;
+}
+
 export interface Field {
   name: string;
   label: string;
   type: string;
   placeholder?: string;
-  options?: FieldOption[];
-  value: string;
-  gridSpan?: 1 | 2 | 'full';  // Add the gridSpan property here
-  required?: boolean; // Add this line
-}
-
-export interface FieldOption {
-  label: string;
-  value: string;
+  options?: FieldOption[]; // Used only for 'select' and 'multiselect' types
+  value: string | number | string[]; // Allowing string, number, or array of strings (for multiselect)
+  gridSpan?: 1 | 2 | 'full'; // Grid span for layout
+  required?: boolean; // Indicates if the field is required
 }
 
 // Reusable modal
@@ -182,4 +183,37 @@ export interface EditModalPageProps {
 export interface CSVExportButtonProps {
   statsPerRegion: any[];
   pageType: string;
+  roleId?: number;
+  fileName?: string;
+  columns?: any[];
+  operatorMap?: any[];
+}
+
+export type UserFormData = z.infer<typeof userSchema>;
+
+export const defaultValues: UserFormData = {
+  firstName: "",
+  lastName: "",
+  email: "",
+  password: "",
+  phoneNumber: "",
+  operatorId: 0,
+};
+
+export interface ConfirmUserActionModalProps {
+  open: boolean;
+  onClose: () => void;
+  onVerified?: () => void;
+  user?: any;
+  errors: any;
+  setErrors: React.Dispatch<React.SetStateAction<any>>;
+  selectedUser?: User | null;
+  setSelectedUser?: React.Dispatch<React.SetStateAction<User | null>>;
+  actionType: "create" | "suspend";
+  formData: { [key: string]: string | number | string[] };
+  setFormData: (data: { [key: string]: string | number }) => void;
+  endpoint: {
+    create: string;
+    update: string;
+  };
 }

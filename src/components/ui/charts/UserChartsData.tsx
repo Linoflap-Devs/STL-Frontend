@@ -3,7 +3,6 @@ import { ChartBarItem, ChartsDataPageProps, RegionUser } from "~/types/interface
 import useDashboardStore from "../../../../store/useDashboardStore";
 import ChartCard from "./UserCharts";
 import { getUserStatus } from "~/utils/dashboarddata";
-import CSVExportButton from "../button/CSVExportButtonDashboard";
 
 const regionMap: Record<string, string> = {
   "I": "Region I",
@@ -125,7 +124,7 @@ export const ChartsDataPage = <T extends RegionUser & { OperatorName?: string }>
       },
     ];
 
-    setStatsPerRegion(stats);  // Set the statsPerRegion state
+    setStatsPerRegion(stats);
     setLocalChartData(newChartData);
     setChartData(newChartData);
   }, [dashboardData, userType, sevenDaysAgo, setChartData]);
@@ -137,7 +136,7 @@ export const ChartsDataPage = <T extends RegionUser & { OperatorName?: string }>
         regions={regions}
         title={`${(pageType ?? "Unknown").charAt(0).toUpperCase() + (pageType ?? "Unknown").slice(1)} Summary`}
         pageType={pageType ?? "operator"}
-        statsPerRegion={statsPerRegion} // for csv button
+        statsPerRegion={statsPerRegion}
       />
     </div>
   );

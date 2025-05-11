@@ -1,5 +1,5 @@
 import React, { useState, useMemo, useEffect } from "react";
-import {Table,TableBody,TableCell,TableContainer,TableHead,TableRow,TablePagination,Button,IconButton,Menu,MenuItem} from "@mui/material";
+import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TablePagination, Button, IconButton, Menu, MenuItem } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
 import FilterListIcon from "@mui/icons-material/FilterList";
 import FilterListOffIcon from "@mui/icons-material/FilterListOff";
@@ -13,17 +13,16 @@ import { User, Operator, SortConfig } from "~/types/types";
 import { useModalStore } from "../../../../store/useModalStore";
 import { getUserStatus } from "~/utils/dashboarddata";
 import dayjs from "dayjs";
+import CSVExportButtonTable from "../buttons/CSVExportButtonTable";
 
 const DetailedTable = <T extends User | Operator>({
   data,
   columns,
   actionsRender,
   pageType,
-  showExportButton = true,
-  onExportCSV,
   operatorMap,
 }: DetailedTableProps<T>) => {
-  const {searchQuery,setIsFilterActive,isFilterActive,page,rowsPerPage,sortConfig,filters,handleChangePage,handleChangeRowsPerPage,setSearchQuery,anchorEl,selectedRow,setAnchorEl,setSelectedRow,resetMenu} = useDetailTableStore();
+  const { searchQuery, setIsFilterActive, isFilterActive, page, rowsPerPage, sortConfig, filters, handleChangePage, handleChangeRowsPerPage, setSearchQuery, anchorEl, selectedRow, setAnchorEl, setSelectedRow, resetMenu } = useDetailTableStore();
   const [openEditLogModal, setOpenEditLogModal] = useState(false);
   const sevenDaysAgo = useMemo(() => dayjs().subtract(7, "day"), []);
 
@@ -88,21 +87,6 @@ const DetailedTable = <T extends User | Operator>({
     // Add delete functionality as needed
   };
 
-  // Close Edit Modal on ESC press
-  useEffect(() => {
-    const handleEscape = (event: KeyboardEvent) => {
-      if (event.key === "Escape" && openEditLogModal) {
-        setOpenEditLogModal(false); // Close modal on ESC
-        console.log("Edit Log Modal is now closed (ESC key).");
-      }
-    };
-
-    window.addEventListener("keydown", handleEscape);
-    return () => {
-      window.removeEventListener("keydown", handleEscape);
-    };
-  }, [openEditLogModal]);
-
   return (
     <React.Fragment>
       <TableContainer>
@@ -138,19 +122,21 @@ const DetailedTable = <T extends User | Operator>({
         </div>
         <Table size="small">
           <TableHead>
-            {columns.map((col) =>
-              col.sortable || col.filterable ? (
-                <SortableTableCell
-                  key={String(col.key)}
-                  label={col.label}
-                  sortKey={String(col.key)}
-                  isFilterVisible={isFilterActive && col.filterable}
-                />
-              ) : (
-                <TableCell key={String(col.key)}>{col.label}</TableCell>
-              )
-            )}
-            <TableCell>Actions</TableCell>
+            <TableRow sx={{ '&:hover': { backgroundColor: '#F08060' } }}>
+              {columns.map((col) =>
+                col.sortable || col.filterable ? (
+                  <SortableTableCell
+                    key={String(col.key)}
+                    label={col.label}
+                    sortKey={String(col.key)}
+                    isFilterVisible={isFilterActive && col.filterable}
+                  />
+                ) : (
+                  <TableCell key={String(col.key)}>{col.label}</TableCell>
+                )
+              )}
+              <TableCell>Actions</TableCell>
+            </TableRow>
           </TableHead>
           <TableBody>
             {paginatedData.length === 0 ? (
@@ -195,24 +181,29 @@ const DetailedTable = <T extends User | Operator>({
                     >
                       <MoreHorizIcon sx={{ color: "#0038A8" }} />
                     </IconButton>
-
                     <Menu
                       anchorEl={anchorEl}
                       open={Boolean(anchorEl)}
                       onClose={resetMenu}
                     >
-                      <MenuItem onClick={handleOpenViewModal}>
+                      <MenuItem
+                        onClick={() => {
+                          resetMenu(); // close menu first
+                          handleOpenViewModal(); // then handle action
+                        }}
+                      >
                         View
                       </MenuItem>
                       <MenuItem
                         onClick={() => {
                           if (selectedRow) handleDelete(selectedRow);
-                          resetMenu();
+                          resetMenu(); // close menu after delete
                         }}
                       >
                         Delete
                       </MenuItem>
                     </Menu>
+
                   </TableCell>
                 </TableRow>
               ))
@@ -231,13 +222,14 @@ const DetailedTable = <T extends User | Operator>({
           />
         </div>
       </TableContainer>
-      {showExportButton && (
-        <div className="flex justify-end pt-2">
-          <Button variant="contained" onClick={onExportCSV} sx={[buttonStyles, { marginTop: "0.5rem" }]}>
-            Export as CSV
-          </Button>
-        </div>
-      )}
+      <div className="flex justify-end pt-2">
+        <CSVExportButtonTable
+          pageType={pageType ?? "unknown"}
+          columns={columns}
+          statsPerRegion={data}
+          operatorMap={operatorMap ? Object.values(operatorMap) : []}
+        />
+      </div>
     </React.Fragment>
   );
 };

@@ -3,7 +3,7 @@
 import { BarChart } from "@mui/x-charts/BarChart";
 import React from "react";
 import { ChartCardProps } from "~/types/interfaces";
-import CSVExportButton from "../button/CSVExportButtonDashboard";
+import CSVExportButtonDashboard from "../buttons/CSVExportButtonDashboard";
 
 const getLegendItems = (pageType: string) => {
   const labelMap: Record<string, string> = {
@@ -65,7 +65,7 @@ export const ChartCard = <T,>({
             <CustomLegend pageType={pageType} />
           </div>
           <div className="flex items-center">
-            <CSVExportButton statsPerRegion={statsPerRegion} pageType={pageType} />
+            <CSVExportButtonDashboard statsPerRegion={statsPerRegion} pageType={pageType} />
           </div>
         </div>
         <div className="h-[270px] w-full min-w-0">

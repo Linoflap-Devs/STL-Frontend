@@ -1,7 +1,5 @@
 import React, { useEffect } from "react";
 import DetailedTable from "~/components/ui/tables/DetailedTable";
-import { getOperatorsData } from "~/utils/api/operators/get.operators.service";
-import { GetOperatorsResponse } from "~/types/interfaces";
 import dayjs from "dayjs";
 import { useOperatorsData } from "../../../../store/useOperatorStore";
 import CardsPage from "~/components/ui/dashboardcards/CardsData";
@@ -10,6 +8,7 @@ import { Button } from "@mui/material";
 import { getUserStatus } from "~/utils/dashboarddata";
 import { Operator } from "~/types/types";
 import OperatorFieldFormPage from "~/components/operators/OperatorForm";
+import { fetchOperators } from "~/services/userService";
 
 const OperatorsPage = () => {
   const {
@@ -17,32 +16,15 @@ const OperatorsPage = () => {
     setData,
     columns,
     setColumns,
-    setModalOpen,
   } = useOperatorsData();
 
   const textlabel = "Operators";
 
   useEffect(() => {
-    const fetchOperators = async () => {
-      try {
-        const response = await getOperatorsData<GetOperatorsResponse>("/operators/getOperators");
-        if (response.success && Array.isArray(response.data?.data)) {
-          const fetchedOperators = response.data.data;
-          console.log("Fetched Operators:", fetchedOperators);
+    fetchOperators(setData);
+  }, [setData]);
 
-          setData(fetchedOperators);
-        } else {
-          setData([]);
-        }
-      } catch (error) {
-        console.error("Error fetching operators:", error);
-        setData([]);
-      }
-    };
-
-    fetchOperators();
-  }, []);
-
+  // columns in the table
   useEffect(() => {
     setColumns([
       {
@@ -128,20 +110,19 @@ const OperatorsPage = () => {
       <h1 className="text-3xl font-bold mb-3">Small Town Lottery Operators</h1>
       <CardsPage
         dashboardData={data}
-        cardData={[]}
         textlabel={textlabel || ""}
       />
       <ChartsDataPage
         userType="operator"
         pageType="operator"
-        regions={[]}
-        dashboardData={data.map(op => 
+        dashboardData={data.map(op =>
           ({ ...op, region: op.OperatorRegion?.RegionName ?? "Unknown" }))}
       />
       <>
         <DetailedTable
           data={data}
           columns={columns}
+          pageType="operator"
         />
         {/* Conditionally render CreateUserModalPage */}
         <OperatorFieldFormPage />

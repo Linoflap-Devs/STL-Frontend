@@ -4,8 +4,9 @@
 import { create } from 'zustand';
 
 type FormStore = {
-  formData: { [key: string]: string };
-  setFormData: (data: { [key: string]: string }) => void;
+  setFormData: (data: { [key: string]: string | number }) => void;
+  formData: { [key: string]: string | number };
+
   updateFormField: (key: string, value: string) => void;
   resetFormData: () => void;
 
