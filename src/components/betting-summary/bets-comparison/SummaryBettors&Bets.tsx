@@ -283,7 +283,6 @@ const ChartBettorsAndBetsSummary: React.FC<BettorsandBetsSummaryProps> = ({
     return {};
   }
 
-
   // Helper function to check if dates match (ignoring time)
   const datesMatch = (dateString1: string, dateString2: string): boolean => {
     return formatDate(dateString1) === formatDate(dateString2);

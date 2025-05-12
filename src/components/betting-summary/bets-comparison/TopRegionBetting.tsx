@@ -63,7 +63,6 @@ const formatDate = (date: string | null): string => {
   return `${year}-${month}-${day}`;
 };
 
-
 // Helper to turn e.g. "IV-A" → "Region IV-A", but leave "NCR"/"CAR"/"BARMM" alone
 const apiRegionLabel = (r: string) =>
   ["NCR", "CAR", "BARMM"].includes(r) ? r : `Region ${r}`;
