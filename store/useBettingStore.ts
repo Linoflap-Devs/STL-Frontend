@@ -3,6 +3,7 @@ import { create } from 'zustand';
 // For Dashboard Cards
 import getTransactionsData from '~/utils/api/transactions/get.TransactionsData.service';
 
+const getTodayDate = () => new Date().toISOString().slice(0, 10);
 export type categoryType = 
   'Total Bettors and Bets' |
   'Total Bets by Bet Type' |
@@ -31,11 +32,11 @@ interface BettingStore {
   categoryFilter: categoryType;
   dateFilter: dateType;
   // If Filtered by Specific Date
-  firstDateSpecific: Date | null;
-  secondDateSpecific: Date | null;
+  firstDateSpecific: string | null;
+  secondDateSpecific: string | null;
   // If Filtered by Date Duration
-  firstDateDuration: Date | null;
-  secondDateDuration: Date | null;
+  firstDateDuration: string | null;
+  secondDateDuration: string | null;
   cardsAggregatedData: {
     totalBettors: number;
     totalWinners: number;
@@ -50,11 +51,11 @@ interface BettingStore {
   setCategoryFilter: (category: categoryType) => void;
   setDateFilter: (type: dateType) => void;
   // If Filtered by Specific Datee
-  setFirstDateSpecific: (date: Date) => void;
-  setSecondDateSpecific: (date: Date) => void;
+  setFirstDateSpecific: (date: string) => void;
+  setSecondDateSpecific: (date: string) => void;
   // If Filtered by Date Duration
-  setFirstDateDuration: (date: Date) => void;
-  setSecondDateDuration: (date: Date) => void;
+  setFirstDateDuration: (date: string) => void;
+  setSecondDateDuration: (date: string) => void;
   fetchAndAggregateData: () => Promise<void>;
   resetFilters: () => void;
 }
@@ -64,8 +65,8 @@ export const useBettingStore = create<BettingStore>((set) => ({
     activeGameType: '',
     categoryFilter: 'Total Bettors and Bets',
     dateFilter: 'Specific Date',
-    firstDateSpecific: null,
-    secondDateSpecific: null,
+    firstDateSpecific: getTodayDate(),
+    secondDateSpecific: getTodayDate(),
     firstDateDuration: null,
     secondDateDuration: null,
     cardsAggregatedData: {
