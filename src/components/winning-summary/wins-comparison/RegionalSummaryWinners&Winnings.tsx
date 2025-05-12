@@ -79,6 +79,7 @@ const ChartWinnersandWinningsRegionalSummary: React.FC<WinnersandWinningsSummary
   secondDateSpecific,
   firstDateDuration,
   secondDateDuration,
+  activeGameType
 }) => {
     const philippineRegions = [
         "I",
@@ -122,12 +123,13 @@ return (
             { `Regional Summary of ${categoryFilter}`}
         </Typography>
         <CustomLegend 
-              categoryFilter={categoryFilter}
-              dateFilter={dateFilter}
-              firstDateSpecific={firstDateSpecific}
-              secondDateSpecific={secondDateSpecific}
-              firstDateDuration={firstDateDuration}
-              secondDateDuration={secondDateDuration}        
+          activeGameType={activeGameType}
+          categoryFilter={categoryFilter}
+          dateFilter={dateFilter}
+          firstDateSpecific={firstDateSpecific}
+          secondDateSpecific={secondDateSpecific}
+          firstDateDuration={firstDateDuration}
+          secondDateDuration={secondDateDuration}
         />
         <Box
             sx={{
