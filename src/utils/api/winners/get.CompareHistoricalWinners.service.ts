@@ -32,7 +32,6 @@ const getCompareHistoricalWinners = async <T = unknown>(
 		console.log("Making API request to:", fullPath);
     console.log("With query parameters:", queryParams); // This will show all params including gameCategory
 
-		console.log(response.data.data)
 		if (response.data.success) {
 			return response.data.data;
 		} else {
