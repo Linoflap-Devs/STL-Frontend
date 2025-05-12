@@ -1,8 +1,9 @@
-import React from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import {
   Box,
   Typography,
   Stack,
+  CircularProgresss
 } from "@mui/material";
 import { BarChart } from '@mui/x-charts/BarChart';
 import { 
@@ -10,6 +11,18 @@ import {
   getLegendItemsMap_Specific,
   getLegendItemsMap_Duration,
   } from "../../../../store/useBettingStore";
+
+const formatDate = (date: string | null): string => {
+  const d = new Date(date);
+  const year = d.getFullYear();
+  const month = `${d.getMonth() + 1}`.padStart(2, '0');
+  const day = `${d.getDate()}`.padStart(2, '0');
+  return `${year}-${month}-${day}`;
+};
+
+// Helper to turn e.g. "IV-A" → "Region IV-A", but leave "NCR"/"CAR"/"BARMM" alone
+const apiRegionLabel = (r: string) =>
+  ["NCR", "CAR", "BARMM"].includes(r) ? r : `Region ${r}`;
 
 
 const CustomLegend: React.FC<BettorsandBetsSummaryProps> = ({
@@ -80,6 +93,7 @@ const ChartBettorsAndBetsRegionalSummary: React.FC<BettorsandBetsSummaryProps> =
   firstDateDuration,
   secondDateDuration,
 }) => {
+  
 
   const philippineRegions = [
     "NCR", "CAR", "I", "II", "III", "IV-A", "IV-B",
