@@ -169,7 +169,7 @@ console.log('Active Game Category:', activeGameType)
   }
   // SpecificDate
   const processSpecificPayloadData = (payload: {
-    FirstDagameCategoryParamte: DateSpecific[];
+    FirstDate: DateSpecific[];
     SecondDate: DateSpecific[];
   }) => {
     const data: ChartData[] = philippineRegions.map(region => {
