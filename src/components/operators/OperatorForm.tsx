@@ -1,11 +1,12 @@
 import React, { useEffect, useState } from 'react';
-import CreateModalPage from '~/components/ui/modals/CreateModal';
+import CreateModalOperationsPage from './CreateOperationsModal';
 import UpdateModalPage from '~/components/ui/modals/UpdateModal';
 import { useOperatorsData } from '../../../store/useOperatorStore';
 import { useModalStore } from '../../../store/useModalStore';
 import { Field } from '~/types/interfaces';
 import { fetchGameCategories } from '~/services/userService';
 import { fetchCityData, fetchProvinceData, fetchRegionData } from '~/services/locationService';
+import { fetchOperators } from '~/services/userService';
 
 const operatorConfig: {
   endpoint: { create: string; update: string };
@@ -18,7 +19,7 @@ const operatorConfig: {
   fields: [
     { name: 'name', label: 'Operators Name', type: 'text', placeholder: 'Given name', value: '', gridSpan: 1 },
     { name: 'address', label: 'Operators Address', type: 'text', placeholder: 'Address', value: '', gridSpan: 'full' },
-    { name: 'email', label: 'Email', type: 'email', placeholder: 'Enter email', value: '', gridSpan: 1 },
+    { name: 'email', label: 'Email', type: 'email', placeholder: 'Enter Email Address', value: '', gridSpan: 1 },
     { name: 'contactNumber', label: 'Phone Number', type: 'tel', placeholder: 'Enter phone number', value: '', gridSpan: 2 },
     { name: 'DateOfOperations', label: 'Date of Operations', type: 'date', placeholder: '', value: '', gridSpan: 2 },
     {
@@ -79,10 +80,10 @@ const operatorConfig: {
     {
       name: 'STLExcludedCity',
       label: 'Excluded City',
-      type: 'select',
+      type: 'multiselect',
       options: [],
       placeholder: '',
-      value: '',
+      value: [],
       gridSpan: 1,
     },
   ],
@@ -98,6 +99,7 @@ export const OperatorFieldFormPage: React.FC = () => {
   const [cities, setCities] = useState<any[]>([]);
   const [selectedRegion, setSelectedRegion] = useState<any>(''); // for region filtering
   const [selectedProvince, setSelectedProvince] = useState<any>(''); // for province filtering
+  const [operatorDetails, setOperatorDetails] = useState<any>(null); // Add state for operator details
 
   // Fetch game categories, regions, provinces, and cities on component mount
   useEffect(() => {
@@ -106,7 +108,7 @@ export const OperatorFieldFormPage: React.FC = () => {
     fetchProvinceData(setProvinces);
     fetchCityData(setCities);
   }, []);
-
+  
   // Update field options based on selected data (gameTypes, regions, provinces, cities)
   useEffect(() => {
     const updatedFields = operatorConfig.fields.map((field) => {
@@ -165,7 +167,7 @@ export const OperatorFieldFormPage: React.FC = () => {
   return (
     <div className="p-4">
       {modalType === 'create' && (
-        <CreateModalPage
+        <CreateModalOperationsPage
           open={modalOpen}
           onClose={closeModal}
           fields={fields}

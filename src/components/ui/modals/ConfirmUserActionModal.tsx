@@ -81,13 +81,23 @@ const ConfirmUserActionModalPage: React.FC<ConfirmUserActionModalProps> = ({
       if (roleId) {
         fetchUsers(roleId, setData);
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error("Error during user action:", error);
-      setError("An unexpected error occurred.");
+      console.log("Full error response:", error?.response?.data);
+
+      const backendMessage =
+        error?.response?.data?.message ||
+        error?.response?.data ||
+        error?.message ||
+        "An unexpected error occurred.";
+
+      setError(backendMessage);
+
       await Swal.fire({
         icon: "error",
         title: "Unexpected Error!",
-        text: `An error occurred while trying to ${actionType} user.`,
+        text: `Error while trying to ${actionType} user: ${backendMessage}`,
+        confirmButtonColor: "#D32F2F",
       });
     }
   };

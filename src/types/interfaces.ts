@@ -184,11 +184,11 @@ export interface ReusableModalPageProps {
   operatorMap?: Record<number, Operator>;
   layout?: 'single' | 'double'; // Add layout property
 
-  provinces: any[];
-  regions: any[];
-  cities: any[];
-  setSelectedRegion: (regionId: string) => void;
-  setSelectedProvince: (provinceId: string) => void;
+  provinces?: any[];
+  regions?: any[];
+  cities?: any[];
+  setSelectedRegion?: (regionId: string) => void;
+  setSelectedProvince?: (provinceId: string) => void;
 }
 
 export interface ModalPageProps {

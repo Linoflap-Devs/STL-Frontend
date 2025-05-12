@@ -19,6 +19,8 @@ const UpdateModalPage: React.FC<ModalPageProps> = ({
   useEffect(() => {
   }, [initialUserData]);
 
+  console.log('UpdateModalPagsse', initialUserData);
+
   const [loading, setLoading] = useState(false);
   const isOpen = open ?? true;
   const handleClose = onClose ?? (() => { });

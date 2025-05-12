@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import CreateModalPage from '~/components/ui/modals/CreateModal';
+import CreateModalPage from '~/components/user/CreateModal';
 import useUserRoleStore from '../../../store/useUserStore';
 import { Field, UserFieldFormPageProps } from '~/types/interfaces';
 import UpdateModalPage from '../ui/modals/UpdateModal';
