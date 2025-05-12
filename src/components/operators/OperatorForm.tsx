@@ -1,9 +1,11 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import CreateModalPage from '~/components/ui/modals/CreateModal';
-import UpdateModalPage from '../ui/modals/UpdateModal';
+import UpdateModalPage from '~/components/ui/modals/UpdateModal';
 import { useOperatorsData } from '../../../store/useOperatorStore';
 import { useModalStore } from '../../../store/useModalStore';
 import { Field } from '~/types/interfaces';
+import { fetchGameCategories } from '~/services/userService';
+import { fetchCityData, fetchProvinceData, fetchRegionData } from '~/services/locationService';
 
 const operatorConfig: {
   endpoint: { create: string; update: string };
@@ -15,43 +17,150 @@ const operatorConfig: {
   },
   fields: [
     { name: 'name', label: 'Operators Name', type: 'text', placeholder: 'Given name', value: '', gridSpan: 1 },
-    { name: 'address', label: 'Operators Address', type: 'text', placeholder: 'Address', value: '', gridSpan: 'full', },
+    { name: 'address', label: 'Operators Address', type: 'text', placeholder: 'Address', value: '', gridSpan: 'full' },
     { name: 'email', label: 'Email', type: 'email', placeholder: 'Enter email', value: '', gridSpan: 1 },
-
     { name: 'contactNumber', label: 'Phone Number', type: 'tel', placeholder: 'Enter phone number', value: '', gridSpan: 2 },
-    {
-      name: 'DateOfOperations',
-      label: 'Date of Operations',
-      type: 'date',
-      placeholder: '',
-      value: '',
-      gridSpan: 2,
-    },
+    { name: 'DateOfOperations', label: 'Date of Operations', type: 'date', placeholder: '', value: '', gridSpan: 2 },
     {
       name: 'GamesProvided',
       label: 'Games Provided',
       type: 'multiselect',
-      options: [
-        { value: 'STLPares1', label: 'STL Pares 1' },
-        { value: 'STLSwer2', label: 'STL Swer 2' },
-        { value: 'STLSwer3', label: 'STL Swer 3' },
-        { value: 'STLSwer4', label: 'STL Swer 4' }
-      ],
-      placeholder: 'Select Games Provided',
-      value: '',  // <-- Must be an array
-      gridSpan: 1
+      options: [],
+      placeholder: 'Games Provided',
+      value: [],
+      gridSpan: 1,
     },
-
+    {
+      name: 'STLAreaOfOperations',
+      label: 'STL Area of Operations',
+      type: 'select',
+      options: [
+        { value: 'ProvincialWide', label: 'Provincial Wide' },
+        { value: 'CityWide', label: 'City Wide' },
+      ],
+      placeholder: 'Select STL Area of Operations',
+      value: '',
+      gridSpan: 2,
+    },
+    {
+      name: 'STLRegion',
+      label: 'Area of Regional Operations',
+      type: 'multiselect',
+      options: [],
+      placeholder: 'Area of Regional Operations',
+      value: [],
+      gridSpan: 1,
+    },
+    {
+      name: 'STLProvince',
+      label: 'Area of Provincial Operations',
+      type: 'multiselect',
+      options: [],
+      placeholder: 'Area of Provincial Operations',
+      value: [],
+      gridSpan: 2,
+    },
+    {
+      name: 'STLCity',
+      label: 'Area of City Operations',
+      type: 'multiselect',
+      options: [],
+      placeholder: 'Area of City Operations',
+      value: [],
+      gridSpan: 1,
+    },
+    {
+      name: 'isExcludedCITY',
+      label: 'Is there excluded city?',
+      type: 'checkbox',
+      value: false,
+      gridSpan: 2,
+    },
+    {
+      name: 'STLExcludedCity',
+      label: 'Excluded City',
+      type: 'select',
+      options: [],
+      placeholder: '',
+      value: '',
+      gridSpan: 1,
+    },
   ],
 };
 
-const OperatorFieldFormPage: React.FC = () => {
+export const OperatorFieldFormPage: React.FC = () => {
   const { fields, setFields } = useOperatorsData();
   const { modalOpen, modalType, selectedData, closeModal } = useModalStore();
 
+  const [gameTypes, setGameTypes] = useState<any[]>([]);
+  const [regions, setRegions] = useState<any[]>([]);
+  const [provinces, setProvinces] = useState<any[]>([]);
+  const [cities, setCities] = useState<any[]>([]);
+  const [selectedRegion, setSelectedRegion] = useState<any>(''); // for region filtering
+  const [selectedProvince, setSelectedProvince] = useState<any>(''); // for province filtering
+
+  // Fetch game categories, regions, provinces, and cities on component mount
   useEffect(() => {
-    setFields(operatorConfig.fields);
-  }, [setFields]);
+    fetchGameCategories(setGameTypes);
+    fetchRegionData(setRegions);
+    fetchProvinceData(setProvinces);
+    fetchCityData(setCities);
+  }, []);
+
+  // Update field options based on selected data (gameTypes, regions, provinces, cities)
+  useEffect(() => {
+    const updatedFields = operatorConfig.fields.map((field) => {
+      if (field.name === 'GamesProvided') {
+        return {
+          ...field,
+          options: gameTypes.map((gameType) => ({
+            value: gameType.GameCategoryId,
+            label: gameType.GameCategory,
+          })),
+        };
+      }
+
+      if (field.name === 'STLRegion') {
+        return {
+          ...field,
+          options: regions.map((region) => ({
+            value: region.RegionId,
+            label: region.RegionName,
+          })),
+        };
+      }
+
+      if (field.name === 'STLProvince') {
+        const filteredProvinces = provinces.filter(
+          (province) => province.RegionId === selectedRegion
+        );
+        return {
+          ...field,
+          options: filteredProvinces.map((province) => ({
+            value: province.ProvinceId,
+            label: province.ProvinceName,
+          })),
+        };
+      }
+
+      if (field.name === 'STLCity') {
+        const filteredCities = cities.filter(
+          (city) => city.ProvinceId === selectedProvince
+        );
+        return {
+          ...field,
+          options: filteredCities.map((city) => ({
+            value: city.CityId,
+            label: city.CityName,
+          })),
+        };
+      }
+
+      return field;
+    });
+
+    setFields(updatedFields);
+  }, [gameTypes, regions, provinces, cities, selectedRegion, selectedProvince, setFields]);
 
   return (
     <div className="p-4">
@@ -61,6 +170,11 @@ const OperatorFieldFormPage: React.FC = () => {
           onClose={closeModal}
           fields={fields}
           endpoint={operatorConfig.endpoint}
+          provinces={provinces}
+          regions={regions}
+          cities={cities}
+          selectedRegion={selectedRegion}
+          selectedProvince={selectedProvince}
         />
       )}
       {modalType === 'view' && (
@@ -70,11 +184,8 @@ const OperatorFieldFormPage: React.FC = () => {
           fields={fields}
           endpoint={operatorConfig.endpoint}
           initialUserData={selectedData}
-          operatorMap={{}}
         />
       )}
     </div>
   );
 };
-
-export default OperatorFieldFormPage;

@@ -138,7 +138,9 @@ const darkTheme = createTheme({
         paper: {
           backgroundColor: '#F8F0E3',
           borderRadius: "6px",
-          padding: "25px 8px 27px 8px",
+          // padding: "25px 8px 27px 8px",
+          padding: "20px 8px 12px 8px",
+          boxShadow: "0px 5px 5px -2px rgba(0,0,0,0.2)",
         },
       },
     },

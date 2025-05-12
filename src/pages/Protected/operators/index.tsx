@@ -7,7 +7,7 @@ import ChartsDataPage from "~/components/ui/charts/UserChartsData";
 import { Button } from "@mui/material";
 import { getUserStatus } from "~/utils/dashboarddata";
 import { Operator } from "~/types/types";
-import OperatorFieldFormPage from "~/components/operators/OperatorForm";
+import { OperatorFieldFormPage } from "~/components/operators/OperatorForm";
 import { fetchOperators } from "~/services/userService";
 
 const OperatorsPage = () => {

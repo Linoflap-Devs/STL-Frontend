@@ -14,6 +14,11 @@ const CreateModalPage: React.FC<ModalPageProps> = ({
   fields = [],
   endpoint = '',
   operatorMap,
+  provinces = [],
+  regions = [],
+  cities = [],
+  setSelectedRegion,
+  setSelectedProvince,
 }) => {
   const [loading, setLoading] = useState(false);
   const isOpen = open ?? true;
@@ -34,6 +39,11 @@ const CreateModalPage: React.FC<ModalPageProps> = ({
         fields={fields}
         title={`Add ${getRoleName(roleId ?? 0)}`}
         operatorMap={operatorMap ?? {}}
+        provinces={provinces}
+        regions={regions}
+        cities={cities}
+        setSelectedRegion={setSelectedRegion ?? (() => {})}
+        setSelectedProvince={setSelectedProvince ?? (() => {})}
       >
         {({ handleSubmit }) => (
           <ReusableButton

@@ -1,9 +1,10 @@
 // services/userService.ts
 
-import { GetOperatorsResponse, GetUsersResponse } from "~/types/interfaces";
+import { GetGameCategoriesResponse, GetOperatorsResponse, GetUsersResponse } from "~/types/interfaces";
 import { Operator, User } from "~/types/types";
 import { getOperatorsData } from "~/utils/api/operators/get.operators.service";
 import { getUsersData } from "~/utils/api/users/get.users.service";
+import { getGameTypesData } from "~/utils/api/gameTypes/get.gameTypes.service";
 
 export const fetchUsers = async (
   roleId: number,
@@ -66,4 +67,24 @@ export const fetchOperators = async (setData: React.Dispatch<React.SetStateActio
     setData([]);
   }
 };
+
+export const fetchGameCategories = async (setGameTypes: React.Dispatch<React.SetStateAction<any>>) => {
+  try {
+    const response = await getGameTypesData<GetGameCategoriesResponse>("/gameTypes/getGameCategories");
+    if (response.success && Array.isArray(response.data?.data)) {
+      const fetchedGameCategories = response.data.data;
+      console.log("Fetched Game Categories:", fetchedGameCategories);
+
+      setGameTypes(fetchedGameCategories);
+    } else {
+      setGameTypes([]);
+    }
+  } catch (error) {
+    console.error("Error fetching game categories:", error);
+    setGameTypes([]);
+  }
+};
+
+
+
 

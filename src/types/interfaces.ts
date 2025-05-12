@@ -1,6 +1,7 @@
 import { z } from "zod";
 import { User, Operator } from "./types";
 import { userSchema } from "~/utils/validation";
+import { MultiValue } from "react-select";
 
 // Generic API response interface
 export interface ApiResponse<T> {
@@ -11,6 +12,25 @@ export interface ApiResponse<T> {
 
 export type GetUsersResponse = ApiResponse<User[]>;
 export type GetOperatorsResponse = ApiResponse<Operator[]>;
+export type GetGameCategoriesResponse = ApiResponse<{
+  data: {
+    id: number;
+    name: string;
+    description: string;
+    createdAt: string;
+    updatedAt: string;
+  }[];
+}>;
+export type GetLocationResponse = ApiResponse<{
+  data: {
+    id: number;
+    name: string;
+    description: string;
+    createdAt: string;
+    updatedAt: string;
+  }[];
+}>;
+
 
 // Table column interface
 export interface Column<T> {
@@ -120,6 +140,16 @@ export interface RegionUser {
 export interface FieldOption {
   value: string;
   label: string;
+  regionId?: number; // <- Add this ,ine
+  provinceId?: number; // <- Add this line
+  cityId?: number; // <- Add this line
+  selected?: boolean; // Indicates if the option is selected
+  RegionName?: string; // Optional region name for display
+  RegionId?: number; // Optional region ID for filtering
+  ProvinceName?: string; // Optional province name for display
+  ProvinceId?: number; // Optional province ID for filtering  
+  CityName?: string; // Optional city name for display
+  CityId?: number; // Optional city ID for filtering
 }
 
 export interface Field {
@@ -128,7 +158,7 @@ export interface Field {
   type: string;
   placeholder?: string;
   options?: FieldOption[]; // Used only for 'select' and 'multiselect' types
-  value: string | number | string[]; // Allowing string, number, or array of strings (for multiselect)
+  value: string | number | boolean | string[]; // Add boolean for checkbox
   gridSpan?: 1 | 2 | 'full'; // Grid span for layout
   required?: boolean; // Indicates if the field is required
 }
@@ -153,6 +183,12 @@ export interface ReusableModalPageProps {
   initialUserData?: any;
   operatorMap?: Record<number, Operator>;
   layout?: 'single' | 'double'; // Add layout property
+
+  provinces: any[];
+  regions: any[];
+  cities: any[];
+  setSelectedRegion: (regionId: string) => void;
+  setSelectedProvince: (provinceId: string) => void;
 }
 
 export interface ModalPageProps {
@@ -168,6 +204,19 @@ export interface ModalPageProps {
   onFieldChange?: (name: string, value: string) => void;
   initialUserData?: any;
   operatorMap?: { [key: number]: Operator };
+
+  // operators
+  provinces?: FieldOption[];
+  regions?: FieldOption[];  // Added regions
+  cities?: FieldOption[];   // Added cities
+  selectedRegion?: string;  // Selected region for filtering provinces/cities
+  selectedProvince?: string; // Selected province for filtering cities
+  onRegionSelect?: (regionId: string) => void;  // Handler for region selection
+  onProvinceSelect?: (provinceId: string) => void; // Handler for province selection
+  handleMultiSelect?: (fieldName: string, selectedOptions: MultiValue<FieldOption>) => void; // Added this line
+
+  setSelectedRegion?: (regionId: string) => void; // Added this line
+  setSelectedProvince?: (provinceId: string) => void; // Added this line
 }
 
 export interface UserFieldFormPageProps {
