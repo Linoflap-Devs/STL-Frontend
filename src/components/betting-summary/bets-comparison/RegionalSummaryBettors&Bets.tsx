@@ -123,6 +123,25 @@ type Chart36Data = {
   secondRangeSTLSwer4: number;
 }
 
+interface RegionSpecificData {
+  TransactionDate: string;
+  DrawOrder?: null;
+  Region: string;
+  GameCategory?: string | null;
+  TotalBets: number;
+  TotalBettors: number;
+  TotalTumbok: number;
+  TotalSahod: number;
+  TotalRamble: number;
+  BetTypes?: {
+    Tumbok: number;
+    Sahod: number;
+    Ramble: number;
+  }
+}
+interface SpecificPayload{
+  Region: RegionSpecificData[];
+}
 interface RegionRangeData {
   Region: string;
   TotalBets: number;
@@ -277,9 +296,8 @@ const ChartBettorsAndBetsRegionalSummary: React.FC<BettorsandBetsSummaryProps> =
 
   // For Specific Date
   // Process Chart 1 Data
-
   const processChart1Data = (
-    payload: { Region: Array<RegionData[]> },
+    payload: { Region: Array<RegionSpecificData[]> },
     firstDate: string,
     secondDate: string
   ) => {
@@ -305,7 +323,7 @@ const ChartBettorsAndBetsRegionalSummary: React.FC<BettorsandBetsSummaryProps> =
     });
   };
   const processChart2Data = (
-    payload: { Region: Array<RegionData[]> },
+    payload: { Region: Array<RegionSpecificData[]> },
     firstDate: string,
     secondDate: string
   ) => {
@@ -331,7 +349,7 @@ const ChartBettorsAndBetsRegionalSummary: React.FC<BettorsandBetsSummaryProps> =
     });
   };
   const processChart3Data = (
-    payload: { Region: Array<RegionData[]> },
+    payload: { Region: Array<RegionSpecificData[]> },
     firstDate: string,
     secondDate: string
   ) => {
@@ -363,7 +381,7 @@ const ChartBettorsAndBetsRegionalSummary: React.FC<BettorsandBetsSummaryProps> =
     });
   };
   const processChart5Data = (
-    payload: { Region: Array<RegionData[]> },
+    payload: { Region: Array<RegionSpecificData[]> },
     firstDate: string,
     secondDate: string
   ) => {
@@ -389,7 +407,7 @@ const ChartBettorsAndBetsRegionalSummary: React.FC<BettorsandBetsSummaryProps> =
     });
   };
   const processChart6Data = (
-    payload: { Region: Array<RegionData[]> },
+    payload: { Region: Array<RegionSpecificData[]> },
     firstDate: string,
     secondDate: string
   ) => {
@@ -814,7 +832,17 @@ const ChartBettorsAndBetsRegionalSummary: React.FC<BettorsandBetsSummaryProps> =
               flexGrow: 1,
           }}
           >
-              <BarChart
+          { loading ? (
+            <Box
+              display="flex"
+              justifyContent="center"
+              alignItems="center"
+              height="100vh"
+            >
+              <CircularProgress />
+            </Box>
+          ):(
+            <BarChart
                 height={500} 
                 margin={{ left: 90, right: 20, top: 20, bottom: 40 }}
                 xAxis={[
@@ -835,6 +863,7 @@ const ChartBettorsAndBetsRegionalSummary: React.FC<BettorsandBetsSummaryProps> =
                 series={generateSeries(chartData, urlParam)}
                 // Optional: Increase width for better x-axis spacing
               />
+          )}
           </Box>
       </Box>
     )

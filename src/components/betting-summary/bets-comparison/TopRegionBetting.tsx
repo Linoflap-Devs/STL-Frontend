@@ -300,11 +300,6 @@ console.log('Active Game Category:', activeGameType)
             firstDateDuration={firstDateDuration}
             secondDateDuration={secondDateDuration}
       />
-      { loading ? (
-        <Box sx={{ display: "flex", justifyContent: "center", alignItems: "center", height: "100%" }}>
-        <CircularProgress />
-      </Box>
-      ) : (
         <Box
         sx={{
           height: "100%",
@@ -313,6 +308,11 @@ console.log('Active Game Category:', activeGameType)
           flexGrow: 1,
         }}
       >
+      { loading ? (
+        <Box sx={{ display: "flex", justifyContent: "center", alignItems: "center", height: "100%" }}>
+        <CircularProgress />
+      </Box>
+      ) : (
         <LineChart
           height={600}
           margin={{ left: 90, right: 20, top: 20, bottom: 40 }}
@@ -334,8 +334,8 @@ console.log('Active Game Category:', activeGameType)
             ]}
             grid={{ horizontal: true }}
         />
+          )}
       </Box>
-      )}
     </Box>
   );
 };
