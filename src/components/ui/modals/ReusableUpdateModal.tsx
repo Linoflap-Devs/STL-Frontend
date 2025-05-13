@@ -36,7 +36,6 @@ const ReusableUpdateModal: React.FC<ReusableModalPageProps> = ({
   title,
   isOpen,
   onClose,
-  fields,
   endpoint,
   initialUserData,
   operatorMap,
@@ -62,6 +61,9 @@ const ReusableUpdateModal: React.FC<ReusableModalPageProps> = ({
   const { operators, setOperators } = useOperatorsData();
   const [originalUserData, setOriginalUserData] = useState(null);
 
+
+  // console.log("Operatorssss:", initialUserData);
+
   // fetching of initial data
   useEffect(() => {
     if (!initialUserData || !operatorMap) return;
@@ -79,6 +81,7 @@ const ReusableUpdateModal: React.FC<ReusableModalPageProps> = ({
 
     setUser(transformedUser);
     setOriginalUserData(transformedUser);
+    console.log("Original User Datasss:", transformedUser);
 
     const operatorId = Number(initialUserData.OperatorId);
     const operator = operatorMap[operatorId] ?? null;
@@ -238,121 +241,119 @@ const ReusableUpdateModal: React.FC<ReusableModalPageProps> = ({
       </DialogTitle>
 
       <DialogContent>
-        <Stack spacing={2} key={status} sx={{ my: 1.5 }}>
-          {/* Status & Toggle Button */}
-          <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", width: "100%" }}>
-            <Box sx={{ flex: 1, maxWidth: 100 }}>
-              <FormControl fullWidth sx={selectStyles} error={!status && !isDisabled}>
-                <InputLabel id="status-label">Status</InputLabel>
-                <Select
-                  labelId="status-label"
-                  id="status"
-                  value={status || ""}
-                  onChange={(e) => setStatus(e.target.value)}
-                  label="Status"
-                  disabled={isDisabled}
-                  size="small"
-                  autoFocus
-                >
-                  <MenuItem value="Active">Active</MenuItem>
-                  <MenuItem value="Inactive">Inactive</MenuItem>
-                  <MenuItem value="New">New</MenuItem>
-                  <MenuItem value="Suspended">Suspended</MenuItem>
-                </Select>
-              </FormControl>
-            </Box>
-
-            <Box>
-              <Button
-                onClick={handleDisable}
-                sx={{ ...buttonUpdateStyles, mt: 1, fontSize: "14px", px: "1.7rem" }}
-                variant="contained"
-              >
-                {isViewMode ? "View" : "Update"}
-              </Button>
-            </Box>
+        <Stack spacing={2} key={status} sx={{ mb: 1 }}>
+          {/* Toggle Button */}
+          <Box
+            sx={{
+              display: "flex",
+              justifyContent: "flex-end", // align to the right
+              alignItems: "center",       // vertically center if needed
+              width: "100%",
+            }}
+          >
+            <Button
+              onClick={handleDisable}
+              sx={{ ...buttonUpdateStyles, mt: 1, fontSize: "14px", px: "1.7rem" }}
+              variant="contained"
+            >
+              {isViewMode ? "View" : "Update"}
+            </Button>
           </Box>
 
           {/* Personal Information Fields */}
           <Stack direction="row" spacing={3}>
-            <Stack spacing={3} sx={{ flex: 1 }}>
-              <Typography>Personal Information</Typography>
-              {["FirstName", "LastName", "PhoneNumber", "Email"].map(
-                (key) => (
-                  <Stack key={key} spacing={0}>
-                    {key === "lastName" ? (
-                      <Stack direction="row" spacing={2}>
-                        <FormControl fullWidth error={!!errors.lastName}>
-                          <InputLabel
-                            sx={{ fontSize: "14px" }}
-                            htmlFor="lastName"
-                          >
-                            Last Name
-                          </InputLabel>
-                          <OutlinedInput
-                            id="lastName"
-                            name="lastName"
-                            placeholder="Enter Last Name"
-                            value={user?.lastName
-                              || (isLoading ? "Loading..." : "")}
-                            onChange={handleManagerChange}
-                            label="Last Name"
-                            disabled
-                            size="small"
-                          />
-                          {errors.lastName && (
-                            <FormHelperText>
-                              {errors.lastName}
-                            </FormHelperText>
-                          )}
-                        </FormControl>
-                        <FormControl fullWidth error={!!errors.suffix}>
-                          <InputLabel htmlFor="suffix">Suffix</InputLabel>
-                          <OutlinedInput
-                            id="suffix"
-                            name="suffix"
-                            placeholder="Enter Suffix"
-                            value={user?.suffix || (isLoading ? "Loading..." : "")}
-                            onChange={handleManagerChange}
-                            label="Suffix"
-                            disabled
-                            size="small"
-                          />
-                          {errors.suffix && (
-                            <FormHelperText>{errors.suffix}</FormHelperText>
-                          )}
-                        </FormControl>
-                      </Stack>
-                    ) : (
-                      <FormControl fullWidth error={Boolean(errors[key])} size="small">
-                        <InputLabel htmlFor={key}>{formatKey(key)}</InputLabel>
+            <Stack spacing={3} sx={{ flex: 1, }}>
+              {["FirstName", "LastName", "OperatorContactNos",].map((key) => (
+                <Stack key={key} spacing={0}>
+                  {key === "LastName" ? (
+                    <Stack direction="row" spacing={2}>
+                      <FormControl fullWidth error={!!errors.lastName}>
+                        <InputLabel sx={{ fontSize: "14px" }} htmlFor="LastName">
+                          Last Name
+                        </InputLabel>
                         <OutlinedInput
-                          id={key}
-                          name={key}
-                          label={formatKey(key)}
-                          placeholder={`Enter ${formatKey(key)}`}
-                          value={user[key as keyof typeof user] || ""}
+                          id="LastName"
+                          name="LastName"
+                          placeholder="Enter Last Name"
+                          value={
+                            user?.LastName ||
+                            initialUserData?.LastName ||
+                            (isLoading ? "Loading..." : "No data")
+                          }
                           onChange={handleManagerChange}
-                          disabled={alwaysDisabledKeys.includes(key) || isDisabled}
+                          label="Last Name"
+                          disabled
+                          size="small"
                         />
-                        {errors[key] && (
-                          <FormHelperText>{errors[key]}</FormHelperText>
+                        {errors.lastName && (
+                          <FormHelperText>{errors.lastName}</FormHelperText>
                         )}
                       </FormControl>
-                    )}
-                  </Stack>
-                )
-              )}
+                      <FormControl fullWidth error={!!errors.suffix}>
+                        <InputLabel htmlFor="suffix">Suffix</InputLabel>
+                        <OutlinedInput
+                          id="suffix"
+                          name="suffix"
+                          placeholder="Enter Suffix"
+                          value={user?.Suffix || (isLoading ? "Loading..." : "No data")}
+                          onChange={handleManagerChange}
+                          label="Suffix"
+                          disabled
+                          size="small"
+                        />
+                        {errors.suffix && (
+                          <FormHelperText>{errors.suffix}</FormHelperText>
+                        )}
+                      </FormControl>
+                    </Stack>
+                  ) : (
+                    <FormControl fullWidth error={Boolean(errors[key])} size="small">
+                      <InputLabel htmlFor={key}>{formatKey(key)}</InputLabel>
+                      <OutlinedInput
+                        id={key}
+                        name={key}
+                        label={formatKey(key)}
+                        placeholder={`Enter ${formatKey(key)}`}
+                        value={user[key as keyof typeof user] || initialUserData?.[key] || "No data"}
+                        onChange={handleManagerChange}
+                        disabled={alwaysDisabledKeys.includes(key) || isDisabled}
+                      />
+                      {errors[key] && (
+                        <FormHelperText>{errors[key]}</FormHelperText>
+                      )}
+                    </FormControl>
+                  )}
+                </Stack>
+              ))}
+              <Box sx={{ flex: 1 }}>
+                <FormControl fullWidth sx={selectStyles} error={!status && !isDisabled}>
+                  <InputLabel id="status-label">Status</InputLabel>
+                  <Select
+                    labelId="status-label"
+                    id="status"
+                    value={status || ""}
+                    onChange={(e) => setStatus(e.target.value)}
+                    label="Status"
+                    disabled={isDisabled}
+                    size="small"
+                    autoFocus
+                  >
+                    <MenuItem value="Active">Active</MenuItem>
+                    <MenuItem value="Inactive">Inactive</MenuItem>
+                    <MenuItem value="New">New</MenuItem>
+                    <MenuItem value="Suspended">Suspended</MenuItem>
+                  </Select>
+                </FormControl>
+              </Box>
+
             </Stack>
 
-            {/* History Fields */}
+            {/* 2nd row */}
             <Stack spacing={3} sx={{ flex: 1 }}>
-              <Typography sx={{ mb: 0 }}>History</Typography>
               {[
-                "CreatedBy",
-                "DateOfRegistration",
+                "OperatorName",
+                "Email",
                 "LastUpdatedBy",
-                "LastUpdatedDate",
               ].map((key) => (
                 <FormControl key={key} fullWidth error={!!errors[key]} size="small">
                   <InputLabel htmlFor={key}>{formatKey(key)}</InputLabel>
@@ -371,7 +372,10 @@ const ReusableUpdateModal: React.FC<ReusableModalPageProps> = ({
                               ? new Date(dateValue as string).toISOString().split("T")[0]
                               : "";
                           })()
-                          : (user?.[key as keyof typeof user] ?? "")
+                          : operators?.[0]?.[key as keyof typeof operators[0]] ??
+                          user?.[key as keyof typeof user] ??
+                          initialUserData?.[key] ??
+                          "No Data"
                     }
                     onChange={handleManagerChange}
                     disabled={
@@ -383,56 +387,24 @@ const ReusableUpdateModal: React.FC<ReusableModalPageProps> = ({
                   )}
                 </FormControl>
               ))}
-
-              {/* View Summary */}
-              <Box
-                sx={{
-                  display: "flex",
-                  justifyContent: "flex-end",
-                  alignItems: "center",
-                }}
-              >
-                <Typography
-                  sx={{
-                    fontSize: 12,
-                    color: "#67ABEB",
-                    cursor: "pointer",
-                    mt: -1,
-                  }}
-                  onClick={() => handleOpenEditLogModal(user.UserId)}
-                >
-                  View Summary
-                </Typography>
-                {/* open edit modal */}
-                {openEditLogModal && selectedUserId != null && (
-                  <EditModalDataPage
-                    userId={selectedUserId}
-                    onClose={handleCloseEditLogModal}
-                  />
-                )}
-              </Box>
             </Stack>
           </Stack>
 
-          {/* Authorized Agents Corporations */}
-          <Stack sx={{ flex: 1, width: "100%" }}>
-            <Typography>Authorized Agents</Typography>
-          </Stack>
-
-          <Stack direction="row" spacing={3}>
-            <Stack spacing={3} sx={{ flex: 1 }}>
-              {["OperatorName", "DateOfOperation"].map((key) => {
+          <Stack direction="row" spacing={3} sx={{ mt: '2.5rem !important' }}>
+            <Stack spacing={3} sx={{ flex: 1, }}>
+              {["CreatedBy", "DateOfOperation"].map((key) => {
                 const value =
                   isLoading
                     ? ""
                     : key === "DateOfOperation"
                       ? (() => {
-                        const date = operators?.[0]?.DateOfOperation;
+                        const date = operators?.[0]?.DateOfOperation || initialUserData?.DateOfOperation;
                         return date && !isNaN(new Date(date).getTime())
                           ? new Date(date).toISOString().split("T")[0]
                           : "";
                       })()
-                      : operators?.[0]?.[key as keyof typeof operators[0]] ?? "";
+                      : user?.[key as keyof typeof user] ??
+                      initialUserData?.[key] ?? "No data"
 
                 return (
                   <FormControl key={key} fullWidth error={!!errors[key]}>
@@ -456,33 +428,74 @@ const ReusableUpdateModal: React.FC<ReusableModalPageProps> = ({
               })}
 
             </Stack>
+
             <Stack spacing={3} sx={{ flex: 1 }}>
-              <FormControl fullWidth>
-                <TextField
-                  id="AreaOfOperations"
-                  name="areaofoperations"
-                  onChange={handleManagerChange}
-                  label="Area of Operations"
-                  multiline
-                  minRows={4}
-                  value={
-                    isLoading
-                      ? ""
-                      : operators && operators.length > 0
-                        ? operators
-                          .flatMap((operator) => operator?.Cities || [])
-                          .map((city) => city.CityName)
-                          .join(", ")
-                        : ""
-                  }
-                  placeholder={isLoading ? "Loading..." : "No cities available"}
-                  variant="outlined"
-                  disabled
-                  size="small"
-                />
-              </FormControl>
+              {[
+                "LastUpdatedBy",
+                "LastUpdatedDate",
+              ].map((key) => (
+                <FormControl key={key} fullWidth error={!!errors[key]} size="small">
+                  <InputLabel htmlFor={key}>{formatKey(key)}</InputLabel>
+                  <OutlinedInput
+                    id={key}
+                    name={key}
+                    label={formatKey(key)}
+                    placeholder={`Enter ${formatKey(key)}`}
+                    value={
+                      isLoading
+                        ? ""
+                        : key === "DateOfRegistration" || key === "LastUpdatedDate"
+                          ? (() => {
+                            const dateValue = user?.[key as keyof typeof user];
+                            return dateValue && !isNaN(Date.parse(dateValue as string))
+                              ? new Date(dateValue as string).toISOString().split("T")[0]
+                              : "";
+                          })()
+                          : operators?.[0]?.[key as keyof typeof operators[0]] ??
+                          user?.[key as keyof typeof user] ??
+                          initialUserData?.[key] ??
+                          "No data"
+                    }
+
+                    onChange={handleManagerChange}
+                    disabled={
+                      alwaysDisabledKeys.includes(key) || isDisabled || isLoading
+                    }
+                  />
+                  {errors[key] && (
+                    <FormHelperText>{errors[key]}</FormHelperText>
+                  )}
+                </FormControl>
+              ))}
+
             </Stack>
           </Stack>
+
+          {/* View Summary */}
+          <Box
+            sx={{
+              display: "flex",
+              justifyContent: "flex-end",
+              alignItems: "center",
+            }}
+          >
+            <Typography
+              sx={{
+                fontSize: 13,
+                cursor: "pointer",
+              }}
+              onClick={() => handleOpenEditLogModal(user.UserId)}
+            >
+              View Summary
+            </Typography>
+            {/* open edit modal */}
+            {openEditLogModal && selectedUserId != null && (
+              <EditModalDataPage
+                userId={selectedUserId}
+                onClose={handleCloseEditLogModal}
+              />
+            )}
+          </Box>
 
           {/* Remarks Field */}
           {!isDisabled && (
@@ -497,7 +510,7 @@ const ReusableUpdateModal: React.FC<ReusableModalPageProps> = ({
                 onChange={handleManagerChange}
                 size="small"
                 multiline
-                minRows={3}
+                minRows={2}
               />
               {errors.remarks && (
                 <FormHelperText>{errors.remarks}</FormHelperText>

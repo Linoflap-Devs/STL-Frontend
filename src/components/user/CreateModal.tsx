@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
-import ReusableButton from '../buttons/ReusableSubmitButton';
+import ReusableButton from '../ui/buttons/ReusableSubmitButton';
 import ReusableCreateModalPage from './ReusableCreateModal';
-import useUserRoleStore from '../../../../store/useUserStore';
+import useUserRoleStore from '../../../store/useUserStore';
 import { getRoleName } from '~/utils/dashboarddata';
-import { ModalPageProps } from '../../../types/interfaces';
+import { ModalPageProps } from '../../types/interfaces';
 
 export const isManager = (roleId: number) => roleId === 2;
 export const isExecutive = (roleId: number) => roleId === 3;
@@ -14,6 +14,11 @@ const CreateModalPage: React.FC<ModalPageProps> = ({
   fields = [],
   endpoint = '',
   operatorMap,
+  provinces = [],
+  regions = [],
+  cities = [],
+  setSelectedRegion,
+  setSelectedProvince,
 }) => {
   const [loading, setLoading] = useState(false);
   const isOpen = open ?? true;

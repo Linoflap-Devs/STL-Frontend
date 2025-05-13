@@ -1,14 +1,18 @@
 // reusable create form
+
 import React, { useState } from 'react';
 import { Dialog, DialogContent, DialogTitle, IconButton, Stack, Typography } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
-import { FieldOption, ReusableModalPageProps } from '~/types/interfaces';
+import { AxiosError } from 'axios';
+import { defaultValues, ReusableModalPageProps } from '~/types/interfaces';
+import axiosInstance from '~/utils/axiosInstance';
 import { generateValidPassword, userSchema } from '~/utils/validation';
-import ConfirmUserActionModalPage from './ConfirmUserActionModal';
+import { useFormStore } from '../../../store/useFormStore';
+import useUserRoleStore from '../../../store/useUserStore';
 import Visibility from '@mui/icons-material/Visibility';
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
 import Swal from 'sweetalert2';
-import Select, { MultiValue } from 'react-select';
+import ConfirmUserActionModalPage from '../ui/modals/ConfirmUserActionModal';
 
 const ReusableCreateModalPage: React.FC<ReusableModalPageProps> = ({
   title,
@@ -20,7 +24,7 @@ const ReusableCreateModalPage: React.FC<ReusableModalPageProps> = ({
   operatorMap,
 }) => {
   const [errors, setErrors] = useState<Record<string, string[]>>({});
-  const [formData, setFormData] = useState<{ [key: string]: string | number | string[] }>({});
+  const { formData, setFormData, } = useFormStore();
   const [showPassword, setShowPassword] = useState(false);
   const [isVerifyModalOpen, setIsVerifyModalOpen] = useState(false);
 
@@ -56,18 +60,6 @@ const ReusableCreateModalPage: React.FC<ReusableModalPageProps> = ({
       });
     }
   };
-
-  const handleMultiSelect = (
-    fieldName: string,
-    selectedOptions: MultiValue<FieldOption>
-  ) => {
-    const values = selectedOptions.map((option) => option.value); // No error here
-    setFormData((prevData) => ({
-      ...prevData,
-      [fieldName]: values,
-    }));
-  };
-
 
   const handleClose = () => {
     setIsVerifyModalOpen(false); // Close the verification modal
@@ -154,26 +146,51 @@ const ReusableCreateModalPage: React.FC<ReusableModalPageProps> = ({
 
       <DialogContent>
         <Stack spacing={2} sx={{ mt: 3 }}>
-          {/* 1 row with 2 columns for operators since need*/}
-          {
-            fields.some((field) => field.name === 'name') &&
-            fields.some((field) => field.name === 'contactNumber') && (
-              <Stack direction="row" spacing={2}>
-                {/* Column 1 */}
-                <Stack spacing={2} flex={1}>
+          <div className="flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-4">
+            {/* Column 1 */}
+            <div className="flex-1 space-y-4">
+              {/* Render firstName field separately */}
+              {fields
+                .filter((field) => field.name === 'firstName')
+                .map((field, index) => (
+                  <div key={index} className="w-full">
+                    <input
+                      id={field.name}
+                      name={field.name}
+                      type={field.type}
+                      value={formData[field.name] || ''}
+                      onChange={handleChange}
+                      placeholder={field.placeholder}
+                      className={`w-full border rounded px-3 py-2 text-sm ${errors[field.name]?.length ? 'border-[#CE1126]' : 'border-[#0038A8]'}`}
+                      aria-label={field.label} // for accessibility
+                    />
+                    {/* Display error message if exists */}
+                    {errors[field.name]?.[0] && (
+                      <p className="text-xs text-[#CE1126] mt-1">{errors[field.name][0]}</p>
+                    )}
+                  </div>
+                ))}
+
+              {/* lastName and suffix side-by-side */}
+              {fields.some((field) => field.name === 'lastName' || field.name === 'suffix') && (
+                <div className="flex space-x-4">
                   {fields
-                    .filter((field) => field.name === 'name')
+                    .filter((field) => field.name === 'lastName' || field.name === 'suffix')
                     .map((field, index) => (
-                      <div key={index} className="mb-4 w-full">
+                      <div
+                        key={index}
+                        className={field.name === 'lastName' ? 'flex-[4]' : 'flex-[2]'}
+                      >
                         {field.type === 'select' ? (
                           <select
                             id={field.name}
                             name={field.name}
-                            value={formData[field.name] || ""} // Default to 0 if undefined
+                            value={formData[field.name] || 0} // Default to 0 if undefined
                             onChange={handleSelectChange}
-                            className={`w-full border rounded px-3 py-2 text-xs ${errors[field.name]?.length ? 'border-red-500' : 'border-[#0038A8]'
+                            className={`w-full border rounded px-3 py-2 text-sm ${errors[field.name]?.length ? 'border-red-500' : 'border-[#0038A8]'
                               }`}
                             aria-label={field.label} // for accessibility
+
                           >
                             <option value={0}>{field.label}</option>
                             {field.options?.map((option) => (
@@ -195,126 +212,6 @@ const ReusableCreateModalPage: React.FC<ReusableModalPageProps> = ({
                             aria-label={field.label} // for accessibility
                           />
                         )}
-
-                        {errors[field.name]?.[0] && (
-                          <p className="text-sm text-red-600 mt-1">{errors[field.name][0]}</p>
-                        )}
-                      </div>
-
-                    ))}
-                </Stack>
-
-                {/* Column 2 */}
-                <div className="flex flex-col space-y-4 flex-1">
-                  {fields
-                    .filter((field) => field.name === 'contactNumber')
-                    .map((field, index) => (
-                      <div key={index} className="w-full">
-                        <input
-                          id={field.name}
-                          name={field.name}
-                          type={field.type}
-                          value={formData[field.name] || ''}
-                          onChange={handleChange}
-                          placeholder={field.placeholder}
-                          className={`w-full border rounded px-3 py-2 text-sm ${errors[field.name]?.length ? 'border-red-500' : 'border-[#0038A8]'
-                            }`}
-                          aria-label={field.label} // for accessibility
-                        />
-                        {errors[field.name]?.[0] && (
-                          <p className="text-sm text-red-600 mt-1">{errors[field.name][0]}</p>
-                        )}
-                      </div>
-                    ))}
-                </div>
-              </Stack>
-            )
-          }
-
-          {/* Full address - 1 full input*/}
-          {fields
-            .filter((field) => field.name === 'address')
-            .map((field, index) => (
-              <div key={index} className="w-full">
-                <input
-                  id={field.name}
-                  name={field.name}
-                  type={field.type}
-                  value={formData[field.name] || ''}
-                  onChange={handleChange}
-                  placeholder={field.placeholder}
-                  className={`w-full border rounded px-3 py-2 text-sm ${errors[field.name]?.length ? 'border-red-500' : 'border-[#0038A8]'
-                    }`}
-                  aria-label={field.label} // for accessibility
-                />
-                {errors[field.name]?.[0] && (
-                  <p className="text-sm text-red-600 mt-1">{errors[field.name][0]}</p>
-                )}
-              </div>
-            ))}
-
-          <div className="flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-4">
-            {/* start Column 1 again */}
-            <div className="flex-1 space-y-4">
-              {/* firstName field */}
-              {fields
-                .filter((field) => field.name === 'firstName')
-                .map((field, index) => (
-                  <div key={index} className="w-full">
-                    <input
-                      id={field.name}
-                      name={field.name}
-                      type={field.type}
-                      value={formData[field.name] || ''}
-                      onChange={handleChange}
-                      placeholder={field.placeholder}
-                      className={`w-full border rounded px-3 py-2 text-sm ${errors[field.name]?.length ? 'border-[#CE1126]' : 'border-[#0038A8]'
-                        }`}
-                      aria-label={field.label}
-                    />
-                    {errors[field.name]?.[0] && (
-                      <p className="text-xs text-[#CE1126] mt-1">{errors[field.name][0]}</p>
-                    )}
-                  </div>
-                ))}
-
-              {/* lastName and suffix since they have to be magkatabi */}
-              {fields.some((field) => field.name === 'lastName' || field.name === 'suffix') && (
-                <div className="flex space-x-4">
-                  {fields
-                    .filter((field) => field.name === 'lastName' || field.name === 'suffix')
-                    .map((field, index) => (
-                      <div key={index} className={field.name === 'lastName' ? 'flex-[4]' : 'flex-[2]'}>
-                        {field.type === 'select' ? (
-                          <select
-                            id={field.name}
-                            name={field.name}
-                            value={formData[field.name] || 0}
-                            onChange={handleSelectChange}
-                            className={`w-full border rounded px-3 py-2 text-sm ${errors[field.name]?.length ? 'border-red-500' : 'border-[#0038A8]'
-                              }`}
-                            aria-label={field.label}
-                          >
-                            <option value={0}>{field.label}</option>
-                            {field.options?.map((option) => (
-                              <option key={option.value} value={Number(option.value)}>
-                                {option.label}
-                              </option>
-                            ))}
-                          </select>
-                        ) : (
-                          <input
-                            id={field.name}
-                            name={field.name}
-                            type={field.type}
-                            value={formData[field.name] || ''}
-                            onChange={handleChange}
-                            placeholder={field.placeholder}
-                            className={`w-full border rounded px-3 py-2 text-sm ${errors[field.name]?.length ? 'border-red-500' : 'border-[#0038A8]'
-                              }`}
-                            aria-label={field.label}
-                          />
-                        )}
                         {errors[field.name]?.[0] && (
                           <p className="text-xs text-red-600 mt-1">{errors[field.name][0]}</p>
                         )}
@@ -323,12 +220,12 @@ const ReusableCreateModalPage: React.FC<ReusableModalPageProps> = ({
                 </div>
               )}
 
-              {/* all other fields EXCLUDED others already explicitly displayed */}
+              {/* Other fields that are not explicitly displayed */}
               {fields
                 .filter(
                   (field) =>
                     field.gridSpan !== 2 &&
-                    !['firstName', 'lastName', 'suffix', 'name', 'address', 'contactNumber',].includes(field.name)
+                    !['firstName', 'lastName', 'suffix', 'name', 'address', 'contactNumber'].includes(field.name)
                 )
                 .map((field, index) => (
                   <div key={index} className="w-full">
@@ -336,49 +233,19 @@ const ReusableCreateModalPage: React.FC<ReusableModalPageProps> = ({
                       <select
                         id={field.name}
                         name={field.name}
-                        value={formData[field.name] || 0}
+                        value={formData[field.name] || 0} // Default to 0 if undefined
                         onChange={handleSelectChange}
                         className={`w-full border rounded px-3 py-2 text-sm ${errors[field.name]?.length ? 'border-red-500' : 'border-[#0038A8]'
                           }`}
-                        aria-label={field.label}
+                        aria-label={field.label} // for accessibility
                       >
                         <option value={0}>{field.label}</option>
                         {field.options?.map((option) => (
-                          <option key={option.value} value={Number(option.value)}>
+                          <option key={option.value} value={Number(option.value)}> {/* Ensure option.value is a number */}
                             {option.label}
                           </option>
                         ))}
                       </select>
-                    ) : field.type === 'multiselect' ? (
-                      <div className="w-full">
-
-                        {/* // column 1 multi select */}
-                        <Select
-                          id={field.name}
-                          name={field.name}
-                          options={field.options}
-                          isMulti
-                          value={
-                            field.options?.filter((option) =>
-                              Array.isArray(formData[field.name]) &&
-                              (formData[field.name] as string[]).includes(option.value)
-                            ) || []
-                          }
-                          onChange={(selectedOptions) =>
-                            handleMultiSelect(field.name, selectedOptions)
-                          }
-                          className="react-select-container"
-                          classNamePrefix="react-select"
-                          placeholder={field.placeholder}
-                          menuPortalTarget={document.body}  // Renders menu outside the modal
-                          styles={{
-                            menuPortal: (base) => ({
-                              ...base,
-                              zIndex: 9999, // Ensure the dropdown is above the modal
-                            }),
-                          }}
-                        />
-                      </div>
                     ) : (
                       <input
                         id={field.name}
@@ -389,7 +256,7 @@ const ReusableCreateModalPage: React.FC<ReusableModalPageProps> = ({
                         placeholder={field.placeholder}
                         className={`w-full border rounded px-3 py-2 text-sm ${errors[field.name]?.length ? 'border-red-500' : 'border-[#0038A8]'
                           }`}
-                        aria-label={field.label}
+                        aria-label={field.label} // for accessibility
                       />
                     )}
                     {errors[field.name]?.[0] && (
@@ -399,8 +266,9 @@ const ReusableCreateModalPage: React.FC<ReusableModalPageProps> = ({
                 ))}
             </div>
 
-            {/* Column 2 for all */}
+            {/* Column 2 */}
             <div className="flex-1 space-y-4">
+              {/* Fields that span 2 columns */}
               {fields
                 .filter(
                   (field) =>
@@ -410,18 +278,17 @@ const ReusableCreateModalPage: React.FC<ReusableModalPageProps> = ({
                 .map((field, index) => (
                   <div key={index} className="w-full">
                     {field.type === 'select' ? (
+                      // If the select value is expected to be a number
                       <select
                         id={field.name}
                         name={field.name}
-                        value={formData[field.name] || '0'}
+                        value={formData[field.name] || '0'} // Ensure it's a string for consistency
                         onChange={handleSelectChange}
-                        className={`w-full border rounded px-3 py-2 text-sm ${errors[field.name]?.length || formData[field.name] === '0'
-                          ? 'border-red-500'
-                          : 'border-[#0038A8]'
+                        className={`w-full border rounded px-3 py-2 text-sm ${errors[field.name]?.length || formData[field.name] === '0' ? 'border-red-500' : 'border-[#0038A8]'
                           }`}
                         aria-label={field.label}
                       >
-                        <option value="0" disabled style={{ color: '#9CA3AF' }}>
+                        <option value="0" disabled style={{ color: '#9CA3AF' }}> {/* Tailwind's text-gray-400 */}
                           {field.label}
                         </option>
                         {field.options?.map((option) => (
@@ -430,37 +297,7 @@ const ReusableCreateModalPage: React.FC<ReusableModalPageProps> = ({
                           </option>
                         ))}
                       </select>
-                    ) : field.type === 'multiselect' ? (
-                      <div className="w-full">
 
-                        {/* column 2 multi select */}
-                        <Select
-                          id={field.name}
-                          name={field.name}
-                          options={field.options}
-                          isMulti
-                          value={
-                            field.options?.filter((option) =>
-                              Array.isArray(formData[field.name]) &&
-                              (formData[field.name] as string[]).includes(option.value)
-                            ) || []
-                          }
-                          onChange={(selectedOptions) =>
-                            handleMultiSelect(field.name, selectedOptions)
-                          }
-                          className="react-select-container"
-                          classNamePrefix="react-select"
-                          placeholder={field.placeholder}
-                          menuPortalTarget={document.body}  // Renders menu outside the modal
-                          styles={{
-                            menuPortal: (base) => ({
-                              ...base,
-                              zIndex: 9999, // Ensure the dropdown is above the modal
-                            }),
-                          }}
-                        />
-
-                      </div>
                     ) : (
                       <input
                         id={field.name}
@@ -471,7 +308,7 @@ const ReusableCreateModalPage: React.FC<ReusableModalPageProps> = ({
                         placeholder={field.placeholder}
                         className={`w-full border rounded px-3 py-2 text-sm ${errors[field.name]?.length ? 'border-red-500' : 'border-[#0038A8]'
                           }`}
-                        aria-label={field.label}
+                        aria-label={field.label} // for accessibility
                       />
                     )}
                     {errors[field.name]?.[0] && (
@@ -480,7 +317,7 @@ const ReusableCreateModalPage: React.FC<ReusableModalPageProps> = ({
                   </div>
                 ))}
 
-              {/* Password Section since had to be separated cause of its 2 columns */}
+              {/* Password with Generate Password button */}
               {fields.some((field) => field.name === 'password') && (
                 <div className="flex items-center space-x-4">
                   <div className="flex-1">
@@ -495,8 +332,7 @@ const ReusableCreateModalPage: React.FC<ReusableModalPageProps> = ({
                             value={formData[field.name] || ''}
                             onChange={handleChange}
                             placeholder={field.placeholder}
-                            className={`w-full border rounded px-3 py-2 text-sm pr-10 ${errors[field.name]?.length ? 'border-red-500' : 'border-[#0038A8]'
-                              }`}
+                            className={`w-full border rounded px-3 py-2 text-sm pr-10 ${errors[field.name]?.length ? 'border-red-500' : 'border-[#0038A8]'}`}
                             aria-label={field.label}
                           />
                           <button
@@ -508,14 +344,13 @@ const ReusableCreateModalPage: React.FC<ReusableModalPageProps> = ({
                             {showPassword ? <VisibilityOff fontSize="small" /> : <Visibility fontSize="small" />}
                           </button>
                           {errors[field.name]?.[0] && (
-                            <p className="text-xs text-red-600 mt-1 absolute left-0 w-full">
-                              {errors[field.name][0]}
-                            </p>
+                            <p className="text-xs text-red-600 mt-1 absolute left-0 w-full">{errors[field.name][0]}</p>
                           )}
                         </div>
                       ))}
                   </div>
 
+                  {/* Generate Password Button */}
                   <button
                     type="button"
                     onClick={() => {
@@ -530,7 +365,6 @@ const ReusableCreateModalPage: React.FC<ReusableModalPageProps> = ({
               )}
             </div>
           </div>
-
           <div className="mt-4">{children({ handleSubmit })}</div>
         </Stack>
 
@@ -543,7 +377,7 @@ const ReusableCreateModalPage: React.FC<ReusableModalPageProps> = ({
             setErrors={setErrors}
             open={isVerifyModalOpen}
             endpoint={endpoint ?? { create: '', update: '' }}
-            onClose={handleClose}
+            onClose={handleClose} // Pass the same onClose to the confirmation modal
           />
         )}
       </DialogContent>
@@ -552,4 +386,3 @@ const ReusableCreateModalPage: React.FC<ReusableModalPageProps> = ({
 };
 
 export default ReusableCreateModalPage;
-
