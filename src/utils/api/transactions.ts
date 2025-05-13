@@ -46,6 +46,24 @@ export const fetchTransactions = async (p0?: { date: string; }) => {
     }
 };
 
-export default { fetchHistoricalSummary, fetchHistoricalRegion, fetchTransactions };
+export const fetchDrawSummary = async(provinceId: number, gameCategoryId: number, month: number) => {
+    try {
+        const url = validateRelativeUrl("/transactions/getDrawSummary");
+        const response = await axiosInstance.get(url, {
+            params: {
+                provinceId: provinceId,
+                gameCategoryId: gameCategoryId,
+                month: month
+            }
+        });
+
+        return response.data;
+    } catch (error) {
+        console.error("Error fetching draw summary:", (error as Error).message);
+        return { success: false, message: (error as Error).message, data: [] };
+    }
+}
+
+export default { fetchHistoricalSummary, fetchHistoricalRegion, fetchTransactions, fetchDrawSummary };
 
 

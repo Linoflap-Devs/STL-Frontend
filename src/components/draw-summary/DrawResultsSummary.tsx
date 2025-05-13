@@ -1,7 +1,9 @@
 import React from "react";
 
-const DrawResultsSummaryPage = () => {
+const DrawResultsSummaryPage = (data: { firstDraw: string[], secondDraw: string[], thirdDraw: string[] }) => {
     const hotNumbers = [40];
+
+    console.log(data)
 
     return (
         <React.Fragment>
@@ -11,7 +13,7 @@ const DrawResultsSummaryPage = () => {
                         First Draw
                     </p>
                     <div className="flex gap-2">
-                        {[8, 7].map((number, index) => (
+                        {data.firstDraw.map((number, index) => (
                             <div
                                 key={index}
                                 className="w-fit bg-transparent border border-[#0038A8] rounded-sm px-10 py-8 flex items-center justify-center"
@@ -27,7 +29,7 @@ const DrawResultsSummaryPage = () => {
                         Second Draw
                     </p>
                     <div className="flex gap-2">
-                        {[4, 0].map((number, index) => (
+                        {data.secondDraw.map((number, index) => (
                             <div
                                 key={index}
                                 className="w-fit bg-transparent border border-[#0038A8] rounded-sm px-10 py-8 flex items-center justify-center"
@@ -43,7 +45,7 @@ const DrawResultsSummaryPage = () => {
                         Third Draw
                     </p>
                     <div className="flex gap-2">
-                        {[6, 6].map((number, index) => (
+                        {data.thirdDraw.map((number, index) => (
                             <div
                                 key={index}
                                 className="w-fit bg-transparent border border-[#0038A8] rounded-sm px-10 py-8 flex items-center justify-center"
