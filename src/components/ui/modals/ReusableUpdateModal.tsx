@@ -29,7 +29,7 @@ import { useUpdateModalState } from "../../../../store/useUpdateModalStore";
 import { useOperatorsData } from "../../../../store/useOperatorStore";
 import EditModalDataPage from "./EditLogModal";
 import Swal from "sweetalert2";
-import { updateSchema } from "~/utils/validation";
+import { updateSchema } from "~/schemas/userSchema";
 
 const ReusableUpdateModal: React.FC<ReusableModalPageProps> = ({
   title,

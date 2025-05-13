@@ -1,11 +1,13 @@
-import React, { useEffect } from 'react';
-import CreateModalPage from '~/components/user/UserCreateModalData';
-import useUserRoleStore from '../../../store/useUserStore';
-import { Field, UserFieldFormPageProps } from '~/types/interfaces';
-import UpdateModalPage from '../ui/modals/UpdateModalData';
-import { useModalStore } from '../../../store/useModalStore';
+import { Field } from '~/types/interfaces';
 
-const roleConfigs: Record<string, { userTypeId: number; endpoint: { create: string; update: string }; fields: Field[] }> = {
+export const userRoleFormFields: Record<
+  string,
+  {
+    userTypeId: number;
+    endpoint: { create: string; update: string };
+    fields: Field[];
+  }
+> = {
   manager: {
     userTypeId: 2,
     endpoint: {
@@ -36,6 +38,7 @@ const roleConfigs: Record<string, { userTypeId: number; endpoint: { create: stri
       { name: 'password', label: 'Password', type: 'password', placeholder: 'Password', value: '', gridSpan: 2 },
     ],
   },
+
   executive: {
     userTypeId: 3,
     endpoint: {
@@ -66,71 +69,3 @@ const roleConfigs: Record<string, { userTypeId: number; endpoint: { create: stri
     ],
   },
 };
-
-const UserFieldFormPage: React.FC<UserFieldFormPageProps> = ({ operatorMap }) => {
-  const { setFields, fields, setRoleId } = useUserRoleStore();
-  const { modalOpen, modalType, selectedData, closeModal } = useModalStore();
-
-  const pathname = typeof window !== 'undefined' ? window.location.pathname : '';
-  const pageType =
-    pathname.includes('manager') ? 'manager' :
-      pathname.includes('executive') ? 'executive' :
-        null;
-
-  if (!pageType) return null;
-
-  const roleConfig = roleConfigs[pageType];
-
-  useEffect(() => {
-    setRoleId(roleConfig.userTypeId);
-    const operatorOptions = Object.values(operatorMap).map(operator => ({
-      label: operator.OperatorName,
-      value: operator.OperatorId,
-    }));
-
-    // Update the operatorId field to be a select field
-    const updatedFields = roleConfig.fields.map(field =>
-      field.name === 'operatorId'
-        ? {
-          ...field,
-          type: 'select',
-          options: operatorOptions,
-          value: String(field.value ?? ''),
-          placeholder: field.placeholder || '',
-        }
-        : {
-          ...field,
-          value: String(field.value ?? ''),
-          placeholder: field.placeholder || '',
-        }
-    );
-
-    setFields(updatedFields);
-  }, [pageType, setFields, setRoleId, operatorMap, roleConfig]);
-
-  return (
-    <div className="p-4">
-      {modalType === "create" && (
-        <CreateModalPage
-          open={modalOpen}
-          onClose={closeModal}
-          fields={fields}
-          endpoint={roleConfig.endpoint}
-          operatorMap={operatorMap}
-        />
-      )}
-      {modalType === "view" && (
-        <UpdateModalPage
-          open={modalOpen}
-          onClose={closeModal}
-          fields={fields}
-          endpoint={roleConfig.endpoint}
-          initialUserData={selectedData}
-          operatorMap={operatorMap}
-        />
-      )}
-    </div>
-  );
-};
-
-export default UserFieldFormPage;

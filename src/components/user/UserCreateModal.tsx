@@ -2,14 +2,14 @@ import React, { useState } from 'react';
 import { Dialog, DialogContent, DialogTitle, IconButton, Stack, TextField, Typography } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
 import { ReusableModalPageProps } from '~/types/interfaces';
-import { generateValidPassword, userSchema } from '~/utils/validation';
+import { generateValidPassword, userSchema } from '~/schemas/userSchema';
 import { useFormStore } from '../../../store/useFormStore';
 import Visibility from '@mui/icons-material/Visibility';
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
 import Swal from 'sweetalert2';
 import ConfirmUserActionModalPage from '../ui/modals/ConfirmUserActionModal';
 
-const ReusableCreateModalPage: React.FC<ReusableModalPageProps> = ({
+const UserCreateModalPage: React.FC<ReusableModalPageProps> = ({
   title,
   isOpen,
   onClose,
@@ -402,4 +402,4 @@ const ReusableCreateModalPage: React.FC<ReusableModalPageProps> = ({
   );
 };
 
-export default ReusableCreateModalPage;
+export default UserCreateModalPage;

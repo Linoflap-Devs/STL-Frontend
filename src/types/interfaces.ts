@@ -1,9 +1,8 @@
 import { z } from "zod";
 import { User, Operator } from "./types";
-import { userSchema } from "~/utils/validation";
+import { userSchema } from "~/schemas/userSchema";
 import { MultiValue } from "react-select";
 
-// Generic API response interface
 export interface ApiResponse<T> {
   success: boolean;
   message?: string;
@@ -31,12 +30,10 @@ export type GetLocationResponse = ApiResponse<{
   }[];
 }>;
 
-
-// Table column interface
 export interface Column<T> {
   key: keyof T | string;
   label: string;
-  render?: (row: T) => React.ReactNode; // Add render function to the Column interface
+  render?: (row: T) => React.ReactNode; 
   sortable?: boolean;
   filterable?: boolean;
   filterKey?: keyof T | string;
@@ -45,14 +42,13 @@ export interface Column<T> {
   onFilterChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
 }
 
-// Sortable table header cell
 export interface SortableTableCellProps {
   label: string;
   sortKey: string;
   isFilterVisible?: boolean;
 }
 
-// Generic card props
+
 export interface CardProps<T = React.ReactNode> {
   label: string;
   textlabel?: string;
@@ -61,14 +57,13 @@ export interface CardProps<T = React.ReactNode> {
   style?: React.CSSProperties;
 }
 
-// Cards page props
 export interface CardsPageProps<T> {
   dashboardData: T[];
   roleLabel?: string;
   textlabel?: string;
 }
 
-// Chart types
+
 export interface ChartDataItem<T = unknown> {
   label: string;
   data: number[];
@@ -105,7 +100,6 @@ export interface ChartsDataPageProps<T extends { region: string }> {
   operatorMap?: Record<number, Operator>;
 }
 
-// Generic table props
 export interface DetailedTableProps<T> {
   data: T[];
   columns: Column<T>[];
@@ -125,7 +119,6 @@ export interface ChartBarItem {
   data: number[];
 }
 
-// Region user object
 export interface RegionUser {
   OperatorRegion?: {
     RegionFull: string;
@@ -136,20 +129,19 @@ export interface RegionUser {
   Region?: string;
 }
 
-// Form field definitions
 export interface FieldOption {
   value: string;
   label: string;
-  regionId?: number; // <- Add this ,ine
-  provinceId?: number; // <- Add this line
-  cityId?: number; // <- Add this line
-  selected?: boolean; // Indicates if the option is selected
-  RegionName?: string; // Optional region name for display
-  RegionId?: number; // Optional region ID for filtering
-  ProvinceName?: string; // Optional province name for display
-  ProvinceId?: number; // Optional province ID for filtering  
-  CityName?: string; // Optional city name for display
-  CityId?: number; // Optional city ID for filtering
+  regionId?: number; 
+  provinceId?: number; 
+  cityId?: number;
+  selected?: boolean;
+  RegionName?: string; 
+  RegionId?: number; 
+  ProvinceName?: string;
+  ProvinceId?: number;  
+  CityName?: string;
+  CityId?: number; 
 }
 
 export interface Field {
@@ -157,13 +149,12 @@ export interface Field {
   label: string;
   type: string;
   placeholder?: string;
-  options?: FieldOption[]; // Used only for 'select' and 'multiselect' types
-  value: string | number | boolean | string[]; // Add boolean for checkbox
-  gridSpan?: 1 | 2 | 'full'; // Grid span for layout
-  required?: boolean; // Indicates if the field is required
+  options?: FieldOption[]; 
+  value: string | number | boolean | string[]; 
+  gridSpan?: 1 | 2 | 'full'; 
+  required?: boolean; 
 }
 
-// Reusable modal
 export interface ReusableModalPageProps {
   title: string;
   endpoint?: {
@@ -182,7 +173,7 @@ export interface ReusableModalPageProps {
   additionalPayload?: Record<string, any>;
   initialUserData?: any;
   operatorMap?: Record<number, Operator>;
-  layout?: 'single' | 'double'; // Add layout property
+  layout?: 'single' | 'double'; 
 
   provinces?: any[];
   regions?: any[];
@@ -204,19 +195,18 @@ export interface ModalPageProps {
   onFieldChange?: (name: string, value: string) => void;
   initialUserData?: any;
   operatorMap?: { [key: number]: Operator };
-
-  // operators
+  
   provinces?: FieldOption[];
-  regions?: FieldOption[];  // Added regions
-  cities?: FieldOption[];   // Added cities
-  selectedRegion?: string;  // Selected region for filtering provinces/cities
-  selectedProvince?: string; // Selected province for filtering cities
-  onRegionSelect?: (regionId: string) => void;  // Handler for region selection
-  onProvinceSelect?: (provinceId: string) => void; // Handler for province selection
-  handleMultiSelect?: (fieldName: string, selectedOptions: MultiValue<FieldOption>) => void; // Added this line
+  regions?: FieldOption[];
+  cities?: FieldOption[];
+  selectedRegion?: string;
+  selectedProvince?: string;
+  onRegionSelect?: (regionId: string) => void;
+  onProvinceSelect?: (provinceId: string) => void;
+  handleMultiSelect?: (fieldName: string, selectedOptions: MultiValue<FieldOption>) => void;
 
-  setSelectedRegion?: (regionId: string) => void; // Added this line
-  setSelectedProvince?: (provinceId: string) => void; // Added this line
+  setSelectedRegion?: (regionId: string) => void;
+  setSelectedProvince?: (provinceId: string) => void; 
 }
 
 export interface UserFieldFormPageProps {
