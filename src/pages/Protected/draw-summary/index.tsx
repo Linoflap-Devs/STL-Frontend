@@ -37,6 +37,8 @@ const DrawSelectedPage = () => {
 
   const [data, setData] = useState<any>({});
 
+  const todayDate = new Date().getDate()
+
   // fetch data
   const fetchData = async () => {
     const dataFetch = await fetchDrawSummary(selectedProvince, selectedGameCategory, selectedMonth)
@@ -111,6 +113,43 @@ const DrawSelectedPage = () => {
       fetchData()
     }
   }, [selectedRegion, selectedProvince, selectedGameCategory, selectedMonth])
+
+  const getTodayResults = (drawOrder: number) => {
+    try {
+      console.log(data.ResultSummary)
+      if(drawOrder == 1){
+        const filtered = data.ResultSummary[todayDate-1][todayDate].FirstDraw
+        console.log(`accessing data.ResultSummary[${todayDate-1}][${todayDate}].FirstDraw`)
+        const numbers = [filtered.NumberOne || "-", filtered.NumberTwo || "-"]
+        if(selectedGameCategory > 2) numbers.push(filtered.NumberThree || "-") 
+        if(selectedGameCategory > 3) numbers.push(filtered.NumberFour || "-")
+        
+        return numbers
+      }
+  
+      if(drawOrder == 2){
+        const filtered = data.ResultSummary[todayDate-1][todayDate].SecondDraw
+        const numbers = [filtered.NumberOne || "-", filtered.NumberTwo || "-"]
+        if(selectedGameCategory > 2) numbers.push(filtered.NumberThree || "-")
+        if(selectedGameCategory > 3) numbers.push(filtered.NumberFour || "-")
+        
+        return numbers
+      }
+  
+      if(drawOrder == 3){
+        const filtered = data.ResultSummary[todayDate-1][todayDate].SecondDraw
+        const numbers = [filtered.NumberOne || "-", filtered.NumberTwo || "-"]
+        if(selectedGameCategory > 2) numbers.push(filtered.NumberThree || "-")
+        if(selectedGameCategory > 3) numbers.push(filtered.NumberFour || "-")
+        
+        return numbers
+      }
+    }
+    catch (err: unknown){
+      return []
+    }
+
+  }
 
   return (
     <div className="flex flex-col gap-4">
@@ -239,7 +278,15 @@ const DrawSelectedPage = () => {
               <p className="text-md font-bold mb-1">
                 Draw Results
               </p>
-              <DrawResultsSummaryPage />
+              {
+                data && (
+                  <DrawResultsSummaryPage 
+                    firstDraw={getTodayResults(1) || []} 
+                    secondDraw={getTodayResults(2) || []} 
+                    thirdDraw={getTodayResults(3) || []} 
+                  />
+                )
+              }
               <div className="flex gap-2">
                 {
                   data?.HotNumbers && (
