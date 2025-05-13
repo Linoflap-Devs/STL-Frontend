@@ -70,14 +70,25 @@ const formattedSecondDateDuration = secondDateDuration
     }
   }, [SideBarActiveGameType, activeGameType, setGameType]);
 
+  // const categoryTypes: categoryType[] = [
+  //   "Total Bettors and Bets",
+  //   "Total Bets by Bet Type",
+  //   "Total Bettors by Bet Type",
+  //   "Total Bets by Game Type",
+  //   "Total Bettors by Game Type",
+  //   "Top Betting Region by Total Bets",
+  //   "Top Betting Region by Total Bettors",
+  // ];
+
+
   const categoryTypes: categoryType[] = [
-    "Total Bettors and Bets",
+    "Total Bets and Bettors",
     "Total Bets by Bet Type",
-    "Total Bettors by Bet Type",
     "Total Bets by Game Type",
-    "Total Bettors by Game Type",
     "Top Betting Region by Total Bets",
     "Top Betting Region by Total Bettors",
+    "Total Bettors by Bet Type",
+    "Total Bettors by Game Type",
   ];
 
     // Debugging: Log all states whenever they change

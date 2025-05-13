@@ -5,7 +5,7 @@ import getTransactionsData from '~/utils/api/transactions/get.TransactionsData.s
 
 const getTodayDate = () => new Date().toISOString().slice(0, 10);
 export type categoryType = 
-  'Total Bettors and Bets' |
+  'Total Bets and Bettors' |
   'Total Bets by Bet Type' |
   'Total Bettors by Bet Type' |
   'Total Bets by Game Type' |
@@ -63,7 +63,7 @@ interface BettingStore {
 export const useBettingStore = create<BettingStore>((set) => ({
     loading: false,
     activeGameType: '',
-    categoryFilter: 'Total Bettors and Bets',
+    categoryFilter: 'Total Bets and Bettors',
     dateFilter: 'Specific Date',
     firstDateSpecific: getTodayDate(),
     secondDateSpecific: getTodayDate(),
@@ -102,7 +102,7 @@ export const useBettingStore = create<BettingStore>((set) => ({
           TotalBetAmount: number;
           TotalPayout: number;
           TotalEarnings: number;
-        }[]>("/transactions/getHistoricalRegion", {});
+        }[]>("/transactions/getHistoricalRegion", '');
         
         
         console.log(`Betting Dashboard Cards Data:`, JSON.stringify(data, null, 2))
@@ -141,7 +141,7 @@ export const useBettingStore = create<BettingStore>((set) => ({
 
     resetFilters: () =>
       set({
-        categoryFilter: 'Total Bettors and Bets',
+        categoryFilter: 'Total Bets and Bettors',
         dateFilter: 'Specific Date',
         firstDateSpecific: null,
         secondDateSpecific: null,
@@ -158,7 +158,7 @@ export const getLegendItemsMap_Specific = (
 ): { label: string; color: string }[] => {
   console.log("categoryFilter:", categoryFilter);
   const legendItemsMap: Record<categoryType, { label: string; color: string }[]> = {
-  "Total Bettors and Bets": [
+  "Total Bets and Bettors": [
     {
       label: `Bettors - ${firstDateSpecific ? firstDateSpecific : "N/A"}`,
       color: "#E5C7FF",
@@ -313,7 +313,7 @@ export const getLegendItemsMap_Duration = (
 ): { label: string; color: string }[] => {
   console.log("categoryFilter:", categoryFilter);
   const legendItemsMap: Record<categoryType, { label: string; color: string }[]> = {
-  "Total Bettors and Bets": [
+  "Total Bets and Bettors": [
     {
       label: `Bettors - ${firstDateSpecific ? firstDateSpecific : "N/A"} - ${secondDateSpecific ? secondDateSpecific : "N/A"}`,
       color: "#E5C7FF",
