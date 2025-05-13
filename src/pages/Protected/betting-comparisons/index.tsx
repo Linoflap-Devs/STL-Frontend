@@ -12,15 +12,16 @@ import FilterListIcon from "@mui/icons-material/FilterList";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
-import dayjs from "dayjs";
 // Components
 import ChartBettorsAndBetsSummary from "~/components/betting-summary/bets-comparison/SummaryBettors&Bets";
 import ChartBettorsAndBetsRegionalSummary from "~/components/betting-summary/bets-comparison/RegionalSummaryBettors&Bets";
+import ChartTopRegionByBetsandBettors from "~/components/betting-summary/bets-comparison/TopRegionBetting";
 
 import { useBettingStore, categoryType } from "../../../../store/useBettingStore";
 import { useSideBarStore } from "../../../../store/useSideBarStore";
 
-import ChartTopRegionByBetsandBettors from "~/components/betting-summary/bets-comparison/TopRegionBetting";
+import dayjs from 'dayjs';
+
 
 type dateType = 'Specific Date' | 'Date Duration';
 
@@ -169,10 +170,15 @@ const formattedSecondDateDuration = secondDateDuration
                 <DatePicker
                   label="First Date"
                   value={firstDateSpecific ? dayjs(firstDateSpecific) : null}
-                  onChange={(newValue) =>
-                    setFirstDateSpecific(newValue as unknown as Date)
-                  } // Correct setter function
-                  // renderInput={(params) => <TextField {...params} />}
+                  onChange={(newValue) =>{
+                    if(newValue){
+                      setFirstDateSpecific(newValue.format('YYYY-MM-DD'))
+                    }else{
+                      setFirstDateSpecific('')
+                    }
+                  }
+                    
+                  }
                 />
               </LocalizationProvider>
             </Grid>
@@ -210,7 +216,7 @@ const formattedSecondDateDuration = secondDateDuration
                   label="Second Date"
                   value={secondDateSpecific ? dayjs(secondDateSpecific) : null}
                   onChange={(newValue) =>
-                    setSecondDateSpecific(newValue as unknown as Date)
+                    setSecondDateSpecific(newValue as unknown as string)
                   } // Correct setter function
                   // renderInput={(params) => <TextField {...params} />}
                 />
@@ -269,10 +275,13 @@ const formattedSecondDateDuration = secondDateDuration
                 <DatePicker
                   label="First Date"
                   value={firstDateSpecific ? dayjs(firstDateSpecific) : null}
-                  onChange={(newValue) =>
-                    setFirstDateSpecific(newValue as unknown as Date)
-                  } // Correct setter function
-                  // renderInput={(params: any) => <TextField {...params} />}
+                  onChange={(newValue) => {
+                    if (newValue) {
+                      setFirstDateSpecific(newValue.format('YYYY-MM-DD'))
+                    }else {
+                      setFirstDateSpecific('')
+                    }
+                  }}
                 />
               </LocalizationProvider>
             </Grid>
@@ -309,10 +318,13 @@ const formattedSecondDateDuration = secondDateDuration
                 <DatePicker
                   label="Second Date"
                   value={secondDateSpecific ? dayjs(secondDateSpecific) : null}
-                  onChange={(newValue) =>
-                    setSecondDateSpecific(newValue as unknown as Date)
-                  } // Correct setter function
-                  // renderInput={(params) => <TextField {...params} />}
+                  onChange={(newValue) => {
+                    if(newValue){
+                      setSecondDateSpecific(newValue.format('YYYY-MM-DD'));
+                    }else {
+                      setSecondDateSpecific('')
+                    }
+                  }}
                 />
               </LocalizationProvider>
             </Grid>
@@ -338,8 +350,14 @@ const formattedSecondDateDuration = secondDateDuration
                 <DatePicker
                   label="First Date"
                   value={firstDateDuration ? dayjs(firstDateDuration) : null}
-                  onChange={(newValue) =>
-                    setFirstDateDuration(newValue as unknown as Date)
+                  onChange={(newValue) => {
+                    if(newValue){
+                      setFirstDateDuration(newValue.format('YYYY-MM-DD'))
+                    }else{
+                      setFirstDateDuration('')
+                    }
+                  }
+
                   } // Correct setter function
                   // renderInput={(params) => <TextField {...params} />}
                 />
@@ -367,8 +385,14 @@ const formattedSecondDateDuration = secondDateDuration
                 <DatePicker
                   label="Second Date"
                   value={secondDateDuration ? dayjs(secondDateDuration) : null}
-                  onChange={(newValue) =>
-                    setSecondDateDuration(newValue as unknown as Date)
+                  onChange={(newValue) => {
+                    if(newValue){
+                      setSecondDateDuration(newValue.format('YYYY-MM-DD'));
+                    }else{
+                      setSecondDateDuration('')
+                    }
+                  }
+
                   } // Correct setter function
                   // renderInput={(params) => <TextField {...params} />}
                 />
