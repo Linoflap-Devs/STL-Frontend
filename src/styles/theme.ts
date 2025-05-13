@@ -342,4 +342,8 @@ export const legendCircle = {
   fontSize: "10px !important",
 }
 
+export const selectDrawStyles = {
+  backgroundColor: "#F6BA12 !important",
+}
+
 export default darkTheme;

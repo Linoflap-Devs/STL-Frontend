@@ -3,10 +3,8 @@ import { useRouter } from "next/router";
 import { useSideBarStore, gameType } from "../../../store/useSideBarStore";
 import { UserSectionData } from "../../data/AdminSectionData";
 import { getCurrentUser, logoutUser } from "~/utils/api/auth";
-import { FaSignOutAlt } from "react-icons/fa";
-import Skeleton from "@mui/material/Skeleton";
-
 import {
+  FaSignOutAlt,
   FaHome,
   FaBusinessTime,
   FaUserShield,
@@ -19,6 +17,7 @@ import {
   FaChevronDown,
   FaChevronUp,
 } from "react-icons/fa";
+import Skeleton from "@mui/material/Skeleton";
 import clsx from "clsx";
 
 const BETTING_SUBMENUS = [
@@ -36,67 +35,46 @@ const WINNING_SUBMENUS = [
   { name: "STL Swer3", path: "/winning-summary/stl-swer3" },
   { name: "STL Swer4", path: "/winning-summary/stl-swer4" },
 ];
-const DRAW_SUBMENUS = [
-  { name: "STL Pares", path: "/draw-summary/stl-pares" },
-  { name: "STL Swer2", path: "/draw-summary/stl-swer2" },
-  { name: "STL Swer3", path: "/draw-summary/stl-swer3" },
-  { name: "STL Swer4", path: "/draw-summary/stl-swer4" },
-]
 
 const getUserRole = (userTypeId: number) => {
   switch (userTypeId) {
-    case 1:
-      return "Collector";
-    case 2:
-      return "Manager";
-    case 3:
-      return "Executive";
-    case 4:
-      return "Admin";
-    case 5:
-      return "System Admin";
-    default:
-      return "Unknown Role";
+    case 1: return "Collector";
+    case 2: return "Manager";
+    case 3: return "Executive";
+    case 4: return "Admin";
+    case 5: return "System Admin";
+    default: return "Unknown Role";
   }
 };
 
 const Sidebar: React.FC = () => {
-  // Handling Paths
   const router = useRouter();
   const currentPath = router.asPath;
   const { SideBarActiveGameType, setSideBarActiveGameType } = useSideBarStore();
   const isCurrent = (path: string) => currentPath === path;
-  //  if the current URL path(currentPath) starts with a certain group path (groupPath)
   const isGroupActive = (groupPath: string) => currentPath.startsWith(groupPath);
 
   const [collapsed, setCollapsed] = useState(false);
-  // State whether open the submenu for Betting and Winning or not
   const [openSubmenu, setOpenSubmenu] = useState<string | null>(null);
-  const toggleCollapse = () => setCollapsed(!collapsed);
-
-  // Date Time
   const [dateTime, setDateTime] = useState<Date | null>(null);
-
   const [user, setUser] = useState<{
     firstName: string;
     lastName: string;
     userTypeId: number;
   } | null>(null);
 
-  const formattedDate =
-    dateTime?.toLocaleDateString("en-PH", {
-      month: "long",
-      day: "numeric",
-      year: "numeric",
-    }) ?? "N/A";
+  const formattedDate = dateTime?.toLocaleDateString("en-PH", {
+    month: "long",
+    day: "numeric",
+    year: "numeric",
+  }) ?? "N/A";
 
-  const formattedTime =
-    dateTime?.toLocaleTimeString("en-PH", {
-      hour: "2-digit",
-      minute: "2-digit",
-      second: "2-digit",
-      hour12: true,
-    }) ?? "N/A";
+  const formattedTime = dateTime?.toLocaleTimeString("en-PH", {
+    hour: "2-digit",
+    minute: "2-digit",
+    second: "2-digit",
+    hour12: true,
+  }) ?? "N/A";
 
   useEffect(() => {
     const updateDateTime = () => setDateTime(new Date());
@@ -138,115 +116,6 @@ const Sidebar: React.FC = () => {
     }
   };
 
-  // Menu
-  const renderMenuItem = (label: string) => {
-    const iconSize = 20;
-
-    // will map here if the label === "Betting Summary" || "Winning Summary"
-    const iconMap: Record<string, React.ReactNode> = {
-      Dashboard: <FaHome size={iconSize} />,
-      Managers: <FaUserShield size={iconSize} />,
-      Executive: <FaBusinessTime size={iconSize} />,
-      "Betting Summary": <FaDiceSix size={iconSize} />,
-      "Winning Summary": <FaMoneyBillAlt size={iconSize} />,
-      "Draw Summary": <FaBroadcastTower size={iconSize} />,
-      Operators: <FaStoreAlt size={iconSize} />,
-    };
-
-    const routeMap: Record<string, string> = {
-      Dashboard: "/dashboard",
-      Managers: "/managers",
-      Executive: "/executives",
-      "Winning Summary": "/winning-summary",
-      "Betting Summary": "/betting-summary",
-      "Draw Summary": "/draw-summary",
-      Operators: "/operators",
-    };
-
-    // generates URL path for menu item, using predefined route if avail, or falling back to a default format if not
-    // gets the given path for the given 'label', from routeMap above.
-    // routeMap[label] = 'Dashboard' path will be /dashboard
-    // if routeMap[label] = 'Sample Key'/'null' or wala yung label sa routeMap keys natin, fallback path will be /sample-key
-    const path =
-      routeMap[label] ?? `/${label.toLowerCase().replace(/\s+/g, "-")}`;
-
-    if (
-      label === "Betting Summary" ||
-      label === "Winning Summary" ||
-      label === "Draw Summary"
-    ) {
-      // Object we'll referencing on creating divs
-      let submenu;
-      if (label === "Betting Summary") submenu = BETTING_SUBMENUS;
-      else if (label === "Winning Summary") submenu = WINNING_SUBMENUS;
-      else submenu = DRAW_SUBMENUS;
-
-      return (
-        <div key={label}>
-          <div
-            onClick={() => {
-              {/* openSubmenu === current label */ }
-              setOpenSubmenu(openSubmenu === label ? null : label);
-              {/* 
-                if user is not already inside the sidebar group
-                !isGroupActive('winning-summary')
-                if !currentPath.startsWith('winning-summary')
-                activeGameType = 'Dashboard' by default
-                /winning-summary/dashboard
-                Inly direct to dashboard if available
-              */}
-              if (!isGroupActive(path)) {
-                if (label === "Betting Summary" || label === "Winning Summary") {
-                  setSideBarActiveGameType("Dashboard");
-                  router.push(`${path}/dashboard`);
-                } else {
-                  // For Draw Summary, just navigate to the first submenu path
-                  const firstPath = submenu[0]?.path;
-                  if (firstPath) {
-                    setSideBarActiveGameType(submenu[0].name as gameType)
-                    // router.push(`${path}/${firstPath}`)
-                    router.push(firstPath)
-                  }
-                }
-              }
-            }}
-            className={clsx(
-              "flex items-center justify-between px-4 py-2 cursor-pointer rounded-md",
-              isGroupActive(path)
-                ? "text-purple-400 font-semibold"
-                : "text-gray-300 hover:bg-gray-700"
-            )}
-          >
-            <span className="flex items-center gap-2 text-sm">
-              {iconMap[label]}
-              {/* 
-                if !collapsed corresponding label w/icon will be displayed
-              */}
-              {!collapsed && label}
-            </span>
-            {!collapsed &&
-              (openSubmenu === label ? <FaChevronUp /> : <FaChevronDown />)}
-          </div>
-          {!collapsed && openSubmenu === label && renderSubmenu(submenu)}
-        </div>
-      );
-    }
-    return (
-      <div
-        key={label}
-        onClick={() => router.push(path)}
-        className={clsx(
-          "flex items-center px-4 py-2 cursor-pointer rounded-md text-sm",
-          isCurrent(path)
-            ? "bg-[#F6BA12] text-[#0038A8] font-semibold"
-            : "text-gray-300"
-        )}
-      >
-        {iconMap[label]} {!collapsed && <span className="ml-2">{label}</span>}
-      </div>
-    );
-  };
-  // Submenu
   const renderSubmenu = (items: typeof BETTING_SUBMENUS) =>
     items.map(({ name, path }) => (
       <div
@@ -262,8 +131,76 @@ const Sidebar: React.FC = () => {
         {name}
       </div>
     ));
+
+  const renderMenuItem = (label: string) => {
+    const iconSize = 20;
+
+    const iconMap: Record<string, React.ReactNode> = {
+      Dashboard: <FaHome size={iconSize} />,
+      Managers: <FaUserShield size={iconSize} />,
+      Executive: <FaBusinessTime size={iconSize} />,
+      "Betting Summary": <FaDiceSix size={iconSize} />,
+      "Winning Summary": <FaMoneyBillAlt size={iconSize} />,
+      "Draw Summary": <FaBroadcastTower size={iconSize} />,
+      Operators: <FaStoreAlt size={iconSize} />,
+    };
+
+    const routeMap: Record<string, string> = {
+      Dashboard: "/dashboard",
+      Managers: "/managers",
+      Executive: "/executives",
+      "Betting Summary": "/betting-summary",
+      "Winning Summary": "/winning-summary",
+      "Draw Summary": "/draw-summary",
+      Operators: "/operators",
+    };
+
+    const submenu =
+      label === "Betting Summary"
+        ? BETTING_SUBMENUS
+        : label === "Winning Summary"
+        ? WINNING_SUBMENUS
+        : null;
+
+    const path = routeMap[label] ?? `/${label.toLowerCase().replace(/\s+/g, "-")}`;
+
+    const isGroup = submenu !== null;
+
+    return (
+      <div key={label}>
+        <div
+          onClick={() => {
+            setOpenSubmenu(openSubmenu === label ? null : label);
+            if (!isGroupActive(path)) {
+              if (isGroup) {
+                setSideBarActiveGameType("Dashboard");
+                router.push(`${path}/dashboard`);
+              } else {
+                router.push(path);
+              }
+            }
+          }}
+          className={clsx(
+            "flex items-center justify-between px-4 py-2 cursor-pointer rounded-md",
+            isGroupActive(path)
+              ? "text-purple-400 font-semibold"
+              : "text-gray-300 hover:bg-gray-700"
+          )}
+        >
+          <span className="flex items-center gap-2 text-sm">
+            {iconMap[label]}
+            {!collapsed && label}
+          </span>
+          {!collapsed &&
+            isGroup &&
+            (openSubmenu === label ? <FaChevronUp /> : <FaChevronDown />)}
+        </div>
+        {!collapsed && openSubmenu === label && submenu && renderSubmenu(submenu)}
+      </div>
+    );
+  };
+
   return (
-    // Main Menu
     <aside
       className={clsx(
         "p-3.5 bg-[#0038A8] text-white flex flex-col transition-all duration-300 min-h-screen",
@@ -281,7 +218,7 @@ const Sidebar: React.FC = () => {
           <div className="flex justify-between px-3 p-3 w-full">
             {/* Toggle Collapse Icon (Left Corner) */}
             <button
-              onClick={toggleCollapse}
+             // onClick={toggleCollapse}
               className="flex justify-center items-center bg-[#0038A8] 
                 text-[#ACA993] rounded-full w-6 h-6 p-1 hover:bg-gray-300 transition-colors duration-200"
             >
