@@ -4,6 +4,12 @@ import { create } from 'zustand';
 import getTransactionsData from '~/utils/api/transactions/get.TransactionsData.service';
 
 const getTodayDate = () => new Date().toISOString().slice(0, 10);
+const getYesterdayDate = () => {
+  const date = new Date();
+  date.setDate(date.getDate() - 1);
+  return date.toISOString().slice(0, 10);
+};
+
 export type categoryType = 
   'Total Bets and Bettors' |
   'Total Bets by Bet Type' |
@@ -65,7 +71,7 @@ export const useBettingStore = create<BettingStore>((set) => ({
     activeGameType: '',
     categoryFilter: 'Total Bets and Bettors',
     dateFilter: 'Specific Date',
-    firstDateSpecific: getTodayDate(),
+    firstDateSpecific: getYesterdayDate(),
     secondDateSpecific: getTodayDate(),
     firstDateDuration: null,
     secondDateDuration: null,
