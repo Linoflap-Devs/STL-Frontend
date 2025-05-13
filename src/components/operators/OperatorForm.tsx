@@ -1,12 +1,11 @@
 import React, { useEffect, useState } from 'react';
-import CreateModalOperationsPage from './CreateOperationsModal';
-import UpdateModalPage from '~/components/ui/modals/UpdateModal';
+import CreateModalOperationsPage from './OperationCreateModalData';
+import UpdateModalPage from '~/components/ui/modals/UpdateModalData';
 import { useOperatorsData } from '../../../store/useOperatorStore';
 import { useModalStore } from '../../../store/useModalStore';
 import { Field } from '~/types/interfaces';
 import { fetchGameCategories } from '~/services/userService';
 import { fetchCityData, fetchProvinceData, fetchRegionData } from '~/services/locationService';
-import { fetchOperators } from '~/services/userService';
 
 const operatorConfig: {
   endpoint: { create: string; update: string };
@@ -99,7 +98,6 @@ export const OperatorFieldFormPage: React.FC = () => {
   const [cities, setCities] = useState<any[]>([]);
   const [selectedRegion, setSelectedRegion] = useState<any>(''); // for region filtering
   const [selectedProvince, setSelectedProvince] = useState<any>(''); // for province filtering
-  const [operatorDetails, setOperatorDetails] = useState<any>(null); // Add state for operator details
 
   // Fetch game categories, regions, provinces, and cities on component mount
   useEffect(() => {
@@ -108,7 +106,7 @@ export const OperatorFieldFormPage: React.FC = () => {
     fetchProvinceData(setProvinces);
     fetchCityData(setCities);
   }, []);
-  
+
   // Update field options based on selected data (gameTypes, regions, provinces, cities)
   useEffect(() => {
     const updatedFields = operatorConfig.fields.map((field) => {

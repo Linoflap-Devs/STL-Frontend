@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import ReusableButton from '../ui/buttons/ReusableSubmitButton';
-import ReusableCreateModalPage from './ReusableCreateModal';
+import ReusableCreateModalPage from './UserCreateModal';
 import useUserRoleStore from '../../../store/useUserStore';
 import { getRoleName } from '~/utils/dashboarddata';
 import { ModalPageProps } from '../../types/interfaces';
@@ -14,11 +14,6 @@ const CreateModalPage: React.FC<ModalPageProps> = ({
   fields = [],
   endpoint = '',
   operatorMap,
-  provinces = [],
-  regions = [],
-  cities = [],
-  setSelectedRegion,
-  setSelectedProvince,
 }) => {
   const [loading, setLoading] = useState(false);
   const isOpen = open ?? true;
@@ -29,7 +24,7 @@ const CreateModalPage: React.FC<ModalPageProps> = ({
     typeof endpoint === 'string'
       ? { create: endpoint, update: endpoint }
       : endpoint;
-
+      
   return (
     <>
       <ReusableCreateModalPage

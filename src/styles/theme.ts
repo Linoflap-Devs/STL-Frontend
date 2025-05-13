@@ -174,18 +174,6 @@ const darkTheme = createTheme({
         },
       },
     },
-    MuiInputBase: {
-      styleOverrides: {
-        root: {
-          fontSize: "0.80rem",
-        },
-        input: {
-          "::placeholder": {
-            color: "#E0DCBD",
-          },
-        },
-      },
-    },
     MuiFormHelperText: {
       styleOverrides: {
         root: {
@@ -309,13 +297,6 @@ export const buttonDrawStyles = {
   paddingRight: '3.7rem',
 };
 
-export const buttonNumberStyles = {
-  backgroundColor: "transparent",
-  border: '1px solid #303030',
-  borderRadius: "8px",
-  textAlign: "center",
-  padding: "0.1rem 0",
-};
 
 export const skeletonRowStyles = {
   display: "flex",
@@ -328,10 +309,14 @@ export const skeletonRowStyles = {
 };
 
 export const buttonUpdateStyles = {
-  backgroundColor: "#67ABEB",
+  backgroundColor: "#F6BA12",
   textTransform: "none",
   borderRadius: "8px",
   color: "#181A1B",
+  width: '100%',
+  '&:hover': {
+    backgroundColor: '#FFD100', // Hover color
+  },
 };
 
 export const legendCircle = {

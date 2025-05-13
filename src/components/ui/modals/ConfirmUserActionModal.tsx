@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { IconButton } from "@mui/material";
 import { Visibility, VisibilityOff, Close as CloseIcon } from "@mui/icons-material";
 import Swal from "sweetalert2";
@@ -7,7 +7,7 @@ import { LoginSectionData } from "../../../data/LoginSectionData";
 import { ConfirmUserActionModalProps } from "~/types/interfaces";
 import axiosInstance from "~/utils/axiosInstance";
 import useUserRoleStore from "../../../../store/useUserStore";
-import { fetchOperators, fetchUsers } from "~/services/userService";
+import { fetchUsers } from "~/services/userService";
 
 const ConfirmUserActionModalPage: React.FC<ConfirmUserActionModalProps> = ({
   formData,
@@ -22,8 +22,7 @@ const ConfirmUserActionModalPage: React.FC<ConfirmUserActionModalProps> = ({
   const [error, setError] = useState("");
   const [showPassword, setShowPassword] = useState<boolean>(false);
   const handleTogglePasswordVisibility = () => setShowPassword((prev) => !prev);
-  const { roleId } = useUserRoleStore();
-  const [data, setData] = useState("");
+  const { roleId, setData } = useUserRoleStore();
 
   const handleVerifyUserAction = async () => {
     if (!password) {
@@ -38,7 +37,7 @@ const ConfirmUserActionModalPage: React.FC<ConfirmUserActionModalProps> = ({
         return;
       }
 
-      setError(""); // Clear any previous errors
+      setError("");
 
       // Conditionally add `userTypeId` if roleId exists
       const dataToSend = {
@@ -46,7 +45,7 @@ const ConfirmUserActionModalPage: React.FC<ConfirmUserActionModalProps> = ({
         ...(roleId && { userTypeId: roleId }),
       };
 
-      // Create user via the API
+      // endpoint and data to send
       const response = await axiosInstance.post(endpoint.create, dataToSend, {
         withCredentials: true,
       });
@@ -64,7 +63,6 @@ const ConfirmUserActionModalPage: React.FC<ConfirmUserActionModalProps> = ({
         return;
       }
 
-      // On success, show confirmation and reset form
       await Swal.fire({
         icon: "success",
         title: `${actionType === "create" ? "User Created!" : "Action Successful!"}`,
@@ -81,10 +79,7 @@ const ConfirmUserActionModalPage: React.FC<ConfirmUserActionModalProps> = ({
       // Refresh users if roleId is set
       if (roleId) {
         fetchUsers(roleId, setData);
-        return;
       }
-      
-      fetchOperators(setData, formData.OperatorId);
 
     } catch (error: any) {
       console.error("Error during user action:", error);
@@ -113,7 +108,6 @@ const ConfirmUserActionModalPage: React.FC<ConfirmUserActionModalProps> = ({
         <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-black bg-opacity-75">
           <div className="relative z-20 flex w-full justify-center items-center">
             <div className="w-[60%] sm:w-[60%] md:w-[40%] max-w-[430px] py-11 px-6 bg-[#F8F0E3] rounded-lg relative">
-              
               {/* Close Button */}
               <IconButton
                 aria-label="close"

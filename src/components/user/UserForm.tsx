@@ -1,8 +1,8 @@
 import React, { useEffect } from 'react';
-import CreateModalPage from '~/components/user/CreateModal';
+import CreateModalPage from '~/components/user/UserCreateModalData';
 import useUserRoleStore from '../../../store/useUserStore';
 import { Field, UserFieldFormPageProps } from '~/types/interfaces';
-import UpdateModalPage from '../ui/modals/UpdateModal';
+import UpdateModalPage from '../ui/modals/UpdateModalData';
 import { useModalStore } from '../../../store/useModalStore';
 
 const roleConfigs: Record<string, { userTypeId: number; endpoint: { create: string; update: string }; fields: Field[] }> = {
@@ -22,8 +22,9 @@ const roleConfigs: Record<string, { userTypeId: number; endpoint: { create: stri
         options: [
           { value: 'Jr.', label: 'Jr.' },
           { value: 'Sr.', label: 'Sr.' },
+          { value: 'II', label: 'II' },
           { value: 'III', label: 'III' },
-          { value: 'None', label: 'None' },
+          { value: '', label: 'None' },
         ],
         placeholder: 'Suffix',
         value: '',
@@ -66,8 +67,8 @@ const roleConfigs: Record<string, { userTypeId: number; endpoint: { create: stri
   },
 };
 
-const UserFieldFormPage: React.FC<UserFieldFormPageProps> = ({ operatorMap, setOperatorMap }) => {
-  const { setFields, fields, setRoleId, setData } = useUserRoleStore();
+const UserFieldFormPage: React.FC<UserFieldFormPageProps> = ({ operatorMap }) => {
+  const { setFields, fields, setRoleId } = useUserRoleStore();
   const { modalOpen, modalType, selectedData, closeModal } = useModalStore();
 
   const pathname = typeof window !== 'undefined' ? window.location.pathname : '';
@@ -80,20 +81,14 @@ const UserFieldFormPage: React.FC<UserFieldFormPageProps> = ({ operatorMap, setO
 
   const roleConfig = roleConfigs[pageType];
 
-  // Calculate isUpdateMode after roleConfig is available
-  const isUpdateMode = !!selectedData?.id;
-  const endpoint = isUpdateMode
-    ? roleConfig.endpoint.update
-    : roleConfig.endpoint.create;
-
   useEffect(() => {
     setRoleId(roleConfig.userTypeId);
-
     const operatorOptions = Object.values(operatorMap).map(operator => ({
       label: operator.OperatorName,
       value: operator.OperatorId,
     }));
 
+    // Update the operatorId field to be a select field
     const updatedFields = roleConfig.fields.map(field =>
       field.name === 'operatorId'
         ? {
@@ -122,7 +117,6 @@ const UserFieldFormPage: React.FC<UserFieldFormPageProps> = ({ operatorMap, setO
           fields={fields}
           endpoint={roleConfig.endpoint}
           operatorMap={operatorMap}
-
         />
       )}
       {modalType === "view" && (
