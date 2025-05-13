@@ -241,8 +241,16 @@ const DrawSelectedPage = () => {
               </p>
               <DrawResultsSummaryPage />
               <div className="flex gap-2">
-                <HotNumberPage />
-                <ColdNumberPage />
+                {
+                  data?.HotNumbers?.length > 0 && (
+                    <HotNumberPage number={data?.HotNumbers[0]?.number || 0} />
+                  )
+                }
+                {
+                  data?.HotNumbers?.length > 0 && (
+                    <ColdNumberPage number={data?.ColdNumbers[0]?.number || 0} />
+                  )
+                }
               </div>
               <div className="flex gap-2 mt-5">
                 <DrawCounterTablePage />
