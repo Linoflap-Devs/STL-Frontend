@@ -334,7 +334,7 @@ const CreateOperationsPage: React.FC<ReusableModalPageProps> = ({
                     );
                 }
 
-                if (field.name === 'GamesProvided') {
+                if (field.name === 'gameTypes') {
                     return (
                     <div key={index} className="w-full">
                         <Select
@@ -397,7 +397,7 @@ const CreateOperationsPage: React.FC<ReusableModalPageProps> = ({
                     );
                 }
 
-                if (field.name === 'STLCity' && isCityWide ) {
+                if (field.name === 'cities' && isCityWide ) {
                     return (
                     <div key={index} className="w-full">
                         <Select
@@ -458,7 +458,7 @@ const CreateOperationsPage: React.FC<ReusableModalPageProps> = ({
             {/* Column 2 */}
             <div className="flex-1 space-y-4">
                 {fields.map((field, index) => {
-                if (field.name === 'DateOfOperations') {
+                if (field.name === 'dateOfOperation') {
                     return (
                     <div key={index} className="w-full">
                         <input

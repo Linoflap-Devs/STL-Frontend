@@ -21,9 +21,9 @@ const operatorConfig: {
     { name: 'address', label: 'Operators Address', type: 'text', placeholder: 'Address', value: '', gridSpan: 'full' },
     { name: 'email', label: 'Email', type: 'email', placeholder: 'Enter Email Address', value: '', gridSpan: 1 },
     { name: 'contactNumber', label: 'Phone Number', type: 'tel', placeholder: 'Enter phone number', value: '', gridSpan: 2 },
-    { name: 'DateOfOperations', label: 'Date of Operations', type: 'date', placeholder: '', value: '', gridSpan: 2 },
+    { name: 'dateOfOperation', label: 'Date of Operations', type: 'date', placeholder: 'Select Date of Operations', value: '', gridSpan: 2 },
     {
-      name: 'GamesProvided',
+      name: 'gameTypes',
       label: 'Games Provided',
       type: 'multiselect',
       options: [],
@@ -62,7 +62,7 @@ const operatorConfig: {
       gridSpan: 2,
     },
     {
-      name: 'STLCity',
+      name: 'cities',
       label: 'Area of City Operations',
       type: 'multiselect',
       options: [],
@@ -112,7 +112,7 @@ export const OperatorFieldFormPage: React.FC = () => {
   // Update field options based on selected data (gameTypes, regions, provinces, cities)
   useEffect(() => {
     const updatedFields = operatorConfig.fields.map((field) => {
-      if (field.name === 'GamesProvided') {
+      if (field.name === 'gameTypes') {
         return {
           ...field,
           options: gameTypes.map((gameType) => ({
@@ -145,7 +145,7 @@ export const OperatorFieldFormPage: React.FC = () => {
         };
       }
 
-      if (field.name === 'STLCity') {
+      if (field.name === 'cities') {
         const filteredCities = cities.filter(
           (city) => city.ProvinceId === selectedProvince
         );

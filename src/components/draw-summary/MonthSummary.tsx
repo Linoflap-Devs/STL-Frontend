@@ -21,7 +21,7 @@ const MonthSummaryPage = () => {
             {day}
             <Divider
               sx={{
-                backgroundColor: "#B3B3B3", 
+                backgroundColor: "#B3B3B3",
                 opacity: 1,
                 height: "2px",
                 my: 0.5,

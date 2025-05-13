@@ -51,7 +51,7 @@ export const fetchMapOperators = async (
   }
 };
 
-export const fetchOperators = async (setData: React.Dispatch<React.SetStateAction<any>>) => {
+export const fetchOperators = async (setData: React.Dispatch<React.SetStateAction<any>>, OperatorId: string | number | string[]) => {
   try {
     const response = await getOperatorsData<GetOperatorsResponse>("/operators/getOperators");
     if (response.success && Array.isArray(response.data?.data)) {

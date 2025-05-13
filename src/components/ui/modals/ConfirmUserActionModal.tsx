@@ -7,7 +7,7 @@ import { LoginSectionData } from "../../../data/LoginSectionData";
 import { ConfirmUserActionModalProps } from "~/types/interfaces";
 import axiosInstance from "~/utils/axiosInstance";
 import useUserRoleStore from "../../../../store/useUserStore";
-import { fetchUsers } from "~/services/userService";
+import { fetchOperators, fetchUsers } from "~/services/userService";
 
 const ConfirmUserActionModalPage: React.FC<ConfirmUserActionModalProps> = ({
   formData,
@@ -22,7 +22,8 @@ const ConfirmUserActionModalPage: React.FC<ConfirmUserActionModalProps> = ({
   const [error, setError] = useState("");
   const [showPassword, setShowPassword] = useState<boolean>(false);
   const handleTogglePasswordVisibility = () => setShowPassword((prev) => !prev);
-  const { roleId, setData } = useUserRoleStore();
+  const { roleId } = useUserRoleStore();
+  const [data, setData] = useState("");
 
   const handleVerifyUserAction = async () => {
     if (!password) {
@@ -80,7 +81,11 @@ const ConfirmUserActionModalPage: React.FC<ConfirmUserActionModalProps> = ({
       // Refresh users if roleId is set
       if (roleId) {
         fetchUsers(roleId, setData);
+        return;
       }
+      
+      fetchOperators(setData, formData.OperatorId);
+
     } catch (error: any) {
       console.error("Error during user action:", error);
       console.log("Full error response:", error?.response?.data);
