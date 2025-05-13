@@ -231,7 +231,7 @@ const DrawSelectedPage = () => {
       <div className="flex flex-col items-center gap-4m mt-2">
         <div className="flex flex-col w-full gap-4">
           <h1 className="text-3xl font-bold">
-            Ilocos Norte - STL Swer2
+            {filteredProvinces.find((province) => province.value == selectedProvince.toString())?.label} - {gameCategories.find((gameCategory) => gameCategory.value == selectedGameCategory.toString())?.label}
           </h1>
           <div className="flex flex-col md:flex-row w-full gap-2">
             <div className="flex flex-col w-full md:w-2/3">
@@ -242,13 +242,13 @@ const DrawSelectedPage = () => {
               <DrawResultsSummaryPage />
               <div className="flex gap-2">
                 {
-                  data?.HotNumbers?.length > 0 && (
-                    <HotNumberPage number={data?.HotNumbers[0]?.number || 0} />
+                  data?.HotNumbers && (
+                    <HotNumberPage number={data?.HotNumbers[0]?.number || "-"} />
                   )
                 }
                 {
-                  data?.HotNumbers?.length > 0 && (
-                    <ColdNumberPage number={data?.ColdNumbers[0]?.number || 0} />
+                  data?.ColdNumbers && (
+                    <ColdNumberPage number={data?.ColdNumbers[0]?.number || "-"} />
                   )
                 }
               </div>

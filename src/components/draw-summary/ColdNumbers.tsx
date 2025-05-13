@@ -1,6 +1,6 @@
 import React from "react";
 
-const ColdNumberPage = (data: {number: number}) => {
+const ColdNumberPage = (data: {number: string}) => {
   const coldNumbers = [36, 39, 32, 4, 23];
 
   return (

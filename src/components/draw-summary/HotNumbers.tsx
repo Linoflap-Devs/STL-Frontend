@@ -1,6 +1,6 @@
 import React from "react";
 
-const HotNumberPage = (data: {number: number}) => {
+const HotNumberPage = (data: {number: string}) => {
   const hotNumbers = [40];
 
   return (
