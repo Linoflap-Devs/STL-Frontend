@@ -11,7 +11,6 @@ import {
   Select,
   MenuItem,
   FormControl,
-  TextField,
   InputLabel,
   OutlinedInput,
   Box,
@@ -30,7 +29,7 @@ import { useUpdateModalState } from "../../../../store/useUpdateModalStore";
 import { useOperatorsData } from "../../../../store/useOperatorStore";
 import EditModalDataPage from "./EditLogModal";
 import Swal from "sweetalert2";
-import { updateSchema } from "~/utils/validation";
+import { updateSchema } from "~/schemas/userSchema";
 
 const ReusableUpdateModal: React.FC<ReusableModalPageProps> = ({
   title,
@@ -60,7 +59,6 @@ const ReusableUpdateModal: React.FC<ReusableModalPageProps> = ({
 
   const { operators, setOperators } = useOperatorsData();
   const [originalUserData, setOriginalUserData] = useState(null);
-
 
   // console.log("Operatorssss:", initialUserData);
 
@@ -236,7 +234,7 @@ const ReusableUpdateModal: React.FC<ReusableModalPageProps> = ({
           />
         </IconButton>
         <Typography sx={{ fontSize: 26, fontWeight: 'bold', mt: -1 }}>
-          {title}
+          {isDisabled ? "View" : (isViewMode ? "Update" : "")} {title}
         </Typography>
       </DialogTitle>
 
@@ -246,8 +244,8 @@ const ReusableUpdateModal: React.FC<ReusableModalPageProps> = ({
           <Box
             sx={{
               display: "flex",
-              justifyContent: "flex-end", // align to the right
-              alignItems: "center",       // vertically center if needed
+              justifyContent: "flex-end",
+              alignItems: "center",
               width: "100%",
             }}
           >
@@ -508,9 +506,8 @@ const ReusableUpdateModal: React.FC<ReusableModalPageProps> = ({
                 placeholder="Enter Remarks"
                 value={typeof user.remarks === "string" ? user.remarks : ""}
                 onChange={handleManagerChange}
-                size="small"
                 multiline
-                minRows={2}
+                minRows={1}
               />
               {errors.remarks && (
                 <FormHelperText>{errors.remarks}</FormHelperText>

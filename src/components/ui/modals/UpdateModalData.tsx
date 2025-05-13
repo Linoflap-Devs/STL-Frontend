@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { ModalPageProps, Field } from '../../../types/interfaces';
+import { ModalPageProps } from '../../../types/interfaces';
 import useUserRoleStore from '../../../../store/useUserStore';
 import ReusableUpdateModalPage from './ReusableUpdateModal';
 import ReusableButton from '../buttons/ReusableSubmitButton';
@@ -56,7 +56,7 @@ const UpdateModalPage: React.FC<ModalPageProps> = ({
         onClose={handleClose}
         endpoint={formattedEndpoint}
         fields={fields}
-        title={`View ${getRoleName()}`}
+        title={`${getRoleName()}`}
         initialUserData={initialUserData}
         operatorMap={operatorMap}
       >
