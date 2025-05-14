@@ -45,6 +45,7 @@ const DrawSelectedPage = () => {
     setData(dataFetch.data)
     console.log(dataFetch)
   }
+  
   const loadData = async () => {
 
     const regionFetch = await fetchRegions()
@@ -84,6 +85,8 @@ const DrawSelectedPage = () => {
   useEffect(() => {
     // Initial Fetch
     loadData()
+    fetchData()
+    console.log(data)
   }, [])
 
   useEffect(() => { 
@@ -91,11 +94,6 @@ const DrawSelectedPage = () => {
       const filteredProvinces = provinces.filter((province) => {
         return province.RegionId == selectedRegion
       })
-      
-      console.log(provinces)
-      console.log(filteredProvinces)
-      console.log(selectedRegion)
-      
 
       setFilteredProvinces(filteredProvinces.map((province: any) => {
         return {
@@ -116,7 +114,6 @@ const DrawSelectedPage = () => {
 
   const getTodayResults = (drawOrder: number) => {
     try {
-      console.log(data.ResultSummary)
       if(drawOrder == 1){
         const filtered = data.ResultSummary[todayDate-1][todayDate].FirstDraw
         console.log(`accessing data.ResultSummary[${todayDate-1}][${todayDate}].FirstDraw`)
@@ -174,7 +171,6 @@ const DrawSelectedPage = () => {
                 const val = e.target.value
                 setSelectedRegion(val)
                 setSelectedProvince(0)
-                console.log(val)
               }
             }
           >
@@ -198,7 +194,6 @@ const DrawSelectedPage = () => {
               (e: any) => {
                 const val = e.target.value
                 setSelectedProvince(val)
-                console.log(val)
               }
             }
           >
@@ -222,7 +217,6 @@ const DrawSelectedPage = () => {
               (e: any) => {
                 const val = e.target.value
                 setSelectedGameCategory(val)
-                console.log(val)
               }
             }
           >
@@ -246,7 +240,6 @@ const DrawSelectedPage = () => {
               (e: any) => {
                 const val = e.target.value
                 setSelectedMonth(val)
-                console.log(val)
               }
             }
           >
@@ -299,8 +292,13 @@ const DrawSelectedPage = () => {
                   )
                 }
               </div>
+
               <div className="flex gap-2 mt-5">
-                <DrawCounterTablePage />
+                {
+                  data && (
+                    <DrawCounterTablePage numberArr={data?.FrequencyMap || []} gameCategory={selectedGameCategory} />
+                  )
+                }
               </div>
               </div>
             </div>
