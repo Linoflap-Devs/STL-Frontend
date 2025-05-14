@@ -30,9 +30,9 @@ const DrawSelectedPage = () => {
   const [gameCategories, setGameCategories] = useState<{label: string, value: string}[]> ([]);
   const [filteredProvinces, setFilteredProvinces] = useState<{label: string, value: string}[]> ([]);
   
-  const [selectedRegion, setSelectedRegion] = useState(1);
-  const [selectedProvince, setSelectedProvince] = useState(1);
-  const [selectedGameCategory, setSelectedGameCategory] = useState(1);
+  const [selectedRegion, setSelectedRegion] = useState("1");
+  const [selectedProvince, setSelectedProvince] = useState("");
+  const [selectedGameCategory, setSelectedGameCategory] = useState("1");
   const [selectedMonth, setSelectedMonth] = useState((new Date()).getMonth() + 1);
 
   const [data, setData] = useState<any>({});
@@ -41,7 +41,7 @@ const DrawSelectedPage = () => {
 
   // fetch data
   const fetchData = async () => {
-    const dataFetch = await fetchDrawSummary(selectedProvince, selectedGameCategory, selectedMonth)
+    const dataFetch = await fetchDrawSummary(Number(selectedProvince), Number(selectedGameCategory), Number(selectedMonth))
     setData(dataFetch.data)
     console.log(dataFetch)
   }
@@ -61,16 +61,21 @@ const DrawSelectedPage = () => {
     const provinceFetch = await fetchProvinces()
     console.log(provinceFetch)
     setProvinces(provinceFetch.data)
-    setFilteredProvinces(provinceFetch.data.map((province: any) => {
+
+    const filteredProvinces = provinceFetch.data.filter((province: any) => {
+      return province.RegionId == selectedRegion
+    })
+    
+    setFilteredProvinces(filteredProvinces.map((province: any) => {
       return {
         label: province.ProvinceName,
         value: province.ProvinceId.toString()
       }
-    }))
+    })) 
 
     // default region
-    setSelectedRegion(1)
-    setSelectedProvince(1)
+    setSelectedRegion("1")
+    setSelectedProvince("1")
 
     const gameCategoryFetch = await fetchGameCategories()
     console.log(gameCategoryFetch)
@@ -86,7 +91,6 @@ const DrawSelectedPage = () => {
     // Initial Fetch
     loadData()
     fetchData()
-    console.log(data)
   }, [])
 
   useEffect(() => { 
@@ -104,24 +108,27 @@ const DrawSelectedPage = () => {
 
       setSelectedProvince(filteredProvinces[0].ProvinceId)
     }
-  }, [selectedRegion])
+  }, [selectedRegion, provinces])
 
   useEffect(() => {
-    if(selectedRegion != 0 && selectedProvince != 0 && selectedGameCategory != 0 && selectedMonth != 0){
+    if(Number(selectedRegion) != 0 && Number(selectedProvince) != 0 && Number(selectedGameCategory) != 0 && selectedMonth != 0){
       fetchData()
     }
   }, [selectedRegion, selectedProvince, selectedGameCategory, selectedMonth])
 
+  useEffect(() => {
+    console.log(filteredProvinces)
+  }, [filteredProvinces])
+
   const getTodayResults = (drawOrder: number) => {
     try {
-      console.log(data.ResultSummary[todayDate-1])
       
       if(drawOrder == 1){
         const filtered = data.ResultSummary[todayDate-1].FirstDraw
         console.log(`accessing data.ResultSummary[${todayDate-1}][${todayDate}].FirstDraw`)
         const numbers = [filtered.NumberOne || "-", filtered.NumberTwo || "-"]
-        if(selectedGameCategory > 2) numbers.push(filtered.NumberThree || "-") 
-        if(selectedGameCategory > 3) numbers.push(filtered.NumberFour || "-")
+        if(Number(selectedGameCategory) > 2) numbers.push(filtered.NumberThree || "-") 
+        if(Number(selectedGameCategory) > 3) numbers.push(filtered.NumberFour || "-")
         
         return numbers
       }
@@ -129,8 +136,8 @@ const DrawSelectedPage = () => {
       if(drawOrder == 2){
         const filtered = data.ResultSummary[todayDate-1].SecondDraw
         const numbers = [filtered.NumberOne || "-", filtered.NumberTwo || "-"]
-        if(selectedGameCategory > 2) numbers.push(filtered.NumberThree || "-")
-        if(selectedGameCategory > 3) numbers.push(filtered.NumberFour || "-")
+        if(Number(selectedGameCategory) > 2) numbers.push(filtered.NumberThree || "-")
+        if(Number(selectedGameCategory) > 3) numbers.push(filtered.NumberFour || "-")
         
         return numbers
       }
@@ -138,8 +145,8 @@ const DrawSelectedPage = () => {
       if(drawOrder == 3){
         const filtered = data.ResultSummary[todayDate-1].ThirdDraw
         const numbers = [filtered.NumberOne || "-", filtered.NumberTwo || "-"]
-        if(selectedGameCategory > 2) numbers.push(filtered.NumberThree || "-")
-        if(selectedGameCategory > 3) numbers.push(filtered.NumberFour || "-")
+        if(Number(selectedGameCategory) > 2) numbers.push(filtered.NumberThree || "-")
+        if(Number(selectedGameCategory) > 3) numbers.push(filtered.NumberFour || "-")
         
         return numbers
       }
@@ -152,21 +159,19 @@ const DrawSelectedPage = () => {
   const transformResultSummary = (gameCategory: number) => {
     let results: {firstDraw: string[], secondDraw: string[], thirdDraw: string[]}[] = []
 
-    console.log(data)
     if(data.ResultSummary){
       for( const result of data.ResultSummary ){
-        console.log(result)
         const firstDrawArr = [(result.FirstDraw.NumberOne?.toString() || "-"), (result.FirstDraw.NumberTwo?.toString() || "-")]
-        if(selectedGameCategory > 2) firstDrawArr.push(result.FirstDraw.NumberThree?.toString() || "-") 
-        if(selectedGameCategory > 3) firstDrawArr.push(result.FirstDraw.NumberFour?.toString() || "-")
+        if(Number(selectedGameCategory) > 2) firstDrawArr.push(result.FirstDraw.NumberThree?.toString() || "-") 
+        if(Number(selectedGameCategory) > 3) firstDrawArr.push(result.FirstDraw.NumberFour?.toString() || "-")
   
         const secondDrawArr = [(result.SecondDraw.NumberOne?.toString() || "-"), (result.SecondDraw.NumberTwo?.toString() || "-")]
-        if(selectedGameCategory > 2) secondDrawArr.push(result.SecondDraw.NumberThree?.toString() || "-") 
-        if(selectedGameCategory > 3) secondDrawArr.push(result.SecondDraw.NumberFour?.toString() || "-")
+        if(Number(selectedGameCategory) > 2) secondDrawArr.push(result.SecondDraw.NumberThree?.toString() || "-") 
+        if(Number(selectedGameCategory) > 3) secondDrawArr.push(result.SecondDraw.NumberFour?.toString() || "-")
         
         const thirdDrawArr = [(result.ThirdDraw.NumberOne?.toString() || "-"), (result.ThirdDraw.NumberTwo?.toString() || "-")]
-        if(selectedGameCategory > 2) thirdDrawArr.push(result.ThirdDraw.NumberThree?.toString() || "-") 
-        if(selectedGameCategory > 3) thirdDrawArr.push(result.ThirdDraw.NumberFour?.toString() || "-")
+        if(Number(selectedGameCategory) > 2) thirdDrawArr.push(result.ThirdDraw.NumberThree?.toString() || "-") 
+        if(Number(selectedGameCategory) > 3) thirdDrawArr.push(result.ThirdDraw.NumberFour?.toString() || "-")
   
         results.push({firstDraw: firstDrawArr, secondDraw: secondDrawArr, thirdDraw: thirdDrawArr})
       }
@@ -197,7 +202,7 @@ const DrawSelectedPage = () => {
               (e: any) => {
                 const val = e.target.value
                 setSelectedRegion(val)
-                setSelectedProvince(0)
+                setSelectedProvince("")
               }
             }
           >
@@ -220,13 +225,14 @@ const DrawSelectedPage = () => {
             onChange={
               (e: any) => {
                 const val = e.target.value
-                setSelectedProvince(val)
+                console.log("Province changed to " + val)
+                setSelectedProvince(val.toString())
               }
             }
           >
             {
               filteredProvinces.map((province) => 
-                  <MenuItem value={province.value}>{province.label}</MenuItem>
+                  <MenuItem key={province.value} value={province.value}>{province.label}</MenuItem>
               )
             }
           </Select>
@@ -323,7 +329,7 @@ const DrawSelectedPage = () => {
               <div className="flex gap-2 mt-5">
                 {
                   data && (
-                    <DrawCounterTablePage numberArr={data?.FrequencyMap || []} gameCategory={selectedGameCategory} />
+                    <DrawCounterTablePage numberArr={data?.FrequencyMap || []} gameCategory={Number(selectedGameCategory)} />
                   )
                 }
               </div>
@@ -336,7 +342,7 @@ const DrawSelectedPage = () => {
                 <DrawListSummaryPage 
                   location={filteredProvinces.find((province) => province.value == selectedProvince.toString())?.label || ""}
                   month={selectedMonth}
-                  values={transformResultSummary(selectedGameCategory)}
+                  values={transformResultSummary(Number(selectedGameCategory))}
                 />
               )
             }
