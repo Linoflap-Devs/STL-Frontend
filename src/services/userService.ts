@@ -73,7 +73,7 @@ export const fetchGameCategories = async (setGameTypes: React.Dispatch<React.Set
     const response = await getGameTypesData<GetGameCategoriesResponse>("/gameTypes/getGameCategories");
     if (response.success && Array.isArray(response.data?.data)) {
       const fetchedGameCategories = response.data.data;
-      console.log("Fetched Game Categories:", fetchedGameCategories);
+      // console.log("Fetched Game Categories:", fetchedGameCategories);
 
       setGameTypes(fetchedGameCategories);
     } else {
@@ -82,6 +82,24 @@ export const fetchGameCategories = async (setGameTypes: React.Dispatch<React.Set
   } catch (error) {
     console.error("Error fetching game categories:", error);
     setGameTypes([]);
+  }
+};
+
+
+export const fetchOperatorsEditLogs = async (setOperatorsLog: React.Dispatch<React.SetStateAction<any>>) => {
+  try {
+    const response = await getOperatorsData<GetOperatorsResponse>("/operators/getOperatorEdits");
+    if (response.success && Array.isArray(response.data?.data)) {
+      const fetchedOperatorsLogs = response.data.data;
+      console.log("Fetched fetchedOperatorsLogs:", fetchedOperatorsLogs);
+
+      setOperatorsLog(fetchedOperatorsLogs);
+    } else {
+      setOperatorsLog([]);
+    }
+  } catch (error) {
+    console.error("Error fetching game categories:", error);
+    setOperatorsLog([]);
   }
 };
 

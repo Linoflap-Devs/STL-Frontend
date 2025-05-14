@@ -26,7 +26,7 @@ export const userRoleFormFields: Record<
           { value: 'Sr.', label: 'Sr.' },
           { value: 'II', label: 'II' },
           { value: 'III', label: 'III' },
-          { value: '', label: 'None' },
+          { value: '', label: 'N/A' },
         ],
         placeholder: 'Suffix',
         value: '',

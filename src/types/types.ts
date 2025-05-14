@@ -16,8 +16,8 @@ export interface LegendItem {
 export interface User {
   UserId: number;
   FirstName: string;
-  fullName: string;
   LastName: string;
+  fullName: string; // Consider making this a computed field on the frontend
   Suffix: string | null;
   UserTypeId: number;
   email: string;
@@ -27,8 +27,8 @@ export interface User {
   OperatorDetails?: {
     OperatorName?: string;
   };
-  Region?: string;
-  region: string; // Add region here
+  Region?: string; // Remove this if 'region' below is preferred
+  region: string;
 
   LastLogin?: string;
   LastTokenRefresh?: string;
@@ -36,15 +36,14 @@ export interface User {
   Cities: { CityId: number; CityName: string }[];
 }
 
+
 // Define the Operator type
-export type Operator = {
-  OperatorRegion: any;
-  Region?: any;
+export interface Operator {
   OperatorId: number;
   OperatorName: string;
   Executive: string;
   OperatorEmail: string | null;
-  Status: number;
+  Status: number; // Consider using enum if Status can be "Active" = 1, etc.
   CreatedAt: string;
   DateOfOperation: string;
   Cities: { CityId: number; CityName: string }[];
@@ -53,7 +52,10 @@ export type Operator = {
   Email: string | null;
   ContactNo: string;
   OperatorRepresentative: string;
+  OperatorRegion?: any; // Ideally replace `any` with a specific Region type
+  Region?: any;         // Same here
 
+  // Optional shared fields (if reused with users)
   LastLogin?: string;
   LastTokenRefresh?: string;
   UserStatusId?: number;

@@ -171,29 +171,30 @@ const darkTheme = createTheme({
       styleOverrides: {
         root: {
           fontSize: '15px',
+          //color: "#ACA993 !important",
         },
       },
     },
     MuiFormHelperText: {
       styleOverrides: {
         root: {
-          fontSize: "0.80rem",
+          fontSize: "0.70rem",
           marginBottom: "0px !important",
           marginLeft: "0px",
-          color: '#FF7A7A !important', // Custom color for error text
+          // color: '#CE1126 !important',
         },
       },
     },
     MuiOutlinedInput: {
       styleOverrides: {
         input: {
-          //padding: "10px 16px",
           width: "100% !important",
           fontSize: "0.85rem",
+          color: '#000000 !important',
         },
       },
     },
-    MuiTooltip: {
+    MuiTooltip: { 
       styleOverrides: {
         tooltip: {
           backgroundColor: "#2F2F2F !important", // Custom background color
@@ -202,6 +203,7 @@ const darkTheme = createTheme({
         },
       },
     },
+
   },
 });
 

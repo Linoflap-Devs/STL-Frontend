@@ -6,7 +6,7 @@ import ConfirmUserActionModalPage from './ConfirmUserActionModal';
 import Swal from 'sweetalert2';
 import Select from 'react-select';
 import { operatorSchema } from '~/schemas/operatorSchema';
-import { generateValidPassword } from '~/schemas/userSchema';
+import { generateValidPassword, userSchema } from '~/schemas/userSchema';
 import Visibility from '@mui/icons-material/Visibility';
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
 
@@ -47,8 +47,8 @@ const ReusableCreateModalPage: React.FC<ReusableModalPageProps> = ({
   };
 
   // FOR SELECT FIELDS
-  const handleSelectChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    const { name, value } = e.target;
+  const handleSelectChange = (e: { target: { name: string; value: string | number } }) => {
+      const { name, value } = e.target;
 
     const valueAsNumber = isNaN(Number(value)) ? value : Number(value);
 
@@ -142,15 +142,27 @@ const ReusableCreateModalPage: React.FC<ReusableModalPageProps> = ({
 
   const handleSubmit = async () => {
     try {
-      const result = operatorSchema.safeParse(formData);
+      // Validate operator schema
+      const operatorResult = operatorSchema.safeParse(formData);
 
-      if (!result.success) {
-        const fieldErrors = result.error.flatten().fieldErrors;
-        console.error("Validation errors:", fieldErrors);
+      if (!operatorResult.success) {
+        const fieldErrors = operatorResult.error.flatten().fieldErrors;
+        console.error("Operator validation errors:", fieldErrors);
         setErrors(fieldErrors);
         return;
       }
 
+      // Validate user schema
+      const userResult = userSchema.safeParse(formData);
+
+      if (!userResult.success) {
+        const fieldErrors = userResult.error.flatten().fieldErrors;
+        console.error("User validation errors:", fieldErrors);
+        setErrors(fieldErrors);
+        return;
+      }
+
+      // No errors, proceed with form submission
       setErrors({});
       console.log("Form data is valid:", formData);
 
@@ -171,7 +183,7 @@ const ReusableCreateModalPage: React.FC<ReusableModalPageProps> = ({
       if (!confirmationResult.isConfirmed) {
         return;
       }
-      
+
       setIsVerifyModalOpen(true);
     } catch (error) {
       console.error("Error during validation or confirmation:", error);
@@ -194,7 +206,7 @@ const ReusableCreateModalPage: React.FC<ReusableModalPageProps> = ({
             sm: "80%",
             md: "600px",
             lg: "650px",
-            xl: "690px",
+            xl: "680px",
           },
         }
       }}>
@@ -240,14 +252,6 @@ const ReusableCreateModalPage: React.FC<ReusableModalPageProps> = ({
                                 native: true,
                               }}
                             >
-                              <option value="0" disabled style={{ color: '#9CA3AF' }}>
-                                {field.label}
-                              </option>
-                              {field.options?.map((option) => (
-                                <option key={option.value} value={option.value}>
-                                  {option.label}
-                                </option>
-                              ))}
                             </TextField>
                             {errors[field.name]?.[0] && (
                               <FormHelperText>{errors[field.name][0]}</FormHelperText>
@@ -578,31 +582,56 @@ const ReusableCreateModalPage: React.FC<ReusableModalPageProps> = ({
             <div className="flex-1 space-y-4">
               {fields.map((field, index) => {
 
-                if (field.name === 'operatorId') {
+                if (field.name === "operatorId") {
                   return (
                     <div key={index} className="w-full">
-                      <select
-                        id={field.name}
+                      <Select
+                        inputId={field.name}
                         name={field.name}
-                        value={String(formData[field.name] || '')}
-                        onChange={handleSelectChange}
-                        className={`w-full border rounded px-3 py-2 text-sm ${errors[field.name]?.length || formData[field.name] === ''
-                          ? 'border-red-500'
-                          : 'border-[#0038A8]'
-                          }`}
-                        aria-label={field.label}
-                      >
-                        <option value="" disabled style={{ color: '#9CA3AF' }}>
-                          Select an area of operation
-                        </option>
-                        {field.options?.map((option) => (
-                          <option key={option.value} value={option.value}>
-                            {option.label}
-                          </option>
-                        ))}
-                      </select>
+                        options={field.options}
+                        value={
+                          (field.options ?? []).find(
+                            (option) => option.value === formData[field.name]
+                          ) || null
+                        }
+                        onChange={(selectedOption) => {
+                          const event = {
+                            target: {
+                              name: field.name,
+                              value: selectedOption?.value || "",
+                            },
+                          };
+                          handleSelectChange(event);
+                        }}
+                        placeholder="Select an area of operation"
+                        className="react-select-container"
+                        classNamePrefix="react-select"
+                        menuPortalTarget={document.body}
+                        styles={{
+                          menuPortal: (base) => ({ ...base, zIndex: 1000000 }),
+                          menu: (provided) => ({
+                            ...provided,
+                            maxHeight: 400, // Limits dropdown height
+                            overflowY: "auto",
+                          }),
+                          control: (provided, state) => ({
+                            ...provided,
+                            borderColor:
+                              errors[field.name]?.length ||
+                              formData[field.name] === ""
+                                ? "#EF4444"
+                                : "#0038A8",
+                            fontSize: "0.875rem",
+                            padding: "2px",
+                          }),
+                        }}
+                        classNames={{
+                          control: () => "rounded text-sm",
+                        }}
+                        // Removed isClearable
+                      />
                       {errors[field.name]?.[0] && (
-                        <p className="text-sm text-red-600 mt-1">
+                        <p className="text-[12px] text-[#CE1126] mt-1">
                           {errors[field.name][0]}
                         </p>
                       )}

@@ -3,7 +3,7 @@ import ReusableButton from '../buttons/ReusableSubmitButton';
 import useUserRoleStore from '../../../../store/useUserStore';
 import { getRoleName } from '~/utils/dashboarddata';
 import { ModalPageProps } from '../../../types/interfaces';
-import ReusableCreateModalPage from './ReusableCreateModal';
+import ReusableCreateModalPage from './CreateModal';
 
 const CreateModalDataPage: React.FC<ModalPageProps> = ({
   open,
