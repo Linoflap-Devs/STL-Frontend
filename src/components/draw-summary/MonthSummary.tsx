@@ -2,10 +2,10 @@ import React from "react";
 import dayjs from "dayjs";
 import { Divider } from "@mui/material";
 
-const MonthSummaryPage = () => {
-  const currentMonth = dayjs();
-  const daysInMonth = currentMonth.daysInMonth();
-  const monthName = currentMonth.format("MMMM");
+const MonthSummaryPage = (data: {month: number, year: number}) => {
+  const currentMonth = new Date(data.year, data.month);
+  const daysInMonth = dayjs(currentMonth).daysInMonth();
+  const monthName = dayjs(currentMonth).format("MMM");
 
   const dayNumbers = Array.from({ length: daysInMonth }, (_, i) => i + 1);
 
