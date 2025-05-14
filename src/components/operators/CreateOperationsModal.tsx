@@ -29,6 +29,7 @@ const CreateOperationsPage: React.FC<ReusableModalPageProps> = ({
   const isCityWide = formData.STLAreaOfOperations === 'CityWide';
   const isExcludedCITY = formData.isExcludedCITY;
 
+  // FOR TEXT FIELDS
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement> | { target: { name: string; value: string | boolean } }
   ) => {
@@ -41,6 +42,7 @@ const CreateOperationsPage: React.FC<ReusableModalPageProps> = ({
     }
   };
 
+  // FOR SELECT FIELDS
   const handleSelectChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const { name, value } = e.target;
 
@@ -66,6 +68,7 @@ const CreateOperationsPage: React.FC<ReusableModalPageProps> = ({
     }
   };
 
+  // FOR MULTI SELECT FIELDS
   const handleMultiSelect = (name: string, selectedOptions: any[]) => {
     const selectedValues = selectedOptions.map((option) => option.value);
     console.log(`Selected Values for ${name}:`, selectedValues);
@@ -102,7 +105,6 @@ const CreateOperationsPage: React.FC<ReusableModalPageProps> = ({
         }));
 
       console.log("Filtered Cities:", filteredCities);
-
       // Reset city selection when province changes
       setFormData((prev) => ({
         ...prev,
@@ -222,7 +224,7 @@ const CreateOperationsPage: React.FC<ReusableModalPageProps> = ({
                               id={field.name}
                               name={field.name}
                               select
-                              value={formData[field.name] || '0'} // Ensure it's a string for consistency
+                              value={formData[field.name] || '0'}
                               onChange={(e) => handleSelectChange(e as unknown as React.ChangeEvent<HTMLSelectElement>)}
                               label={field.label}
                               variant="outlined"

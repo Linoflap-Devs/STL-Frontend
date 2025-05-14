@@ -153,10 +153,6 @@ const UserCreateModalPage: React.FC<ReusableModalPageProps> = ({
                       helperText={errors[field.name]?.[0] || ''}
                       size="small"
                     />
-                    {/* Display error message if exists */}
-                    {errors[field.name]?.[0] && (
-                      <p className="text-xs text-[#CE1126] mt-1">{errors[field.name][0]}</p>
-                    )}
                   </div>
                 ))}
 
@@ -212,9 +208,6 @@ const UserCreateModalPage: React.FC<ReusableModalPageProps> = ({
                             size="small"
                           />
                         )}
-                        {errors[field.name]?.[0] && (
-                          <p className="text-xs text-red-600 mt-1">{errors[field.name][0]}</p>
-                        )}
                       </div>
                     ))}
                 </div>
@@ -261,9 +254,6 @@ const UserCreateModalPage: React.FC<ReusableModalPageProps> = ({
                         helperText={errors[field.name]?.[0] || ''}
                         size="small"
                       />
-                    )}
-                    {errors[field.name]?.[0] && (
-                      <p className="text-xs text-red-600 mt-1">{errors[field.name][0]}</p>
                     )}
                   </div>
                 ))}
@@ -323,9 +313,6 @@ const UserCreateModalPage: React.FC<ReusableModalPageProps> = ({
                         helperText={errors[field.name]?.[0] || ''}
                         size="small"
                       />
-                    )}
-                    {errors[field.name]?.[0] && (
-                      <p className="text-xs text-red-600 mt-1">{errors[field.name][0]}</p>
                     )}
                   </div>
                 ))}

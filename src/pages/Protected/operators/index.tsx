@@ -33,7 +33,7 @@ const OperatorsPage = () => {
       <ChartsDataPage 
         userType="operator" 
         pageType="operator" 
-        dashboardData={dashboardData} 
+        dashboardData={dashboardData}
       />
       <DetailedTable
         data={data}

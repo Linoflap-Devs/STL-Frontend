@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
 import ReusableButton from '../ui/buttons/ReusableSubmitButton';
-import ReusableCreateModalPage from './UserCreateModal';
 import useUserRoleStore from '../../../store/useUserStore';
 import { getRoleName } from '~/utils/dashboarddata';
 import { ModalPageProps } from '../../types/interfaces';
+import UserCreateModalPage from './UserCreateModal';
 
 export const isManager = (roleId: number) => roleId === 2;
 export const isExecutive = (roleId: number) => roleId === 3;
@@ -27,7 +27,7 @@ const CreateModalPage: React.FC<ModalPageProps> = ({
       
   return (
     <>
-      <ReusableCreateModalPage
+      <UserCreateModalPage
         isOpen={isOpen}
         onClose={handleClose}
         endpoint={formattedEndpoint}
@@ -42,7 +42,7 @@ const CreateModalPage: React.FC<ModalPageProps> = ({
             label="Submit"
           />
         )}
-      </ReusableCreateModalPage>
+      </UserCreateModalPage>
     </>
   );
 };
