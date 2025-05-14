@@ -24,83 +24,82 @@ const ConfirmUserActionModalPage: React.FC<ConfirmUserActionModalProps> = ({
   const handleTogglePasswordVisibility = () => setShowPassword((prev) => !prev);
   const { roleId, setData } = useUserRoleStore();
 
-  const handleVerifyUserAction = async () => {
-    if (!password) {
-      setError("Password is required.");
+const handleVerifyUserAction = async () => {
+  if (!password) {
+    setError("Password is required.");
+    return;
+  }
+
+  try {
+    const { success: isVerified } = await verifyPass(password);
+    if (!isVerified) {
+      setError("Invalid password. Please try again.");
       return;
     }
 
-    try {
-      const { success: isVerified } = await verifyPass(password);
-      if (!isVerified) {
-        setError("Invalid password. Please try again.");
-        return;
-      }
+    setError("");
 
-      setError("");
+    const dataToSend = {
+      ...formData,
+      ...(roleId && { userTypeId: roleId }),
+    };
 
-      // Conditionally add `userTypeId` if roleId exists
-      const dataToSend = {
-        ...formData,
-        ...(roleId && { userTypeId: roleId }),
-      };
+    const response = await axiosInstance.post(endpoint.create, dataToSend, {
+      withCredentials: true,
+    });
 
-      // endpoint and data to send
-      const response = await axiosInstance.post(endpoint.create, dataToSend, {
-        withCredentials: true,
-      });
-
-      // Handle API response success or failure
-      if (!response?.data?.success) {
-        const errMsg = response?.data?.message || `Failed to ${actionType} user.`;
-        setError(errMsg);
-        await Swal.fire({
-          icon: "error",
-          title: "Error!",
-          text: errMsg,
-          confirmButtonColor: "#D32F2F",
-        });
-        return;
-      }
-
-      await Swal.fire({
-        icon: "success",
-        title: `${actionType === "create" ? "User Created!" : "Action Successful!"}`,
-        text: `${actionType === "create" ? "The user has been created successfully." : "The user action was successful."}`,
-        confirmButtonColor: "#67ABEB",
-      });
-
-      // Close modal and reset states
-      setFormData({});
-      setPassword("");
-      setErrors({});
-      onClose();
-
-      // Refresh users if roleId is set
-      if (roleId) {
-        fetchUsers(roleId, setData);
-      }
-
-    } catch (error: any) {
-      console.error("Error during user action:", error);
-      console.log("Full error response:", error?.response?.data);
-
-      const backendMessage =
-        error?.response?.data?.message ||
-        error?.response?.data ||
-        error?.message ||
-        "An unexpected error occurred.";
-
-      setError(backendMessage);
-
+    if (!response?.data?.success) {
+      const errMsg = response?.data?.message || `Failed to ${actionType} user.`;
+      setError(errMsg);
       await Swal.fire({
         icon: "error",
-        title: "Unexpected Error!",
-        text: `Error while trying to ${actionType} user: ${backendMessage}`,
+        title: "Error!",
+        text: errMsg,
         confirmButtonColor: "#D32F2F",
       });
+      return;
     }
-  };
+
+    // ✅ Close modal and reset states BEFORE showing success alert
+    setFormData({});
+    setPassword("");
+    setErrors({});
+    onClose(); // e.g. closing the modal
+
+    // Refresh users if roleId is set
+    if (roleId) {
+      fetchUsers(roleId, setData);
+    }
+
+    // ✅ Now show the success alert
+    await Swal.fire({
+      icon: "success",
+      title: `${actionType === "create" ? "User Created!" : "Action Successful!"}`,
+      text: `${actionType === "create" ? "The user has been created successfully." : "The user action was successful."}`,
+      confirmButtonColor: "#67ABEB",
+    });
+
+  } catch (error: any) {
+    console.error("Error during user action:", error);
+    console.log("Full error response:", error?.response?.data);
+
+    const backendMessage =
+      error?.response?.data?.message ||
+      error?.response?.data ||
+      error?.message ||
+      "An unexpected error occurred.";
+
+    setError(backendMessage);
+
+    await Swal.fire({
+      icon: "error",
+      title: "Unexpected Error!",
+      text: `Error while trying to ${actionType} user: ${backendMessage}`,
+      confirmButtonColor: "#D32F2F",
+    });
+  }
+};
+
 
   return (
     <>

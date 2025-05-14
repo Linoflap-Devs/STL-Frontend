@@ -1,5 +1,4 @@
 import React, { useEffect } from 'react';
-import CreateModalOperationsPage from './OperationCreateModalData';
 import UpdateModalPage from '~/components/ui/modals/UpdateModalData';
 import { useOperatorsData } from '../../../store/useOperatorStore';
 import { useModalStore } from '../../../store/useModalStore';
@@ -7,6 +6,7 @@ import { fetchGameCategories } from '~/services/userService';
 import { fetchCityData, fetchProvinceData, fetchRegionData } from '~/services/locationService';
 import { operatorConfig } from '~/config/operatorFormFields';
 import { useOperatorFormStore } from '../../../store/useOperatorFormStore';
+import CreateModalDataPage from '../ui/modals/CreateModalData';
 
 export const OperatorFieldFormPage: React.FC = () => {
   const {
@@ -90,7 +90,7 @@ export const OperatorFieldFormPage: React.FC = () => {
   return (
     <div className="p-4">
       {modalType === 'create' && (
-        <CreateModalOperationsPage
+        <CreateModalDataPage
           open={modalOpen}
           onClose={closeModal}
           fields={fields}

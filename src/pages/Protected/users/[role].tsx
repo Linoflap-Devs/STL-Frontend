@@ -45,12 +45,12 @@ const RolePage = () => {
       <h1 className="text-3xl font-bold mb-3">{label}</h1>
       <CardsPage
         dashboardData={data} 
-        roleLabel={label} 
+        roleLabel={label}
         textlabel={textlabel} 
       />
       <ChartsDataPage 
-        pageType={pagetype} 
-        dashboardData={data} 
+        pageType={pagetype}
+        dashboardData={data}
       />
       <DetailedTable
         data={data}
@@ -58,7 +58,7 @@ const RolePage = () => {
         pageType={pagetype}
         operatorMap={operatorMap}
         roleId={roleId}
-        statsPerRegion={data}
+        statsPerRegion={data} // for csv
       />
       <UserFieldFormPage 
         operatorMap={operatorMap} 

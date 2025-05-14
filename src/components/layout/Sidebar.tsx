@@ -131,6 +131,10 @@ const Sidebar: React.FC = () => {
         {name}
       </div>
     ));
+    
+    const toggleCollapse = () => {
+      setCollapsed((prev) => !prev);
+    };
 
   const renderMenuItem = (label: string) => {
     const iconSize = 20;
@@ -183,8 +187,8 @@ const Sidebar: React.FC = () => {
           className={clsx(
             "flex items-center justify-between px-4 py-2 cursor-pointer rounded-md",
             isGroupActive(path)
-              ? "text-purple-400 font-semibold"
-              : "text-gray-300 hover:bg-gray-700"
+              ? "bg-[#F6BA12] text-[#0038A8] font-semibold"
+              : "hover:text-[#F6BA12] text-gray-300",
           )}
         >
           <span className="flex items-center gap-2 text-sm">
@@ -218,7 +222,7 @@ const Sidebar: React.FC = () => {
           <div className="flex justify-between px-3 p-3 w-full">
             {/* Toggle Collapse Icon (Left Corner) */}
             <button
-             // onClick={toggleCollapse}
+             onClick={toggleCollapse}
               className="flex justify-center items-center bg-[#0038A8] 
                 text-[#ACA993] rounded-full w-6 h-6 p-1 hover:bg-gray-300 transition-colors duration-200"
             >

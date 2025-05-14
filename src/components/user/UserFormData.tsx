@@ -1,10 +1,10 @@
 import React, { useEffect } from 'react';
-import CreateModalPage from '~/components/user/UserCreateModalData';
 import useUserRoleStore from '../../../store/useUserStore';
 import { UserFieldFormPageProps } from '~/types/interfaces';
 import UpdateModalPage from '../ui/modals/UpdateModalData';
 import { useModalStore } from '../../../store/useModalStore';
 import { userRoleFormFields } from '~/config/userFormFields';
+import CreateModalDataPage from '../ui/modals/CreateModalData';
 
 const UserFieldFormPage: React.FC<UserFieldFormPageProps> = ({ operatorMap }) => {
   const { setFields, fields, setRoleId } = useUserRoleStore();
@@ -52,7 +52,7 @@ const UserFieldFormPage: React.FC<UserFieldFormPageProps> = ({ operatorMap }) =>
   return (
     <div className="p-4">
       {modalType === "create" && (
-        <CreateModalPage
+        <CreateModalDataPage
           open={modalOpen}
           onClose={closeModal}
           fields={fields}

@@ -22,7 +22,7 @@ html, body {
 }
 
 .MuiFormLabel-root.MuiInputLabel-root.Mui-error {
-  color: #FF7A7A !important;
+  color: #CE1126 !important;
 }
 
 input, select {
@@ -57,6 +57,7 @@ select option:disabled {
 /* Error state for react-select */
 .react-select__control--is-invalid {
   border-color: #CE1126 !important;          /* Red border on error */
+  font-size: 12px !important;             /* Font size for error message */
 }
 
 /* Adjust dropdown option styles */

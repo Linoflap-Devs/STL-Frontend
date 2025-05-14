@@ -10,7 +10,7 @@ const FirstSummaryPage = (data: {
 
   return (
     <div className="bg-[#0038A8] py-5 px-3 rounded-xl text-white w-full max-w-2xl mx-auto text-center">
-      <h2 className="text-2xl font-semibold text-center">{
+      <h2 className="text-md font-semibold text-center">{
         data.drawOrder === 1 ? "FIRST" : data.drawOrder === 2 ? "SECOND" : "THIRD"  
       }</h2>
       <Divider

@@ -9,7 +9,7 @@ const handleFetch = async (
     const response = await getLocation<GetLocationResponse>(endpoint);
     if (response.success && Array.isArray(response.data?.data)) {
       const fetchedData = response.data.data;
-      console.log(`Fetched data from ${endpoint}:`, fetchedData);
+      // console.log(`Fetched data from ${endpoint}:`, fetchedData);
       setState(fetchedData);
     } else {
       setState([]);

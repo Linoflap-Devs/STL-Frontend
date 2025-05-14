@@ -48,7 +48,6 @@ export interface SortableTableCellProps {
   isFilterVisible?: boolean;
 }
 
-
 export interface CardProps<T = React.ReactNode> {
   label: string;
   textlabel?: string;
