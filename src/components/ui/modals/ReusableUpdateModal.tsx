@@ -16,7 +16,7 @@ import {
   Box,
   Stack,
   IconButton,
-  FormHelperText
+  FormHelperText,
 } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 import dayjs from "dayjs";
@@ -38,7 +38,7 @@ const ReusableUpdateModal: React.FC<ReusableModalPageProps> = ({
   endpoint,
   initialUserData,
   operatorMap,
-  children
+  children,
 }) => {
   const {
     user,
@@ -122,11 +122,12 @@ const ReusableUpdateModal: React.FC<ReusableModalPageProps> = ({
   const handleSubmit = async () => {
     try {
       if (!endpoint) throw new Error("Endpoint is missing.");
-      if (typeof endpoint === 'object' && !endpoint.update) {
+      if (typeof endpoint === "object" && !endpoint.update) {
         throw new Error("Invalid endpoint: 'update' endpoint is required.");
       }
 
-      const endpointUrl = typeof endpoint === 'string' ? endpoint : endpoint.update;
+      const endpointUrl =
+        typeof endpoint === "string" ? endpoint : endpoint.update;
 
       if (!originalUserData) throw new Error("Original user data is missing.");
 
@@ -138,14 +139,14 @@ const ReusableUpdateModal: React.FC<ReusableModalPageProps> = ({
           fieldErrors[key] = err.message;
         });
 
-        setErrors(fieldErrors);  // Show inline errors only
+        setErrors(fieldErrors); // Show inline errors only
         return; // Don't show a Swal popup here
       }
 
       const updatedFields: Record<string, any> = { userId: user.UserId };
       Object.entries(user).forEach(([key, value]) => {
         const originalValue = originalUserData[key];
-        if (key !== 'UserId' && value !== originalValue) {
+        if (key !== "UserId" && value !== originalValue) {
           const normalizedKey = key.charAt(0).toLowerCase() + key.slice(1);
           updatedFields[normalizedKey] = value;
         }
@@ -162,7 +163,8 @@ const ReusableUpdateModal: React.FC<ReusableModalPageProps> = ({
         icon: "question",
         showCancelButton: true,
         confirmButtonText: '<span style="color: #212121;">Yes, I did.</span>',
-        cancelButtonText: '<span style="color: #212121;">No, let me check</span>',
+        cancelButtonText:
+          '<span style="color: #212121;">No, let me check</span>',
         confirmButtonColor: "#67ABEB",
         cancelButtonColor: "#f0f0f0",
         customClass: {
@@ -180,9 +182,9 @@ const ReusableUpdateModal: React.FC<ReusableModalPageProps> = ({
       });
 
       Swal.fire({
-        icon: 'success',
-        title: 'Success',
-        text: 'User updated successfully!',
+        icon: "success",
+        title: "Success",
+        text: "User updated successfully!",
         timer: 2000,
         showConfirmButton: false,
       });
@@ -192,9 +194,12 @@ const ReusableUpdateModal: React.FC<ReusableModalPageProps> = ({
       const err = error as AxiosError;
 
       Swal.fire({
-        icon: 'error',
-        title: 'Update Failed',
-        text: (err.response?.data as { message?: string })?.message || err.message || 'An unexpected error occurred.',
+        icon: "error",
+        title: "Update Failed",
+        text:
+          (err.response?.data as { message?: string })?.message ||
+          err.message ||
+          "An unexpected error occurred.",
       });
     }
   };
@@ -217,56 +222,45 @@ const ReusableUpdateModal: React.FC<ReusableModalPageProps> = ({
         },
       }}
     >
-      <DialogTitle sx={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', py: 0 }}>
-        <IconButton
-          sx={{ alignSelf: 'flex-end' }}
-          onClick={onClose}
-        >
+      <DialogTitle
+        sx={{
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "flex-start",
+          py: 0,
+        }}
+      >
+        <IconButton sx={{ alignSelf: "flex-end" }} onClick={onClose}>
           <CloseIcon
             sx={{
               fontSize: 28,
               fontWeight: 700,
-              backgroundColor: '#ACA993',
-              borderRadius: '50%',
-              padding: '4px',
-              color: '#FFFFFF',
+              backgroundColor: "#ACA993",
+              borderRadius: "50%",
+              padding: "4px",
+              color: "#FFFFFF",
             }}
           />
         </IconButton>
-        <Typography sx={{ fontSize: 26, fontWeight: 'bold', mt: -1 }}>
-          {isDisabled ? "View" : (isViewMode ? "Update" : "")} {title}
+        <Typography sx={{ fontSize: 26, fontWeight: "bold", mt: -1 }}>
+          {isDisabled ? "View" : isViewMode ? "Update" : ""} {title}
         </Typography>
       </DialogTitle>
 
       <DialogContent>
-        <Stack spacing={2} key={status} sx={{ mb: 1 }}>
-          {/* Toggle Button */}
-          <Box
-            sx={{
-              display: "flex",
-              justifyContent: "flex-end",
-              alignItems: "center",
-              width: "100%",
-            }}
-          >
-            <Button
-              onClick={handleDisable}
-              sx={{ ...buttonUpdateStyles, mt: 1, fontSize: "14px", px: "1.7rem" }}
-              variant="contained"
-            >
-              {isViewMode ? "View" : "Update"}
-            </Button>
-          </Box>
-
+        <Stack spacing={2} key={status} sx={{ mb: 1, mt: 3 }}>
           {/* Personal Information Fields */}
           <Stack direction="row" spacing={3}>
-            <Stack spacing={3} sx={{ flex: 1, }}>
-              {["FirstName", "LastName", "OperatorContactNos",].map((key) => (
+            <Stack spacing={3} sx={{ flex: 1 }}>
+              {["FirstName", "LastName", "OperatorContactNos"].map((key) => (
                 <Stack key={key} spacing={0}>
                   {key === "LastName" ? (
                     <Stack direction="row" spacing={2}>
                       <FormControl fullWidth error={!!errors.lastName}>
-                        <InputLabel sx={{ fontSize: "14px" }} htmlFor="LastName">
+                        <InputLabel
+                          sx={{ fontSize: "14px" }}
+                          htmlFor="LastName"
+                        >
                           Last Name
                         </InputLabel>
                         <OutlinedInput
@@ -293,7 +287,10 @@ const ReusableUpdateModal: React.FC<ReusableModalPageProps> = ({
                           id="suffix"
                           name="suffix"
                           placeholder="Enter Suffix"
-                          value={user?.Suffix || (isLoading ? "Loading..." : "No data")}
+                          value={
+                            user?.Suffix ||
+                            (isLoading ? "Loading..." : "No data")
+                          }
                           onChange={handleManagerChange}
                           label="Suffix"
                           disabled
@@ -305,16 +302,26 @@ const ReusableUpdateModal: React.FC<ReusableModalPageProps> = ({
                       </FormControl>
                     </Stack>
                   ) : (
-                    <FormControl fullWidth error={Boolean(errors[key])} size="small">
+                    <FormControl
+                      fullWidth
+                      error={Boolean(errors[key])}
+                      size="small"
+                    >
                       <InputLabel htmlFor={key}>{formatKey(key)}</InputLabel>
                       <OutlinedInput
                         id={key}
                         name={key}
                         label={formatKey(key)}
                         placeholder={`Enter ${formatKey(key)}`}
-                        value={user[key as keyof typeof user] || initialUserData?.[key] || "No data"}
+                        value={
+                          user[key as keyof typeof user] ||
+                          initialUserData?.[key] ||
+                          "No data"
+                        }
                         onChange={handleManagerChange}
-                        disabled={alwaysDisabledKeys.includes(key) || isDisabled}
+                        disabled={
+                          alwaysDisabledKeys.includes(key) || isDisabled
+                        }
                       />
                       {errors[key] && (
                         <FormHelperText>{errors[key]}</FormHelperText>
@@ -324,12 +331,16 @@ const ReusableUpdateModal: React.FC<ReusableModalPageProps> = ({
                 </Stack>
               ))}
               <Box sx={{ flex: 1 }}>
-                <FormControl fullWidth sx={selectStyles} error={!status && !isDisabled}>
+                <FormControl
+                  fullWidth
+                  sx={selectStyles}
+                  error={!status && !isDisabled}
+                >
                   <InputLabel id="status-label">Status</InputLabel>
                   <Select
                     labelId="status-label"
                     id="status"
-                    value={status || ""}
+                    value={status || "Status"} // value
                     onChange={(e) => setStatus(e.target.value)}
                     label="Status"
                     disabled={isDisabled}
@@ -343,17 +354,17 @@ const ReusableUpdateModal: React.FC<ReusableModalPageProps> = ({
                   </Select>
                 </FormControl>
               </Box>
-
             </Stack>
 
             {/* 2nd row */}
             <Stack spacing={3} sx={{ flex: 1 }}>
-              {[
-                "OperatorName",
-                "Email",
-                "LastUpdatedBy",
-              ].map((key) => (
-                <FormControl key={key} fullWidth error={!!errors[key]} size="small">
+              {["OperatorName", "Email", "LastUpdatedBy"].map((key) => (
+                <FormControl
+                  key={key}
+                  fullWidth
+                  error={!!errors[key]}
+                  size="small"
+                >
                   <InputLabel htmlFor={key}>{formatKey(key)}</InputLabel>
                   <OutlinedInput
                     id={key}
@@ -363,21 +374,30 @@ const ReusableUpdateModal: React.FC<ReusableModalPageProps> = ({
                     value={
                       isLoading
                         ? ""
-                        : key === "DateOfRegistration" || key === "LastUpdatedDate"
+                        : key === "DateOfRegistration" ||
+                            key === "LastUpdatedDate"
                           ? (() => {
-                            const dateValue = user?.[key as keyof typeof user];
-                            return dateValue && !isNaN(Date.parse(dateValue as string))
-                              ? new Date(dateValue as string).toISOString().split("T")[0]
-                              : "";
-                          })()
-                          : operators?.[0]?.[key as keyof typeof operators[0]] ??
-                          user?.[key as keyof typeof user] ??
-                          initialUserData?.[key] ??
-                          "No Data"
+                              const dateValue =
+                                user?.[key as keyof typeof user];
+                              return dateValue &&
+                                !isNaN(Date.parse(dateValue as string))
+                                ? new Date(dateValue as string)
+                                    .toISOString()
+                                    .split("T")[0]
+                                : "";
+                            })()
+                          : (operators?.[0]?.[
+                              key as keyof (typeof operators)[0]
+                            ] ??
+                            user?.[key as keyof typeof user] ??
+                            initialUserData?.[key] ??
+                            "No Data")
                     }
                     onChange={handleManagerChange}
                     disabled={
-                      alwaysDisabledKeys.includes(key) || isDisabled || isLoading
+                      alwaysDisabledKeys.includes(key) ||
+                      isDisabled ||
+                      isLoading
                     }
                   />
                   {errors[key] && (
@@ -388,21 +408,23 @@ const ReusableUpdateModal: React.FC<ReusableModalPageProps> = ({
             </Stack>
           </Stack>
 
-          <Stack direction="row" spacing={3} sx={{ mt: '2.5rem !important' }}>
-            <Stack spacing={3} sx={{ flex: 1, }}>
+          <Stack direction="row" spacing={3} sx={{ mt: "2.5rem !important" }}>
+            <Stack spacing={3} sx={{ flex: 1 }}>
               {["CreatedBy", "DateOfOperation"].map((key) => {
-                const value =
-                  isLoading
-                    ? ""
-                    : key === "DateOfOperation"
-                      ? (() => {
-                        const date = operators?.[0]?.DateOfOperation || initialUserData?.DateOfOperation;
+                const value = isLoading
+                  ? ""
+                  : key === "DateOfOperation"
+                    ? (() => {
+                        const date =
+                          operators?.[0]?.DateOfOperation ||
+                          initialUserData?.DateOfOperation;
                         return date && !isNaN(new Date(date).getTime())
                           ? new Date(date).toISOString().split("T")[0]
                           : "";
                       })()
-                      : user?.[key as keyof typeof user] ??
-                      initialUserData?.[key] ?? "No data"
+                    : (user?.[key as keyof typeof user] ??
+                      initialUserData?.[key] ??
+                      "No data");
 
                 return (
                   <FormControl key={key} fullWidth error={!!errors[key]}>
@@ -415,7 +437,11 @@ const ReusableUpdateModal: React.FC<ReusableModalPageProps> = ({
                       value={value}
                       type={key === "DateOfOperation" ? "date" : "text"}
                       onChange={handleManagerChange}
-                      disabled={alwaysDisabledKeys.includes(key) || isDisabled || isLoading}
+                      disabled={
+                        alwaysDisabledKeys.includes(key) ||
+                        isDisabled ||
+                        isLoading
+                      }
                       size="small"
                     />
                     {errors[key] && (
@@ -424,15 +450,16 @@ const ReusableUpdateModal: React.FC<ReusableModalPageProps> = ({
                   </FormControl>
                 );
               })}
-
             </Stack>
 
             <Stack spacing={3} sx={{ flex: 1 }}>
-              {[
-                "LastUpdatedBy",
-                "LastUpdatedDate",
-              ].map((key) => (
-                <FormControl key={key} fullWidth error={!!errors[key]} size="small">
+              {["LastUpdatedBy", "LastUpdatedDate"].map((key) => (
+                <FormControl
+                  key={key}
+                  fullWidth
+                  error={!!errors[key]}
+                  size="small"
+                >
                   <InputLabel htmlFor={key}>{formatKey(key)}</InputLabel>
                   <OutlinedInput
                     id={key}
@@ -442,22 +469,30 @@ const ReusableUpdateModal: React.FC<ReusableModalPageProps> = ({
                     value={
                       isLoading
                         ? ""
-                        : key === "DateOfRegistration" || key === "LastUpdatedDate"
+                        : key === "DateOfRegistration" ||
+                            key === "LastUpdatedDate"
                           ? (() => {
-                            const dateValue = user?.[key as keyof typeof user];
-                            return dateValue && !isNaN(Date.parse(dateValue as string))
-                              ? new Date(dateValue as string).toISOString().split("T")[0]
-                              : "";
-                          })()
-                          : operators?.[0]?.[key as keyof typeof operators[0]] ??
-                          user?.[key as keyof typeof user] ??
-                          initialUserData?.[key] ??
-                          "No data"
+                              const dateValue =
+                                user?.[key as keyof typeof user];
+                              return dateValue &&
+                                !isNaN(Date.parse(dateValue as string))
+                                ? new Date(dateValue as string)
+                                    .toISOString()
+                                    .split("T")[0]
+                                : "No data";
+                            })()
+                          : (operators?.[0]?.[
+                              key as keyof (typeof operators)[0]
+                            ] ??
+                            user?.[key as keyof typeof user] ??
+                            initialUserData?.[key] ??
+                            "No data")
                     }
-
                     onChange={handleManagerChange}
                     disabled={
-                      alwaysDisabledKeys.includes(key) || isDisabled || isLoading
+                      alwaysDisabledKeys.includes(key) ||
+                      isDisabled ||
+                      isLoading
                     }
                   />
                   {errors[key] && (
@@ -465,7 +500,6 @@ const ReusableUpdateModal: React.FC<ReusableModalPageProps> = ({
                   )}
                 </FormControl>
               ))}
-
             </Stack>
           </Stack>
 
@@ -514,10 +548,58 @@ const ReusableUpdateModal: React.FC<ReusableModalPageProps> = ({
               )}
             </FormControl>
           )}
-          {!isDisabled && (
-            <div className="mt-4">
-              {children({ handleSubmit })}
-            </div>
+
+          {/* When in update/edit mode (not disabled) */}
+          {!isDisabled ? (
+            <>
+              <Box
+                sx={{
+                  display: "flex",
+                  justifyContent: "flex-end",
+                  alignItems: "center",
+                  width: "100%",
+                }}
+              >
+                <Button
+                  onClick={handleSubmit} // Use handleSubmit for save
+                  sx={{
+                    ...buttonUpdateStyles,
+                    mt: 1,
+                    fontSize: "14px",
+                    px: "1.7rem",
+                  }}
+                  variant="contained"
+                >
+                  Save
+                </Button>
+              </Box>
+
+              {/* Form fields or custom UI passed as children */}
+              <div className="mt-4">{children({ handleSubmit })}</div>
+            </>
+          ) : (
+            // When in view mode
+            <Box
+              sx={{
+                display: "flex",
+                justifyContent: "flex-end",
+                alignItems: "center",
+                width: "100%",
+              }}
+            >
+              <Button
+                onClick={handleDisable}
+                sx={{
+                  ...buttonUpdateStyles,
+                  mt: 1,
+                  fontSize: "14px",
+                  px: "1.7rem",
+                }}
+                variant="contained"
+              >
+                View
+              </Button>
+            </Box>
           )}
         </Stack>
       </DialogContent>

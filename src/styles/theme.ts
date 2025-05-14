@@ -189,6 +189,7 @@ const darkTheme = createTheme({
         input: {
           //padding: "10px 16px",
           width: "100% !important",
+          fontSize: "0.85rem",
         },
       },
     },
