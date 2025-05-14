@@ -1,7 +1,10 @@
 import React from "react";
 import { Divider } from "@mui/material";
 
-const FirstSummaryPage = () => {
+const FirstSummaryPage = (data: {
+    drawOrder: number, 
+    values: string[][]
+  }) => {
   const firstDraw = [1, 2, 3, 4, 45];
   const secondDraw = [1, 2, 3, 4, 23];
 
@@ -12,11 +15,16 @@ const FirstSummaryPage = () => {
         sx={{ backgroundColor: "#B3B3B3", opacity: 1, height: "2px", my: 0.5 }}
       />
       <div className="mt-4 space-y-2 text-center">
-        {firstDraw.map((item, index) => (
+        {data.values.map((item, index) => (
           <div key={index}>
             <div className="flex justify-center gap-x-8 text-lg text-gray-300">
-              <span>{item}</span>
-              <span>{secondDraw[index]}</span>
+              {
+                item.map((item, index) => (
+                  <span key={index}>{item}</span>
+                ))
+              }
+              {/* <span>{item}</span>
+              <span>{secondDraw[index]}</span> */}
             </div>
             <Divider
               sx={{

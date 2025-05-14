@@ -45,7 +45,7 @@ const DrawSelectedPage = () => {
     setData(dataFetch.data)
     console.log(dataFetch)
   }
-  
+
   const loadData = async () => {
 
     const regionFetch = await fetchRegions()
@@ -114,8 +114,10 @@ const DrawSelectedPage = () => {
 
   const getTodayResults = (drawOrder: number) => {
     try {
+      console.log(data.ResultSummary[todayDate-1])
+      
       if(drawOrder == 1){
-        const filtered = data.ResultSummary[todayDate-1][todayDate].FirstDraw
+        const filtered = data.ResultSummary[todayDate-1].FirstDraw
         console.log(`accessing data.ResultSummary[${todayDate-1}][${todayDate}].FirstDraw`)
         const numbers = [filtered.NumberOne || "-", filtered.NumberTwo || "-"]
         if(selectedGameCategory > 2) numbers.push(filtered.NumberThree || "-") 
@@ -125,7 +127,7 @@ const DrawSelectedPage = () => {
       }
   
       if(drawOrder == 2){
-        const filtered = data.ResultSummary[todayDate-1][todayDate].SecondDraw
+        const filtered = data.ResultSummary[todayDate-1].SecondDraw
         const numbers = [filtered.NumberOne || "-", filtered.NumberTwo || "-"]
         if(selectedGameCategory > 2) numbers.push(filtered.NumberThree || "-")
         if(selectedGameCategory > 3) numbers.push(filtered.NumberFour || "-")
@@ -134,7 +136,7 @@ const DrawSelectedPage = () => {
       }
   
       if(drawOrder == 3){
-        const filtered = data.ResultSummary[todayDate-1][todayDate].SecondDraw
+        const filtered = data.ResultSummary[todayDate-1].ThirdDraw
         const numbers = [filtered.NumberOne || "-", filtered.NumberTwo || "-"]
         if(selectedGameCategory > 2) numbers.push(filtered.NumberThree || "-")
         if(selectedGameCategory > 3) numbers.push(filtered.NumberFour || "-")
@@ -145,7 +147,32 @@ const DrawSelectedPage = () => {
     catch (err: unknown){
       return []
     }
+  }
 
+  const transformResultSummary = (gameCategory: number) => {
+    let results: {firstDraw: string[], secondDraw: string[], thirdDraw: string[]}[] = []
+
+    console.log(data)
+    if(data.ResultSummary){
+      for( const result of data.ResultSummary ){
+        console.log(result)
+        const firstDrawArr = [(result.FirstDraw.NumberOne?.toString() || "-"), (result.FirstDraw.NumberTwo?.toString() || "-")]
+        if(selectedGameCategory > 2) firstDrawArr.push(result.FirstDraw.NumberThree?.toString() || "-") 
+        if(selectedGameCategory > 3) firstDrawArr.push(result.FirstDraw.NumberFour?.toString() || "-")
+  
+        const secondDrawArr = [(result.SecondDraw.NumberOne?.toString() || "-"), (result.SecondDraw.NumberTwo?.toString() || "-")]
+        if(selectedGameCategory > 2) secondDrawArr.push(result.SecondDraw.NumberThree?.toString() || "-") 
+        if(selectedGameCategory > 3) secondDrawArr.push(result.SecondDraw.NumberFour?.toString() || "-")
+        
+        const thirdDrawArr = [(result.ThirdDraw.NumberOne?.toString() || "-"), (result.ThirdDraw.NumberTwo?.toString() || "-")]
+        if(selectedGameCategory > 2) thirdDrawArr.push(result.ThirdDraw.NumberThree?.toString() || "-") 
+        if(selectedGameCategory > 3) thirdDrawArr.push(result.ThirdDraw.NumberFour?.toString() || "-")
+  
+        results.push({firstDraw: firstDrawArr, secondDraw: secondDrawArr, thirdDraw: thirdDrawArr})
+      }
+    }
+    
+    return results
   }
 
   return (
@@ -304,7 +331,15 @@ const DrawSelectedPage = () => {
             </div>
             {/* Right Column */}
             <div className="flex flex-col gap-4 w-full md:w-1/3">
-              <DrawListSummaryPage />
+            {
+              data && (
+                <DrawListSummaryPage 
+                  location={filteredProvinces.find((province) => province.value == selectedProvince.toString())?.label || ""}
+                  month={selectedMonth}
+                  values={transformResultSummary(selectedGameCategory)}
+                />
+              )
+            }
             </div>
           </div>
         </div>
