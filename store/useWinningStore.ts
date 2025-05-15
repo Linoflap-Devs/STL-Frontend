@@ -1,6 +1,8 @@
 import { create } from 'zustand';
 import getTransactionsData from '~/utils/api/transactions/get.TransactionsData.service';
 
+const getTodayDate = () => new Date().toISOString().slice(0, 10);
+
 export type categoryType = 
   'Total Winners and Winnings' |
   'Total Winnings by Bet Type' |
@@ -13,6 +15,7 @@ export type categoryType =
 type dateType = 'Specific Date' | 'Date Duration';
 
 export interface WinnersandWinningsSummaryProps {
+  activeGameType: string;
   categoryFilter: categoryType;
   dateFilter: string;
   firstDateSpecific: string | null;
@@ -28,11 +31,11 @@ interface WinningStore {
   categoryFilter: categoryType;
   dateFilter: dateType;
   // If Filtered by Specific Date
-  firstDateSpecific: Date | null;
-  secondDateSpecific: Date | null;
+  firstDateSpecific: string | null;
+  secondDateSpecific: string | null;
   // If Filtered by Date Duration
-  firstDateDuration: Date | null;
-  secondDateDuration: Date | null;
+  firstDateDuration: string | null;
+  secondDateDuration: string | null;
   cardsAggregatedData: {
     totalBettors: number;
     totalWinners: number;
@@ -47,11 +50,11 @@ interface WinningStore {
   setCategoryFilter: (category: categoryType) => void;
   setDateFilter: (type: dateType) => void;
   // If Filtered by Specific Datee
-  setFirstDateSpecific: (date: Date) => void;
-  setSecondDateSpecific: (date: Date) => void;
+  setFirstDateSpecific: (date: string) => void;
+  setSecondDateSpecific: (date: string) => void;
   // If Filtered by Date Duration
-  setFirstDateDuration: (date: Date) => void;
-  setSecondDateDuration: (date: Date) => void;
+  setFirstDateDuration: (date: string) => void;
+  setSecondDateDuration: (date: string) => void;
   fetchAndAggregateDate: () => Promise<void>;
   resetFilters: () => void;
 }
@@ -61,8 +64,8 @@ export const useWinningStore = create<WinningStore>((set) => ({
   activeGameType: '',
   categoryFilter: 'Total Winners and Winnings',
   dateFilter: 'Specific Date',
-  firstDateSpecific: null,
-  secondDateSpecific: null,
+  firstDateSpecific: getTodayDate(),
+  secondDateSpecific: getTodayDate(),
   firstDateDuration: null,
   secondDateDuration: null,
   cardsAggregatedData: {
@@ -151,19 +154,19 @@ export const getLegendItemsMap_Specific = (
   const legendItemsMap: Record<categoryType, { label: string; color: string }[]> = {
       "Total Winners and Winnings": [
         {
-          label: `Bettors - ${firstDateSpecific ? firstDateSpecific : "N/A"}`,
+          label: `Winners - ${firstDateSpecific ? firstDateSpecific : "N/A"}`,
           color: "#E5C7FF",
         },
         {
-          label: `Bettors - ${secondDateSpecific ? secondDateSpecific : "N/A"}`,
+          label: `Winners - ${secondDateSpecific ? secondDateSpecific : "N/A"}`,
           color: "#D2A7FF",
         },
         {
-          label: `Bets - ${firstDateSpecific ? firstDateSpecific : "N/A"}`,
+          label: `Winnings - ${firstDateSpecific ? firstDateSpecific : "N/A"}`,
           color: "#D2A7FF",
         },
         {
-          label: `Bets - ${secondDateSpecific ? secondDateSpecific : "N/A"}`,
+          label: `Winnings - ${secondDateSpecific ? secondDateSpecific : "N/A"}`,
           color: "#D2A7FF",
         },
       ],
@@ -307,19 +310,19 @@ export const getLegendItemsMap_Duration = (
   const legendItemsMap: Record<categoryType, { label: string; color: string }[]> = {
     "Total Winners and Winnings": [
       {
-        label: `Bettors - ${firstDateSpecific ? firstDateSpecific : "N/A"} - ${secondDateSpecific ? secondDateSpecific : "N/A"}`,
+        label: `Winners - ${firstDateSpecific ? firstDateSpecific : "N/A"} - ${secondDateSpecific ? secondDateSpecific : "N/A"}`,
         color: "#E5C7FF",
       },
       {
-        label: `Bettors - ${firstDateDuration ? firstDateDuration : "N/A"} - ${secondDateDuration ? secondDateDuration : "N/A"}`,
+        label: `Winners - ${firstDateDuration ? firstDateDuration : "N/A"} - ${secondDateDuration ? secondDateDuration : "N/A"}`,
         color: "#D2A7FF",
       },
       {
-        label: `Bets - ${firstDateSpecific ? firstDateSpecific : "N/A"} - ${secondDateSpecific ? secondDateSpecific : "N/A"}`,
+        label: `Winnings - ${firstDateSpecific ? firstDateSpecific : "N/A"} - ${secondDateSpecific ? secondDateSpecific : "N/A"}`,
         color: "#D2A7FF",
       },
       {
-        label: `Bets - ${firstDateDuration ? firstDateDuration : "N/A"} - ${secondDateDuration ? secondDateDuration : "N/A"}`,
+        label: `Winnings - ${firstDateDuration ? firstDateDuration : "N/A"} - ${secondDateDuration ? secondDateDuration : "N/A"}`,
         color: "#D2A7FF",
       },
     ],

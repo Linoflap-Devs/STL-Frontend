@@ -2,24 +2,28 @@ import axiosInstance from "../../axiosInstance";
 import { AxiosError } from "axios";
 
 /**
- * A service function to fetch data from the Transactions API endpoint.
+ * A service function to fetch comparison data from the Transactions API endpoint.
  *
  * @template T - Expected response type.
  * @param baseEndpoint - Base endpoint (e.g. '/api/transactions').
- * @param pathParams - Optional array of path segments to append (e.g. ['chart1', 'chart2']).
- * @param queryParams - Optional query parameters (as an object).
+ * @param urlParam - Optional path param (e.g. 'chart').
+ * @param queryParams - Optional query parameters (e.g. { firstStart, firstEnd, secondStart?, secondEnd? }).
  * @returns Promise<T | null>
  */
-
-const getTransactionsData = async <T = unknown>(
-  baseEndpoint: string,
+const getCompareHistoricalDuration = async <T = unknown>(
+  endpoint: string,
   urlParam: string | number,
-  queryParams: Record<string, unknown> = {}
+  queryParams: {
+    firstStart: string,
+    firstEnd: string;
+    secondStart: string,
+    secondEnd: string,
+  }
 ): Promise<T | null> => {
   try {
     const fullPath = urlParam
-      ? `${baseEndpoint}/${urlParam}`.replace(/\/+/g, "/")
-      : baseEndpoint.replace(/\/+/g, "/");
+      ? `${endpoint}/${urlParam}`.replace(/\/+/g, "/")
+      : endpoint.replace(/\/+/g, "/");
 
     const response = await axiosInstance.get<{
       success: boolean;
@@ -28,9 +32,9 @@ const getTransactionsData = async <T = unknown>(
     }>(fullPath, {
       params: queryParams,
     });
-    console.log(
-      `Full Path: ${fullPath} ${queryParams.first}  ${queryParams.second}`
-    );
+		console.log("Making API request to:", fullPath);
+    console.log("With query parameters:", queryParams);
+
     if (response.data.success) {
       return response.data.data;
     } else {
@@ -52,20 +56,4 @@ const getTransactionsData = async <T = unknown>(
   }
 };
 
-export default getTransactionsData;
-
-/*
-// Simple request (no path or query params)
-await getTransactionsData('/api/transactions');
-
-// With one optional path param
-await getTransactionsData('/api/transactions', "1");
-
-
-// With query params
-await getTransactionsData('/api/transactions', ['1'], {
-  first: 'USD',
-  second: 'EUR',
-});
-
-*/
+export default getCompareHistoricalDuration;

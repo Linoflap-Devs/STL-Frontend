@@ -3,7 +3,6 @@ import {
   Box,
   Typography,
   Grid,
-  TextField,
   Select,
   MenuItem,
   InputLabel,
@@ -13,15 +12,16 @@ import FilterListIcon from "@mui/icons-material/FilterList";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
-import dayjs from "dayjs";
 // Components
 import ChartBettorsAndBetsSummary from "~/components/betting-summary/bets-comparison/SummaryBettors&Bets";
 import ChartBettorsAndBetsRegionalSummary from "~/components/betting-summary/bets-comparison/RegionalSummaryBettors&Bets";
+import ChartTopRegionByBetsandBettors from "~/components/betting-summary/bets-comparison/TopRegionBetting";
 
 import { useBettingStore, categoryType } from "../../../../store/useBettingStore";
 import { useSideBarStore } from "../../../../store/useSideBarStore";
 
-import ChartTopRegionByBetsandBettors from "~/components/betting-summary/bets-comparison/TopRegionBetting";
+import dayjs from 'dayjs';
+
 
 type dateType = 'Specific Date' | 'Date Duration';
 
@@ -70,14 +70,25 @@ const formattedSecondDateDuration = secondDateDuration
     }
   }, [SideBarActiveGameType, activeGameType, setGameType]);
 
+  // const categoryTypes: categoryType[] = [
+  //   "Total Bettors and Bets",
+  //   "Total Bets by Bet Type",
+  //   "Total Bettors by Bet Type",
+  //   "Total Bets by Game Type",
+  //   "Total Bettors by Game Type",
+  //   "Top Betting Region by Total Bets",
+  //   "Top Betting Region by Total Bettors",
+  // ];
+
+
   const categoryTypes: categoryType[] = [
-    "Total Bettors and Bets",
+    "Total Bets and Bettors",
     "Total Bets by Bet Type",
-    "Total Bettors by Bet Type",
     "Total Bets by Game Type",
-    "Total Bettors by Game Type",
     "Top Betting Region by Total Bets",
     "Top Betting Region by Total Bettors",
+    "Total Bettors by Bet Type",
+    "Total Bettors by Game Type",
   ];
 
     // Debugging: Log all states whenever they change
@@ -170,10 +181,15 @@ const formattedSecondDateDuration = secondDateDuration
                 <DatePicker
                   label="First Date"
                   value={firstDateSpecific ? dayjs(firstDateSpecific) : null}
-                  onChange={(newValue) =>
-                    setFirstDateSpecific(newValue as unknown as Date)
-                  } // Correct setter function
-                  // renderInput={(params) => <TextField {...params} />}
+                  onChange={(newValue) =>{
+                    if(newValue){
+                      setFirstDateSpecific(newValue.format('YYYY-MM-DD'))
+                    }else{
+                      setFirstDateSpecific('')
+                    }
+                  }
+                    
+                  }
                 />
               </LocalizationProvider>
             </Grid>
@@ -211,7 +227,7 @@ const formattedSecondDateDuration = secondDateDuration
                   label="Second Date"
                   value={secondDateSpecific ? dayjs(secondDateSpecific) : null}
                   onChange={(newValue) =>
-                    setSecondDateSpecific(newValue as unknown as Date)
+                    setSecondDateSpecific(newValue as unknown as string)
                   } // Correct setter function
                   // renderInput={(params) => <TextField {...params} />}
                 />
@@ -270,10 +286,13 @@ const formattedSecondDateDuration = secondDateDuration
                 <DatePicker
                   label="First Date"
                   value={firstDateSpecific ? dayjs(firstDateSpecific) : null}
-                  onChange={(newValue) =>
-                    setFirstDateSpecific(newValue as unknown as Date)
-                  } // Correct setter function
-                  // renderInput={(params: any) => <TextField {...params} />}
+                  onChange={(newValue) => {
+                    if (newValue) {
+                      setFirstDateSpecific(newValue.format('YYYY-MM-DD'))
+                    }else {
+                      setFirstDateSpecific('')
+                    }
+                  }}
                 />
               </LocalizationProvider>
             </Grid>
@@ -310,10 +329,13 @@ const formattedSecondDateDuration = secondDateDuration
                 <DatePicker
                   label="Second Date"
                   value={secondDateSpecific ? dayjs(secondDateSpecific) : null}
-                  onChange={(newValue) =>
-                    setSecondDateSpecific(newValue as unknown as Date)
-                  } // Correct setter function
-                  // renderInput={(params) => <TextField {...params} />}
+                  onChange={(newValue) => {
+                    if(newValue){
+                      setSecondDateSpecific(newValue.format('YYYY-MM-DD'));
+                    }else {
+                      setSecondDateSpecific('')
+                    }
+                  }}
                 />
               </LocalizationProvider>
             </Grid>
@@ -339,8 +361,14 @@ const formattedSecondDateDuration = secondDateDuration
                 <DatePicker
                   label="First Date"
                   value={firstDateDuration ? dayjs(firstDateDuration) : null}
-                  onChange={(newValue) =>
-                    setFirstDateDuration(newValue as unknown as Date)
+                  onChange={(newValue) => {
+                    if(newValue){
+                      setFirstDateDuration(newValue.format('YYYY-MM-DD'))
+                    }else{
+                      setFirstDateDuration('')
+                    }
+                  }
+
                   } // Correct setter function
                   // renderInput={(params) => <TextField {...params} />}
                 />
@@ -368,8 +396,14 @@ const formattedSecondDateDuration = secondDateDuration
                 <DatePicker
                   label="Second Date"
                   value={secondDateDuration ? dayjs(secondDateDuration) : null}
-                  onChange={(newValue) =>
-                    setSecondDateDuration(newValue as unknown as Date)
+                  onChange={(newValue) => {
+                    if(newValue){
+                      setSecondDateDuration(newValue.format('YYYY-MM-DD'));
+                    }else{
+                      setSecondDateDuration('')
+                    }
+                  }
+
                   } // Correct setter function
                   // renderInput={(params) => <TextField {...params} />}
                 />
@@ -382,7 +416,8 @@ const formattedSecondDateDuration = secondDateDuration
         
         {/* Conditionally Render Components Based on categoryFilter */}
         {categoryFilter === "Top Betting Region by Total Bets" || categoryFilter === "Top Betting Region by Total Bettors"  ? (
-          <ChartTopRegionByBetsandBettors 
+          <ChartTopRegionByBetsandBettors
+            activeGameType={activeGameType}
             categoryFilter={categoryFilter}
             dateFilter={dateFilter}
             firstDateSpecific={formattedFirstDateSpecific}
@@ -394,6 +429,7 @@ const formattedSecondDateDuration = secondDateDuration
           <>
             {/* Summary of Total Bettors and Bets Barchart */}
             <ChartBettorsAndBetsSummary
+              activeGameType={activeGameType}
               categoryFilter={categoryFilter}
               dateFilter={dateFilter}
               firstDateSpecific={formattedFirstDateSpecific}
@@ -403,6 +439,7 @@ const formattedSecondDateDuration = secondDateDuration
             />
             {/* Regional Summary of Total Bettors and Bets Barchart */}
             <ChartBettorsAndBetsRegionalSummary
+              activeGameType={activeGameType}
               categoryFilter={categoryFilter}
               dateFilter={dateFilter}
               firstDateSpecific={formattedFirstDateSpecific}
