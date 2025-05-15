@@ -74,33 +74,34 @@ const TableBettingActivityToday = (params: {gameCategoryId?: number}) => {
     }, []);
 
   // Hardcoded data for all Philippine regions
-  const [regionData] = useState<RegionData[]>([
-    { Region: "National Capital Region (NCR)", TotalBetAmount: 1850000, trend: 3 },
-    { Region: "Cordillera Administrative Region (CAR)", TotalBetAmount: 320000, trend: 1 },
-    { Region: "Ilocos Region (Region I)", TotalBetAmount: 450000, trend: -1 },
-    { Region: "Cagayan Valley (Region II)", TotalBetAmount: 380000, trend: 2 },
-    { Region: "Central Luzon (Region III)", TotalBetAmount: 920000, trend: 1 },
-    { Region: "Calabarzon (Region IV-A)", TotalBetAmount: 1150000, trend: 2 },
-    { Region: "Mimaropa (Region IV-B)", TotalBetAmount: 280000, trend: 2 },
-    { Region: "Bicol Region (Region V)", TotalBetAmount: 350000, trend: -1 },
-    { Region: "Western Visayas (Region VI)", TotalBetAmount: 510000, trend: 1 },
-    { Region: "Central Visayas (Region VII)", TotalBetAmount: 680000, trend: 3 },
-    { Region: "Eastern Visayas (Region VIII)", TotalBetAmount: 290000, trend: -2 },
-    { Region: "Zamboanga Peninsula (Region IX)", TotalBetAmount: 310000, trend: 2 },
-    { Region: "Northern Mindanao (Region X)", TotalBetAmount: 390000, trend: 1 },
-    { Region: "Davao Region (Region XI)", TotalBetAmount: 550000, trend: 2 },
-    { Region: "Soccsksargen (Region XII)", TotalBetAmount: 330000, trend: -1 },
-  ]);
+  // const [regionData] = useState<RegionData[]>([
+  //   { Region: "National Capital Region (NCR)", TotalBetAmount: 1850000, trend: 3 },
+  //   { Region: "Cordillera Administrative Region (CAR)", TotalBetAmount: 320000, trend: 1 },
+  //   { Region: "Ilocos Region (Region I)", TotalBetAmount: 450000, trend: -1 },
+  //   { Region: "Cagayan Valley (Region II)", TotalBetAmount: 380000, trend: 2 },
+  //   { Region: "Central Luzon (Region III)", TotalBetAmount: 920000, trend: 1 },
+  //   { Region: "Calabarzon (Region IV-A)", TotalBetAmount: 1150000, trend: 2 },
+  //   { Region: "Mimaropa (Region IV-B)", TotalBetAmount: 280000, trend: 2 },
+  //   { Region: "Bicol Region (Region V)", TotalBetAmount: 350000, trend: -1 },
+  //   { Region: "Western Visayas (Region VI)", TotalBetAmount: 510000, trend: 1 },
+  //   { Region: "Central Visayas (Region VII)", TotalBetAmount: 680000, trend: 3 },
+  //   { Region: "Eastern Visayas (Region VIII)", TotalBetAmount: 290000, trend: -2 },
+  //   { Region: "Zamboanga Peninsula (Region IX)", TotalBetAmount: 310000, trend: 2 },
+  //   { Region: "Northern Mindanao (Region X)", TotalBetAmount: 390000, trend: 1 },
+  //   { Region: "Davao Region (Region XI)", TotalBetAmount: 550000, trend: 2 },
+  //   { Region: "Soccsksargen (Region XII)", TotalBetAmount: 330000, trend: -1 },
+  // ]);
 
   return (
     <Box 
       sx={{ 
-        backgroundColor: "#171717", padding: 2, 
+        backgroundColor: "#F8F0E3", padding: 2, 
         borderRadius: "10px", 
         width: "100%", 
-        height: "720px" 
+        height: "720px",
+        border: "1px solid #0038A8"
       }}>
-      <Box sx={{ display: "flex", mb: 1 }}>
+      <Box sx={{ display: "flex", mb: 1}}>
         <Box
           sx={{
             backgroundColor: "#2F2F2F",
@@ -116,7 +117,7 @@ const TableBettingActivityToday = (params: {gameCategoryId?: number}) => {
             fontWeight: 300,
             fontSize: "16px", 
             ml: 1, 
-            color: "#fff" 
+            color: "#0038A8" 
           }}
         >
           Today&apos;s Total Bets Placed by Region 
@@ -161,9 +162,9 @@ const TableBettingActivityToday = (params: {gameCategoryId?: number}) => {
                   fontSize: "0.85rem",
                   color:
                     item.trend! > 0
-                      ? "#3d8440"
+                      ? "#046115"
                       : item.trend! < 0
-                        ? "#894747"
+                        ? "#CE1126"
                         : "#aaa",
                 }}
               >
@@ -176,7 +177,7 @@ const TableBettingActivityToday = (params: {gameCategoryId?: number}) => {
             </Box>
             <Typography 
               sx={{ 
-                color: "#fff", 
+                color: "#0038A8", 
                 flex: 1, 
                 ml: 2, 
                 fontSize: "0.9rem",
@@ -189,7 +190,7 @@ const TableBettingActivityToday = (params: {gameCategoryId?: number}) => {
             </Typography>
             <Typography
               sx={{
-                color: "#67ABEB",
+                color: "#212121",
                 fontWeight: "bold",
                 textAlign: "right",
                 flex: 1,

@@ -318,9 +318,10 @@ const TableBettingSummary = (params: {gameCategoryId?: number}) => {
             display: "flex",
             justifyContent: "space-between",
             alignItems: "center",
+            backgroundColor: "#F8F0E3"
           }}
         >
-          <Box sx={{ display: "flex", alignItems: "center", width: "100%" }}>
+          <Box sx={{ display: "flex", alignItems: "center", width: "100%", backgroundColor: "#F8F0E3"}}>
             <TextField
               variant="outlined"
               placeholder="Search"
@@ -446,8 +447,8 @@ const TableBettingSummary = (params: {gameCategoryId?: number}) => {
       <Box
         sx={{
           padding: "12px",
-          boxShadow: "0 2px 8px rgba(0, 0, 0, 0.4)",
-          backgroundColor: "#171717",
+          // boxShadow: "0 2px 8px rgba(0, 0, 0, 0.4)",
+          backgroundColor: "#F8F0E3",
         }}
       >
         <TablePagination

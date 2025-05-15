@@ -1,16 +1,11 @@
-// import React, { useEffect, useState } from "react";
-import { Box, Typography, Stack } from "@mui/material";
+import React, { useState } from "react";
+import { Box, Typography, Stack, CircularProgress } from "@mui/material";
 import { BarChart } from "@mui/x-charts/BarChart";
 // import { fetchHistoricalSummary, fetchTransactions } from "~/utils/api/transactions";
 import { TodaysBettorCountByGameTypeData, addLabelsGameTypes } from "~/components/betting-summary/tooltips/dataSet";
 // import fetchHistoricalSummary from "~/utils/api/transactions/getHistoricalSummary";
 
-// Mapping GameTypeId to Draw Names
-// const drawNames: Record<number, string> = {
-//   1: "First Draw",
-//   2: "Second Draw",
-//   3: "Third Draw",
-// };
+
 
 // Custom Legend (Dynamically Handles Bet Types)
 const CustomLegend = () => (
@@ -31,7 +26,7 @@ const CustomLegend = () => (
           mr: 1.5,
         }}
       />
-      <Typography color="white">Tumbok</Typography>
+      <Typography color="#212121">Tumbok</Typography>
     </Box>
     <Box sx={{ display: "flex", alignItems: "center" }}>
       <Box
@@ -39,11 +34,11 @@ const CustomLegend = () => (
           width: 14,
           height: 14,
           borderRadius: "50%",
-          backgroundColor: "#D2A7FF",
+          backgroundColor: "#5050A5",
           mr: 1.5,
         }}
       />
-      <Typography color="white">Sahod</Typography>
+      <Typography color="#212121">Sahod</Typography>
     </Box>
     <Box sx={{ display: "flex", alignItems: "center" }}>
       <Box
@@ -51,21 +46,22 @@ const CustomLegend = () => (
           width: 14,
           height: 14,
           borderRadius: "50%",
-          backgroundColor: "#BB86FC",
+          backgroundColor: "#7266C9",
           mr: 1.5,
         }}
       />
-      <Typography color="white">Ramble</Typography>
+      <Typography color="#212121">Ramble</Typography>
     </Box>
   </Stack>
 );
 
-const ChartBettorsBetTypeSummary = (params: {gameCategoryId?: number}) => {
+// const ChartBettorsBetTypeSummary = (params: {gameCategoryId?: number}) => {
 
+  const ChartBettorsBetTypeSummary = () => {
   // const [data, setData] = useState<
   //     { draw: string; tumbok: number, sahod: number, ramble: number }[]
   //   >([]);
-  // const [loading, setLoading] = useState(false);
+  const [loading] = useState(false);
 
   const xAxisTicks = [
     0, 1, 5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 55, 60, 65, 70, 75, 80, 85, 90,
@@ -160,11 +156,12 @@ const ChartBettorsBetTypeSummary = (params: {gameCategoryId?: number}) => {
   return (
     <Box
       sx={{
-        backgroundColor: "#171717",
+        backgroundColor: "#F8F0E3",
         padding: "1rem",
         borderRadius: "8px",
         paddingBottom: "2rem",
         marginRight: 0,
+        border: "1px solid #0038A8"
       }}
     >
       <Box>
@@ -176,7 +173,7 @@ const ChartBettorsBetTypeSummary = (params: {gameCategoryId?: number}) => {
           }}
         >
           <Typography 
-            color="#FFFFFF" 
+            color="#212121" 
             sx={{ 
               fontSize: "16px" 
             }}>
@@ -193,7 +190,10 @@ const ChartBettorsBetTypeSummary = (params: {gameCategoryId?: number}) => {
             flexGrow: 1,
           }}
         >
-          <BarChart
+        { loading ? (
+          <CircularProgress/>
+        ) : (
+                    <BarChart
             height={300}
             // width={{100%}}
             grid={{ vertical: true }}
@@ -225,6 +225,7 @@ const ChartBettorsBetTypeSummary = (params: {gameCategoryId?: number}) => {
               { dataKey: 'STL_Swer4', color: '#A06FE6' }
             ])}
           />
+        )}
         </Box>
     </Box>
   );

@@ -102,7 +102,7 @@ const CustomLegend: React.FC<BettorsandBetsSummaryProps> = ({
             }}
           />
           <Typography
-            color="white"
+            color="5050A5"
             sx={{
               fontSize: "12px",
               fontWeight: 400,
@@ -272,16 +272,17 @@ console.log('Active Game Category:', activeGameType)
   return (
     <Box
       sx={{
-        backgroundColor: "#171717",
+        backgroundColor: "#F8F0E3",
         padding: "1rem",
         borderRadius: "8px",
         paddingBottom: "2rem",
         width: "100%",
         height: "685px",
+        border: "1px solid #0038A8"
       }}
     >
       <Typography
-        color="#FFFFFF"
+        color="#212121"
         sx={{
           fontSize: "16px",
           fontWeight: 400,

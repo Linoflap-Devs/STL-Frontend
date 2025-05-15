@@ -6,13 +6,13 @@ import { addLabels } from "./tooltips/dataSet";
 
 const CustomLegend = () => (
   <Stack direction="row" spacing={2} justifyContent="left" sx={{ mt: 0.5, mr: 4 }}>
-    <Box sx={{ display: "flex", alignItems: "center" }}>
-      <Box sx={{ width: 14, height: 14, borderRadius: "50%", backgroundColor: "#E5C7FF", mr: 1.5 }} />
-      <Typography color="white">Bettors</Typography>
+    <Box sx={{ display: "flex", alignItems: "center"}}>
+      <Box sx={{ width: 14, height: 14, borderRadius: "50%", backgroundColor: "#BB86FC", mr: 1.5 }} />
+      <Typography color="#212121">Bettors</Typography>
     </Box>
     <Box sx={{ display: "flex", alignItems: "center" }}>
-      <Box sx={{ width: 14, height: 14, borderRadius: "50%", backgroundColor: "#D2A7FF", mr: 1.5 }} />
-      <Typography color="white">Bets</Typography>
+      <Box sx={{ width: 14, height: 14, borderRadius: "50%", backgroundColor: "#5050A5", mr: 1.5 }} />
+      <Typography color="#212121">Bets</Typography>
     </Box>
   </Stack>
 );
@@ -84,14 +84,15 @@ const ChartBettorsvsBetsPlacedSummary = (params: { gameCategoryId?: number }) =>
   return (
     <Box
       sx={{
-        backgroundColor: "#171717",
+        backgroundColor: "#F8F0E3",
         padding: "1rem",
         borderRadius: "8px",
         paddingBottom: "2rem",
         width: "100%",
+        border: "1px solid #0038A8"
       }}
     >
-      <Typography color="#FFFFFF" sx={{ fontSize: "16px" }}>
+      <Typography color="#212121" sx={{ fontSize: "16px" }}>
         Today&apos;s Bettors and Total Bets
       </Typography>
       <CustomLegend />
