@@ -140,7 +140,9 @@ export interface FieldOption {
   ProvinceName?: string;
   ProvinceId?: number;  
   CityName?: string;
-  CityId?: number; 
+  CityId?: number;
+  GameCategoryId?: number;
+  GameCategory?: string;
 }
 
 export interface Field {
@@ -174,6 +176,7 @@ export interface ReusableModalPageProps {
   operatorMap?: Record<number, Operator>;
   layout?: 'single' | 'double'; 
 
+  gameTypes?: FieldOption[];
   provinces?: any[];
   regions?: any[];
   cities?: any[];
@@ -194,7 +197,7 @@ export interface ModalPageProps {
   onFieldChange?: (name: string, value: string) => void;
   initialUserData?: any;
   operatorMap?: { [key: number]: Operator };
-  
+  gameTypes?: FieldOption[];
   provinces?: FieldOption[];
   regions?: FieldOption[];
   cities?: FieldOption[];
