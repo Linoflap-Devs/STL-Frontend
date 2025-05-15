@@ -14,6 +14,8 @@ import { useModalStore } from "../../../../store/useModalStore";
 import { getUserStatus } from "~/utils/dashboarddata";
 import dayjs from "dayjs";
 import CSVExportButtonTable from "../buttons/CSVExportButtonTable";
+import ConfirmUserActionModalPage from "../modals/ConfirmUserActionModal";
+import Swal from 'sweetalert2';
 
 const DetailedTable = <T extends User | Operator>({
   data,
@@ -21,11 +23,18 @@ const DetailedTable = <T extends User | Operator>({
   actionsRender,
   pageType,
   operatorMap,
+  onClose,
+  endpoint,
 }: DetailedTableProps<T>) => {
   const { searchQuery, setIsFilterActive, isFilterActive, page, rowsPerPage, sortConfig, filters, handleChangePage, handleChangeRowsPerPage, setSearchQuery, anchorEl, selectedRow, setAnchorEl, setSelectedRow, resetMenu } = useDetailTableStore();
   const [openEditLogModal, setOpenEditLogModal] = useState(false);
   const sevenDaysAgo = useMemo(() => dayjs().subtract(7, "day"), []);
+  const [isVerifyModalOpen, setIsVerifyModalOpen] = useState(false);
 
+  const [formData, setFormData] = useState<{ [key: string]: string | number | string[] }>({});
+  const [errors, setErrors] = useState<{ [key: string]: string }>({});
+  const [actionType, setActionType] = useState<'suspend' | 'create' | 'update' | 'delete'>('suspend');
+  
   // FILTER + SEARCH
   const filteredData = useMemo(() => {
     const filterKeys = columns
@@ -81,11 +90,47 @@ const DetailedTable = <T extends User | Operator>({
     setOpenEditLogModal(false);
   };
 
-  const handleDelete = (row: any) => {
-    console.log("Deleting row:", row);
-    setSelectedRow(row);
-    // Add delete functionality as needed
+  const handleClose = () => {
+    setIsVerifyModalOpen(false); // Close the verification modal
+    onClose?.();
   };
+
+const handleDelete = async (row: T) => {
+  // Log the selected user
+  console.log('Selected user for deletion:', row);
+
+  if (!row || ('UserId' in row && !row.UserId)) {
+    setErrors({ form: 'Invalid user data. Cannot proceed with delete.' });
+    return;
+  }
+
+  const result = await Swal.fire({
+    title: 'Are you sure?',
+    text: 'Do you really want to delete this user? This action cannot be undone.',
+    icon: 'warning',
+    showCancelButton: true,
+    confirmButtonColor: '#d33',
+    cancelButtonColor: '#3085d6',
+    confirmButtonText: 'Yes, delete it!',
+  });
+
+  if (result.isConfirmed) {
+    // Pass the entire user row or at least UserId in formData
+    setFormData({
+      UserId: 'UserId' in row ? row.UserId ?? '' : '',
+      // Optionally, add other fields if needed
+      // FirstName: row.FirstName,
+      // LastName: row.LastName,
+      // etc.
+    });
+
+    setActionType('suspend'); // or 'delete' if supported
+    setIsVerifyModalOpen(true);
+
+    setSelectedRow(null);
+    resetMenu();
+  }
+};
 
   return (
     <React.Fragment>
@@ -221,6 +266,21 @@ const DetailedTable = <T extends User | Operator>({
             onRowsPerPageChange={handleChangeRowsPerPage}
           />
         </div>
+
+        {isVerifyModalOpen && (
+          <ConfirmUserActionModalPage
+            formData={formData}
+            setFormData={setFormData}
+            errors={errors}
+            actionType='update'
+            setErrors={setErrors}
+            open={isVerifyModalOpen}
+            endpoint={endpoint ?? { create: '', update: '' }}
+            onClose={handleClose}
+          />
+
+        )}
+
       </TableContainer>
       <div className="flex justify-end pt-2">
         <CSVExportButtonTable

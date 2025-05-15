@@ -44,6 +44,7 @@ const UpdateModalPage: React.FC<ModalPageProps> = ({
         fields={fields}
         title={`${getRoleName(roleId ?? 0)}`}
         initialUserData={initialUserData}
+        
         operatorMap={operatorMap}
         provinces={provinces}
         regions={regions}

@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import Sidebar from "./components/layout/Sidebar";
-import Header from "./components/layout/Header";
 
 const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   return (

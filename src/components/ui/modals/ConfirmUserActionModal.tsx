@@ -24,82 +24,104 @@ const ConfirmUserActionModalPage: React.FC<ConfirmUserActionModalProps> = ({
   const handleTogglePasswordVisibility = () => setShowPassword((prev) => !prev);
   const { roleId, setData } = useUserRoleStore();
 
-const handleVerifyUserAction = async () => {
-  if (!password) {
-    setError("Password is required.");
-    return;
-  }
-
-  try {
-    const { success: isVerified } = await verifyPass(password);
-    if (!isVerified) {
-      setError("Invalid password. Please try again.");
+  const handleVerifyUserAction = async () => {
+    if (!password) {
+      setError("Password is required.");
       return;
     }
 
-    setError("");
+    try {
+      const { success: isVerified } = await verifyPass(password);
+      if (!isVerified) {
+        setError("Invalid password. Please try again.");
+        return;
+      }
 
-    const dataToSend = {
-      ...formData,
-      ...(roleId && { userTypeId: roleId }),
-    };
+      setError("");
 
-    const response = await axiosInstance.post(endpoint.create, dataToSend, {
-      withCredentials: true,
-    });
+      const isSuspending = actionType === "update";
+      const isCreating = actionType === "create";
 
-    if (!response?.data?.success) {
-      const errMsg = response?.data?.message || `Failed to ${actionType} user.`;
-      setError(errMsg);
+      const userId = formData.UserId;
+
+      if (isSuspending && !userId) {
+        setError("User ID is required to suspend a user.");
+        return;
+      }
+
+      const endpointUrl = isSuspending ? endpoint.update : endpoint.create;
+
+      // Normalize data to use correct field names
+      const dataToSend = {
+        ...(userId && { userId }),
+        ...Object.entries(formData).reduce(
+          (acc, [key, val]) => {
+            if (val !== undefined && key !== "UserId") acc[key] = val;
+            return acc;
+          },
+          {} as Record<string, any>
+        ),
+        ...(roleId && { userTypeId: roleId }),
+        ...(isSuspending && { IsActive: false }),
+      };
+
+      const axiosCall = isSuspending ? axiosInstance.patch : axiosInstance.post;
+
+      const response = await axiosCall(endpointUrl, dataToSend, {
+        withCredentials: true,
+      });
+
+      if (!response?.data?.success) {
+        const errMsg =
+          response?.data?.message || `Failed to ${actionType} user.`;
+        setError(errMsg);
+        await Swal.fire({
+          icon: "error",
+          title: "Error!",
+          text: errMsg,
+          confirmButtonColor: "#D32F2F",
+        });
+        return;
+      }
+
+      setFormData({});
+      setPassword("");
+      setErrors({});
+      onClose();
+
+      if (roleId) {
+        fetchUsers(roleId, setData);
+      }
+
+      await Swal.fire({
+        icon: "success",
+        title: isSuspending ? "User Suspended!" : "User Created!",
+        text: isSuspending
+          ? "The user has been suspended successfully."
+          : "The user has been created successfully.",
+        confirmButtonColor: "#67ABEB",
+      });
+    } catch (error: any) {
+      console.error("Error during user action:", error);
+      console.log("Full error response:", error?.response?.data);
+      console.log("Endpoint URL when failed:", endpoint?.update);
+
+      const backendMessage =
+        error?.response?.data?.message ||
+        error?.response?.data ||
+        error?.message ||
+        "An unexpected error occurred.";
+
+      setError(backendMessage);
+
       await Swal.fire({
         icon: "error",
-        title: "Error!",
-        text: errMsg,
+        title: "Unexpected Error!",
+        text: `Error while trying to ${actionType} user: ${backendMessage}`,
         confirmButtonColor: "#D32F2F",
       });
-      return;
     }
-
-    // ✅ Close modal and reset states BEFORE showing success alert
-    setFormData({});
-    setPassword("");
-    setErrors({});
-    onClose(); // e.g. closing the modal
-
-    // Refresh users if roleId is set
-    if (roleId) {
-      fetchUsers(roleId, setData);
-    }
-
-    // ✅ Now show the success alert
-    await Swal.fire({
-      icon: "success",
-      title: `${actionType === "create" ? "User Created!" : "Action Successful!"}`,
-      text: `${actionType === "create" ? "The user has been created successfully." : "The user action was successful."}`,
-      confirmButtonColor: "#67ABEB",
-    });
-
-  } catch (error: any) {
-    console.error("Error during user action:", error);
-    console.log("Full error response:", error?.response?.data);
-
-    const backendMessage =
-      error?.response?.data?.message ||
-      error?.response?.data ||
-      error?.message ||
-      "An unexpected error occurred.";
-
-    setError(backendMessage);
-
-    await Swal.fire({
-      icon: "error",
-      title: "Unexpected Error!",
-      text: `Error while trying to ${actionType} user: ${backendMessage}`,
-      confirmButtonColor: "#D32F2F",
-    });
-  }
-};
-
+  };
 
   return (
     <>

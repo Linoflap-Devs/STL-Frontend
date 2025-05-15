@@ -101,7 +101,7 @@ const ReusableUpdateModal: React.FC<ReusableModalPageProps> = ({
   };
 
   const handleFocus = () => {
-    setIsTouched(true); // Mark as touched so we stop showing "*****"
+    setIsTouched(true);
   };
 
   useEffect(() => {
