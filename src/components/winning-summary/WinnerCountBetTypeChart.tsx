@@ -33,7 +33,7 @@ const CustomLegend = () => (
           mr: 1.5,
         }}
       />
-      <Typography color="white">Tumbok</Typography>
+      <Typography color="#212121">Tumbok</Typography>
     </Box>
     <Box sx={{ display: "flex", alignItems: "center" }}>
       <Box
@@ -45,7 +45,7 @@ const CustomLegend = () => (
           mr: 1.5,
         }}
       />
-      <Typography color="white">Sahod</Typography>
+      <Typography color="#212121">Sahod</Typography>
     </Box>
     <Box sx={{ display: "flex", alignItems: "center" }}>
       <Box
@@ -57,7 +57,7 @@ const CustomLegend = () => (
           mr: 1.5,
         }}
       />
-      <Typography color="white">Ramble</Typography>
+      <Typography color="#212121">Ramble</Typography>
     </Box>
   </Stack>
 );
@@ -164,11 +164,12 @@ const ChartWinnersBetTypeSummary = (params: {gameCategoryId?: number}) => {
   return (
     <Box
       sx={{
-        backgroundColor: "#171717",
+        backgroundColor: "#F8F0E3",
         padding: "1rem",
         borderRadius: "8px",
         paddingBottom: "2rem",
         marginRight: 0,
+        border: "1px solid #0038A8"
       }}
     >
       <Box>
@@ -180,7 +181,7 @@ const ChartWinnersBetTypeSummary = (params: {gameCategoryId?: number}) => {
           }}
         >
           <Typography 
-            color="#FFFFFF" 
+            color="#212121" 
             sx={{ 
               fontSize: "16px" 
             }}>
@@ -203,6 +204,7 @@ const ChartWinnersBetTypeSummary = (params: {gameCategoryId?: number}) => {
             grid={{ vertical: true }}
             layout="horizontal"
             margin={{ left: 90, right: 20, top: 20, bottom: 40 }}
+            slotProps={{ legend: { hidden: true } }}
             dataset={TodaysWinnerCountByGameTypeData}
             yAxis={[
               {
@@ -223,9 +225,9 @@ const ChartWinnersBetTypeSummary = (params: {gameCategoryId?: number}) => {
             ]}
             series={addLabelsGameTypes([
               { dataKey: 'STL_Pares', color: '#E5C7FF' },
-              { dataKey: 'STL_Swer2', color: '#D2A7FF' },
-              { dataKey: 'STL_Swer3', color: '#BB86FC' },
-              { dataKey: 'STL_Swer4', color: '#A06FE6' }
+              { dataKey: 'STL_Swer2', color: '#5050A5' },
+              { dataKey: 'STL_Swer3', color: '#7266C9' },
+              { dataKey: 'STL_Swer4', color: '#3B3B81' }
             ])}
           />
         </Box>

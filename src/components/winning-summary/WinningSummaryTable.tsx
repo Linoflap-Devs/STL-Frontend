@@ -137,6 +137,7 @@ const TableWinningSummary = (params: {gameCategoryId?: number}) => {
             display: "flex",
             justifyContent: "space-between",
             alignItems: "center",
+            backgroundColor: "#F8F0E3"
           }}
         >
           <Box sx={{ display: "flex", alignItems: "center" }}>
@@ -243,7 +244,7 @@ const TableWinningSummary = (params: {gameCategoryId?: number}) => {
         sx={{
           padding: "12px",
           boxShadow: "0 2px 8px rgba(0, 0, 0, 0.4)",
-          backgroundColor: "#171717",
+          backgroundColor: "#F8F0E3",
         }}
       >
         <TablePagination
@@ -264,6 +265,7 @@ const TableWinningSummary = (params: {gameCategoryId?: number}) => {
           display: "flex",
           justifyContent: "flex-end",
           paddingTop: 2.3,
+            backgroundColor: "#F8F0E3"
         }}
       >
         <Button variant="contained" sx={buttonStyles}>

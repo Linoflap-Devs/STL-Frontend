@@ -94,11 +94,12 @@ const TableWinningActivityToday = (params: {gameCategoryId?: number}) => {
   return (
     <Box 
       sx={{ 
-        backgroundColor: "#171717", 
+        backgroundColor: "#F8F0E3", 
         padding: 2, 
         borderRadius: "10px",
         width: "100%",
-        height: "720px"
+        height: "720px",
+        border: "1px solid #0038A8"
       }}>
       <Box sx={{ display: "flex", mb: 1 }}>
         <Box
@@ -116,7 +117,7 @@ const TableWinningActivityToday = (params: {gameCategoryId?: number}) => {
             fontWeight: 300, 
             fontSize: "16px", 
             ml: 1, 
-            color: "#fff" 
+            color: "#212121" 
           }}
         >
           Today&apos;s Total Winnings by Region
@@ -162,7 +163,7 @@ const TableWinningActivityToday = (params: {gameCategoryId?: number}) => {
                   fontSize: "0.85rem",
                   color:
                     item.trend! > 0
-                      ? "#3d8440"
+                      ? "#046115"
                       : item.trend! < 0
                         ? "#894747"
                         : "#aaa",
@@ -177,7 +178,7 @@ const TableWinningActivityToday = (params: {gameCategoryId?: number}) => {
             </Box>
             <Typography 
               sx={{ 
-                color: "#fff", 
+                color: "#212121", 
                 flex: 1, 
                 ml: 2, 
                 fontSize: "0.9rem",

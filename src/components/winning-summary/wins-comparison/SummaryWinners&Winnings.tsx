@@ -220,7 +220,7 @@ const CustomLegend: React.FC<WinnersandWinningsSummaryProps> = ({
                 }}
               />
               <Typography
-                color="white"
+                color="#212121"
                 sx={{
                   fontSize: "12px",
                   fontWeight: 400,
@@ -248,6 +248,7 @@ const ChartWinnersandWinningsSummary: React.FC<
   secondDateDuration,
   activeGameType
 }) => {
+
   // gameCategory 
   console.log('Active Game Category:', activeGameType)
   const [loading, setLoading] = useState(false);
@@ -255,13 +256,13 @@ const ChartWinnersandWinningsSummary: React.FC<
   
   // Determine chart number based on categoryFilter
   const chartMap: Record<string, string> = {
-    "Total Winners and Winnings": "1",
+    "Total Winnings and Winners": "1",
     "Total Winnings by Bet Type": "2",
     "Total Winnings by Game Type": "3",
     "Total Winners by Bet Type": "5",
     "Total Winners by Game Type": "6",
-    "Top Winning Region by Winning Comparison": "4",
-    "Top Winning Region by Winners Comparison": "4",
+    "Top Winning Region by Total Winning": "4",
+    "Top Winning Region by Total Winners": "4",
   };
   const urlParam = chartMap[categoryFilter];
 
@@ -311,7 +312,7 @@ const ChartWinnersandWinningsSummary: React.FC<
       const secondDateItems = allDrawItems.filter((item: chartOne_Specific) => 
         datesMatch(item.DateOfWinningCombination, secondDate)
       );
-
+      
       return {
         drawOrder,
         firstDateWinners: firstDateItems.reduce((sum: number, item: chartOne_Specific) => sum + item.TotalWinners, 0),
@@ -375,9 +376,9 @@ const ChartWinnersandWinningsSummary: React.FC<
         );
 
         result[`firstDate${category.replace(/\s+/g, '')}`] = 
-          firstDateItems.reduce((sum: number, item: any) => sum + item.TotalPayAmount, 0);
+          firstDateItems.reduce((sum: number, item: any) => sum + item.TotalTumbokPayouts, 0);
         result[`secondDate${category.replace(/\s+/g, '')}`] = 
-          secondDateItems.reduce((sum: number, item: any) => sum + item.TotalPayAmount, 0);
+          secondDateItems.reduce((sum: number, item: any) => sum + item.TotalSahodPayouts, 0);
       });
 
       return result;
@@ -800,19 +801,17 @@ const ChartWinnersandWinningsSummary: React.FC<
   return (
     <Box
       sx={{
-        backgroundColor: "#171717",
+        backgroundColor: "#F8F0E3",
         padding: "1rem",
         borderRadius: "8px",
         paddingBottom: "2rem",
         width: "100%",
         height: "511px",
-        // display: "flex",
-        // justifyContent: "center",
-        // alignItems: "center"
+        border: "1px solid #0038A8"
       }}
     >
       <Typography
-        color="#FFFFFF"
+        color="#212121"
         sx={{
           fontSize: "16px",
           fontWeight: 400,
@@ -831,7 +830,9 @@ const ChartWinnersandWinningsSummary: React.FC<
         firstDateDuration={firstDateDuration}
         secondDateDuration={secondDateDuration}
       />
-
+      { loading ? (
+        <CircularProgress/>
+      ):(
       <Box
         sx={{
           height: "100%",
@@ -846,6 +847,7 @@ const ChartWinnersandWinningsSummary: React.FC<
           grid={{ vertical: true }}
           layout="horizontal"
           margin={{ left: 90, right: 20, top: 20, bottom: 40 }}
+          slotProps={{ legend: { hidden: true } }}
           series={generateSeries(chartData, urlParam)}
           yAxis={[
             {
@@ -866,6 +868,7 @@ const ChartWinnersandWinningsSummary: React.FC<
           ]}
         />
       </Box>
+      )}
     </Box>
   );
 };
