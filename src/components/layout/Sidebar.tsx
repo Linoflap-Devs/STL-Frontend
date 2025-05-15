@@ -233,7 +233,7 @@ const Sidebar: React.FC = () => {
                 <FaChevronLeft size={12} />
               )}
             </button>
-            
+
             {!collapsed && (
               <>
                 {/* Logo (Right Corner) */}
@@ -288,7 +288,7 @@ const Sidebar: React.FC = () => {
           onClick={handleLogout}
               className={`flex items-center px-4 py-2 cursor-pointer rounded-md text-sm transition-colors`}
             >
-          <FaSignOutAlt size={16} />
+          <FaSignOutAlt size={20} />
           {!collapsed && <span className="ml-2">Logout</span>}
         </div>
       </nav>

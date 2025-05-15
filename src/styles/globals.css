@@ -39,7 +39,7 @@ select option:disabled {
 .react-select__control {
   background-color: transparent !important;  /* Transparent background */
   border-radius: 0.4rem !important;          /* Rounded corners */
-  border: 1px solid #0038A8 !important;      /* Set border color */
+  border: 1px solid rgba(0, 0, 0, 0.23) !important;      /* Set border color */
 }
 
 /* Handle the hover state for react-select control */

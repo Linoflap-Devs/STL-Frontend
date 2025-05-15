@@ -24,104 +24,105 @@ const ConfirmUserActionModalPage: React.FC<ConfirmUserActionModalProps> = ({
   const handleTogglePasswordVisibility = () => setShowPassword((prev) => !prev);
   const { roleId, setData } = useUserRoleStore();
 
-  const handleVerifyUserAction = async () => {
-    if (!password) {
-      setError("Password is required.");
+const handleVerifyUserAction = async () => {
+  if (!password) {
+    setError("Password is required.");
+    return;
+  }
+
+  try {
+    const { success: isVerified } = await verifyPass(password);
+    if (!isVerified) {
+      setError("Invalid password. Please try again.");
       return;
     }
 
-    try {
-      const { success: isVerified } = await verifyPass(password);
-      if (!isVerified) {
-        setError("Invalid password. Please try again.");
-        return;
-      }
+    setError("");
 
-      setError("");
+    const isDeleting = actionType === "update"; // <-- Renamed for clarity
+    const isCreating = actionType === "create";
 
-      const isSuspending = actionType === "update";
-      const isCreating = actionType === "create";
+    const userId = formData.UserId;
 
-      const userId = formData.UserId;
+    if (isDeleting && !userId) {
+      setError("User ID is required to delete a user.");
+      return;
+    }
 
-      if (isSuspending && !userId) {
-        setError("User ID is required to suspend a user.");
-        return;
-      }
+    const endpointUrl = isDeleting ? endpoint.update : endpoint.create;
 
-      const endpointUrl = isSuspending ? endpoint.update : endpoint.create;
+    // Normalize data to use correct field names
+    const dataToSend = {
+      ...(userId && { userId }),
+      ...Object.entries(formData).reduce(
+        (acc, [key, val]) => {
+          if (val !== undefined && key !== "UserId") acc[key] = val;
+          return acc;
+        },
+        {} as Record<string, any>
+      ),
+      ...(roleId && { userTypeId: roleId }),
+      ...(isDeleting && { IsDeleted: 1 }), // <-- Changed from IsActive: false
+    };
 
-      // Normalize data to use correct field names
-      const dataToSend = {
-        ...(userId && { userId }),
-        ...Object.entries(formData).reduce(
-          (acc, [key, val]) => {
-            if (val !== undefined && key !== "UserId") acc[key] = val;
-            return acc;
-          },
-          {} as Record<string, any>
-        ),
-        ...(roleId && { userTypeId: roleId }),
-        ...(isSuspending && { IsActive: false }),
-      };
+    const axiosCall = isDeleting ? axiosInstance.patch : axiosInstance.post;
 
-      const axiosCall = isSuspending ? axiosInstance.patch : axiosInstance.post;
+    const response = await axiosCall(endpointUrl, dataToSend, {
+      withCredentials: true,
+    });
 
-      const response = await axiosCall(endpointUrl, dataToSend, {
-        withCredentials: true,
-      });
-
-      if (!response?.data?.success) {
-        const errMsg =
-          response?.data?.message || `Failed to ${actionType} user.`;
-        setError(errMsg);
-        await Swal.fire({
-          icon: "error",
-          title: "Error!",
-          text: errMsg,
-          confirmButtonColor: "#D32F2F",
-        });
-        return;
-      }
-
-      setFormData({});
-      setPassword("");
-      setErrors({});
-      onClose();
-
-      if (roleId) {
-        fetchUsers(roleId, setData);
-      }
-
-      await Swal.fire({
-        icon: "success",
-        title: isSuspending ? "User Suspended!" : "User Created!",
-        text: isSuspending
-          ? "The user has been suspended successfully."
-          : "The user has been created successfully.",
-        confirmButtonColor: "#67ABEB",
-      });
-    } catch (error: any) {
-      console.error("Error during user action:", error);
-      console.log("Full error response:", error?.response?.data);
-      console.log("Endpoint URL when failed:", endpoint?.update);
-
-      const backendMessage =
-        error?.response?.data?.message ||
-        error?.response?.data ||
-        error?.message ||
-        "An unexpected error occurred.";
-
-      setError(backendMessage);
-
+    if (!response?.data?.success) {
+      const errMsg =
+        response?.data?.message || `Failed to ${actionType} user.`;
+      setError(errMsg);
       await Swal.fire({
         icon: "error",
-        title: "Unexpected Error!",
-        text: `Error while trying to ${actionType} user: ${backendMessage}`,
+        title: "Error!",
+        text: errMsg,
         confirmButtonColor: "#D32F2F",
       });
+      return;
     }
-  };
+
+    setFormData({});
+    setPassword("");
+    setErrors({});
+    onClose();
+
+    if (roleId) {
+      fetchUsers(roleId, setData);
+    }
+
+    await Swal.fire({
+      icon: "success",
+      title: isDeleting ? "User Deleted!" : "User Created!",
+      text: isDeleting
+        ? "The user has been marked as deleted."
+        : "The user has been created successfully.",
+      confirmButtonColor: "#67ABEB",
+    });
+  } catch (error: any) {
+    console.error("Error during user action:", error);
+    console.log("Full error response:", error?.response?.data);
+    console.log("Endpoint URL when failed:", endpoint?.update);
+
+    const backendMessage =
+      error?.response?.data?.message ||
+      error?.response?.data ||
+      error?.message ||
+      "An unexpected error occurred.";
+
+    setError(backendMessage);
+
+    await Swal.fire({
+      icon: "error",
+      title: "Unexpected Error!",
+      text: `Error while trying to ${actionType} user: ${backendMessage}`,
+      confirmButtonColor: "#D32F2F",
+    });
+  }
+};
+
 
   return (
     <>

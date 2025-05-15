@@ -19,6 +19,7 @@ export interface UpdateModalState {
   setIsVerifyModalOpen: (val: boolean) => void;
   setSelectedUserId: (id: number | null) => void;
   setOpenEditLogModal: (val: boolean) => void;
+  handleMultiSelect: (fieldName: string, selectedOptions: any[]) => void;
 }
 
 export const useUpdateModalState = create<UpdateModalState>((set) => ({
@@ -43,6 +44,16 @@ export const useUpdateModalState = create<UpdateModalState>((set) => ({
   setIsVerifyModalOpen: (val) => set({ isVerifyModalOpen: val }),
   setSelectedUserId: (id) => set({ selectedUserId: id }),
   setOpenEditLogModal: (val) => set({ openEditLogModal: val }),
+
+  handleMultiSelect: (fieldName, selectedOptions) => {
+    const selectedValues = selectedOptions.map((option) => option.value);
+    set((state) => ({
+      user: {
+        ...state.user,
+        [fieldName]: selectedValues,
+      },
+    }));
+  },
 }));
 
 export default useUpdateModalState;
