@@ -17,7 +17,7 @@ const DashboardCardsPage = (params: { gameCategoryId?: number }) => {
         const response = await fetchHistoricalSummary();
 
         if (response.success) {
-          const today = new Date().toISOString().split("T")[0]; // Get today's date in YYYY-MM-DD
+          const today = new Date().toISOString().split("T")[0];
 
           // Filter data for today's date
           let filteredData = response.data.filter(
@@ -104,7 +104,7 @@ const DashboardCardsPage = (params: { gameCategoryId?: number }) => {
           className="w-full px-4 py-[1.5rem] bg-gray-800 rounded-lg"
           style={{ ...cardDashboardStyles }}
         >
-          <p className="text-xs leading-4 text-gray-400">{item.title}</p>
+          <p className="text-xs leading-4">{item.title}</p>
           {item.value === undefined || item.value === null ? (
             <div className="w-20 h-6 bg-gray-500 animate-pulse rounded-md mt-3" />
           ) : (

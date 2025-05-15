@@ -1,53 +1,48 @@
-import { Box, Typography} from "@mui/material"
-import CardsOperatorsPage from "~/components/operators/OperatorsCards"
-import ChartOperatorsSummary from "~/components/operators/OperatorsSummary"
-import TableOperatorsSummary from "~/components/operators/OperatorsSummaryTable"
+import React, { useEffect } from "react";
+import { useOperatorsData } from "../../../../store/useOperatorStore";
+import DetailedTable from "~/components/ui/tables/DetailedTable";
+import CardsPage from "~/components/ui/dashboardcards/CardsData";
+import ChartsDataPage from "~/components/ui/charts/UserChartsData";
+import { OperatorFieldFormPage } from "~/components/operators/OperatorForm";
+import { fetchOperators } from "~/services/userService";
+import { operatorTableColumns } from "~/config/operatorTableColumns";
 
-const OperatorPage = () => {
-    return (
-      <Box>
-          <Typography sx={{ fontWeight: 700 }} variant="h4">
-            Small Town Lottery Operators
-          </Typography>
+const OperatorsPage = () => {
+  const { data, setData } = useOperatorsData();
+  const textlabel = "Operators";
 
-          <Box>
-            <CardsOperatorsPage/>
-          </Box>
+  useEffect(() => {
+    fetchOperators(setData);
+  }, [setData]);
 
-          <Box 
-            sx={{
-              display: "flex",
-              flexDirection: "column",
-              gap: 2,
-              height: "100%",
-              width: "100%",
-              mt: 2,
-            }}
-          >
-            <ChartOperatorsSummary/>
-            <TableOperatorsSummary/>
-              <Box
-                sx={{ display: "flex", justifyContent: "flex-end" }}
-                >
-                  <button
-                    style={{
-                      backgroundColor: "#67ABEB",
-                      color: "#000",
-                      border: "none",
-                      padding: "10px 24px",
-                      borderRadius: "8px",
-                      fontSize: "12px",
-                      fontWeight: "400",
-                      cursor: "pointer",
-                      width: "150px",
-                    }}
-                  >
-                    Export as CSV
-                  </button>
-              </Box>
-          </Box>
-      </Box>
-    )
-}
+  const tableColumns = operatorTableColumns();
 
-export default OperatorPage
+  // Prepare dashboard data with region name fallback
+  const dashboardData = data.map(op => ({
+    ...op,
+    region: op.OperatorRegion?.RegionName ?? "Unknown",
+  }));
+
+  return (
+    <div className="mx-auto px-0 py-1">
+      <h1 className="text-3xl font-bold mb-3">Small Town Lottery Operators</h1>
+      <CardsPage 
+        dashboardData={data} 
+        textlabel={textlabel} 
+      />
+      <ChartsDataPage 
+        userType="operator" 
+        pageType="operator" 
+        dashboardData={dashboardData}
+      />
+      <DetailedTable
+        data={data}
+        columns={tableColumns}
+        pageType="operator"
+      />
+      <OperatorFieldFormPage />
+    </div>
+  );
+};
+
+export default OperatorsPage;

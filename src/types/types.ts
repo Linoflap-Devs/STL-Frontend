@@ -1,56 +1,118 @@
+// for dashboard cards
+export type DashboardData = {
+  totalUsers: number;
+  activeUsers: number;
+  suspendedUsers: number;
+  inactiveUsers: number;
+  newUsers: number;
+};
 
-// Operators
-export type OperatorsData = {
-  totalOperators: number;
-  totalActiveOperators: number;
-  totalDeletedOperators: number;
-  totalInactiveOperators: number;
-  totalNewOperators: number;
-};
-export type AddOperatorFormData = {
-  companyName: string;
-  email: string;
-  phone: string;
-  dateOfOperations: string;
-  areaOfOperations: string;
-  gameTypes: {
-    stlPares: boolean;
-    stlSwer2: boolean;
-    stlSwer3: boolean;
-    stlSwer4: boolean;
-    allGames: boolean;
-  }
+// for dashboard charts
+export interface LegendItem {
+  color: string;
+  label: string;
 }
-export type UpdateOperatorFormData = {
-  status: string;
-  companyName: string;
+
+export interface User {
+  UserId: number;
+  FirstName: string;
+  LastName: string;
+  fullName: string; // Consider making this a computed field on the frontend
+  Suffix: string | null;
+  UserTypeId: number;
   email: string;
-  phone: string;
-  dateOfOperations: string;
-  areaOfOperations: string;
-  gameTypes: {
-    stlPares: boolean;
-    stlSwer2: boolean;
-    stlSwer3: boolean;
-    stlSwer4: boolean;
-    allGames: boolean;
-  }
-  createdBy: string;
-  latestUpdateBy: string;
-  creationDate: string;
-  latestUpdateDate: string;
-  remarks: string;
+  phoneNumber: string;
+  DateOfRegistration: string;
+  OperatorId: number;
+  OperatorDetails?: {
+    OperatorName?: string;
+  };
+  Region?: string; // Remove this if 'region' below is preferred
+  region: string;
+
+  LastLogin?: string;
+  LastTokenRefresh?: string;
+  IsActive?: number;
+  Cities: { CityId: number; CityName: string }[];
 }
-export type OperatorsStore = {
-  //OperatorsCards Component
-  operatorsData: OperatorsData;
-  // Partial<T> - typescript utility makes all fields of T optional
-  setOperatorsData: (data: Partial<OperatorsData>) => void;
-  //Add Operator Component
-  addOperatorForm: AddOperatorFormData;
-  setOperatorFormData: (data:  Partial<AddOperatorFormData>) => void;
-  updateOperatorForm: UpdateOperatorFormData;
-  setUpdateOperatorFormData: (data: Partial<UpdateOperatorFormData>) => void;
-  setAllGameTypes: (data: Partial<AddOperatorFormData['gameTypes']>) => void;
+
+
+// Define the Operator type
+export interface Operator {
+  OperatorId: number;
+  OperatorName: string;
+  Executive: string;
+  OperatorEmail: string | null;
+  Status: number; // Consider using enum if Status can be "Active" = 1, etc.
+  CreatedAt: string;
+  DateOfOperation: string;
+  Cities: { CityId: number; CityName: string }[];
+  OperatorAddress: string;
+  OperatorContactNos: string;
+  Email: string | null;
+  ContactNo: string;
+  OperatorRepresentative: string;
+  OperatorRegion?: any; // Ideally replace `any` with a specific Region type
+  Region?: any;         // Same here
+
+  // Optional shared fields (if reused with users)
+  LastLogin?: string;
+  LastTokenRefresh?: string;
+  UserStatusId?: number;
+  DateOfRegistration?: string;
+  IsActive?: number;
+}
+
+export type EditLogFields = {
+  logField: string;
+  EditLogDetailsId: number;
+  User: string;
+  EditedBy: string;
+  CreatedAt: string;
+  OldValue: string;
+  NewValue: string;
+  Remarks: string;
+  
+  OperatorId?: number;
+}
+
+export interface RoleConfig {
+  userTypeId: number;
+  endpoint: {
+    create: string;
+    update: string;
+  };
+  fields: {
+    name: string;
+    label: string;
+    type: string;
+    placeholder: string;
+    value: string;
+    gridSpan: number;
+    options?: { value: string; label: string }[];
+  }[];
+}
+
+export interface operatorConfig {
+  userTypeId: number;
+  endpoint: {
+    create: string;
+    update: string;
+  };
+  fields: {
+    name: string;
+    label: string;
+    type: string;
+    placeholder: string;
+    value: string;
+    gridSpan: number;
+    options?: { value: string; label: string }[];
+  }[];
+}
+
+export type SortConfig<T> = {
+  key: keyof T;  // Restrict 'key' to a valid key of the passed type
+  direction: "asc" | "desc";  // Sorting direction
 };
+
 

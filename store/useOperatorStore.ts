@@ -1,114 +1,52 @@
 import { create } from "zustand";
-import { AddOperatorFormData,UpdateOperatorFormData, OperatorsStore} from '../src/types/types'
+import { Operator } from "../src/types/types";
+import { Column, Field } from "~/types/interfaces";
 
-// type OperatorsData = {
-//   totalOperators: number;
-//   totalActiveOperators: number;
-//   totalDeletedOperators: number;
-//   totalInactiveOperators: number;
-//   totalNewOperators: number;
-// };
-// type AddOperatorFormData = {
-//   companyName: string;
-//   email: string;
-//   phone: string;
-//   dateOfOperations: string;
-//   areaOfOperations: string;
-//   gameTypes: {
-//     stlPares: boolean;
-//     stlSwer2: boolean;
-//     stlSwer3: boolean;
-//     stlSwer4: boolean;
-//     allGames: boolean;
-//   }
-// }
-const defaultOperatorForm: AddOperatorFormData = {
-  companyName: '',
-  email: '',
-  phone: '',
-  dateOfOperations: '',
-  areaOfOperations: '',
-  gameTypes: {
-    stlPares: false,
-    stlSwer2: false,
-    stlSwer3: false,
-    stlSwer4: false,
-    allGames: false,
-  }
+export interface OperatorsState {
+  data: Operator[];
+  setData: (data: Operator[]) => void;
+
+  columns: Column<Operator>[];
+  setColumns: (columns: Column<Operator>[]) => void;
+
+  operators: Operator[];
+  operatorMap: Record<number, Operator>;
+  
+  loading: boolean;
+  error: string | null;
+
+  setOperators: (operators: Operator[]) => void;
+  setOperatorMap: (operatorMap: Record<number, Operator>) => void;
+  setLoading: (loading: boolean) => void;
+  setError: (error: string | null) => void;
+
+  modalOpen: boolean;
+  setModalOpen: (open: boolean) => void;
+
+  fields: Field[];
+  setFields: (fields: Field[]) => void;
 }
-const defaultUpdateOperatorForm: UpdateOperatorFormData = {
-  status: ' ',
-  companyName:' ',
-  email: ' ',
-  phone: ' ',
-  dateOfOperations: ' ',
-  areaOfOperations: ' ',
-  gameTypes: {
-    stlPares: false,
-    stlSwer2: false,
-    stlSwer3: false,
-    stlSwer4: false,
-    allGames: false,
-  },
-  createdBy: ' ',
-  latestUpdateBy: ' ',
-  creationDate: ' ',
-  latestUpdateDate: ' ',
-  remarks: '',
-}
-// type OperatorsStore = {
-//   //OperatorsCards Component
-//   operatorsData: OperatorsData;
-//   // Partial<T> - typescript utility makes all fields of T optional
-//   setOperatorsData: (data: Partial<OperatorsData>) => void;
-//   //Add Operator Component
-//   addOperatorForm: AddOperatorFormData;
-//   setOperatorFormData: (data:  Partial<AddOperatorFormData>) => void;
-//   setAllGameTypes: (data: Partial<AddOperatorFormData['gameTypes']>) => void;
 
-// };
+export const useOperatorsData = create<OperatorsState>((set) => ({
+  data: [],
+  setData: (data) => set({ data }),
 
+  columns: [],
+  setColumns: (columns) => set({ columns }),
 
+  operators: [],
+  operatorMap: {}, // Ensures type safety
+  loading: false,
+  error: null,
 
-export const useOperatorsStore = create<OperatorsStore>((set) => ({
-  // OperatorsCards Component
-  operatorsData: {
-    totalOperators: 0,
-    totalActiveOperators: 0,
-    totalDeletedOperators: 0,
-    totalInactiveOperators: 0,
-    totalNewOperators: 0,
-  },
-  setOperatorsData: (data) =>
-    set((state) => ({
-      operatorsData: { ...state.operatorsData, ...data },
-    })
-  ),
-  // Add Operator Component
-  addOperatorForm: defaultOperatorForm,
-  setOperatorFormData: (data)=>
-    set((state)=> ({
-      addOperatorForm: {
-        ...state.addOperatorForm, 
-        ...data},
-    })
-  ),
-  // Update Operator Component
-  updateOperatorForm: defaultUpdateOperatorForm,
-  setUpdateOperatorFormData: (data) =>
-    set((state)=>({
-      updateOperatorForm: {
-        ...state.updateOperatorForm,
-        ...data},
-      })
-  ),
-  setAllGameTypes: (data)=>
-    set((state)=> ({
-      addOperatorForm: {
-        ...state.addOperatorForm,
-        gameTypes: {...state.addOperatorForm.gameTypes, ...data},
-      }
-    })
-  )
+  setOperators: (operators) => set({ operators }),
+  setOperatorMap: (operatorMap) => set({ operatorMap }),
+  setLoading: (loading) => set({ loading }),
+  setError: (error) => set({ error }),
 
+  modalOpen: false,
+  setModalOpen: (open) => set({ modalOpen: open }),
+
+  fields: [],
+  setFields: (fields) => set({ fields }),
 }));

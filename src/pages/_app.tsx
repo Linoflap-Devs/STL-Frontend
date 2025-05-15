@@ -53,14 +53,11 @@ const App = ({ Component, pageProps }: AppProps) => {
     const checkAuth = async () => {
       try {
         await waitUntilNotRefreshing();
-
         const data = await getCurrentUser({});
-
         if (data?.success) {
           setLoading(false);
           return;
         }
-
         throw new Error("No valid auth found!");
       } catch (error: any) {
         const isTokenExpired =

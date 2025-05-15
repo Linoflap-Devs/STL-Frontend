@@ -117,12 +117,12 @@ const DrawResultsPage = () => {
   }, [selectedProvince, winningCombinations]);
 
   return (
-    <div className="bg-[#171717] p-4 rounded-xl">
+  <div className="bg-transparent p-4 rounded-xl border border-[#0038A8]">
       <div className="flex mb-2 items-center">
         <div className="bg-[#2F2F2F] p-1 rounded-lg">
           <FaBroadcastTower size={24} color={"#67ABEB"}/>
         </div>
-        <p className="font-light text-base ml-2">Draw Results Today</p>
+        <p className="text-base ml-2">Draw Results Today</p>
       </div>
       <div className="h-px bg-[#303030] mb-4" />
 
@@ -130,7 +130,7 @@ const DrawResultsPage = () => {
         <div className="w-full relative">
           <label
             htmlFor="region-select"
-            className="block text-sm font-medium text-gray-300 mb-1"
+            className="block text-sm font-medium mb-1"
           >
             Select a Region
           </label>
@@ -143,9 +143,9 @@ const DrawResultsPage = () => {
                 setSelectedRegion(e.target.value);
                 setSelectedProvince("");
               }}
-              className="w-full appearance-none p-2 pr-10 rounded-lg bg-transparent text-white border border-[#404040] focus:outline-none focus:ring-1 focus:ring-[#555]"
+              className="w-full appearance-none p-2 pr-10 rounded-lg bg-transparent border border-[#404040] focus:outline-none focus:ring-1 focus:ring-[#555]"
             >
-              <option className="bg-[#2F2F2F] text-white" value="">
+              <option className="bg-[#2F2F2F]" value="">
                 Select a Region
               </option>
               {regions.map((region) => (
@@ -175,7 +175,7 @@ const DrawResultsPage = () => {
           <div className="w-full relative">
             <label
               htmlFor="province-select"
-              className="block text-sm font-medium text-gray-300 mb-1"
+              className="block text-sm font-medium mb-1"
             >
               Select a Province
             </label>
@@ -185,23 +185,23 @@ const DrawResultsPage = () => {
                 value={selectedProvince}
                 onChange={(e) => setSelectedProvince(e.target.value)}
                 disabled={!selectedRegion}
-                className="w-full appearance-none p-2 pr-10 rounded-lg bg-transparent text-white border border-[#404040] focus:outline-none focus:ring-1 focus:ring-[#555] disabled:opacity-50 disabled:cursor-not-allowed"
+                className="w-full appearance-none p-2 pr-10 rounded-lg bg-transparent border border-[#404040] focus:outline-none focus:ring-1 focus:ring-[#555] disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                <option className="bg-[#2F2F2F] text-white" value="">
+                <option className="bg-[#2F2F2F]" value="">
                   Select a Province
                 </option>
                 {provinces.map((province) => (
                   <option
                     key={province.ProvinceId}
                     value={province.ProvinceId}
-                    className="bg-[#2F2F2F] text-white"
+                    className="bg-[#2F2F2F]"
                   >
                     {province.Province}
                   </option>
                 ))}
               </select>
 
-              <div className="pointer-events-none absolute top-1/2 right-3 -translate-y-1/2 text-white">
+              <div className="pointer-events-none absolute top-1/2 right-3 -translate-y-1/2">
                 <svg
                   className="w-3 h-3 fill-current"
                   viewBox="0 0 10 6"
@@ -233,23 +233,23 @@ const DrawResultsPage = () => {
                 console.log(selectedGameType);
               }}
               disabled={!selectedProvince}
-              className="w-full appearance-none p-2 pr-10 rounded-lg bg-transparent text-white border border-[#404040] focus:outline-none focus:ring-1 focus:ring-[#555] disabled:opacity-50 disabled:cursor-not-allowed"
+              className="w-full appearance-none p-2 pr-10 rounded-lg bg-transparent border border-[#404040] focus:outline-none focus:ring-1 focus:ring-[#555] disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              <option className="bg-[#2F2F2F] text-white" value="">
+              <option className="bg-[#2F2F2F]" value="">
                 Select a Game Type
               </option>
               {gameCategories.map((category) => (
                 <option
                   key={category.GameCategoryId}
                   value={category.GameCategory}
-                  className="bg-[#2F2F2F] text-white"
+                  className="bg-[#2F2F2F]"
                 >
                   {category.GameCategory}
                 </option>
               ))}
             </select>
 
-            <div className="pointer-events-none absolute top-1/2 right-3 -translate-y-1/2 text-white">
+            <div className="pointer-events-none absolute top-1/2 right-3 -translate-y-1/2">
               <svg
                 className="w-3 h-3 fill-current"
                 viewBox="0 0 10 6"
@@ -311,7 +311,7 @@ const DrawResultsPage = () => {
                   >
                     {/* First Winning Number */}
                     <div
-                      className={`bg-[#2F2F2F] rounded-lg p-4 flex items-center justify-center ${displayInGrid ? "w-[calc(50%-4px)]" : "flex-1"}`}
+                      className={`bg-transparent border border-[#0038A8] rounded-lg p-4 flex items-center justify-center ${displayInGrid ? "w-[calc(50%-4px)]" : "flex-1"}`}
                     >
                       <p className="text-white font-bold text-3xl lg:text-2xl">
                         {displayValue(
@@ -322,7 +322,7 @@ const DrawResultsPage = () => {
 
                     {/* Second Winning Number */}
                     <div
-                      className={`bg-[#2F2F2F] rounded-lg p-4 flex items-center justify-center ${displayInGrid ? "w-[calc(50%-4px)]" : "flex-1"}`}
+                      className={`bg-transparent border border-[#0038A8] rounded-lg p-4 flex items-center justify-center ${displayInGrid ? "w-[calc(50%-4px)]" : "flex-1"}`}
                     >
                       <p className="text-white font-bold text-3xl lg:text-2xl">
                         {displayValue(
@@ -334,9 +334,9 @@ const DrawResultsPage = () => {
                     {/* Third Winning Number - Only shown if needed */}
                     {totalBoxes >= 3 && (
                       <div
-                        className={`bg-[#2F2F2F] rounded-lg p-4 flex items-center justify-center w-[calc(50%-4px)] mt-1`}
+                        className={`bg-transparent border border-[#0038A8] rounded-lg p-4 flex items-center justify-center w-[calc(50%-4px)] mt-1`}
                       >
-                        <p className="text-white font-bold text-3xl">
+                        <p className="font-bold text-3xl">
                           {displayValue(
                             winningCombo?.WinningCombinationThree || "\u00A0"
                           )}
@@ -347,9 +347,9 @@ const DrawResultsPage = () => {
                     {/* Fourth Winning Number - Only shown if needed */}
                     {totalBoxes >= 4 && (
                       <div
-                        className={`bg-[#2F2F2F] rounded-lg p-4 flex items-center justify-center w-[calc(50%-4px)] mt-1`}
+                        className={`bg-transparent border border-[#0038A8] rounded-lg p-4 flex items-center justify-center w-[calc(50%-4px)] mt-1`}
                       >
-                        <p className="text-white font-bold text-3xl">
+                        <p className="font-bold text-3xl">
                           {displayValue(
                             winningCombo?.WinningCombinationFour || "\u00A0"
                           )}

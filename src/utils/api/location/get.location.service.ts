@@ -27,7 +27,7 @@ import { AxiosError } from 'axios';
 */
 
 // <T> generic type parameter, placeholder for the actual type that will be provided when the function is called, unknown = default
-const getLocation = async <T = unknown>(
+export const getLocation = async <T = unknown>(
     endpoint: string,
     queryParams: Record<string, unknown> = {}
 ):Promise<{
@@ -35,21 +35,9 @@ const getLocation = async <T = unknown>(
     message?: string;
     data: T | null; // on success: T which is generic, on error: null
 }> => {
-    const token = localStorage.getItem('authToken');
-
-    if(!token) {
-        const errorMsg = "No authentication token found";
-        console.error(errorMsg);
-        return {success: false, message: errorMsg, data: null}
-    }
-
     try {
         const response = await axiosInstance.get<T>(endpoint, {
             params: queryParams,
-            headers: {
-                Authorization: `Bearer ${token}`,
-                // 'Content-Type': 'application/json'
-            }
         })
 
         return {

@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { Box, Typography, Divider } from "@mui/material";
 import MoneyIcon from "@mui/icons-material/AttachMoney";
-import { fetchWinners } from "~/utils/api/winners";
+//import { fetchWinners } from "~/utils/api/winners";
 import { fetchHistoricalRegion, fetchHistoricalSummary } from "~/utils/api/transactions";
 import { historicalSummaryByRegionCategory } from "~/utils/transforms";
 // import fetchHistoricalRegion from "~/utils/api/getHistoricalRegion";
