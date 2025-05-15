@@ -3,8 +3,15 @@ import { create } from 'zustand';
 // For Dashboard Cards
 import getTransactionsData from '~/utils/api/transactions/get.TransactionsData.service';
 
+const getTodayDate = () => new Date().toISOString().slice(0, 10);
+const getYesterdayDate = () => {
+  const date = new Date();
+  date.setDate(date.getDate() - 1);
+  return date.toISOString().slice(0, 10);
+};
+
 export type categoryType = 
-  'Total Bettors and Bets' |
+  'Total Bets and Bettors' |
   'Total Bets by Bet Type' |
   'Total Bettors by Bet Type' |
   'Total Bets by Game Type' |
@@ -15,6 +22,7 @@ export type categoryType =
 type dateType = 'Specific Date' | 'Date Duration';
 
 export interface BettorsandBetsSummaryProps {
+  activeGameType: string;
   categoryFilter: categoryType;
   dateFilter: dateType;
   firstDateSpecific: string | null;
@@ -30,11 +38,11 @@ interface BettingStore {
   categoryFilter: categoryType;
   dateFilter: dateType;
   // If Filtered by Specific Date
-  firstDateSpecific: Date | null;
-  secondDateSpecific: Date | null;
+  firstDateSpecific: string | null;
+  secondDateSpecific: string | null;
   // If Filtered by Date Duration
-  firstDateDuration: Date | null;
-  secondDateDuration: Date | null;
+  firstDateDuration: string | null;
+  secondDateDuration: string | null;
   cardsAggregatedData: {
     totalBettors: number;
     totalWinners: number;
@@ -49,11 +57,11 @@ interface BettingStore {
   setCategoryFilter: (category: categoryType) => void;
   setDateFilter: (type: dateType) => void;
   // If Filtered by Specific Datee
-  setFirstDateSpecific: (date: Date) => void;
-  setSecondDateSpecific: (date: Date) => void;
+  setFirstDateSpecific: (date: string) => void;
+  setSecondDateSpecific: (date: string) => void;
   // If Filtered by Date Duration
-  setFirstDateDuration: (date: Date) => void;
-  setSecondDateDuration: (date: Date) => void;
+  setFirstDateDuration: (date: string) => void;
+  setSecondDateDuration: (date: string) => void;
   fetchAndAggregateData: () => Promise<void>;
   resetFilters: () => void;
 }
@@ -61,10 +69,10 @@ interface BettingStore {
 export const useBettingStore = create<BettingStore>((set) => ({
     loading: false,
     activeGameType: '',
-    categoryFilter: 'Total Bettors and Bets',
+    categoryFilter: 'Total Bets and Bettors',
     dateFilter: 'Specific Date',
-    firstDateSpecific: null,
-    secondDateSpecific: null,
+    firstDateSpecific: getYesterdayDate(),
+    secondDateSpecific: getTodayDate(),
     firstDateDuration: null,
     secondDateDuration: null,
     cardsAggregatedData: {
@@ -100,7 +108,7 @@ export const useBettingStore = create<BettingStore>((set) => ({
           TotalBetAmount: number;
           TotalPayout: number;
           TotalEarnings: number;
-        }[]>("/transactions/getHistoricalRegion", {});
+        }[]>("/transactions/getHistoricalRegion", '');
         
         
         console.log(`Betting Dashboard Cards Data:`, JSON.stringify(data, null, 2))
@@ -139,7 +147,7 @@ export const useBettingStore = create<BettingStore>((set) => ({
 
     resetFilters: () =>
       set({
-        categoryFilter: 'Total Bettors and Bets',
+        categoryFilter: 'Total Bets and Bettors',
         dateFilter: 'Specific Date',
         firstDateSpecific: null,
         secondDateSpecific: null,
@@ -156,7 +164,7 @@ export const getLegendItemsMap_Specific = (
 ): { label: string; color: string }[] => {
   console.log("categoryFilter:", categoryFilter);
   const legendItemsMap: Record<categoryType, { label: string; color: string }[]> = {
-  "Total Bettors and Bets": [
+  "Total Bets and Bettors": [
     {
       label: `Bettors - ${firstDateSpecific ? firstDateSpecific : "N/A"}`,
       color: "#E5C7FF",
@@ -311,7 +319,7 @@ export const getLegendItemsMap_Duration = (
 ): { label: string; color: string }[] => {
   console.log("categoryFilter:", categoryFilter);
   const legendItemsMap: Record<categoryType, { label: string; color: string }[]> = {
-  "Total Bettors and Bets": [
+  "Total Bets and Bettors": [
     {
       label: `Bettors - ${firstDateSpecific ? firstDateSpecific : "N/A"} - ${secondDateSpecific ? secondDateSpecific : "N/A"}`,
       color: "#E5C7FF",

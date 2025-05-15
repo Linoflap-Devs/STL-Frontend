@@ -3,7 +3,6 @@ import {
   Box,
   Typography,
   Grid,
-  TextField,
   Select,
   MenuItem,
   InputLabel,
@@ -380,7 +379,8 @@ const formattedSecondDateDuration = secondDateDuration
         
 
         {categoryFilter === "Top Winning Region by Winnings Comparison" || categoryFilter === "Top Winner Region by Winners Comparison" ? (
-          <ChartTopRegionByWinsandWinners 
+          <ChartTopRegionByWinsandWinners
+            activeGameType={activeGameType}
             categoryFilter={categoryFilter}
             dateFilter={dateFilter}
             firstDateSpecific={formattedFirstDateSpecific}
@@ -390,7 +390,8 @@ const formattedSecondDateDuration = secondDateDuration
           />
           ) : (
           <>
-            <ChartWinnersandWinningsSummary 
+            <ChartWinnersandWinningsSummary
+              activeGameType={activeGameType}
               categoryFilter={categoryFilter}
               dateFilter={dateFilter}
               firstDateSpecific={formattedFirstDateSpecific}
@@ -398,7 +399,8 @@ const formattedSecondDateDuration = secondDateDuration
               firstDateDuration={formattedFirstDateDuration}
               secondDateDuration={formattedSecondDateDuration}
             />
-            <ChartWinnersandWinningsRegionalSummary 
+            <ChartWinnersandWinningsRegionalSummary
+              activeGameType={activeGameType}
               categoryFilter={categoryFilter}
               dateFilter={dateFilter}
               firstDateSpecific={formattedFirstDateSpecific}
