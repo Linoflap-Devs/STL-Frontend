@@ -83,6 +83,7 @@ const Sidebar: React.FC = () => {
     return () => clearInterval(interval);
   }, []);
 
+  // get current user
   useEffect(() => {
     (async () => {
       try {
@@ -208,10 +209,10 @@ const Sidebar: React.FC = () => {
     <aside
       className={clsx(
         "p-3.5 bg-[#0038A8] text-white flex flex-col transition-all duration-300 min-h-screen",
-        collapsed ? "w-16" : "w-60"
+        collapsed ? "w-20" : "w-60"
       )}
     >
-      <div
+      <div  
         className={clsx(
           "flex items-center",
           collapsed ? "flex-col justify-center" : "flex-row justify-center"
@@ -232,18 +233,24 @@ const Sidebar: React.FC = () => {
                 <FaChevronLeft size={12} />
               )}
             </button>
-            {/* Logo (Right Corner) */}
-            <div className="flex ml-auto">
-              <img
-                src={UserSectionData.image}
-                alt="Logo"
-                className={clsx(
-                  "transition-all duration-300",
-                  collapsed ? "w-10" : "max-w-[8rem]"
-                )}
-              />
-            </div>
+            
+            {!collapsed && (
+              <>
+                {/* Logo (Right Corner) */}
+                <div className="flex ml-auto">
+                  <img
+                    src={UserSectionData.image}
+                    alt="Logo"
+                    className={clsx(
+                      "transition-all duration-300",
+                      collapsed ? "w-10" : "max-w-[8rem]"
+                    )}
+                  />
+                </div>
+              </>
+            )}
           </div>
+
           {/* Time and Date */}
           {!collapsed && (
             <div className="text-[#0038A8] px-3 py-2 leading-none">
@@ -255,29 +262,32 @@ const Sidebar: React.FC = () => {
               </div>
             </div>
           )}
+          
         </div>
       </div>
 
-      {/* User Details */}
-      <div className="pt-5 pb-3 px-1">
-        <div className="text-2xl font-bold text-white leading-tight">
-          {user ? `${user.firstName} ${user.lastName}` : (
-            <Skeleton variant="text" width={100} height={20} />
-          )}
+      {!collapsed && (
+        <div className="pt-5 pb-3 px-1">
+          {/* User Details */}
+          <div className="text-2xl font-bold text-white leading-tight">
+            {user ? `${user.firstName} ${user.lastName}` : (
+              <Skeleton variant="text" width={100} height={20} />
+            )}
+          </div>
+          <div className="text-xs text-white">
+            {user ? getUserRole(user.userTypeId) : ""}
+          </div>
         </div>
-        <div className="text-xs text-white">
-          {user ? getUserRole(user.userTypeId) : ""}
-        </div>
-      </div>
+      )}
 
       {/* Navigation Menu */}
-      <nav className="flex-1 space-y-3">
+      <nav className={`flex-1 space-y-3 ${collapsed ? "mt-5" : "" } `}>
         {UserSectionData.pages.map(renderMenuItem)}
         {/* Logout Button */}
         <div
           onClick={handleLogout}
-          className="flex items-center px-4 py-2 cursor-pointer rounded-md text-sm 
-             transition-colors" >
+              className={`flex items-center px-4 py-2 cursor-pointer rounded-md text-sm transition-colors`}
+            >
           <FaSignOutAlt size={16} />
           {!collapsed && <span className="ml-2">Logout</span>}
         </div>
