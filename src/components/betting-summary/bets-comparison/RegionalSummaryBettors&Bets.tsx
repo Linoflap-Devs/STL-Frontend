@@ -260,7 +260,7 @@ const ChartBettorsAndBetsRegionalSummary: React.FC<BettorsandBetsSummaryProps> =
 
     // Determine chart number based on categoryFilter
   const chartMap: Record<string, string> = {
-    "Total Bettors and Bets": "1",
+    "Total Bets and Bettors": "1",
     "Total Bets by Bet Type": "2",
     "Total Bets by Game Type": "3",
     "Total Bettors by Bet Type": "5",
@@ -847,6 +847,7 @@ const ChartBettorsAndBetsRegionalSummary: React.FC<BettorsandBetsSummaryProps> =
                 margin={{ left: 90, right: 20, top: 20, bottom: 40 }}
                 xAxis={[
                   {
+                    label: "Amount (in 100,000 units)",
                     scaleType: "band",
                     data: philippineRegions, // Ensure this matches the number of data points
                   },
@@ -861,6 +862,7 @@ const ChartBettorsAndBetsRegionalSummary: React.FC<BettorsandBetsSummaryProps> =
                   },
                 ]}
                 series={generateSeries(chartData, urlParam)}
+                slotProps={{legend: {hidden: true}}}
                 // Optional: Increase width for better x-axis spacing
               />
           )}

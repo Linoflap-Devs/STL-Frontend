@@ -5,7 +5,6 @@ import {
   BettorsandBetsSummaryProps,
   getLegendItemsMap_Specific,
   getLegendItemsMap_Duration,
-  useBettingStore,
 } from "../../../../store/useBettingStore";
 
 // API Endpoints
@@ -140,7 +139,7 @@ console.log('Active Game Category:', activeGameType)
   const aggregateField = categoryFilter.includes("Bets") ? "TotalBets" : "TotalBettors";
   // Determine chart number based on category
   const chartMap: Record<string, string> = {
-    "Total Bettors and Bets": "1",
+    "Total Bets and Bettors": "1",
     "Total Bets by Bet Type": "2",
     "Total Bets by Game Type": "3",
     "Total Bettors by Bet Type": "5",
@@ -149,6 +148,7 @@ console.log('Active Game Category:', activeGameType)
     "Top Betting Region by Total Bettors": "4",
   };
   const urlParam = chartMap[categoryFilter];
+  console.log('URL Param', urlParam)
   const gameCategoryMap: Record<string, number> = {
     "Dashboard": 0,
     "STL Pares": 1,
@@ -317,6 +317,7 @@ console.log('Active Game Category:', activeGameType)
           height={600}
           margin={{ left: 90, right: 20, top: 20, bottom: 40 }}
           xAxis={[{ scaleType: "band", data: philippineRegions }]}
+          slotProps={{legend: {hidden: true}}}
             yAxis={[{ label: "Ranking", min: 0, max: 18 }]}
             series={[
               {

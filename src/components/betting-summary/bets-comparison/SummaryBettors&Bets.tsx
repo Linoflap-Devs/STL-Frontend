@@ -254,7 +254,7 @@ const ChartBettorsAndBetsSummary: React.FC<BettorsandBetsSummaryProps> = ({
   
   // Determine chart number based on categoryFilter
     const chartMap: Record<string, string> = {
-    "Total Bettors and Bets": "1",
+    "Total Bets and Bettors": "1",
     "Total Bets by Bet Type": "2",
     "Total Bets by Game Type": "3",
     "Total Bettors by Bet Type": "5",
@@ -830,14 +830,14 @@ const ChartBettorsAndBetsSummary: React.FC<BettorsandBetsSummaryProps> = ({
                 <CircularProgress />
             </Box>
           ) : (
-                      <Box
+            <Box
               sx={{
               height: "100%",
               display: "flex",
               flexDirection: "column",
               flexGrow: 1,
             }}
-          >
+            >
             <BarChart
               height={400}
               // width={{100%}}
@@ -862,6 +862,7 @@ const ChartBettorsAndBetsSummary: React.FC<BettorsandBetsSummaryProps> = ({
                   // tickSpacing:1,
                 } ,
               ]}
+              slotProps={{legend: {hidden: true}}}
             />
           </Box>
           )}
