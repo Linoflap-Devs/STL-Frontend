@@ -56,11 +56,11 @@ const TopWinningRegionPage = () => {
 
   return (
   <div className="bg-transparent p-4 rounded-xl border border-[#0038A8]">
-      <div className="flex mb-2">
-        <div className="bg-[#2F2F2F] p-1 rounded-lg">
-          <FaMoneyBillAlt size={24} color={"#67ABEB"}/>
+      <div className="flex items-center mb-2">
+        <div className="bg-[#0038A8] p-1 rounded-lg">
+          <FaMoneyBillAlt size={24} color={"#F6BA12"}/>
         </div>
-        <p className="font-light text-base ml-2">
+        <p className="font-light text-base ml-4">
           Top Winning Regions Today
         </p>
       </div>

@@ -3,7 +3,7 @@ import { BarChart } from "@mui/x-charts/BarChart";
 import { fetchHistoricalSummary } from "../../utils/api/transactions";
 import { useRouter } from "next/navigation";
 
-// Custom Legend
+// Custom Legend circle
 const CustomLegend = () => (
   <div className="flex flex-row space-x-8 justify-start mt-1 mr-4">
     <div className="flex items-center">
@@ -36,15 +36,16 @@ const SummaryBettorsBetsPlacedPage = () => {
   >;
 
   const router = useRouter();
-
+const maxValue = Math.max(...data.map((item) => item.bets));
+const safeMax = maxValue < 1000 ? 1000 : maxValue;
   useEffect(() => {
     const fetchDataDashboard = async () => {
       try {
         const response = await fetchHistoricalSummary();
-        //console.log("API Response of Bettors charts:", response);
+        console.log("API Response of Bettors charts:", response);
 
         if (response.success) {
-          //console.log("Processing data...");
+          console.log("Processing data...");
 
           const today = new Date().toISOString().split("T")[0];
           console.log(today); // Output: "2025-03-25T00:00:00.000Z"
@@ -142,10 +143,10 @@ const SummaryBettorsBetsPlacedPage = () => {
               label: "Amount (in 100,000 units)",
               scaleType: "linear",
               min: 0,
-              max: Math.max(...data.map((item) => item.bets / 100000), 70),
-              valueFormatter: (value: number) => `${value}`,
+              max: safeMax,
+              valueFormatter: (value: number) => `${value.toLocaleString()}`,
               tickSize: 2,
-              barCategoryGap: 0.3,
+              barCategoryGap: 0.2,
               tickLabelProps: { style: { fontSize: "12px" } },
             } as any,
           ]}

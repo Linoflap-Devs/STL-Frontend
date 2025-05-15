@@ -77,7 +77,7 @@ const ReusableCreateModalPage: React.FC<ReusableModalPageProps> = ({
     const selectedValues = selectedOptions.map((option) => option.value);
     console.log(`Selected Values for ${name}:`, selectedValues);
 
-    if (name === "STLRegion") {
+    if (name === "regions") {
       // Filter provinces based on selected region IDs
       const filteredProvinces = (provinces ?? [])
         .filter((province) => selectedValues.includes(Number(province.RegionId)))
@@ -91,15 +91,15 @@ const ReusableCreateModalPage: React.FC<ReusableModalPageProps> = ({
       // Reset province and city selections when region changes
       setFormData((prev) => ({
         ...prev,
-        STLRegion: selectedValues,
-        STLProvince: [],
-        STLCity: [],
+        regions: selectedValues,
+        provinces: [],
+        cities: [],
       }));
 
       setFilteredProvinces(filteredProvinces);
       setFilteredCities([]);
 
-    } else if (name === "STLProvince") {
+    } else if (name === "provinces") {
       // Filter cities based on selected province IDs
       const filteredCities = (cities ?? [])
         .filter((city) => selectedValues.includes(city.ProvinceId)) // Match with ProvinceId
@@ -112,19 +112,19 @@ const ReusableCreateModalPage: React.FC<ReusableModalPageProps> = ({
       // Reset city selection when province changes
       setFormData((prev) => ({
         ...prev,
-        STLProvince: selectedValues,
-        STLCity: [],
+        provinces: selectedValues,
+        cities: [],
       }));
 
       setFilteredCities(filteredCities);
 
-    } else if (name === "STLCity") {
+    } else if (name === "cities") {
       // Simply update selected city values
       console.log("Selected Cities:", selectedValues);
 
       setFormData((prev) => ({
         ...prev,
-        STLCity: selectedValues,
+        cities: selectedValues,
       }));
     } else {
       // For other fields, just update as usual
@@ -485,7 +485,7 @@ const ReusableCreateModalPage: React.FC<ReusableModalPageProps> = ({
                   );
                 }
 
-                if (field.name === 'STLRegion' && (isProvincial || isCityWide)) {
+                if (field.name === 'regions' && (isProvincial || isCityWide)) {
                   return (
                     <div key={index} className="w-full">
                       <Select
@@ -769,7 +769,7 @@ const ReusableCreateModalPage: React.FC<ReusableModalPageProps> = ({
                   );
                 }
 
-                if (field.name === 'STLProvince' && (isProvincial || isCityWide)) {
+                if (field.name === 'provinces' && (isProvincial || isCityWide)) {
                   return (
                     <div key={index} className="w-full">
                       <Select
