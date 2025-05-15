@@ -30,9 +30,7 @@ import { useOperatorsData } from "../../../../store/useOperatorStore";
 import EditModalDataPage from "./EditLogModal";
 import Swal from "sweetalert2";
 import useUserRoleStore from "../../../../store/useUserStore";
-import Select from 'react-select';
-
-
+import Select from "react-select";
 
 import Visibility from "@mui/icons-material/Visibility";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
@@ -81,7 +79,7 @@ const ReusableUpdateModal: React.FC<ReusableModalPageProps> = ({
     [key: string]: string | number | boolean | string[];
   }>({});
 
-  console.log('PROVINCES OPE', cities)
+  console.log("PROVINCES OPE", cities);
   console.log("HELLLOOOOOO GAME TYPE:", gameTypes);
 
   const gameTypeOptions =
@@ -144,11 +142,11 @@ const ReusableUpdateModal: React.FC<ReusableModalPageProps> = ({
     const selectedValues = Array.isArray(selectedOptions)
       ? selectedOptions.map((option) => option.value)
       : [];
-  
+
     console.log(`Field Name: ${fieldName}`);
     console.log(`Selected Options:`, selectedOptions);
     console.log(`Selected Values:`, selectedValues);
-  
+
     setUser({
       ...user, // Merge the existing user object
       [fieldName]: selectedValues, // Update the specific field with the selected values
@@ -333,79 +331,87 @@ const ReusableUpdateModal: React.FC<ReusableModalPageProps> = ({
           {/* Personal Information Fields */}
           <Stack direction="row" spacing={3}>
             <Stack spacing={3} sx={{ flex: 1 }}>
-              {roleName === "Operator" &&
-                ["OperatorName"].map((key) => (
-                  <FormControl
-                    fullWidth
-                    error={Boolean(errors[key])}
-                    size="small"
-                    key={key}
-                  >
-                    <InputLabel htmlFor={key}>{formatKey(key)}</InputLabel>
-                    <OutlinedInput
-                      id={key}
-                      name={key}
-                      label={formatKey(key)}
-                      placeholder={`Enter ${formatKey(key)}`}
-                      value={user[key as keyof typeof user] || "No data"}
-                      onChange={handleManagerChange}
-                      disabled={alwaysDisabledKeys.includes(key) || isDisabled}
-                    />
-                    {errors[key] && (
-                      <FormHelperText>{errors[key]}</FormHelperText>
-                    )}
-                  </FormControl>
-                ))}
+              {roleName === "Operator" && (
+                <FormControl
+                  fullWidth
+                  error={Boolean(errors["OperatorName"])}
+                  size="small"
+                >
+                  <InputLabel htmlFor="OperatorName">
+                    {formatKey("OperatorName")}
+                  </InputLabel>
+                  <OutlinedInput
+                    id="OperatorName"
+                    name="OperatorName"
+                    label={formatKey("OperatorName")}
+                    placeholder={`Enter ${formatKey("OperatorName")}`}
+                    value={user.OperatorName || "No data"}
+                    onChange={handleManagerChange}
+                    disabled={
+                      alwaysDisabledKeys.includes("OperatorName") || isDisabled
+                    }
+                  />
+                  {errors["OperatorName"] && (
+                    <FormHelperText>{errors["OperatorName"]}</FormHelperText>
+                  )}
+                </FormControl>
+              )}
             </Stack>
 
             <Stack spacing={3} sx={{ flex: 1 }}>
-              {roleName === "Operator" &&
-                ["contactNumber"].map((key) => (
-                  <FormControl
-                    fullWidth
-                    error={Boolean(errors[key])}
-                    size="small"
-                    key={key}
-                  >
-                    <InputLabel htmlFor={key}>{formatKey(key)}</InputLabel>
-                    <OutlinedInput
-                      id={key}
-                      name={key}
-                      label={formatKey(key)}
-                      placeholder={`Enter ${formatKey(key)}`}
-                      value={user[key as keyof typeof user] || ""}
-                      onChange={handleManagerChange}
-                      disabled={alwaysDisabledKeys.includes(key) || isDisabled}
-                    />
-                    {errors[key] && (
-                      <FormHelperText>{errors[key]}</FormHelperText>
-                    )}
-                  </FormControl>
-                ))}
+              {roleName === "Operator" && (
+                <FormControl
+                  fullWidth
+                  error={Boolean(errors["contactNumber"])}
+                  size="small"
+                >
+                  <InputLabel htmlFor="contactNumber">
+                    {formatKey("contactNumber")}
+                  </InputLabel>
+                  <OutlinedInput
+                    id="contactNumber"
+                    name="contactNumber"
+                    label={formatKey("contactNumber")}
+                    placeholder={`Enter ${formatKey("contactNumber")}`}
+                    value={user.contactNumber || ""}
+                    onChange={handleManagerChange}
+                    disabled={
+                      alwaysDisabledKeys.includes("contactNumber") || isDisabled
+                    }
+                  />
+                  {errors["contactNumber"] && (
+                    <FormHelperText>{errors["contactNumber"]}</FormHelperText>
+                  )}
+                </FormControl>
+              )}
             </Stack>
           </Stack>
 
-          {roleName === "Operator" &&
-            ["OperatorAddress"].map((key) => (
-              <FormControl
-                fullWidth
-                error={Boolean(errors[key])}
-                size="small"
-                key={key}
-              >
-                <InputLabel htmlFor={key}>{formatKey(key)}</InputLabel>
-                <OutlinedInput
-                  id={key}
-                  name={key}
-                  label={formatKey(key)}
-                  placeholder={`Enter ${formatKey(key)}`}
-                  value={user[key as keyof typeof user] || ""}
-                  onChange={handleManagerChange}
-                  disabled={alwaysDisabledKeys.includes(key) || isDisabled}
-                />
-                {errors[key] && <FormHelperText>{errors[key]}</FormHelperText>}
-              </FormControl>
-            ))}
+          {roleName === "Operator" && (
+            <FormControl
+              fullWidth
+              error={Boolean(errors["OperatorAddress"])}
+              size="small"
+            >
+              <InputLabel htmlFor="OperatorAddress">
+                {formatKey("OperatorAddress")}
+              </InputLabel>
+              <OutlinedInput
+                id="OperatorAddress"
+                name="OperatorAddress"
+                label={formatKey("OperatorAddress")}
+                placeholder={`Enter ${formatKey("OperatorAddress")}`}
+                value={user.OperatorAddress || ""}
+                onChange={handleManagerChange}
+                disabled={
+                  alwaysDisabledKeys.includes("OperatorAddress") || isDisabled
+                }
+              />
+              {errors["OperatorAddress"] && (
+                <FormHelperText>{errors["OperatorAddress"]}</FormHelperText>
+              )}
+            </FormControl>
+          )}
 
           <Stack direction="row" spacing={3} sx={{ mt: "1.5rem !important" }}>
             <Stack spacing={3} sx={{ flex: 1 }}>
@@ -518,29 +524,29 @@ const ReusableUpdateModal: React.FC<ReusableModalPageProps> = ({
                   </Box>
                 ))}
 
-              {roleName === "Operator" &&
-                ["email"].map((key) => (
-                  <FormControl
-                    fullWidth
-                    error={Boolean(errors[key])}
-                    size="small"
-                    key={key}
-                  >
-                    <InputLabel htmlFor={key}>{formatKey(key)}</InputLabel>
-                    <OutlinedInput
-                      id={key}
-                      name={key}
-                      label={formatKey(key)}
-                      placeholder={`Enter ${formatKey(key)}`}
-                      value={user[key as keyof typeof user] || ""}
-                      onChange={handleManagerChange}
-                      disabled={alwaysDisabledKeys.includes(key) || isDisabled}
-                    />
-                    {errors[key] && (
-                      <FormHelperText>{errors[key]}</FormHelperText>
-                    )}
-                  </FormControl>
-                ))}
+              {roleName === "Operator" && (
+                <FormControl
+                  fullWidth
+                  error={Boolean(errors["email"])}
+                  size="small"
+                >
+                  <InputLabel htmlFor="email">{formatKey("email")}</InputLabel>
+                  <OutlinedInput
+                    id="email"
+                    name="email"
+                    label={formatKey("email")}
+                    placeholder={`Enter ${formatKey("email")}`}
+                    value={user.email || ""}
+                    onChange={handleManagerChange}
+                    disabled={
+                      alwaysDisabledKeys.includes("email") || isDisabled
+                    }
+                  />
+                  {errors["email"] && (
+                    <FormHelperText>{errors["email"]}</FormHelperText>
+                  )}
+                </FormControl>
+              )}
 
               {roleName === "Operator" && (
                 <>
@@ -554,7 +560,7 @@ const ReusableUpdateModal: React.FC<ReusableModalPageProps> = ({
                           )
                         : []
                     }
-                    isMulti={true} // Enable multi-select
+                    isMulti
                     options={gameTypeOptions}
                     onChange={(selectedOptions) =>
                       handleMultiSelect(
@@ -564,7 +570,7 @@ const ReusableUpdateModal: React.FC<ReusableModalPageProps> = ({
                     }
                     className="react-select-container"
                     classNamePrefix="react-select"
-                    placeholder={"Select Games Provided"}
+                    placeholder="Select Games Provided"
                     menuPortalTarget={
                       typeof window !== "undefined" ? document.body : null
                     }
@@ -578,9 +584,8 @@ const ReusableUpdateModal: React.FC<ReusableModalPageProps> = ({
                 </>
               )}
 
-              {roleName === "Operator" &&
-                ["provinces"].map((key) => (
-                  <>
+              {roleName === "Operator" && (
+                <>
                   <Select
                     id="provinces"
                     name="provinces"
@@ -591,7 +596,7 @@ const ReusableUpdateModal: React.FC<ReusableModalPageProps> = ({
                           )
                         : []
                     }
-                    isMulti={true} // Enable multi-select
+                    isMulti={true}
                     options={provincesOptions}
                     onChange={(selectedOptions) =>
                       handleMultiSelect(
@@ -601,7 +606,7 @@ const ReusableUpdateModal: React.FC<ReusableModalPageProps> = ({
                     }
                     className="react-select-container"
                     classNamePrefix="react-select"
-                    placeholder={"Select Province(s)"}
+                    placeholder="Select Province(s)"
                     menuPortalTarget={
                       typeof window !== "undefined" ? document.body : null
                     }
@@ -609,11 +614,11 @@ const ReusableUpdateModal: React.FC<ReusableModalPageProps> = ({
                       menuPortal: (base) => ({ ...base, zIndex: 9999 }),
                     }}
                   />
-                    {errors["provinces"] && (
-                      <FormHelperText>{errors["provinces"]}</FormHelperText>
-                    )}
-                  </>
-                ))}
+                  {errors["provinces"] && (
+                    <FormHelperText>{errors["provinces"]}</FormHelperText>
+                  )}
+                </>
+              )}
             </Stack>
 
             <Stack spacing={3} sx={{ flex: 1 }}>
@@ -723,49 +728,44 @@ const ReusableUpdateModal: React.FC<ReusableModalPageProps> = ({
                 </>
               )}
 
-              {roleName === "Operator" &&
-                ["DateOfOperation"].map((key) => (
-                  <FormControl
-                    fullWidth
-                    error={Boolean(errors[key])}
-                    size="small"
-                    key={key}
-                  >
-                    <InputLabel htmlFor={key}>{formatKey(key)}</InputLabel>
-                    <OutlinedInput
-                      id={key}
-                      name={key}
-                      label={formatKey(key)}
-                      placeholder={`Enter ${formatKey(key)}`}
-                      value={
-                        isLoading
-                          ? ""
-                          : key === "DateOfOperation" ||
-                              key === "DateOfOperation"
-                            ? (() => {
-                                const dateValue =
-                                  user?.[key as keyof typeof user];
-                                return dateValue &&
-                                  !isNaN(Date.parse(dateValue as string))
-                                  ? new Date(dateValue as string)
-                                      .toISOString()
-                                      .split("T")[0]
-                                  : "";
-                              })()
-                            : (operators?.[0]?.[
-                                key as keyof (typeof operators)[0]
-                              ] ??
-                              user?.[key as keyof typeof user] ??
-                              "")
-                      }
-                      onChange={handleManagerChange}
-                      disabled={alwaysDisabledKeys.includes(key) || isDisabled}
-                    />
-                    {errors[key] && (
-                      <FormHelperText>{errors[key]}</FormHelperText>
-                    )}
-                  </FormControl>
-                ))}
+              {roleName === "Operator" && (
+                <FormControl
+                  fullWidth
+                  error={Boolean(errors["DateOfOperation"])}
+                  size="small"
+                >
+                  <InputLabel htmlFor="DateOfOperation">
+                    {formatKey("DateOfOperation")}
+                  </InputLabel>
+                  <OutlinedInput
+                    id="DateOfOperation"
+                    name="DateOfOperation"
+                    label={formatKey("DateOfOperation")}
+                    placeholder={`Enter ${formatKey("DateOfOperation")}`}
+                    value={
+                      isLoading
+                        ? ""
+                        : (() => {
+                            const dateValue = user?.DateOfOperation;
+                            return dateValue &&
+                              !isNaN(Date.parse(dateValue as string))
+                              ? new Date(dateValue as string)
+                                  .toISOString()
+                                  .split("T")[0]
+                              : "";
+                          })()
+                    }
+                    onChange={handleManagerChange}
+                    disabled={
+                      alwaysDisabledKeys.includes("DateOfOperation") ||
+                      isDisabled
+                    }
+                  />
+                  {errors["DateOfOperation"] && (
+                    <FormHelperText>{errors["DateOfOperation"]}</FormHelperText>
+                  )}
+                </FormControl>
+              )}
 
               {roleName === "Operator" && (
                 <div className="w-full">
