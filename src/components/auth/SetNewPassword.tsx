@@ -379,7 +379,7 @@ const LoginPage = () => {
             }}
           >
             <Typography>
-              <span  style={{ fontSize: "12px", color: "#FFFFFF" }}>
+              <span style={{ fontSize: "12px", color: "#FFFFFF" }}>
                 Powered by
               </span>
               <span style={{ color: "#D4AEFE" }}>

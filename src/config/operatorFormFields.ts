@@ -74,7 +74,7 @@ export const operatorConfig: {
       label: 'Excluded City',
       type: 'multiselect',
       options: [],
-      placeholder: '',
+      placeholder: 'Area of City Operations',
       value: [],
       gridSpan: 1,
     },

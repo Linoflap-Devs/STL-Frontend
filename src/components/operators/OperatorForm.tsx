@@ -75,8 +75,8 @@ export const OperatorFieldFormPage: React.FC = () => {
         return {
           ...field,
           options: filteredCities.map((city) => ({
-            value: city.CityId,
-            label: city.CityName,
+        value: city.CityId,
+        label: `${city.CityName} (${city.ProvinceKey})`,
           })),
         };
       }
