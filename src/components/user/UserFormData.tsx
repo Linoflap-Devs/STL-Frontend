@@ -1,4 +1,4 @@
-import React, { useCallback } from 'react';
+import React, { useEffect } from 'react';
 import useUserRoleStore from '../../../store/useUserStore';
 import { UserFieldFormPageProps } from '~/types/interfaces';
 import UpdateModalPage from '../ui/modals/UpdateModalData';
@@ -23,7 +23,7 @@ const UserFieldFormPage: React.FC<UserFieldFormPageProps> = ({ operatorMap }) =>
 
 // for operatorId field, we need to set the type to select and 
 // provide options based on the operatorMap
-  useCallback(() => {
+  useEffect(() => {
     setRoleId(roleConfig.userTypeId);
     const operatorOptions = Object.values(operatorMap).map(operator => ({
       label: operator.OperatorName,
