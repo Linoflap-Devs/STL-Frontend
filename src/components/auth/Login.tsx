@@ -69,142 +69,142 @@ const LoginPage = () => {
   const handleTogglePasswordVisibility = () => setShowPassword((prev) => !prev);
 
   return (
-    <div
-      className="flex h-screen bg-cover bg-center bg-no-repeat relative"
-      style={{ backgroundImage: `url(${LoginSectionData.image2})` }}
-    >
-      <div className="absolute inset-0 bg-[#242424D9] z-10" />
-      <div className="relative z-20 flex w-full justify-center items-center">
-        <div className="p-8 bg-[#181A1B] rounded-lg flex flex-col items-center justify-center">
-          {/* Logo + Title */}
-          <div className="text-center mb-4 mt-2">
+     <div className="w-full min-h-screen flex flex-col items-center justify-center lg:items-stretch lg:flex-row bg-[#F8F0E3]">
+      {/* Left Section (Logo & Title) */}
+      <div className="w-full lg:flex-1 flex flex-col justify-center items-center py-8 px-4 lg:py-0">
+        <div className="text-center w-full max-w-md">
+          <div className="flex justify-center gap-3 mb-4">
             <img
-              src={LoginSectionData.image}
-              alt="altLogo"
-              className="max-w-[60%] mx-auto mb-3"
+              src={LoginSectionData.image2}
+              alt="PCSO Logo"
+              className="w-[35%] max-w-[150px] lg:max-w-[180px]"
               loading="lazy"
             />
-            <h1 className="text-2xl font-bold text-white">
+            <img
+              src={LoginSectionData.image}
+              alt="STL Logo"
+              className="w-[35%] max-w-[120px] lg:max-w-[180px]"
+              loading="lazy"
+            />
+          </div>
+          <h1 className="text-base md:text-xl font-bold text-[#0038A8]">
+            {LoginSectionData.logoTitle}
+          </h1>
+          <p className="text-[#0038A8] text-sm">
+            {LoginSectionData.logoDescription}
+          </p>
+        </div>
+      </div>
+
+      {/* Right Section (Login Form) */}
+      <div className="w-full lg:flex-1 flex flex-col justify-center items-center px-4 pb-16 lg:pb-0 relative">
+        <div className="w-full max-w-md">
+          <div className="mb-8">
+            <h1 className="text-4xl sm:text-5xl font-bold text-[#0038A8]">
               {LoginSectionData.cardTitle}
             </h1>
-            <p className="text-gray-400 text-xs md:text-base">
+            <p className="text-[#0038A8] text-sm">
               {LoginSectionData.cardDescription}
             </p>
           </div>
 
-          {/* Form */}
           <form onSubmit={handleLogin} className="w-full">
-            <div className="flex flex-col w-full">
-              {/* Email */}
-              <div className="mb-4">
-                <label
-                  className={`block mb-2 text-sm text-left ${
-                    errors.email || errors.errors || errors.general
-                      ? "text-red-400"
-                      : "text-white"
-                  }`}
-                >
-                  {LoginSectionData.EmailAddressTitle}
-                </label>
+            {/* Email Input */}
+            <div className="mb-4">
+              <label className="block mb-2 text-sm text-left">
+                {LoginSectionData.EmailAddressTitle}
+              </label>
+              <input
+                type="email"
+                placeholder="Email Address"
+                value={credentials.email}
+                onChange={(e) =>
+                  setCredentials({ ...credentials, email: e.target.value })
+                }
+                className={`w-full px-3 py-2 pr-10 rounded border text-sm lg:text-base text-[#0038A8] placeholder-[#ACA993] focus:border-[#0038A8] focus:ring-1 focus:ring-[#0038A8] focus:outline-none
+              ${errors.email || errors.errors ? "border-[#CE1126]" : "border-[#0038A8]"}`}
+              />
+              {(errors.email || errors.errors) && (
+                <span className="text-[#CE1126] text-xs mt-1 block">
+                  {errors.email || errors.errors}
+                </span>
+              )}
+            </div>
+
+            {/* Password Input */}
+            <div className="mb-4">
+              <label className="block mb-2 text-sm text-left">
+                {LoginSectionData.PasswordTitle}
+              </label>
+              <div className="relative">
                 <input
-                  type="email"
-                  placeholder="Email Address"
-                  value={credentials.email}
+                  type={showPassword ? "text" : "password"}
+                  placeholder="Password"
+                  value={credentials.password}
                   onChange={(e) =>
-                    setCredentials({ ...credentials, email: e.target.value })
+                    setCredentials({
+                      ...credentials,
+                      password: e.target.value,
+                    })
                   }
-                  className={`w-full px-3 py-2 rounded border text-sm bg-[#1F2123] text-white focus:ring-2 focus:ring-gray-100 ${
-                    errors.email || errors.errors || errors.general
-                      ? "border-red-400"
-                      : "border-gray-600"
+                  className={`w-full px-3 py-2 pr-10 rounded border text-sm lg:text-base text-[#0038A8] placeholder-[#ACA993] focus:border-[#0038A8] focus:ring-1 focus:ring-[#0038A8] focus:outline-none ${
+                    errors.password || errors.errors || errors.general
+                      ? "border-[#CE1126]"
+                      : "border-[#0038A8]"
                   }`}
                 />
-                {(errors.email || errors.general || errors.errors) && (
-                  <span className="text-red-400 text-xs mt-1 block">
-                    {errors.email || errors.errors || errors.general}
-                  </span>
-                )}
-              </div>
-
-              {/* Password */}
-              <div className="mb-2">
-                <label
-                  className={`block mb-2 text-sm text-left ${
-                    errors.password || errors.errors || errors.general
-                      ? "text-red-400"
-                      : "text-white"
-                  }`}
+                <button
+                  type="button"
+                  onClick={handleTogglePasswordVisibility}
+                  className="absolute right-3 top-1/2 transform -translate-y-1/2 text-[#ACA993] text-lg"
                 >
-                  {LoginSectionData.PasswordTitle}
-                </label>
-                <div className="relative">
-                  <input
-                    type={showPassword ? "text" : "password"}
-                    placeholder="Password"
-                    value={credentials.password}
-                    onChange={(e) =>
-                      setCredentials({
-                        ...credentials,
-                        password: e.target.value,
-                      })
-                    }
-                    className={`w-full px-3 py-2 pr-10 rounded border text-sm bg-[#1F2123] text-white focus:ring-gray-100 ${
-                      errors.password || errors.errors || errors.general
-                        ? "border-red-400"
-                        : "border-gray-600"
-                    }`}
-                  />
-                  <button
-                    type="button"
-                    onClick={handleTogglePasswordVisibility}
-                    className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 text-lg focus:ring-gray-100"
-                  >
-                    {showPassword ? <VisibilityOff /> : <Visibility />}
-                  </button>
-                </div>
-                {(errors.password || errors.errors || errors.general) && (
-                  <span className="text-red-400 text-xs mt-1 block">
+                  {showPassword ? <VisibilityOff /> : <Visibility />}
+                </button>
+              </div>
+              <div className="flex items-center justify-between mt-1">
+                {errors.password || errors.errors || errors.general ? (
+                  <span className="text-[#CE1126] text-xs">
                     {errors.password || errors.errors || errors.general}
                   </span>
+                ) : (
+                  <span />
                 )}
+                <a
+                  href="/auth/forgot-password"
+                  className="text-[#0038A8] text-xs hover:underline"
+                >
+                  {LoginSectionData.forgotPassword}
+                </a>
               </div>
             </div>
 
+            {/* Submit Button */}
             <button
               type="submit"
               disabled={isLoggingIn}
-              className={`w-full mt-4 py-1.5 text-sm rounded-md transition ${
+              className={`w-full mt-4 py-2 text-sm rounded-md transition ${
                 isLoggingIn
-                  ? "bg-[#A5C9ED] text-[#181A1B] cursor-not-allowed opacity-60"
-                  : "bg-[#67ABEB] text-[#181A1B] hover:opacity-90"
+                  ? "bg-[#F6BA12] text-[#212121] cursor-not-allowed opacity-70"
+                  : "bg-[#F6BA12] text-[#212121] hover:opacity-70"
               }`}
             >
               {LoginSectionData.buttonText}
             </button>
-
-            {/* Forgot Password */}
-            <p className="text-center text-xs mt-4">
-              <a
-                href="/auth/forgot-password"
-                className="text-[#67ABEB] hover:underline"
-              >
-                {LoginSectionData.forgotPassword}
-              </a>
-            </p>
           </form>
 
+          {/* Loading Overlay (if needed) */}
           {isLoggingIn && (
             <div className="fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center z-50">
-              <div className="text-white text-lg font-semibold">Logging in...</div>
+              <div className="text-white text-lg font-semibold">
+                Logging in...
+              </div>
             </div>
           )}
+        </div>
 
-          {/* Footer */}
-          <div className="absolute bottom-7 text-center">
-            <p className="text-xs text-gray-300">
-              {LoginSectionData.copyright}
-            </p>
-          </div>
+        {/* Copyright Footer (fixed at bottom for mobile/tablet) */}
+        <div className="absolute bottom-4 left-0 right-0 text-center px-4 lg:bottom-8">
+          <p className="text-xs text-[#0038A8]">{LoginSectionData.copyright}</p>
         </div>
       </div>
     </div>

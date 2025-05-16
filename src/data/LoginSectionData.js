@@ -1,8 +1,10 @@
 export const LoginSectionData = {
 
   image: "/images/STL_Logo.png",
-  image2: "/images/stl_bg.png",
+  image2: "/images/PCSO_Logo.png",
   title: "Small Town Lottery",
+  logoTitle: "Philippine Charity Sweepstakes Office",
+  logoDescription:"PCSO Hindi Umuurong sa Pagtulong",
   description: "Big wins. Stronger communities.",
   cardTitle: "Welcome!",
   cardDescription: (
@@ -20,7 +22,7 @@ export const LoginSectionData = {
   buttonText: "Login",
   copyright: (
     <>
-      Powered by <span style={{ fontWeight: "bold", color: "#67ABEB" }}>Linoflap Technology Philippines Inc.</span>
+      Powered by <span style={{ fontWeight: "bold", color: "#0038A8" }}>Linoflap Technology Philippines Inc.</span>
     </>
   ),
   EmailVerificationTitle: "Check your email",
