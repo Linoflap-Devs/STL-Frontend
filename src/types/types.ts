@@ -1,3 +1,5 @@
+import { ZodSchema } from "zod";
+
 // for dashboard cards
 export type DashboardData = {
   totalUsers: number;
@@ -111,8 +113,15 @@ export interface operatorConfig {
 }
 
 export type SortConfig<T> = {
-  key: keyof T;  // Restrict 'key' to a valid key of the passed type
-  direction: "asc" | "desc";  // Sorting direction
+  key: keyof T;
+  direction: "asc" | "desc";
+};
+
+export type FormValidationProps = {
+  schema: ZodSchema<any>;
+  formData: any;
+  setErrors: (errors: any) => void;
+  setIsVerifyModalOpen: (isOpen: boolean) => void;
 };
 
 

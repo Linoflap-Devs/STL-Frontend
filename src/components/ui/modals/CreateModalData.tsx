@@ -16,6 +16,7 @@ const CreateModalDataPage: React.FC<ModalPageProps> = ({
   cities = [],
   setSelectedRegion,
   setSelectedProvince,
+  schema,
 }) => {
   const [loading, setLoading] = useState(false);
   const isOpen = open ?? true;
@@ -41,6 +42,7 @@ const CreateModalDataPage: React.FC<ModalPageProps> = ({
           cities={cities}
           setSelectedRegion={setSelectedRegion ?? (() => {})}
           setSelectedProvince={setSelectedProvince ?? (() => {})}
+          schema={schema}
         >
         {({ handleSubmit }) => (
           <ReusableButton

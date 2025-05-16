@@ -21,6 +21,7 @@ const UpdateModalPage: React.FC<ModalPageProps> = ({
   setSelectedRegion,
   setSelectedProvince,
   gameTypes = [],
+  schema,
 }) => {
   useEffect(() => {}, [initialUserData]);
 

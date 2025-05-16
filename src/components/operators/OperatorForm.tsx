@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useCallback } from 'react';
 import UpdateModalPage from '~/components/ui/modals/UpdateModalData';
 import { useOperatorsData } from '../../../store/useOperatorStore';
 import { useModalStore } from '../../../store/useModalStore';
@@ -7,6 +7,7 @@ import { fetchCityData, fetchProvinceData, fetchRegionData } from '~/services/lo
 import { operatorConfig } from '~/config/operatorFormFields';
 import { useOperatorFormStore } from '../../../store/useOperatorFormStore';
 import CreateModalDataPage from '../ui/modals/CreateModalData';
+import { operatorSchema } from '~/schemas/operatorSchema';
 
 export const OperatorFieldFormPage: React.FC = () => {
   const {
@@ -25,7 +26,7 @@ export const OperatorFieldFormPage: React.FC = () => {
   const { fields, setFields } = useOperatorsData();
   const { modalOpen, modalType, selectedData, closeModal } = useModalStore();
 
-  useEffect(() => {
+  useCallback(() => {
     fetchGameCategories(setGameTypes);
     fetchRegionData(setRegions);
     fetchProvinceData(setProvinces);
@@ -33,7 +34,7 @@ export const OperatorFieldFormPage: React.FC = () => {
   }, []);
 
   // Update field options based on selected data
-  useEffect(() => {
+  useCallback(() => {
     const updatedFields = operatorConfig.fields.map((field) => {
       if (field.name === 'gameTypes') {
         return {
@@ -100,6 +101,7 @@ export const OperatorFieldFormPage: React.FC = () => {
           cities={cities}
           selectedRegion={selectedRegion}
           selectedProvince={selectedProvince}
+          schema={operatorSchema}
         />
       )}
       {modalType === 'view' && (
@@ -115,6 +117,7 @@ export const OperatorFieldFormPage: React.FC = () => {
           cities={cities}
           selectedRegion={selectedRegion}
           selectedProvince={selectedProvince}
+          schema={operatorSchema}
         />
       )}
     </div>

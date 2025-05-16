@@ -1,4 +1,4 @@
-import { z } from "zod";
+import { z, ZodSchema } from "zod";
 import { User, Operator } from "./types";
 import { userSchema } from "~/schemas/userSchema";
 import { MultiValue } from "react-select";
@@ -187,6 +187,7 @@ export interface ReusableModalPageProps {
   cities?: any[];
   setSelectedRegion?: (regionId: string) => void;
   setSelectedProvince?: (provinceId: string) => void;
+  schema: ZodSchema<any>;
 }
 
 export interface ModalPageProps {
@@ -213,7 +214,8 @@ export interface ModalPageProps {
   handleMultiSelect?: (fieldName: string, selectedOptions: MultiValue<FieldOption>) => void;
 
   setSelectedRegion?: (regionId: string) => void;
-  setSelectedProvince?: (provinceId: string) => void; 
+  setSelectedProvince?: (provinceId: string) => void;
+  schema: ZodSchema<any>;
 }
 
 export interface UserFieldFormPageProps {

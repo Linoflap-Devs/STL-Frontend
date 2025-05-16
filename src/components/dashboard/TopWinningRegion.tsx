@@ -80,7 +80,7 @@ const TopWinningRegionPage = () => {
                 <ArrowDownwardIcon className="text-[#FF7A7A] ml-1 text-lg" />
               )}
             </div>
-            <p className="text-white font-bold flex-1 ml-4">
+            <p className="flex-1 ml-4">
               {region.RegionFull}
             </p>
             <p className="text-center flex-1">

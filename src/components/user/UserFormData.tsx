@@ -1,10 +1,11 @@
-import React, { useEffect } from 'react';
+import React, { useCallback } from 'react';
 import useUserRoleStore from '../../../store/useUserStore';
 import { UserFieldFormPageProps } from '~/types/interfaces';
 import UpdateModalPage from '../ui/modals/UpdateModalData';
 import { useModalStore } from '../../../store/useModalStore';
 import { userRoleFormFields } from '~/config/userFormFields';
 import CreateModalDataPage from '../ui/modals/CreateModalData';
+import { userSchema } from '~/schemas/userSchema';
 
 const UserFieldFormPage: React.FC<UserFieldFormPageProps> = ({ operatorMap }) => {
   const { setFields, fields, setRoleId } = useUserRoleStore();
@@ -22,7 +23,7 @@ const UserFieldFormPage: React.FC<UserFieldFormPageProps> = ({ operatorMap }) =>
 
 // for operatorId field, we need to set the type to select and 
 // provide options based on the operatorMap
-  useEffect(() => {
+  useCallback(() => {
     setRoleId(roleConfig.userTypeId);
     const operatorOptions = Object.values(operatorMap).map(operator => ({
       label: operator.OperatorName,
@@ -58,6 +59,7 @@ const UserFieldFormPage: React.FC<UserFieldFormPageProps> = ({ operatorMap }) =>
           fields={fields}
           endpoint={roleConfig.endpoint}
           operatorMap={operatorMap}
+          schema={userSchema}
         />
       )}
       {modalType === "view" && (
@@ -68,6 +70,7 @@ const UserFieldFormPage: React.FC<UserFieldFormPageProps> = ({ operatorMap }) =>
           endpoint={roleConfig.endpoint}
           initialUserData={selectedData}
           operatorMap={operatorMap}
+          schema={userSchema}
         />
       )}
     </div>
