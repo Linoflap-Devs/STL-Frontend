@@ -8,19 +8,19 @@ const nextConfig: NextConfig = {
     return [
       {
         source: '/email-verification',
-        destination: '/Auth/email-verification',
+        destination: '/auth/email-verification',
       },
       {
         source: '/forgot-password',
-        destination: '/Auth/forgot-password',
+        destination: '/auth/forgot-password',
       },
       {
         source: '/password-reset',
-        destination: '/Auth/password-reset',
+        destination: '/auth/password-reset',
       },
       {
         source: '/set-password',
-        destination: '/Auth/set-password',
+        destination: '/auth/set-password',
       },
       {
         source: '/executives',

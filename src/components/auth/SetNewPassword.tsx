@@ -1,396 +1,235 @@
 import React, { useState, useEffect } from "react";
-import {
-  Box,
-  Typography,
-  Button,
-  TextField,
-  IconButton,
-  Tooltip,
-} from "@mui/material";
-
 import { Visibility, VisibilityOff } from "@mui/icons-material";
 import { LoginSectionData } from "../../data/LoginSectionData";
 import { useRouter } from "next/router";
-//import { loginValidate } from "../../utils/validation";
-import ArrowBackIosNewIcon from "@mui/icons-material/ArrowBackIosNew";
-import { inputStyles, inputErrorStyles } from "../../styles/theme";
 import Swal from "sweetalert2";
 
-const LoginPage = () => {
+const SetNewPassword = () => {
   const router = useRouter();
   const [credentials, setCredentials] = useState({
     newpassword: "",
-    setpassword: "",
+    confirmPassword: "",
   });
   const [showPassword, setShowPassword] = useState<boolean>(false);
   const [showConfirmPassword, setConfirmPassword] = useState<boolean>(false);
   const [errors, setErrors] = useState<{
     newpassword?: string;
-    setpassword?: string;
+    confirmPassword?: string;
     passwordMismatch?: string;
     passwordLimit?: string;
   }>({});
   const [isButtonDisabled, setIsButtonDisabled] = useState(true);
 
-
-   // Validation Function
-   const validatePasswords = () => {
-    const { newpassword, setpassword } = credentials;
+  // Validation Function
+  const validatePasswords = () => {
+    const { newpassword, confirmPassword } = credentials;
     const trimmedNewPassword = newpassword.trim();
-    const trimmedSetPassword = setpassword.trim();
-  
+    const trimmedConfirmPassword = confirmPassword.trim();
+
     let newErrors: { passwordMismatch?: string; passwordLimit?: string } = {};
-  
-    // Step 1: Check if passwords match
-    if (trimmedNewPassword !== trimmedSetPassword) {
+
+    // Check if passwords match
+    if (trimmedNewPassword !== trimmedConfirmPassword) {
       newErrors.passwordMismatch = "Passwords do not match";
     } else {
-      // Step 2: If passwords match, validate password strength
+      // Validate password strength
       const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).{8,}$/;
       if (!passwordRegex.test(trimmedNewPassword)) {
         newErrors.passwordLimit =
           "Password must be at least 8 characters long and include at least one uppercase letter, one lowercase letter, one number, and one special character.";
       }
     }
-  
-    // Set errors in state
+
     setErrors(newErrors);
-  
-    // Return true if there are no errors
     return Object.keys(newErrors).length === 0;
   };
-  
 
-    const handleLogin = (e: React.FormEvent) => {
-      e.preventDefault();
-    
-      // Stop submission if passwords don't match or don't meet criteria
-      if (!validatePasswords()) return;
-    
-      // If no errors exist, show the success alert
-      if (!errors.passwordLimit && !errors.passwordMismatch) {
-        console.log("Login Successful.", credentials);
-    
-        Swal.fire({
-          title: "Success!",
-          text: "New password has been set, you will be directed to the login page.",
-          icon: "success",
-          confirmButtonText: "Redirect",
-          confirmButtonColor: "#7565DE",
-        }).then((result) => {
-          if (result.isConfirmed) {
-            window.location.href = "/";
-          }
-        });
-      }
-    };
-    
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+
+    if (!validatePasswords()) return;
+
+    if (!errors.passwordLimit && !errors.passwordMismatch) {
+      console.log("Password reset successful", credentials);
+
+      Swal.fire({
+        title: "Success!",
+        text: "New password has been set, you will be directed to the login page.",
+        icon: "success",
+        confirmButtonText: "Redirect",
+        confirmButtonColor: "#0038A8",
+      }).then((result) => {
+        if (result.isConfirmed) {
+          window.location.href = "auth/login";
+        }
+      });
+    }
+  };
 
   const handleTogglePasswordVisibility = (
-    type: "newpassword" | "setpassword"
+    type: "newpassword" | "confirmPassword"
   ) => {
     if (type === "newpassword") {
       setShowPassword((prev) => !prev);
-    } else if (type === "setpassword") {
+    } else if (type === "confirmPassword") {
       setConfirmPassword((prev) => !prev);
     }
   };
 
   useEffect(() => {
     setIsButtonDisabled(
-      credentials.newpassword.trim() === "" &&
-        credentials.setpassword.trim() === ""
+      credentials.newpassword.trim() === "" ||
+        credentials.confirmPassword.trim() === ""
     );
-  }, [credentials.newpassword, credentials.setpassword]);
+  }, [credentials.newpassword, credentials.confirmPassword]);
 
   return (
-    <>
-      <Box
-        sx={{
-          display: "flex",
-          margin: 0,
-          height: "100vh",
-          backgroundImage: `url(${LoginSectionData.image2})`,
-          backgroundSize: "cover",
-          backgroundRepeat: "no-repeat",
-          backgroundPosition: "center",
-        }}
-      >
-        <Box
-          sx={{
-            position: "absolute",
-            width: "100%",
-            height: "100%",
-            backgroundColor: "#242424D9",
-            zIndex: 1,
-          }}
-        />
+    <div className="w-full min-h-screen flex flex-col items-center justify-center lg:items-stretch lg:flex-row bg-[#F8F0E3]">
+      <div className="w-full lg:flex-1 flex flex-col justify-center items-center py-8 px-4 lg:py-0">
+        <div className="text-center w-full max-w-md">
+          <div className="flex justify-center gap-3 mb-4">
+            <img
+              src={LoginSectionData.image2}
+              alt="PCSO Logo"
+              className="w-[35%] max-w-[150px] lg:max-w-[180px]"
+              loading="lazy"
+            />
+            <img
+              src={LoginSectionData.image}
+              alt="STL Logo"
+              className="w-[35%] max-w-[120px] lg:max-w-[180px]"
+              loading="lazy"
+            />
+          </div>
+          <h1 className="text-base md:text-xl font-bold text-[#0038A8]">
+            {LoginSectionData.logoTitle}
+          </h1>
+          <p className="text-[#0038A8] text-sm">
+            {LoginSectionData.logoDescription}
+          </p>
+        </div>
+      </div>
 
-        {/* Right Column (Login Card Section) */}
-        <Box
-          sx={{
-            position: "relative",
-            zIndex: 2,
-            display: "flex",
-            width: "100%",
-            justifyContent: "center",
-            alignItems: "center",
-          }}
-        >
-          <Box
-            sx={{
-              width: { xs: "100%", sm: "100%", md: "100%" },
-              maxWidth: 470,
-              p: "2.8rem 0rem",
-              display: "flex",
-              flexDirection: "column",
-              alignItems: "center",
-              backgroundColor: "#181A1B",
-              borderRadius: "8px",
-              position: "relative",
-            }}
-          >
-            <Tooltip title={"Back to Login"}>
-              <IconButton
-                aria-label="close"
-                href="/"
-                sx={{
-                  position: "absolute",
-                  left: 30,
-                  top: 30,
-                  color: "#D1D5D8"[300],
-                  backgroundColor: "#374151",
-                  fontWeight: "bold",
-                }}
-              >
-                <ArrowBackIosNewIcon
-                  sx={{ fontSize: 25, fontWeight: "bold" }}
-                />
-              </IconButton>
-            </Tooltip>
+      <div className="w-full lg:flex-1 flex flex-col justify-center items-center px-4 pb-16 lg:pb-0 relative">
+        <div className="w-full max-w-md">
+          <div className="flex justify-center flex-col text-left mb-4">
+            <h1 className="text-4xl sm:text-5xl font-bold text-[#0038A8]">
+              {LoginSectionData.SetNewPasswordTitle}
+            </h1>
+            <p className="text-[#0038A8] text-sm mt-2">
+              {LoginSectionData.SetNewPasswordDescription}
+            </p>
+          </div>
 
-            <Box
-              sx={{
-                width: { xs: "100%", sm: "100%", md: "100%" },
-                maxWidth: 500,
-                padding: 3,
-                display: "flex",
-                flexDirection: "column",
-                justifyContent: "center",
-                alignItems: "center",
-              }}
-            >
-              <Box
-                sx={{
-                  display: "flex",
-                  justifyContent: "center",
-                  flexDirection: "column",
-                  textAlign: "center",
-                  marginBottom: "1rem",
-                }}
-              >
-                <Box
-                  component="img"
-                  src={LoginSectionData.image}
-                  alt="altLogo"
-                  sx={{
-                    maxWidth: {
-                      xs: "10%",
-                      sm: "35%",
-                      md: "32%",
-                      lg: "32%",
-                      xl: "32%",
-                    },
-                    margin: "0 auto",
-                    display: "block",
-                    marginBottom: "0.6rem",
-                    marginTop: "-1.5rem",
-                  }}
-                  loading="lazy"
-                />
-                <Typography variant="h4" sx={{ fontWeight: "bold" }}>
-                  {LoginSectionData.SetNewPasswordTitle}
-                </Typography>
-                <Typography
-                  sx={{ marginTop: 0.3, color: "#9CA3AF", fontSize: "12.5px" }}
-                >
-                  {LoginSectionData.SetNewPasswordDescription}
-                </Typography>
-              </Box>
+          <form onSubmit={handleSubmit} className="full">
+            <div className="flex flex-col items-stretch w-full">
+              <div className="mb-4">
+                <label className="block mb-2 text-sm text-left">
+                  {LoginSectionData.NewPassword}
+                </label>
 
-              <form onSubmit={handleLogin} style={{ width: "88%" }}>
-                <Box
-                  sx={{
-                    display: "flex",
-                    flexDirection: "column",
-                    alignItems: "stretch",
-                    width: "100%",
-                  }}
-                >
-                  <Box sx={{ marginBottom: "1.5rem" }}>
-                    <Typography
-                      sx={{
-                        display: "block",
-                        textAlign: "left",
-                        marginBottom: "0.5rem",
-                      }}
-                      color={errors.newpassword ? "error" : "text.primary"}
-                    >
-                      {LoginSectionData.PasswordTitle}
-                    </Typography>
-                    <TextField
-                        fullWidth
-                        variant="outlined"
-                        placeholder="Enter Password"
-                        type={showPassword ? "text" : "password"}
-                        value={credentials.newpassword}
-                        onChange={(e) =>
-                          setCredentials({
-                            ...credentials,
-                            newpassword: e.target.value,
-                          })
-                        }
-                        sx={{ 
-                          ...inputStyles,
-                          "& .MuiOutlinedInput-root": {
-                            "& fieldset": {
-                              borderColor: errors.passwordLimit ? "#F05252 !important" : undefined,
-                            },
-                          },
-                        }}
-                        InputProps={{
-                          endAdornment: (
-                            <IconButton
-                              sx={{ color: "#9CA3AF", fontSize: "1.3rem" }}
-                              onClick={() => handleTogglePasswordVisibility("newpassword")}
-                              edge="end"
-                            >
-                              {showPassword ? (
-                                <VisibilityOff sx={{ fontSize: "inherit" }} />
-                              ) : (
-                                <Visibility sx={{ fontSize: "inherit" }} />
-                              )}
-                            </IconButton>
-                          ),
-                        }}
-                      />
-                      
-                    {/* {errors.newpassword && (
-                      <span style={inputErrorStyles}>{errors.newpassword}</span>
-                    )} */}
-                  </Box>
+                <div className="relative">
+                  <input
+                    className={`w-full px-3 py-2 pr-10 rounded border text-sm lg:text-base text-[#0038A8] placeholder-[#ACA993] focus:outline-none ${
+                      errors.passwordLimit || errors.passwordMismatch
+                        ? "border-[#CE1126]"
+                        : "border-[#0038A8]"
+                    }`}
+                    placeholder="Enter new password"
+                    type={showPassword ? "text" : "password"}
+                    value={credentials.newpassword}
+                    onChange={(e) =>
+                      setCredentials({
+                        ...credentials,
+                        newpassword: e.target.value,
+                      })
+                    }
+                  />
 
-                  <Box>
-                    <Typography
-                      sx={{
-                        display: "block",
-                        textAlign: "left",
-                        marginBottom: "0.5rem",
-                      }}
-                      color={errors.setpassword ? "error" : "text.primary"}
-                    >
-                      {LoginSectionData.ConfirmPassword}
-                    </Typography>
-                    <TextField
-                      fullWidth
-                      variant="outlined"
-                      placeholder="Re-enter password"
-                      type={showConfirmPassword ? "text" : "password"}
-                      value={credentials.setpassword}
-                      onChange={(e) =>
-                        setCredentials({
-                          ...credentials,
-                          setpassword: e.target.value,
-                        })
-                      }
-                      sx={{
-                        ...inputStyles,
-                        "& .MuiOutlinedInput-root": {
-                          "& fieldset": {
-                            borderColor: errors.passwordMismatch ? "#F05252 !important" : undefined,
-                          },
-                        },
-                      }}
-                      InputProps={{
-                        endAdornment: (
-                          <IconButton
-                            sx={{ color: "#9CA3AF", fontSize: "1.3rem" }}
-                            onClick={() =>
-                              handleTogglePasswordVisibility("setpassword")
-                            }
-                            edge="end"
-                          >
-                            {showConfirmPassword ? (
-                              <VisibilityOff sx={{ fontSize: "inherit" }} />
-                            ) : (
-                              <Visibility sx={{ fontSize: "inherit" }} />
-                            )}
-                          </IconButton>
-                        ),
-                      }}
-                    />
-                    {errors.passwordLimit && (
-                        <Typography sx={{ color: "#F05252", fontSize: "12px", marginTop: "5px" }}>
-                          {errors.passwordLimit}
-                        </Typography>
-                      )}
-                    {/* {errors.setpassword && (
-                      <span style={inputErrorStyles}>{errors.setpassword}</span>
-                    )} */}
-                  </Box>
-                </Box>
-                    {errors.passwordMismatch && (
-                      <Typography
-                      sx={{ color: "#F05252", fontSize: "12px", marginTop: "5px" }}
-                      >
-                        {errors.passwordMismatch}
-                      </Typography>
+                  <button
+                    type="button"
+                    className="absolute right-3 top-1/2 transform -translate-y-1/2 text-[#ACA993] text-lg"
+                    onClick={() =>
+                      handleTogglePasswordVisibility("newpassword")
+                    }
+                  >
+                    {showPassword ? (
+                      <VisibilityOff className="text-inherit" />
+                    ) : (
+                      <Visibility className="text-inherit" />
                     )}
-                <Button
-                  type="submit"
-                  variant="contained"
-                  fullWidth
-                  sx={{
-                    marginTop: 4,
-                    py: 1.5,  
-                    padding: "8px 20px",
-                    borderRadius: "8px",
-                    textTransform: "none",
-                    backgroundColor: isButtonDisabled ? "#D1D5D8" : "#CCA1FD",
-                    color: isButtonDisabled ? "#181A1B" : "#181A1B",
-                    cursor: isButtonDisabled ? "not-allowed" : "pointer",
-                    "&:hover": {
-                      backgroundColor: isButtonDisabled ? "#D1D5D8" : "#A070D3", // Change hover color
-                    },
-                  }}
-                >
-                  {LoginSectionData.UpdatePassword}
-                </Button>
-              </form>
-            </Box>
-          </Box>
+                  </button>
+                </div>
+              </div>
 
-          <Box
-            sx={{
-              position: "absolute",
-              bottom: 10,
-              textAlign: "center",
-              color: "#FFFFFF",
-            }}
-          >
-            <Typography>
-              <span style={{ fontSize: "12px", color: "#FFFFFF" }}>
-                Powered by
+              <div>
+                <label className="block mb-2 text-sm text-left">
+                  {LoginSectionData.ConfirmPassword}
+                </label>
+
+                <div className="relative">
+                  <input
+                    className={`w-full px-3 py-2 pr-10 rounded border text-sm lg:text-base text-[#0038A8] placeholder-[#ACA993] focus:outline-none ${
+                      errors.passwordMismatch || errors.passwordLimit
+                        ? "border-[#CE1126]"
+                        : "border-[#0038A8]"
+                    }`}
+                    placeholder="Confirm your password"
+                    type={showConfirmPassword ? "text" : "password"}
+                    value={credentials.confirmPassword}
+                    onChange={(e) =>
+                      setCredentials({
+                        ...credentials,
+                        confirmPassword: e.target.value,
+                      })
+                    }
+                  />
+                  <button
+                    type="button"
+                    className="absolute right-3 top-1/2 transform -translate-y-1/2 text-[#ACA993] text-lg"
+                    onClick={() =>
+                      handleTogglePasswordVisibility("confirmPassword")
+                    }
+                  >
+                    {showConfirmPassword ? (
+                      <VisibilityOff className="text-inherit" />
+                    ) : (
+                      <Visibility className="text-inherit" />
+                    )}
+                  </button>
+                </div>
+                {errors.passwordLimit && (
+                  <span className="text-[#CE1126] text-xs">
+                    {errors.passwordLimit}
+                  </span>
+                )}
+              </div>
+            </div>
+            {errors.passwordMismatch && (
+              <span className="text-[#CE1126] text-xs">
+                {errors.passwordMismatch}
               </span>
-              <span style={{ color: "#D4AEFE" }}>
-                {LoginSectionData.copyright}
-              </span>
-            </Typography>
-          </Box>
-        </Box>
-      </Box>
-    </>
+            )}
+            <button
+              type="submit"
+              className={`w-full mt-4 py-2 text-sm rounded-md transition ${
+                isButtonDisabled
+                  ? "bg-[#F6BA12] text-[#212121] cursor-not-allowed opacity-70"
+                  : "bg-[#F6BA12] text-[#212121] hover:opacity-70"
+              }`}
+              disabled={isButtonDisabled}
+            >
+              {LoginSectionData.UpdatePassword}
+            </button>
+          </form>
+        </div>
+
+        <div className="absolute bottom-4 left-0 right-0 text-center px-4 lg:bottom-8">
+          <p className="text-xs text-[#0038A8]">{LoginSectionData.copyright}</p>
+        </div>
+      </div>
+    </div>
   );
 };
 
-export default LoginPage;
+export default SetNewPassword;

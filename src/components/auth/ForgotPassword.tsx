@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useRouter } from "next/router";
-import { FaArrowLeft } from "react-icons/fa"; 
+import { FaArrowLeft } from "react-icons/fa";
 import { LoginSectionData } from "../../data/LoginSectionData";
 
 const ForgotPassword = () => {
@@ -93,15 +93,13 @@ const ForgotPassword = () => {
             </div>
           </div>
 
-          <div className="flex justify-center flex-col text-center mb-4">
-            <div className="mb-8">
-              <h1 className="text-4xl sm:text-5xl font-bold text-[#0038A8]">
-                {LoginSectionData.forgotPasswordTitle}
-              </h1>
-              <p className="text-[#0038A8] text-sm">
-                {LoginSectionData.forgotPasswordDescription}
-              </p>
-            </div>
+          <div className="flex justify-center flex-col mb-4">
+            <h1 className="text-4xl sm:text-5xl font-bold text-[#0038A8]">
+              {LoginSectionData.forgotPasswordTitle}
+            </h1>
+            <p className="text-[#0038A8] text-sm mt-2">
+              {LoginSectionData.forgotPasswordDescription}
+            </p>
           </div>
 
           <form onSubmit={handleLogin} className="w-full">
@@ -113,7 +111,7 @@ const ForgotPassword = () => {
 
                 <input
                   type="text"
-                  className={`w-full px-4 py-3 rounded-md border ${errors.username ? "border-[#CE1126]" : "border-[#0038A8]"} bg-[#1F2937] text-white focus:outline-none focus:ring-1 focus:ring-blue-500`}
+                  className={`w-full px-4 py-3 rounded-md border ${errors.username ? "border-[#CE1126]" : "border-[#0038A8]"} text-[#0038A8] focus:outline-none`}
                   placeholder="Enter Email Address"
                   value={credentials.username}
                   onChange={(e) =>

@@ -1,30 +1,30 @@
 export const LoginSectionData = {
-
   image: "/images/STL_Logo.png",
   image2: "/images/PCSO_Logo.png",
   title: "Small Town Lottery",
   logoTitle: "Philippine Charity Sweepstakes Office",
-  logoDescription:"PCSO Hindi Umuurong sa Pagtulong",
+  logoDescription: "PCSO Hindi Umuurong sa Pagtulong",
   description: "Big wins. Stronger communities.",
   cardTitle: "Welcome!",
-  cardDescription: (
-    <>
-      Great to see you again! Let’s get you signed in.
-    </>
-  ),
+  cardDescription: <>Great to see you again! Let’s get you signed in.</>,
   rememberMe: "Remember Me?",
   EmailAddressTitle: "Email Address",
   PasswordTitle: "Password",
   forgotPassword: "Forgot Password?",
   forgotPasswordTitle: "Forgot Password",
-  forgotPasswordDescription: "Please enter your username to reset the password.",
+  forgotPasswordDescription:
+    "Please enter your username to reset the password.",
   resetPasswordButton: "Reset Password",
   buttonText: "Login",
   copyright: (
     <>
-      Powered by <span style={{ fontWeight: "bold", color: "#0038A8" }}>Linoflap Technology Philippines Inc.</span>
+      Powered by{" "}
+      <span className="font-bold text-[#0038A8]">
+        Linoflap Technology Philippines Inc.
+      </span>
     </>
   ),
+
   EmailVerificationTitle: "Check your email",
   PasswordResetTitle: "Password Reset",
   EmailVerificationDescription: (
@@ -35,27 +35,26 @@ export const LoginSectionData = {
   ),
   resendEmailDescription: (
     <>
-      <span style={{ color: '#9CA3AF' }}>
-        Haven’t got the email yet?{' '}
-        <a 
-          href="/resend-email" 
-          style={{ fontWeight: 'bold', color: '#2563EB', textDecoration: 'none' }}
-        >
+      <span className="text-[#0038A8]">
+        Haven’t got the email yet?{" "}
+        <a href="/resend-email" className="font-bold hover:underline">
           Resend email
         </a>
       </span>
     </>
   ),
+
   PasswordResetTitle: "Password Reset",
   PasswordResetDescription: (
     <>
       Your password has been successfully reset. Click confirm to set new <br />
-       password.
+      password.
     </>
   ),
   ConfirmButton: "Confirm",
   SetNewPasswordTitle: "Set a new password",
   SetNewPasswordDescription: "Please enter new password.",
+  NewPassword: "New Password",
   ConfirmPassword: "Confirm Password",
   UpdatePassword: "Update Password",
   ConfirmIdentity: "Confirm Your Identity",

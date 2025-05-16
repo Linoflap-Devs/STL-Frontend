@@ -1,35 +1,20 @@
 import React, { useState, useEffect } from "react";
-import {
-  Box,
-  Typography,
-  Button,
-  TextField,
-  IconButton,
-  Tooltip,
-  Grid,
-  CircularProgress
-} from "@mui/material";
 import { useRouter } from "next/router";
-import ArrowBackIosNewIcon from "@mui/icons-material/ArrowBackIosNew";
-import {
-  LoginSectionData
-}
-  from "../../data/LoginSectionData";
+import { FaArrowLeft } from "react-icons/fa";
+import { LoginSectionData } from "../../data/LoginSectionData";
 
 const EmailVerification = () => {
   const router = useRouter();
   const [otp, setOtp] = useState(Array(6).fill(""));
   const [isButtonDisabled, setIsButtonDisabled] = useState(false);
   const [isOtpValid, setIsOtpValid] = useState(true);
-  //will be replaced with backend response.
   const correctOTP = "123456";
   const [isLoading, setIsLoading] = useState(false);
   const [isOtpVerified, setIsOTPVerified] = useState(false);
-
   const [userEmail, setUserEmail] = useState("example@email.com");
+  const [showTooltip, setShowTooltip] = useState(false);
 
   useEffect(() => {
-    //disable only if the OTP is incomplete
     setIsButtonDisabled(otp.some((digit) => digit === ""));
   }, [otp]);
 
@@ -59,262 +44,159 @@ const EmailVerification = () => {
 
   const handleNavigation = () => {
     setIsLoading(true);
-    setIsOtpValid(true); // Reset validity status before checking OTP
-    setIsOTPVerified(false); // Reset verification state before checking OTP
+    setIsOtpValid(true);
+    setIsOTPVerified(false);
 
     setTimeout(() => {
       setIsLoading(false);
       if (otp.join("") === correctOTP) {
         setIsOTPVerified(true);
+        router.push("/set-password"); 
       } else {
         setIsOtpValid(false);
       }
-    }, 2000); // Simulate API response time
+    }, 2000);
   };
+
   const VerifyEmailDescription = (userEmail: string) => {
     return {
       EmailVerificationDescription: `We have sent a verification code to ${userEmail}. Please check your email and enter the code below.`,
     };
   };
-  // Ensure invalid OTP message resets when OTP changes
+
   useEffect(() => {
     setIsOtpValid(true);
   }, [otp]);
 
   return (
-    <Box
-      sx={{
-        display: "flex",
-        margin: 0,
-        height: "100vh",
-        backgroundImage: `url(${LoginSectionData.image2})`,
-        backgroundSize: "cover",
-        backgroundRepeat: "no-repeat",
-        backgroundPosition: "center",
-      }}
-    >
-      <Box
-        sx={{
-          position: "absolute",
-          width: "100%",
-          height: "100%",
-          backgroundColor: "#242424D9",
-          zIndex: 1,
-        }}
-      />
-      {/* start content */}
-      <Box
-        sx={{
-          position: "relative",
-          zIndex: 2,
-          display: "flex",
-          width: "100%",
-          justifyContent: "center",
-          alignItems: "center",
-        }}
-      >
-        <Box
-          sx={{
-            width: { xs: "100%", sm: "100%", md: "100%" },
-            maxWidth: 500,
-            zIndex: 2,
-            p: "8rem 1rem",
-            display: "flex",
-            flexDirection: "column",
-            alignItems: "center",
-            backgroundColor: "#181A1B",
-            borderRadius: "8px",
-            position: "relative",
-          }}
-        >
-          <Tooltip title={"Back to Login"}>
-            <IconButton
-              aria-label="close"
-              href="/"
-              sx={{
-                position: "absolute",
-                left: 30,
-                top: 40,
-                color: "#D1D5D8",
-                backgroundColor: "#374151",
-                fontWeight: "bold",
-              }}
-            >
-              <ArrowBackIosNewIcon sx={{ fontSize: 23, fontWeight: "bold" }} />
-            </IconButton>
-          </Tooltip>
-
-          <Box sx={{ width: "100%", maxWidth: 600, textAlign: "center" }}>
-            <Box
-              component="img"
-              src={LoginSectionData.image}
-              alt="altLogo"
-              sx={{
-                maxWidth: {
-                  xs: "10%",
-                  sm: "35%",
-                  md: "32%",
-                  lg: "32%",
-                  xl: "32%",
-                },
-                margin: "0 auto",
-                display: "block",
-                marginBottom: "0.6rem",
-                marginTop: "-4rem",
-              }}
+    <div className="w-full min-h-screen flex flex-col items-center justify-center lg:items-stretch lg:flex-row bg-[#F8F0E3]">
+      <div className="w-full lg:flex-1 flex flex-col justify-center items-center py-8 px-4 lg:py-0">
+        <div className="text-center w-full max-w-md">
+          <div className="flex justify-center gap-3 mb-4">
+            <img
+              src={LoginSectionData.image2}
+              alt="PCSO Logo"
+              className="w-[35%] max-w-[150px] lg:max-w-[180px]"
               loading="lazy"
             />
+            <img
+              src={LoginSectionData.image}
+              alt="STL Logo"
+              className="w-[35%] max-w-[120px] lg:max-w-[180px]"
+              loading="lazy"
+            />
+          </div>
+          <h1 className="text-base md:text-xl font-bold text-[#0038A8]">
+            {LoginSectionData.logoTitle}
+          </h1>
+          <p className="text-[#0038A8] text-sm">
+            {LoginSectionData.logoDescription}
+          </p>
+        </div>
+      </div>
 
-            <Typography variant="h4" fontWeight="bold">
-              {LoginSectionData.PasswordResetTitle}
-            </Typography>
+      <div className="w-full lg:flex-1 flex flex-col justify-center items-center px-4 pb-16 lg:pb-0 relative">
+        <div className="w-full max-w-md">
+          <div className="relative">
+            <div
+              className="mb-6 inline-block"
+              onMouseEnter={() => setShowTooltip(true)}
+              onMouseLeave={() => setShowTooltip(false)}
+            >
+              <a
+                href="/"
+                className="inline-flex items-center justify-center w-10 h-10 rounded-full bg-[#0038A8]"
+              >
+                <FaArrowLeft className="text-[#F8F0E3]" />
+              </a>
+              {showTooltip && (
+                <div className="absolute left-12 top-2 bg-[#0038A8] text-white text-xs px-2 py-1 rounded whitespace-nowrap">
+                  Back to Login
+                  <div className="absolute right-full top-1/2 -translate-y-1/2 w-0 h-0 border-t-4 border-t-transparent border-b-4 border-b-transparent border-r-4 border-r-gray-800"></div>
+                </div>
+              )}
+            </div>
+          </div>
+
+          <div className="w-full max-w-md">
+            <div className="flex justify-center flex-col mb-4">
+              <h1 className="text-4xl sm:text-5xl font-bold text-[#0038A8]">
+                {LoginSectionData.forgotPasswordTitle}
+              </h1>
+              <p className="text-[#0038A8] text-sm mt-2">
+                {LoginSectionData.forgotPasswordDescription}
+              </p>
+            </div>
+
             {!isOtpVerified && (
-              <Typography mt={1} color="#9CA3AF" fontSize={"12.5px"}>
-                {userEmail && VerifyEmailDescription(userEmail).EmailVerificationDescription}
-              </Typography>
+              <p className="text-[#0038A8] text-xs text-justify">
+                {userEmail &&
+                  VerifyEmailDescription(userEmail)
+                    .EmailVerificationDescription}
+              </p>
             )}
 
-            {isLoading && !isOtpVerified && <CircularProgress color="primary" />}
-
-            {isOtpVerified && (
-              <>
-                <Typography mt={1} color="#9CA3AF" fontSize={"12.5px"}>
-                  Your password has been successfully reset. Click confirm to set new password.
-                </Typography>
-                <Button
-                  onClick={handleNavigation}
-                  variant="contained"
-                  sx={{
-                    mt: 0.5,
-                    py: 1,
-                    borderRadius: "8px",
-                    textTransform: "none",
-                    width: "85%",
-                    marginTop: "2rem",
-                    backgroundColor: isButtonDisabled
-                      ? "#D1D5D8"
-                      : "#CCA1D",
-                    color: isButtonDisabled
-                      ? "#181A1B"
-                      : "#181A1B",
-                    cursor: isButtonDisabled ? "not-allowed" : "pointer",
-                  }}
-                  disabled={isButtonDisabled}
-                >
-                  Confirm
-                </Button>
-              </>
-            )}
-
-            {isOtpVerified && isLoading && (
-              <Button onClick={handleNavigation} disabled={isButtonDisabled}>
-                {LoginSectionData.resetPasswordButton}
-              </Button>
+            {isLoading && (
+              <div className="fixed inset-0 z-50 bg-[#212121]/70 flex items-center justify-center">
+                <div className="w-10 h-10 border-4 border-white border-t-transparent rounded-full animate-spin"></div>
+              </div>
             )}
 
             {!isOtpVerified && (
-              <Box display="flex" justifyContent="center" mt={3.5}>
-                <Grid
-                  container
-                  justifyContent="center"
-                  spacing={0.5}
-                  flexWrap="nowrap"
-                  direction="row"
-                >
+              <div className="flex justify-center mt-7">
+                <div className="grid grid-cols-6 gap-2 w-full">
                   {otp.map((digit, index) => (
-                    <Grid item key={index}>
-                      <TextField
-                        id={`otp-input-${index}`}
-                        value={digit}
-                        onChange={(e) => handleChange(e, index)}
-                        onKeyDown={(e) => handleBackspace(e, index)}
-                        variant="outlined"
-                        inputProps={{
-                          maxLength: 1,
-                          style: {
-                            textAlign: "center",
-                            fontSize: "25px",
-                            fontWeight: 1200,
-                            width: "10px !important",
-                            maxWidth: "30px",
-                            height: "35px",
-                            outline: "none",
-                            borderRadius: "6px",
-                            border: otp.every((d) => d !== "")
-                              ? isOtpValid
-                                ? "2px solid #67ABEB"  // If all fields are filled and OTP is valid, set border to purple
-                                : "2px solid #F05252"  // If all fields are filled but OTP is invalid, set border to red
-                              : "1px solid #D1D5DB"   // If not all fields are filled, set border to gray
-                          },
-                        }}
-                        sx={{
-                          "& .MuiOutlinedInput-root": {
-                            padding: "4px",
-                            backgroundColor: "transparent !important",
-                            "& fieldset": {
-                              border: "none",
-                            },
-                          },
-                        }}
-                      />
-                    </Grid>
+                    <input
+                      key={index}
+                      id={`otp-input-${index}`}
+                      value={digit}
+                      onChange={(e) => handleChange(e, index)}
+                      onKeyDown={(e) => handleBackspace(e, index)}
+                      maxLength={1}
+                      className={`text-center text-3xl font-extrabold aspect-square w-full rounded-md outline-none bg-transparent border ${
+                        digit
+                          ? "border-[#0038A8]"
+                          : !otp.every((d) => d !== "")
+                            ? "border-[#ACA993]"
+                            : isOtpValid
+                              ? "border-[#ACA993]"
+                              : "border-[#CE1126]"
+                      } focus:border-[#0038A8]`}
+                    />
                   ))}
-                </Grid>
-              </Box>
+                </div>
+              </div>
             )}
 
             {!isOtpValid && (
-              <Typography sx={{ paddingLeft: 4.5, paddingRight: 4, display: 'flex', textAlign: 'left' }} color="#F05252" mt={0.5} fontSize="13.7px">
+              <p className=" text-[#CE1126] mt-2 text-sm">
                 Invalid OTP. Please check your email and enter the correct OTP.
-              </Typography>
+              </p>
             )}
 
             {!isOtpVerified && (
-              <Button
-                //to be revised
+              <button
                 onClick={handleNavigation}
-                variant="contained"
-                sx={{
-                  py: 1,
-                  borderRadius: "8px",
-                  textTransform: "none",
-                  width: "85%",
-                  marginTop: "0.9rem",
-                  backgroundColor: isButtonDisabled
-                    ? "#D1D5D8"
-                    : "#CCA1D",
-                  color: isButtonDisabled
-                    ? "#181A1B"
-                    : "#181A1B",
-                  cursor: isButtonDisabled ? "not-allowed" : "pointer",
-                }}
+                className={`w-full mt-4 py-2 text-sm rounded-md transition bg-[#F6BA12] text-[#212121] hover:opacity-70 ${isButtonDisabled ? "bg-[#F6BA12] text-[#212121] cursor-not-allowed opacity-50" : "bg-[#F6BA12] text-[#212121] cursor-pointer"}`}
                 disabled={isButtonDisabled}
               >
                 {LoginSectionData.resetPasswordButton}
-              </Button>
+              </button>
             )}
-            {!isOtpVerified && (
-              <Typography mt={1.3} fontSize="13px">
-                {LoginSectionData.resendEmailDescription}
-              </Typography>
-            )}
-          </Box>
-        </Box>
 
-        <Box
-          sx={{
-            position: "absolute",
-            bottom: 20,
-            textAlign: "center",
-            color: "#FFFFFF",
-          }}
-        >
-          <Typography sx={{ fontSize: "13px" }}>
-            {LoginSectionData.copyright}
-          </Typography>
-        </Box>
-      </Box>
-    </Box>
+            {!isOtpVerified && (
+              <p className="text-[#0038A8] text-center text-xs mt-4">
+                {LoginSectionData.resendEmailDescription}
+              </p>
+            )}
+          </div>
+        </div>
+
+        <div className="absolute bottom-4 left-0 right-0 text-center px-4 lg:bottom-8">
+          <p className="text-xs text-[#0038A8]">{LoginSectionData.copyright}</p>
+        </div>
+      </div>
+    </div>
   );
 };
 
