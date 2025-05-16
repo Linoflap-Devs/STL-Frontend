@@ -33,9 +33,9 @@ export const operatorTableColumns = (): Column<Operator>[] => [
     sortable: true,
     filterable: true,
     filterKey: "DateOfOperation",
-    render: (row: Operator) =>
-      row.DateOfOperation
-        ? dayjs(row.DateOfOperation).format("YYYY-MM-DD")
+    render: (user: Operator) =>
+      user.DateOfOperation
+        ? dayjs(user.DateOfOperation).format("YYYY/MM/DD HH:mm:ss")
         : "",
   },
   {

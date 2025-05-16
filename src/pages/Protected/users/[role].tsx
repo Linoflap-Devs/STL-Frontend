@@ -17,12 +17,21 @@ const roleMap: Record<string, { label: string; textlabel: string; roleId: number
 const RolePage = () => {
   const { query } = useRouter();
   const role = query.role as string;
-
-  // Determine roleKey dynamically based on route
   const roleKey = role?.toLowerCase().includes("manager") ? "manager" : "executive";
-
   const roleConfig = roleMap[role?.toLowerCase() || ""];
 
+  const operatorMap = useUserRoleStore((state) => state.operatorMap);
+  const setOperatorMap = useUserRoleStore((state) => state.setOperatorMap);
+  const { data, setData } = useUserRoleStore();
+
+  useEffect(() => {
+    if (roleConfig) {
+      fetchMapOperators(setOperatorMap);
+      fetchUsers(roleConfig.roleId, setData);
+    }
+  }, [roleConfig, setOperatorMap, setData]);
+
+  // Safe to return now
   if (!roleConfig) {
     return (
       <div className="container mx-auto px-0 py-1">
@@ -30,23 +39,10 @@ const RolePage = () => {
       </div>
     );
   }
-  
+
   const { roleId, label, textlabel } = roleConfig;
-
-  const operatorMap = useUserRoleStore((state) => state.operatorMap);
-  const setOperatorMap = useUserRoleStore((state) => state.setOperatorMap);
-  const { data, setData } = useUserRoleStore();
   const tableColumns = userTableColumns(operatorMap);
-
-  useEffect(() => {
-    fetchMapOperators(setOperatorMap);
-    if (roleId) fetchUsers(roleId, setData);
-  }, [roleId, setData, setOperatorMap]);
-
   const endpoint = userRoleFormFields[roleKey]?.endpoint;
-
-  console.log("Create endpoint:", endpoint?.create);
-  console.log("Update endpoint:", endpoint?.update);
 
   return (
     <div className="mx-auto px-0 py-1">

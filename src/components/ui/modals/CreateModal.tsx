@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import { Checkbox, Dialog, DialogContent, DialogTitle, FormControl, FormControlLabel, FormHelperText, IconButton, InputLabel, MenuItem, Stack, TextField, Typography } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
-import { ReusableModalPageProps } from '~/types/interfaces';
+import { ReusableModalPageProps, } from '~/types/interfaces';
+import { FormValidationProps } from '~/types/types';
 import ConfirmUserActionModalPage from './ConfirmUserActionModal';
 import Swal from 'sweetalert2';
 import Select from 'react-select';
@@ -10,6 +11,7 @@ import { userSchema } from '~/schemas/userSchema';
 import Visibility from '@mui/icons-material/Visibility';
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
 import { generateValidPassword } from '~/utils/passwordgenerate';
+import { ZodSchema } from 'zod';
 
 const ReusableCreateModalPage: React.FC<ReusableModalPageProps> = ({
   isOpen,
@@ -21,6 +23,7 @@ const ReusableCreateModalPage: React.FC<ReusableModalPageProps> = ({
   provinces,
   cities,
   children,
+  schema
 }) => {
   const [errors, setErrors] = useState<Record<string, string[]>>({});
   const [formData, setFormData] = useState<{ [key: string]: string | number | boolean | string[] }>({});
@@ -33,6 +36,8 @@ const ReusableCreateModalPage: React.FC<ReusableModalPageProps> = ({
   const isProvincial = formData.STLAreaOfOperations === 'ProvincialWide';
   const isCityWide = formData.STLAreaOfOperations === 'CityWide';
   const isExcludedCITY = formData.isExcludedCITY;
+
+  console.log('scheeemaaa:', schema)
 
   // console.log('CITIESS',cities)
   // const filteredCity = (cities ?? []).map((city) => ({
@@ -149,27 +154,23 @@ const ReusableCreateModalPage: React.FC<ReusableModalPageProps> = ({
 
   const handleSubmit = async () => {
     try {
-      // Validate operator schema
-      const operatorResult = operatorSchema.safeParse(formData);
+      // Use the passed schema prop
+      const result = schema.safeParse(formData);
 
-      if (!operatorResult.success) {
-        const fieldErrors = operatorResult.error.flatten().fieldErrors;
-        console.error("Operator validation errors:", fieldErrors);
-        setErrors(fieldErrors);
+      if (!result.success) {
+        const fieldErrors = result.error.flatten().fieldErrors;
+        console.error("Validation errors:", fieldErrors);
+        // Filter to only string keys and defined string[] values
+        const filteredFieldErrors: Record<string, string[]> = Object.fromEntries(
+          Object.entries(fieldErrors)
+            .filter(([key, value]) => typeof key === "string" && Array.isArray(value) && value !== undefined)
+            .map(([key, value]) => [key, value ?? []])
+        );
+        setErrors(filteredFieldErrors);
         return;
       }
 
-      // Validate user schema
-      const userResult = userSchema.safeParse(formData);
-
-      if (!userResult.success) {
-        const fieldErrors = userResult.error.flatten().fieldErrors;
-        console.error("User validation errors:", fieldErrors);
-        setErrors(fieldErrors);
-        return;
-      }
-
-      // No errors, proceed with form submission
+      // Proceed if validation passes
       setErrors({});
       console.log("Form data is valid:", formData);
 

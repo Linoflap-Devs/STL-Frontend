@@ -22,29 +22,30 @@ export const userTableColumns = (
     render: (user: any) => {
       const operator = operatorMap[user.OperatorId];
       return operator ? operator.OperatorName : "No operator assigned";
-    },
-  },
-  {
-    key: "DateOfRegistration",
-    label: "Creation Date",
-    sortable: true,
-    filterable: true,
-    render: (user: any) => user.DateOfRegistration
-      ? dayjs(user.DateOfRegistration).format("YYYY-MM-DD")
-      : "",
-  },
-  {
-    key: "CreatedBy",
-    label: "Created By",
-    sortable: true,
-    filterable: true,
-  },
-  {
-    key: "Status",
-    label: "Status",
-    sortable: true,
-    filterable: true,
-    render: (user: any) => {
+        },
+      },
+      {
+        key: "DateOfRegistration",
+        label: "Creation Date",
+        sortable: true,
+        filterable: true,
+        render: (user: any) =>
+          user.DateOfRegistration
+        ? dayjs(user.DateOfRegistration).format("YYYY/MM/DD HH:mm:ss")
+        : "",
+      },
+      {
+        key: "CreatedBy",
+        label: "Created By",
+        sortable: true,
+        filterable: true,
+      },
+      {
+        key: "Status",
+        label: "Status",
+        sortable: true,
+        filterable: true,
+        render: (user: any) => {
       const sevenDaysAgo = dayjs().subtract(7, "days");
       const status = getUserStatus(user, sevenDaysAgo);
       return (

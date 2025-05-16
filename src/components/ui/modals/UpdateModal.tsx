@@ -1,14 +1,13 @@
 // this is a reusable update component
 // that needed to customize the fields
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import {
   Dialog,
   DialogContent,
   DialogTitle,
   Button,
   Typography,
-  MenuItem,
   FormControl,
   InputLabel,
   OutlinedInput,
@@ -16,7 +15,6 @@ import {
   Stack,
   IconButton,
   FormHelperText,
-  TextField,
 } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 import dayjs from "dayjs";
@@ -31,10 +29,8 @@ import EditModalDataPage from "./EditLogModal";
 import Swal from "sweetalert2";
 import useUserRoleStore from "../../../../store/useUserStore";
 import Select from "react-select";
-
 import Visibility from "@mui/icons-material/Visibility";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
-import { set } from "zod";
 import { generateValidPassword } from "~/utils/passwordgenerate";
 
 const ReusableUpdateModal: React.FC<ReusableModalPageProps> = ({
@@ -73,35 +69,11 @@ const ReusableUpdateModal: React.FC<ReusableModalPageProps> = ({
   const { roleId } = useUserRoleStore();
   const [showPassword, setShowPassword] = useState(false);
   const [isTouched, setIsTouched] = useState(false);
-  const [filteredProvinces, setFilteredProvinces] = useState<any[]>([]);
-  const [filteredCities, setFilteredCities] = useState<any[]>([]);
+  // const [filteredProvinces, setFilteredProvinces] = useState<any[]>([]);
+  // const [filteredCities, setFilteredCities] = useState<any[]>([]);
   const [formData, setFormData] = useState<{
     [key: string]: string | number | boolean | string[];
   }>({});
-
-  console.log("PROVINCES OPE", cities);
-  console.log("HELLLOOOOOO GAME TYPE:", gameTypes);
-
-  const gameTypeOptions =
-    gameTypes?.map((type) => ({
-      value: type.GameCategoryId,
-      label: `${type.GameCategory} (${type.GameCategoryId})`,
-    })) || [];
-
-  const provincesOptions =
-    provinces?.map((type) => ({
-      value: type.ProvinceId,
-      label: type.ProvinceName,
-    })) || [];
-
-  const handleDisable = () => {
-    setIsDisabled(false);
-    setShowEditButton(false); // Hide the button
-  };
-
-  const handleFocus = () => {
-    setIsTouched(true);
-  };
 
   useEffect(() => {
     if (!initialUserData) return;
@@ -128,7 +100,7 @@ const ReusableUpdateModal: React.FC<ReusableModalPageProps> = ({
     setStatus(userStatus);
   }, [initialUserData]);
 
-  useEffect(() => {
+  useCallback(() => {
     if (!initialUserData || !operatorMap) return;
 
     const operatorId = Number(initialUserData.OperatorId);
@@ -136,7 +108,22 @@ const ReusableUpdateModal: React.FC<ReusableModalPageProps> = ({
     setOperators(operator ? [operator] : []);
   }, [initialUserData, operatorMap]);
 
-  console.log("ENDPOINTTT", endpoint);
+  console.log("PROVINCES OPE", cities);
+  console.log("HELLLOOOOOO GAME TYPE:", gameTypes);
+
+  // gametype options
+  const gameTypeOptions =
+    gameTypes?.map((type) => ({
+      value: type.GameCategoryId,
+      label: `${type.GameCategory} (${type.GameCategoryId})`,
+    })) || [];
+
+  // province populate options
+  const provincesOptions =
+    provinces?.map((type) => ({
+      value: type.ProvinceId,
+      label: type.ProvinceName,
+    })) || [];
 
   const handleMultiSelect = (fieldName: string, selectedOptions: any[]) => {
     const selectedValues = Array.isArray(selectedOptions)
@@ -149,9 +136,20 @@ const ReusableUpdateModal: React.FC<ReusableModalPageProps> = ({
 
     setUser({
       ...user, // Merge the existing user object
-      [fieldName]: selectedValues, // Update the specific field with the selected values
+      [fieldName]: selectedValues,
     });
   };
+
+  const handleDisable = () => {
+    setIsDisabled(false);
+    setShowEditButton(false);
+  };
+
+  const handleFocus = () => {
+    setIsTouched(true);
+  };
+
+  console.log("ENDPOINTTT", endpoint);
 
   const roleName = getRoleName(roleId ?? 0);
   console.log("Role Name:", roleName);
@@ -179,14 +177,6 @@ const ReusableUpdateModal: React.FC<ReusableModalPageProps> = ({
     return key.replace(/([a-z])([A-Z])/g, "$1 $2");
   };
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    setUser((prevUser: any) => ({
-      ...prevUser,
-      [name]: value,
-    }));
-  };
-
   const handleSubmit = async () => {
     try {
       if (!endpoint) throw new Error("Endpoint is missing.");
@@ -201,9 +191,8 @@ const ReusableUpdateModal: React.FC<ReusableModalPageProps> = ({
 
       const updatedFields: Record<string, any> = {};
 
-      // Check if we are updating user data or operator data
-      const isUserData = !!user.UserId; // If user.UserId exists, it's user data
-      const isOperatorData = !!user.OperatorId; // If user.OperatorId exists, it's operator data
+      const isUserData = !!user.UserId;
+      const isOperatorData = !!user.OperatorId;
 
       // Conditional requirement based on user data or operator data
       if (isUserData) {
@@ -217,7 +206,7 @@ const ReusableUpdateModal: React.FC<ReusableModalPageProps> = ({
         if (!user.OperatorId) {
           throw new Error("operatorId is required for operator data.");
         }
-        updatedFields.operatorId = user.OperatorId; // Add operatorId to updated fields
+        updatedFields.operatorId = user.OperatorId;
       }
 
       // Add other fields (user or operator related) if they have changed
@@ -235,7 +224,6 @@ const ReusableUpdateModal: React.FC<ReusableModalPageProps> = ({
 
       console.log("Updated Fields:", updatedFields);
 
-      // Add confirmation prompt before making the API call
       const confirmationResult = await Swal.fire({
         title: "Update Confirmation",
         text: "Did you enter the correct details?",
@@ -252,7 +240,6 @@ const ReusableUpdateModal: React.FC<ReusableModalPageProps> = ({
       });
 
       if (!confirmationResult.isConfirmed) {
-        // User canceled, exit function
         return;
       }
 
@@ -329,89 +316,94 @@ const ReusableUpdateModal: React.FC<ReusableModalPageProps> = ({
       <DialogContent>
         <Stack spacing={2} key={status} sx={{ mb: 1, mt: 3 }}>
           {/* Personal Information Fields */}
-          <Stack direction="row" spacing={3}>
-            <Stack spacing={3} sx={{ flex: 1 }}>
-              {roleName === "Operator" && (
-                <FormControl
-                  fullWidth
-                  error={Boolean(errors["OperatorName"])}
-                  size="small"
-                >
-                  <InputLabel htmlFor="OperatorName">
-                    {formatKey("OperatorName")}
-                  </InputLabel>
-                  <OutlinedInput
-                    id="OperatorName"
-                    name="OperatorName"
-                    label={formatKey("OperatorName")}
-                    placeholder={`Enter ${formatKey("OperatorName")}`}
-                    value={user.OperatorName || "No data"}
-                    onChange={handleManagerChange}
-                    disabled={
-                      alwaysDisabledKeys.includes("OperatorName") || isDisabled
-                    }
-                  />
-                  {errors["OperatorName"] && (
-                    <FormHelperText>{errors["OperatorName"]}</FormHelperText>
-                  )}
-                </FormControl>
-              )}
+          <Stack spacing={3} sx={{ mb: 2 }}>
+            <Stack direction="row" spacing={3}>
+              <Stack spacing={3} sx={{ flex: 1 }}>
+                {roleName === "Operator" && (
+                  <FormControl
+                    fullWidth
+                    error={Boolean(errors["OperatorName"])}
+                    size="small"
+                  >
+                    <InputLabel htmlFor="OperatorName">
+                      {formatKey("OperatorName")}
+                    </InputLabel>
+                    <OutlinedInput
+                      id="OperatorName"
+                      name="OperatorName"
+                      label={formatKey("OperatorName")}
+                      placeholder={`Enter ${formatKey("OperatorName")}`}
+                      value={user.OperatorName || "No data"}
+                      onChange={handleManagerChange}
+                      disabled={
+                        alwaysDisabledKeys.includes("OperatorName") ||
+                        isDisabled
+                      }
+                    />
+                    {errors["OperatorName"] && (
+                      <FormHelperText>{errors["OperatorName"]}</FormHelperText>
+                    )}
+                  </FormControl>
+                )}
+              </Stack>
+
+              <Stack spacing={3} sx={{ flex: 1 }}>
+                {roleName === "Operator" && (
+                  <FormControl
+                    fullWidth
+                    error={Boolean(errors["contactNumber"])}
+                    size="small"
+                  >
+                    <InputLabel htmlFor="contactNumber">
+                      {formatKey("contactNumber")}
+                    </InputLabel>
+                    <OutlinedInput
+                      id="contactNumber"
+                      name="contactNumber"
+                      label={formatKey("contactNumber")}
+                      placeholder={`Enter ${formatKey("contactNumber")}`}
+                      value={user.contactNumber || ""}
+                      onChange={handleManagerChange}
+                      disabled={
+                        alwaysDisabledKeys.includes("contactNumber") ||
+                        isDisabled
+                      }
+                    />
+                    {errors["contactNumber"] && (
+                      <FormHelperText>{errors["contactNumber"]}</FormHelperText>
+                    )}
+                  </FormControl>
+                )}
+              </Stack>
             </Stack>
 
-            <Stack spacing={3} sx={{ flex: 1 }}>
-              {roleName === "Operator" && (
-                <FormControl
-                  fullWidth
-                  error={Boolean(errors["contactNumber"])}
-                  size="small"
-                >
-                  <InputLabel htmlFor="contactNumber">
-                    {formatKey("contactNumber")}
-                  </InputLabel>
-                  <OutlinedInput
-                    id="contactNumber"
-                    name="contactNumber"
-                    label={formatKey("contactNumber")}
-                    placeholder={`Enter ${formatKey("contactNumber")}`}
-                    value={user.contactNumber || ""}
-                    onChange={handleManagerChange}
-                    disabled={
-                      alwaysDisabledKeys.includes("contactNumber") || isDisabled
-                    }
-                  />
-                  {errors["contactNumber"] && (
-                    <FormHelperText>{errors["contactNumber"]}</FormHelperText>
-                  )}
-                </FormControl>
-              )}
-            </Stack>
+            {/* 🟢 Now placed below the row */}
+            {roleName === "Operator" && (
+              <FormControl
+                fullWidth
+                error={Boolean(errors["OperatorAddress"])}
+                size="small"
+              >
+                <InputLabel htmlFor="OperatorAddress">
+                  {formatKey("OperatorAddress")}
+                </InputLabel>
+                <OutlinedInput
+                  id="OperatorAddress"
+                  name="OperatorAddress"
+                  label={formatKey("OperatorAddress")}
+                  placeholder={`Enter ${formatKey("OperatorAddress")}`}
+                  value={user.OperatorAddress || ""}
+                  onChange={handleManagerChange}
+                  disabled={
+                    alwaysDisabledKeys.includes("OperatorAddress") || isDisabled
+                  }
+                />
+                {errors["OperatorAddress"] && (
+                  <FormHelperText>{errors["OperatorAddress"]}</FormHelperText>
+                )}
+              </FormControl>
+            )}
           </Stack>
-
-          {roleName === "Operator" && (
-            <FormControl
-              fullWidth
-              error={Boolean(errors["OperatorAddress"])}
-              size="small"
-            >
-              <InputLabel htmlFor="OperatorAddress">
-                {formatKey("OperatorAddress")}
-              </InputLabel>
-              <OutlinedInput
-                id="OperatorAddress"
-                name="OperatorAddress"
-                label={formatKey("OperatorAddress")}
-                placeholder={`Enter ${formatKey("OperatorAddress")}`}
-                value={user.OperatorAddress || ""}
-                onChange={handleManagerChange}
-                disabled={
-                  alwaysDisabledKeys.includes("OperatorAddress") || isDisabled
-                }
-              />
-              {errors["OperatorAddress"] && (
-                <FormHelperText>{errors["OperatorAddress"]}</FormHelperText>
-              )}
-            </FormControl>
-          )}
 
           <Stack direction="row" spacing={3} sx={{ mt: "1.5rem !important" }}>
             <Stack spacing={3} sx={{ flex: 1 }}>
@@ -560,6 +552,7 @@ const ReusableUpdateModal: React.FC<ReusableModalPageProps> = ({
                           )
                         : []
                     }
+                    isDisabled={isDisabled}
                     isMulti
                     options={gameTypeOptions}
                     onChange={(selectedOptions) =>
@@ -596,6 +589,7 @@ const ReusableUpdateModal: React.FC<ReusableModalPageProps> = ({
                           )
                         : []
                     }
+                    isDisabled={isDisabled}
                     isMulti={true}
                     options={provincesOptions}
                     onChange={(selectedOptions) =>
@@ -686,7 +680,7 @@ const ReusableUpdateModal: React.FC<ReusableModalPageProps> = ({
                           onFocus={handleFocus}
                           label={formatKey("Password")}
                           placeholder="********"
-                          onChange={handleChange}
+                          onChange={handleManagerChange}
                           disabled={isLoading}
                           endAdornment={
                             <IconButton
@@ -790,7 +784,7 @@ const ReusableUpdateModal: React.FC<ReusableModalPageProps> = ({
                       errors?.STLAreaOfOperations?.length ||
                       formData?.STLAreaOfOperations === ""
                         ? "border-red-500"
-                        : "border-[#0038A8]"
+                        : "border-[#0000003A]"
                     }`}
                     aria-label="STLAreaOfOperations"
                     disabled={isDisabled}
