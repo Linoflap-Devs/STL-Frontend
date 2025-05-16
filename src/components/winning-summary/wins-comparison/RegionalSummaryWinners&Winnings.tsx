@@ -161,7 +161,7 @@ const CustomLegend: React.FC<WinnersandWinningsSummaryProps> = ({
                 }}
               />
               <Typography
-                color="white"
+                color="#212121"
                 sx={{
                   fontSize: "12px",
                   fontWeight: 400,
@@ -198,13 +198,13 @@ const philippineRegions = [
 
 // Determine chart number based on categoryFilter
 const chartMap: Record<string, string> = {
-  "Total Winners and Winnings": "1",
+  "Total Winnings and Winners": "1",
   "Total Winnings by Bet Type": "2",
   "Total Winnings by Game Type": "3",
   "Total Winners by Bet Type": "5",
   "Total Winners by Game Type": "6",
-  // "Top Betting Region by Total Bets": "4",
-  // "Top Betting Region by Total Winners": "4",
+  "Top Winning Region by Total Winning": "4",
+  "Top Winning Region by Total Winners": "4",
 };
 const urlParam = chartMap[categoryFilter];
 // Determine gameCategory number based on activeGameType
@@ -736,15 +736,16 @@ const datesMatch = (dateString1: string, dateString2: string): boolean => {
 return (
     <Box
     sx={{
-        backgroundColor: "#171717",
+        backgroundColor: "#F8F0E3",
         padding: "1rem",
         borderRadius: "8px",
         paddingBottom: "2rem",
         width: "100%",
-        height: "585px"
+        height: "610px",
+        border: "1px solid #0038A8",
     }}
     >
-        <Typography color="#FFFFFF" 
+        <Typography color="#212121" 
         sx={{ 
             fontSize: "16px",
             fontWeight: 400,
@@ -769,6 +770,7 @@ return (
             display: "flex",
             flexDirection: "column",
             flexGrow: 1,
+            backgroundColor: "#F8F0E3"
         }}
         >
         { loading ? (
@@ -782,8 +784,9 @@ return (
             </Box>
         ): (
             <BarChart
-            height={500} 
+            height={440} 
             margin={{ left: 90, right: 20, top: 20, bottom: 40 }}
+            slotProps={{ legend: { hidden: true } }}
             xAxis={[
               {
                 scaleType: "band",

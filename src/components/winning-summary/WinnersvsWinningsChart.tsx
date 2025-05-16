@@ -23,7 +23,7 @@ const CustomLegend = () => (
           mr: 1.5,
         }}
       />
-      <Typography color="white">Winners</Typography>
+      <Typography color="#212121">Winners</Typography>
     </Box>
     <Box sx={{ display: "flex", alignItems: "center" }}>
       <Box
@@ -31,11 +31,11 @@ const CustomLegend = () => (
           width: 14,
           height: 14,
           borderRadius: "50%",
-          backgroundColor: "#D2A7FF",
+          backgroundColor: "#5050A5",
           mr: 1.5,
         }}
       />
-      <Typography color="white">Winnings</Typography>
+      <Typography color="#212121">Winnings</Typography>
     </Box>
   </Stack>
 );
@@ -132,15 +132,17 @@ const ChartWinnersvsWinningsSummary = ( params: {gameCategoryId?: number}) => {
   return (
     <Box
       sx={{
-        backgroundColor: "#171717",
+        backgroundColor: "#F8F0E3",
         padding: "1rem",
         borderRadius: "8px",
         paddingBottom: "2rem",
-        width: "100%"
+        width: "100%",
+        height: "420px",
+        border: "1px solid #0038A8"
       }}
     >
       <Typography 
-        color="#FFFFFF" 
+        color="#212121" 
         sx={{ 
           fontSize: "16px" 
         }}>
@@ -150,16 +152,19 @@ const ChartWinnersvsWinningsSummary = ( params: {gameCategoryId?: number}) => {
 
       <Box 
           sx={{
-            height: "100%",
+            height: "325px",
             display: "flex",
             flexDirection: "column",
             flexGrow: 1,
+            backgroundColor: "#F8F0E3"
             }}
       >
         <BarChart
           height={300}
           grid={{ vertical: true }}
           layout="horizontal"
+          backgroundColor = "transparent"
+          slotProps={{ legend: { hidden: true } }}
           margin={{ left: 90, right: 20, top: 20, bottom: 40 }}
           dataset={TodaysWinnersAndWinsData}
           yAxis={[
@@ -181,7 +186,7 @@ const ChartWinnersvsWinningsSummary = ( params: {gameCategoryId?: number}) => {
           ]}
           series={addLabels([
             { dataKey: 'winners', color: '#E5C7FF'},
-            { dataKey: 'winnings', color: '#D2A7FF' }
+            { dataKey: 'winnings', color: '#5050A5' }
           ])}
         />
       </Box>

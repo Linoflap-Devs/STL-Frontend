@@ -93,7 +93,7 @@ const CustomLegend: React.FC<WinnersandWinningsSummaryProps> = ({
             }}
           />
           <Typography
-            color="white"
+            color="#212121"
             sx={{
               fontSize: "12px",
               fontWeight: 400,
@@ -131,13 +131,13 @@ console.log('Active Game Category:', activeGameType)
   const aggregateField = categoryFilter.includes("Winnings") ? "TotalPayoutAmount" : "TotalWinners";
   // Determine chart number based on category
   const chartMap: Record<string, string> = {
-    "Total Winners and Bets": "1",
+    "Total Winnings and Winners": "1",
     "Total Winnings by Bet Type": "2",
     "Total Winnings by Game Type": "3",
     "Total Winners by Bet Type": "5",
     "Total Winners by Game Type": "6",
-    "Top Winning Region by Winnings Comparison": "4",
-    "Top Winner Region by Winners Comparison": "4",
+    "Top Winning Region by Total Winning": "4",
+    "Top Winner Region by Total Winners": "4",
   };
   const urlParam = chartMap[categoryFilter];
   const gameCategoryMap: Record<string, number> = {
@@ -269,7 +269,8 @@ console.log('Active Game Category:', activeGameType)
   return (
     <Box
       sx={{
-        backgroundColor: "#171717",
+        backgroundColor: "#F8F0E3",
+        border: "1px solid #0038A8",
         padding: "1rem",
         borderRadius: "8px",
         paddingBottom: "2rem",
@@ -278,7 +279,7 @@ console.log('Active Game Category:', activeGameType)
       }}
     >
       <Typography
-        color="#FFFFFF"
+        color="#212121"
         sx={{
           fontSize: "16px",
           fontWeight: 400,
@@ -308,6 +309,7 @@ console.log('Active Game Category:', activeGameType)
         <LineChart
           height={500}
           margin={{ left: 90, right: 20, top: 20, bottom: 40 }}
+          slotProps={{ legend: { hidden: true } }}
           xAxis={[
             {
               scaleType: "band",
