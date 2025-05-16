@@ -72,13 +72,13 @@ const formattedSecondDateDuration = secondDateDuration
   }, [SideBarActiveGameType, activeGameType, setGameType]);
 
   const categoryTypes: categoryType[] = [
-    "Total Winners and Winnings",
+    "Total Winnings and Winners",
     "Total Winnings by Bet Type",
-    "Total Winners by Bet Type",
     "Total Winnings by Game Type",
+    "Top Winning Region by Total Winnings",
+    "Top Winner Region by Total Winners",
+    "Total Winners by Bet Type",
     "Total Winners by Game Type",
-    "Top Winning Region by Winnings Comparison",
-    "Top Winner Region by Winners Comparison",
   ];
 
     // Debugging: Log all states whenever they change
@@ -168,10 +168,14 @@ const formattedSecondDateDuration = secondDateDuration
                 <DatePicker
                   label="First Date"
                   value={firstDateSpecific ? dayjs(firstDateSpecific) : null}
-                  onChange={(newValue) =>
-                    setFirstDateSpecific(newValue!.toDate())
-                  } // Correct setter function
-                  // renderInput={(params) => <TextField {...params} />}
+                  onChange={(newValue) => {
+                    if(newValue){
+                      setFirstDateSpecific(newValue.format('YYYY-MM-DD'))
+                    }else{
+                      setFirstDateSpecific('')
+                    }
+                  }
+                }
                 />
               </LocalizationProvider>
             </Grid>
@@ -208,10 +212,14 @@ const formattedSecondDateDuration = secondDateDuration
                 <DatePicker
                   label="Second Date"
                   value={secondDateSpecific ? dayjs(secondDateSpecific) : null}
-                  onChange={(newValue) =>
-                    setSecondDateSpecific(newValue!.toDate())
-                  } // Correct setter function
-                  // renderInput={(params) => <TextField {...params} />}
+                  onChange={(newValue) =>{
+                    if(newValue){
+                      setSecondDateSpecific(newValue.format('YYYY-MM-DD'))
+                    }else{
+                      setSecondDateSpecific('')
+                    }
+                  }
+                  }
                 />
               </LocalizationProvider>
             </Grid>
@@ -268,8 +276,13 @@ const formattedSecondDateDuration = secondDateDuration
                 <DatePicker
                   label="First Date"
                   value={firstDateSpecific ? dayjs(firstDateSpecific) : null}
-                  onChange={(newValue) =>
-                    setFirstDateSpecific(newValue!.toDate())
+                  onChange={(newValue) =>{
+                    if(newValue){
+                      setFirstDateSpecific(newValue.format('YYYY-MM-DD'))
+                    }else{
+                      setFirstDateSpecific('')
+                    }
+                  }
                   } // Correct setter function
                   // renderInput={(params) => <TextField {...params} />}
                 />
@@ -308,10 +321,14 @@ const formattedSecondDateDuration = secondDateDuration
                 <DatePicker
                   label="Second Date"
                   value={secondDateSpecific ? dayjs(secondDateSpecific) : null}
-                  onChange={(newValue) =>
-                    setSecondDateSpecific(newValue!.toDate())
-                  } // Correct setter function
-                  // renderInput={(params) => <TextField {...params} />}
+                  onChange={(newValue) =>{
+                    if(newValue){
+                      setSecondDateSpecific(newValue.format('YYYY-MM-DD'))
+                    }else{
+                      setSecondDateSpecific('')
+                    }
+                  }
+                  }
                 />
               </LocalizationProvider>
             </Grid>
@@ -337,8 +354,13 @@ const formattedSecondDateDuration = secondDateDuration
                 <DatePicker
                   label="First Date"
                   value={firstDateDuration ? dayjs(firstDateDuration) : null}
-                  onChange={(newValue) =>
-                    setFirstDateDuration(newValue!.toDate())
+                  onChange={(newValue) =>{
+                    if(newValue){
+                      setFirstDateDuration(newValue.format('YYYY-MM-DD'))
+                    }else{
+                      setFirstDateDuration('')
+                    }
+                  }
                   } // Correct setter function
                   // renderInput={(params) => <TextField {...params} />}
                 />
@@ -366,10 +388,14 @@ const formattedSecondDateDuration = secondDateDuration
                 <DatePicker
                   label="Second Date"
                   value={secondDateDuration ? dayjs(secondDateDuration) : null}
-                  onChange={(newValue) =>
-                    setSecondDateDuration(newValue!.toDate())
-                  } // Correct setter function
-                  // renderInput={(params) => <TextField {...params} />}
+                  onChange={(newValue) => {
+                    if(newValue){
+                      setSecondDateDuration(newValue.format('YYYY-MM-DD'))
+                    }else{
+                      setFirstDateDuration('')
+                    }
+                  }
+                  }
                 />
               </LocalizationProvider>
             </Grid>
@@ -378,7 +404,7 @@ const formattedSecondDateDuration = secondDateDuration
         </Grid>
         
 
-        {categoryFilter === "Top Winning Region by Winnings Comparison" || categoryFilter === "Top Winner Region by Winners Comparison" ? (
+        {categoryFilter === "Top Winning Region by Total Winnings" || categoryFilter === "Top Winner Region by Total Winners" ? (
           <ChartTopRegionByWinsandWinners
             activeGameType={activeGameType}
             categoryFilter={categoryFilter}

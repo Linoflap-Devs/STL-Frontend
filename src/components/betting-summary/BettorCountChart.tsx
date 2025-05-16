@@ -30,7 +30,7 @@ const CustomLegend = () => (
           mr: 1.5,
         }}
       />
-      <Typography color="white">STL Pares</Typography>
+      <Typography color="#212121">STL Pares</Typography>
     </Box>
     <Box sx={{ display: "flex", alignItems: "center" }}>
       <Box
@@ -38,11 +38,11 @@ const CustomLegend = () => (
           width: 14,
           height: 14,
           borderRadius: "50%",
-          backgroundColor: "#D2A7FF",
+          backgroundColor: "#5050A5",
           mr: 1.5,
         }}
       />
-      <Typography color="white">STL Swer2</Typography>
+      <Typography color="#212121">STL Swer2</Typography>
     </Box>
     <Box sx={{ display: "flex", alignItems: "center" }}>
       <Box
@@ -50,11 +50,11 @@ const CustomLegend = () => (
           width: 14,
           height: 14,
           borderRadius: "50%",
-          backgroundColor: "#BB86FC",
+          backgroundColor: "#7266C9",
           mr: 1.5,
         }}
       />
-      <Typography color="white">STL Swer3</Typography>
+      <Typography color="#212121">STL Swer3</Typography>
     </Box>
     <Box sx={{ display: "flex", alignItems: "center" }}>
       <Box
@@ -62,11 +62,11 @@ const CustomLegend = () => (
           width: 14,
           height: 14,
           borderRadius: "50%",
-          backgroundColor: "#A06FE6",
+          backgroundColor: "#3B3B81",
           mr: 1.5,
         }}
       />
-      <Typography color="white">STL Swer4</Typography>
+      <Typography color="#212121">STL Swer4</Typography>
     </Box>
   </Stack>
 );
@@ -171,11 +171,12 @@ const ChartBettorsSummary = () => {
   return (
     <Box
       sx={{
-        backgroundColor: "#171717",
+        backgroundColor: "#F8F0E3",
         padding: "1rem",
         borderRadius: "8px",
         paddingBottom: "2rem",
         marginRight: 0,
+        border: "1px solid #0038A8"
       }}
     >
       <Box>
@@ -217,15 +218,15 @@ const ChartBettorsSummary = () => {
               },
               {
                 data: data.map((item) => item.swer2),
-                color: "#D2A7FF",
+                color: "#5050A5",
               },
               {
                 data: data.map((item) => item.swer3),  
-                color: "#BB86FC",
+                color: "#7266C9",
               },
               {
                 data: data.map((item) => item.swer4),
-                color: "#A06FE6",
+                color: "#3B3B81",
               },
             ]}
             yAxis={[

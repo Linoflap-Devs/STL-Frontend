@@ -223,7 +223,7 @@ const CustomLegend: React.FC<BettorsandBetsSummaryProps> = ({
                 }}
               />
               <Typography
-                color="white"
+                color="#212121"
                 sx={{
                   fontSize: "12px",
                   fontWeight: 400,
@@ -708,21 +708,21 @@ const ChartBettorsAndBetsRegionalSummary: React.FC<BettorsandBetsSummaryProps> =
             isDuration ? item.secondRangeBettors : item.secondDateBettors
           ),
           label: `Bettors ${secondLabel}`,
-          color: "#D2A7FF",
+          color: "#5050A5",
         },
         {
           data: chartData.map((item: any) => 
             isDuration ? item.firstRangeBets : item.firstDateBets
           ),
           label: `Bets ${firstLabel}`,
-          color: "#BB86FC",
+          color: "#7266C9",
         },
         {
           data: chartData.map((item: any) => 
             isDuration ? item.secondRangeBets : item.secondDateBets
           ),
           label: `Bets ${secondLabel}`,
-          color: "#A06FE6",
+          color: "#3B3B81",
         }
       ];
     } else if (urlParam === "2" || urlParam === "5") {
@@ -739,21 +739,21 @@ const ChartBettorsAndBetsRegionalSummary: React.FC<BettorsandBetsSummaryProps> =
             isDuration ? item.secondRangeTumbok : item.secondDateTumbok
           ),
           label: `Tumbok ${secondLabel}`,
-          color: "#D2A7FF",
+          color: "#5050A5",
         },
         {
           data: chartData.map((item: any) => 
             isDuration ? item.firstRangeSahod : item.firstDateSahod
           ),
           label: `Sahod ${firstLabel}`,
-          color: "#BB86FC",
+          color: "#7266C9",
         },
         {
           data: chartData.map((item: any) => 
             isDuration ? item.secondRangeSahod : item.secondDateSahod
           ),
           label: `Sahod ${secondLabel}`,
-          color: "#A06FE6",
+          color: "#3B3B81",
         }
       ];
     } else if (urlParam === "3" || urlParam === "6") {
@@ -785,8 +785,8 @@ const ChartBettorsAndBetsRegionalSummary: React.FC<BettorsandBetsSummaryProps> =
   // Helper function for category colors
   const getCategoryColor = (category: string, isFirstDate: boolean) => {
     const colorMap: Record<string, string> = {
-      STLPares: isFirstDate ? "#E5C7FF" : "#D2A7FF",
-      STLSwer2: isFirstDate ? "#BB86FC" : "#A06FE6",
+      STLPares: isFirstDate ? "#E5C7FF" : "#5050A5",
+      STLSwer2: isFirstDate ? "#7266C9" : "#3B3B81",
       STLSwer3: isFirstDate ? "#875AC4" : "#6F58C9",
       STLSwer4: isFirstDate ? "#563D99" : "#3E2466"
     };
@@ -797,15 +797,16 @@ const ChartBettorsAndBetsRegionalSummary: React.FC<BettorsandBetsSummaryProps> =
   return (
       <Box
       sx={{
-          backgroundColor: "#171717",
+          backgroundColor: "transparent",
           padding: "1rem",
           borderRadius: "8px",
           paddingBottom: "2rem",
           width: "100%",
-          height: "585px"
+          height: "585px",
+          border: "1px solid #0038A8"
       }}
       >
-          <Typography color="#FFFFFF" 
+          <Typography color="" 
           sx={{ 
               fontSize: "16px",
               fontWeight: 400,
@@ -830,42 +831,44 @@ const ChartBettorsAndBetsRegionalSummary: React.FC<BettorsandBetsSummaryProps> =
               display: "flex",
               flexDirection: "column",
               flexGrow: 1,
+              backgroundColor: "transparent"
           }}
           >
-          { loading ? (
-            <Box
-              display="flex"
-              justifyContent="center"
-              alignItems="center"
-              height="100vh"
-            >
-              <CircularProgress />
-            </Box>
-          ):(
-            <BarChart
-                height={500} 
-                margin={{ left: 90, right: 20, top: 20, bottom: 40 }}
-                xAxis={[
-                  {
-                    label: "Amount (in 100,000 units)",
-                    scaleType: "band",
-                    data: philippineRegions, // Ensure this matches the number of data points
-                  },
-                ]}
-                yAxis={[
-                  {
-                    label: "Amount (in 100,000 units)",
-                    min: 0,
-                    max: 100, // Adjust max to fit your data range
-                    // tickValues: yAxisTicks, // Ensure all ticks are displayed
-                    // tickSpacing: 5, // Optional: Adjust spacing between ticks
-                  },
-                ]}
-                series={generateSeries(chartData, urlParam)}
-                slotProps={{legend: {hidden: true}}}
-                // Optional: Increase width for better x-axis spacing
-              />
-          )}
+            { loading ? (
+              <Box
+                display="flex"
+                justifyContent="center"
+                alignItems="center"
+                height="100vh"
+              >
+                <CircularProgress />
+              </Box>
+            ):(
+              <BarChart
+                  height={500} 
+                  margin={{ left: 90, right: 20, top: 20, bottom: 40 }}
+
+                  xAxis={[
+                    {
+                      label: "Amount (in 100,000 units)",
+                      scaleType: "band",
+                      data: philippineRegions, // Ensure this matches the number of data points
+                    },
+                  ]}
+                  yAxis={[
+                    {
+                      label: "Amount (in 100,000 units)",
+                      min: 0,
+                      max: 100, // Adjust max to fit your data range
+                      // tickValues: yAxisTicks, // Ensure all ticks are displayed
+                      // tickSpacing: 5, // Optional: Adjust spacing between ticks
+                    },
+                  ]}
+                  series={generateSeries(chartData, urlParam)}
+                  slotProps={{legend: {hidden: true}}}
+                  // Optional: Increase width for better x-axis spacing
+                />
+            )}
           </Box>
       </Box>
     )

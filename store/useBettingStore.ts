@@ -163,152 +163,155 @@ export const getLegendItemsMap_Specific = (
   secondDateSpecific: string | null
 ): { label: string; color: string }[] => {
   console.log("categoryFilter:", categoryFilter);
+
   const legendItemsMap: Record<categoryType, { label: string; color: string }[]> = {
-  "Total Bets and Bettors": [
-    {
-      label: `Bettors - ${firstDateSpecific ? firstDateSpecific : "N/A"}`,
-      color: "#E5C7FF",
-    },
-    {
-      label: `Bettors - ${secondDateSpecific ? secondDateSpecific : "N/A"}`,
-      color: "#D2A7FF",
-    },
-    {
-      label: `Bets - ${firstDateSpecific ? firstDateSpecific : "N/A"}`,
-      color: "#D2A7FF",
-    },
-    {
-      label: `Bets - ${secondDateSpecific ? secondDateSpecific : "N/A"}`,
-      color: "#D2A7FF",
-    },
-  ],
-  "Total Bets by Bet Type": [
-    {
-      label: `Tumbok - ${firstDateSpecific ? firstDateSpecific : "N/A"}`,
-      color: "#E5C7FF",
-    },
-    {
-      label: `Tumbok - ${secondDateSpecific ? secondDateSpecific : "N/A"}`,
-      color: "#D2A7FF",
-    },
-    {
-      label: `Sahod - ${firstDateSpecific ? firstDateSpecific : "N/A"}`,
-      color: "#D2A7FF",
-    },
-    {
-      label: `Sahod - ${secondDateSpecific ? secondDateSpecific : "N/A"}`,
-      color: "#D2A7FF",
-    },
-  ],
-  "Total Bettors by Bet Type": [
-    {
-      label: `Tumbok - ${firstDateSpecific ? firstDateSpecific : "N/A"}`,
-      color: "#E5C7FF",
-    },
-    {
-      label: `Tumbok - ${secondDateSpecific ? secondDateSpecific : "N/A"}`,
-      color: "#D2A7FF",
-    },
-    {
-      label: `Sahod - ${firstDateSpecific ? firstDateSpecific : "N/A"}`,
-      color: "#D2A7FF",
-    },
-    {
-      label: `Sahod - ${secondDateSpecific ? secondDateSpecific : "N/A"}`,
-      color: "#D2A7FF",
-    },
-  ],
-  "Total Bets by Game Type": [
-    {
-      label: `STL Pares - ${firstDateSpecific ? firstDateSpecific : "N/A"}`,
-      color: "#E5C7FF",
-    },
-    {
-      label: `STL Pares - ${secondDateSpecific ? secondDateSpecific : "N/A"}`,
-      color: "#E5C7FF",
-    },
-    {
-      label: `STL Swer2 - ${firstDateSpecific ? firstDateSpecific : "N/A"}`,
-      color: "#BB86FC",
-    },
-    {
-      label: `STL Swer2 - ${secondDateSpecific ? secondDateSpecific : "N/A"}`,
-      color: "#BB86FC",
-    },
-    {
-      label: `STL Swer3 - ${firstDateSpecific ? firstDateSpecific : "N/A"}`,
-      color: "#6F58C9",
-    },
-    {
-      label: `STL Swer3 - ${secondDateSpecific ? secondDateSpecific : "N/A"}`,
-      color: "#6F58C9",
-    },
-    {
-      label: `STL Swer4 - ${firstDateSpecific ? firstDateSpecific : "N/A"}`,
-      color: "#3E2466",
-    },
-    {
-      label: `STL Swer4 - ${secondDateSpecific ? secondDateSpecific : "N/A"}`,
-      color: "#3E2466",
-    },
-  ],
-  "Total Bettors by Game Type": [
-    {
-      label: `STL Pares - ${firstDateSpecific ? firstDateSpecific : "N/A"}`,
-      color: "#E5C7FF",
-    },
-    {
-      label: `STL Pares - ${secondDateSpecific ? secondDateSpecific : "N/A"}`,
-      color: "#E5C7FF",
-    },
-    {
-      label: `STL Swer2 - ${firstDateSpecific ? firstDateSpecific : "N/A"}`,
-      color: "#BB86FC",
-    },
-    {
-      label: `STL Swer2 - ${secondDateSpecific ? secondDateSpecific : "N/A"}`,
-      color: "#BB86FC",
-    },
-    {
-      label: `STL Swer3 - ${firstDateSpecific ? firstDateSpecific : "N/A"}`,
-      color: "#6F58C9",
-    },
-    {
-      label: `STL Swer3 - ${secondDateSpecific ? secondDateSpecific : "N/A"}`,
-      color: "#6F58C9",
-    },
-    {
-      label: `STL Swer4 - ${firstDateSpecific ? firstDateSpecific : "N/A"}`,
-      color: "#3E2466",
-    },
-    {
-      label: `STL Swer4 - ${secondDateSpecific ? secondDateSpecific : "N/A"}`,
-      color: "#3E2466",
-    },
-  ],
-  "Top Betting Region by Total Bets": [
-    {
-      label:  `Ranking - ${firstDateSpecific ? firstDateSpecific : "N/A"}`,
-      color: "#E5C7FF",
-    },
-    {
-      label: `Ranking - ${secondDateSpecific ? secondDateSpecific : "N/A"}`,
-      color: "#3E2466",
-    },
-  ],
-  "Top Betting Region by Total Bettors": [
-    {
-      label:  `Ranking - ${firstDateSpecific ? firstDateSpecific : "N/A"}`,
-      color: "#E5C7FF",
-    },
-    {
-      label: `Ranking - ${secondDateSpecific ? firstDateSpecific : "N/A"}`,
-      color: "#3E2466",
-    },
-  ],
-  }
+    "Total Bets and Bettors": [
+      {
+        label: `Bettors - ${firstDateSpecific ? firstDateSpecific : "N/A"}`,
+        color: "#E5C7FF",
+      },
+      {
+        label: `Bettors - ${secondDateSpecific ? secondDateSpecific : "N/A"}`,
+        color: "#5050A5",
+      },
+      {
+        label: `Bets - ${firstDateSpecific ? firstDateSpecific : "N/A"}`,
+        color: "#7266C9",
+      },
+      {
+        label: `Bets - ${secondDateSpecific ? secondDateSpecific : "N/A"}`,
+        color: "#3B3B81",
+      },
+    ],
+    "Total Bets by Bet Type": [
+      {
+        label: `Tumbok - ${firstDateSpecific ? firstDateSpecific : "N/A"}`,
+        color: "#E5C7FF",
+      },
+      {
+        label: `Tumbok - ${secondDateSpecific ? secondDateSpecific : "N/A"}`,
+        color: "#5050A5",
+      },
+      {
+        label: `Sahod - ${firstDateSpecific ? firstDateSpecific : "N/A"}`,
+        color: "#7266C9",
+      },
+      {
+        label: `Sahod - ${secondDateSpecific ? secondDateSpecific : "N/A"}`,
+        color: "#3B3B81",
+      },
+    ],
+    "Total Bettors by Bet Type": [
+      {
+        label: `Tumbok - ${firstDateSpecific ? firstDateSpecific : "N/A"}`,
+        color: "#E5C7FF",
+      },
+      {
+        label: `Tumbok - ${secondDateSpecific ? secondDateSpecific : "N/A"}`,
+        color: "#5050A5",
+      },
+      {
+        label: `Sahod - ${firstDateSpecific ? firstDateSpecific : "N/A"}`,
+        color: "#7266C9",
+      },
+      {
+        label: `Sahod - ${secondDateSpecific ? secondDateSpecific : "N/A"}`,
+        color: "#3B3B81",
+      },
+    ],
+    "Total Bets by Game Type": [
+      {
+        label: `STL Pares - ${firstDateSpecific ? firstDateSpecific : "N/A"}`,
+        color: "#E5C7FF",
+      },
+      {
+        label: `STL Pares - ${secondDateSpecific ? secondDateSpecific : "N/A"}`,
+        color: "#5050A5",
+      },
+      {
+        label: `STL Swer2 - ${firstDateSpecific ? firstDateSpecific : "N/A"}`,
+        color: "#7266C9",
+      },
+      {
+        label: `STL Swer2 - ${secondDateSpecific ? secondDateSpecific : "N/A"}`,
+        color: "#3B3B81",
+      },
+      {
+        label: `STL Swer3 - ${firstDateSpecific ? firstDateSpecific : "N/A"}`,
+        color: "#875AC4",
+      },
+      {
+        label: `STL Swer3 - ${secondDateSpecific ? secondDateSpecific : "N/A"}`,
+        color: "#6F58C9",
+      },
+      {
+        label: `STL Swer4 - ${firstDateSpecific ? firstDateSpecific : "N/A"}`,
+        color: "#563D99",
+      },
+      {
+        label: `STL Swer4 - ${secondDateSpecific ? secondDateSpecific : "N/A"}`,
+        color: "#3E2466",
+      },
+    ],
+    "Total Bettors by Game Type": [
+      {
+        label: `STL Pares - ${firstDateSpecific ? firstDateSpecific : "N/A"}`,
+        color: "#E5C7FF",
+      },
+      {
+        label: `STL Pares - ${secondDateSpecific ? secondDateSpecific : "N/A"}`,
+        color: "#5050A5",
+      },
+      {
+        label: `STL Swer2 - ${firstDateSpecific ? firstDateSpecific : "N/A"}`,
+        color: "#7266C9",
+      },
+      {
+        label: `STL Swer2 - ${secondDateSpecific ? secondDateSpecific : "N/A"}`,
+        color: "#3B3B81",
+      },
+      {
+        label: `STL Swer3 - ${firstDateSpecific ? firstDateSpecific : "N/A"}`,
+        color: "#875AC4",
+      },
+      {
+        label: `STL Swer3 - ${secondDateSpecific ? secondDateSpecific : "N/A"}`,
+        color: "#6F58C9",
+      },
+      {
+        label: `STL Swer4 - ${firstDateSpecific ? firstDateSpecific : "N/A"}`,
+        color: "#563D99",
+      },
+      {
+        label: `STL Swer4 - ${secondDateSpecific ? secondDateSpecific : "N/A"}`,
+        color: "#3E2466",
+      },
+    ],
+    "Top Betting Region by Total Bets": [
+      {
+        label: `Ranking - ${firstDateSpecific ? firstDateSpecific : "N/A"}`,
+        color: "#E5C7FF",
+      },
+      {
+        label: `Ranking - ${secondDateSpecific ? secondDateSpecific : "N/A"}`,
+        color: "#3E2466",
+      },
+    ],
+    "Top Betting Region by Total Bettors": [
+      {
+        label: `Ranking - ${firstDateSpecific ? firstDateSpecific : "N/A"}`,
+        color: "#E5C7FF",
+      },
+      {
+        label: `Ranking - ${secondDateSpecific ? secondDateSpecific : "N/A"}`,
+        color: "#3E2466",
+      },
+    ],
+  };
+
   return legendItemsMap[categoryFilter];
-}
+};
+
 // Map here, for Custom Legend if the Selected Date Type (Duration)
 export const getLegendItemsMap_Duration = (
   categoryFilter: categoryType,
@@ -326,15 +329,15 @@ export const getLegendItemsMap_Duration = (
     },
     {
       label: `Bettors - ${firstDateDuration ? firstDateDuration : "N/A"} - ${secondDateDuration ? secondDateDuration : "N/A"}`,
-      color: "#D2A7FF",
+      color: "#5050A5",
     },
     {
       label: `Bets - ${firstDateSpecific ? firstDateSpecific : "N/A"} - ${secondDateSpecific ? secondDateSpecific : "N/A"}`,
-      color: "#D2A7FF",
+      color: "#7266C9",
     },
     {
       label: `Bets - ${firstDateDuration ? firstDateDuration : "N/A"} - ${secondDateDuration ? secondDateDuration : "N/A"}`,
-      color: "#D2A7FF",
+      color: "#3B3B81",
     },
   ],
   "Total Bets by Bet Type": [
@@ -344,15 +347,15 @@ export const getLegendItemsMap_Duration = (
     },
     {
       label: `Tumbok - ${firstDateDuration ? firstDateDuration : "N/A"} - ${secondDateDuration ? secondDateDuration : "N/A"}`,
-      color: "#D2A7FF",
+      color: "#5050A5",
     },
     {
       label: `Sahod - ${firstDateSpecific ? firstDateSpecific : "N/A"} - ${secondDateSpecific ? secondDateSpecific : "N/A"}`,
-      color: "#D2A7FF",
+      color: "#7266C9",
     },
     {
       label: `Sahod - ${firstDateDuration ? firstDateDuration : "N/A"} - ${secondDateDuration ? secondDateDuration : "N/A"}`,
-      color: "#D2A7FF",
+      color: "#3B3B81",
     },
   ],
   "Total Bettors by Bet Type": [
@@ -362,15 +365,15 @@ export const getLegendItemsMap_Duration = (
     },
     {
       label: `Tumbok - ${firstDateDuration ? firstDateDuration : "N/A"} - ${secondDateDuration ? secondDateDuration : "N/A"}`,
-      color: "#D2A7FF",
+      color: "#5050A5",
     },
     {
       label: `Sahod - ${firstDateSpecific ? firstDateSpecific : "N/A"} - ${secondDateSpecific ? secondDateSpecific : "N/A"}`,
-      color: "#D2A7FF",
+      color: "#7266C9",
     },
     {
       label: `Sahod - ${firstDateDuration ? firstDateDuration : "N/A"} - ${secondDateDuration ? secondDateDuration : "N/A"}`,
-      color: "#D2A7FF",
+      color: "#3B3B81",
     },
   ],
   "Total Bets by Game Type": [
@@ -380,19 +383,19 @@ export const getLegendItemsMap_Duration = (
     },
     {
       label: `STL Pares - ${firstDateDuration ? firstDateDuration : "N/A"} - ${secondDateDuration ? secondDateDuration : "N/A"}`,
-      color: "#E5C7FF",
+      color: "#5050A5",
     },
     {
       label: `STL Swer2 - ${firstDateSpecific ? firstDateSpecific : "N/A"} - ${secondDateSpecific ? secondDateSpecific : "N/A"}`,
-      color: "#E5C7FF",
+      color: "#7266C9",
     },
     {
       label: `STL Swer2 - ${firstDateDuration ? firstDateDuration : "N/A"} - ${secondDateDuration ? secondDateDuration : "N/A"}`,
-      color: "#E5C7FF",
+      color: "#3B3B81",
     },
     {
       label: `STL Swer3 - ${firstDateSpecific ? firstDateSpecific : "N/A"} - ${secondDateSpecific ? secondDateSpecific : "N/A"}`,
-      color: "#6F58C9",
+      color: "#875AC4",
     },
     {
       label: `STL Swer3 - ${firstDateDuration ? firstDateDuration : "N/A"} - ${secondDateDuration ? secondDateDuration : "N/A"}`,
@@ -400,11 +403,11 @@ export const getLegendItemsMap_Duration = (
     },
     {
       label: `STL Swer4 - ${firstDateSpecific ? firstDateSpecific : "N/A"} - ${secondDateSpecific ? secondDateSpecific : "N/A"}`,
-      color: "#6F58C9",
+      color: "#563D99",
     },
     {
       label: `STL Swer4 - ${firstDateDuration ? firstDateDuration : "N/A"} - ${secondDateDuration ? secondDateDuration : "N/A"}`,
-      color: "#6F58C9",
+      color: "#3E2466",
     },
   ],
   "Total Bettors by Game Type": [
@@ -414,19 +417,19 @@ export const getLegendItemsMap_Duration = (
     },
     {
       label: `STL Pares - ${firstDateDuration ? firstDateDuration : "N/A"} - ${secondDateDuration ? secondDateDuration : "N/A"}`,
-      color: "#E5C7FF",
+      color: "#5050A5",
     },
     {
       label: `STL Swer2 - ${firstDateSpecific ? firstDateSpecific : "N/A"} - ${secondDateSpecific ? secondDateSpecific : "N/A"}`,
-      color: "#E5C7FF",
+      color: "#7266C9",
     },
     {
       label: `STL Swer2 - ${firstDateDuration ? firstDateDuration : "N/A"} - ${secondDateDuration ? secondDateDuration : "N/A"}`,
-      color: "#E5C7FF",
+      color: "#3B3B81",
     },
     {
       label: `STL Swer3 - ${firstDateSpecific ? firstDateSpecific : "N/A"} - ${secondDateSpecific ? secondDateSpecific : "N/A"}`,
-      color: "#6F58C9",
+      color: "#875AC4",
     },
     {
       label: `STL Swer3 - ${firstDateDuration ? firstDateDuration : "N/A"} - ${secondDateDuration ? secondDateDuration : "N/A"}`,
@@ -434,11 +437,11 @@ export const getLegendItemsMap_Duration = (
     },
     {
       label: `STL Swer4 - ${firstDateSpecific ? firstDateSpecific : "N/A"} - ${secondDateSpecific ? secondDateSpecific : "N/A"}`,
-      color: "#6F58C9",
+      color: "#563D99",
     },
     {
       label: `STL Swer4 - ${firstDateDuration ? firstDateDuration : "N/A"} - ${secondDateDuration ? secondDateDuration : "N/A"}`,
-      color: "#6F58C9",
+      color: "#3E2466",
     },
   ],
   "Top Betting Region by Total Bets": [
@@ -448,17 +451,17 @@ export const getLegendItemsMap_Duration = (
     },
     {
       label: `Ranking - ${firstDateSpecific ? firstDateSpecific : "N/A"} - ${secondDateSpecific ? secondDateSpecific : "N/A"}`,
-      color: "#3E2466",
+      color: "#5050A5",
     },
   ],
   "Top Betting Region by Total Bettors": [
     {
-      label: "Ranking",
+      label: "E5C7FF",
       color: "#E5C7FF",
     },
     {
       label: "Ranking",
-      color: "##3E2466",
+      color: "#5050A5",
     },
   ],
 }
