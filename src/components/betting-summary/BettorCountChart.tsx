@@ -188,7 +188,7 @@ const ChartBettorsSummary = () => {
           }}
         >
           <Typography 
-            color="#FFFFFF" 
+            color="#212121" 
             sx={{ 
               fontSize: "16px" 
             }}>

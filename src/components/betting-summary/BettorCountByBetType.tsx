@@ -1,7 +1,7 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Box, Typography, Stack, CircularProgress } from "@mui/material";
 import { BarChart } from "@mui/x-charts/BarChart";
-// import { fetchHistoricalSummary, fetchTransactions } from "~/utils/api/transactions";
+import { fetchTransactions } from "~/utils/api/transactions";
 import { TodaysBettorCountByGameTypeData, addLabelsGameTypes } from "~/components/betting-summary/tooltips/dataSet";
 // import fetchHistoricalSummary from "~/utils/api/transactions/getHistoricalSummary";
 
@@ -40,7 +40,7 @@ const CustomLegend = () => (
       />
       <Typography color="#212121">Sahod</Typography>
     </Box>
-    <Box sx={{ display: "flex", alignItems: "center" }}>
+    {/* <Box sx={{ display: "flex", alignItems: "center" }}>
       <Box
         sx={{
           width: 14,
@@ -51,16 +51,16 @@ const CustomLegend = () => (
         }}
       />
       <Typography color="#212121">Ramble</Typography>
-    </Box>
+    </Box> */}
   </Stack>
 );
 
-// const ChartBettorsBetTypeSummary = (params: {gameCategoryId?: number}) => {
+const ChartBettorsBetTypeSummary = (params: {gameCategoryId?: number}) => {
 
-  const ChartBettorsBetTypeSummary = () => {
-  // const [data, setData] = useState<
-  //     { draw: string; tumbok: number, sahod: number, ramble: number }[]
-  //   >([]);
+  // const ChartBettorsBetTypeSummary = () => {
+  const [data, setData] = useState<
+      { draw: string; tumbok: number, sahod: number, ramble: number }[]
+    >([]);
   const [loading] = useState(false);
 
   const xAxisTicks = [
@@ -68,90 +68,90 @@ const CustomLegend = () => (
     95, 100,
   ];
 
-  // useEffect(() => {
-  //     const fetchData = async () => {
-  //       // setLoading(true);
-  //       try {
-  //         const response = await fetchTransactions(); // Add query params if needed
-  //         console.log(response)
-  //         const today = new Date().toISOString().split("T")[0];
-  //         console.log(today); // Output: "2025-03-25T00:00:00.000Z"
+  useEffect(() => {
+      const fetchData = async () => {
+        // setLoading(true);
+        try {
+          const response = await fetchTransactions(); // Add query params if needed
+          console.log(response)
+          const today = new Date().toISOString().split("T")[0];
+          console.log(today); // Output: "2025-03-25T00:00:00.000Z"
 
-  //         // Filter Data for Today's Date
-  //         let res = response.data.filter((item: { DateOfTransaction: string, GameCategoryId: number }) =>
-  //           item.DateOfTransaction.startsWith(today)
-  //         );
+          // Filter Data for Today's Date
+          let res = response.data.filter((item: { DateOfTransaction: string, GameCategoryId: number }) =>
+            item.DateOfTransaction.startsWith(today)
+          );
 
-  //         if(params.gameCategoryId && params.gameCategoryId > 0) {
-  //           res = res.filter((item: { GameCategoryId: number }) =>
-  //             item.GameCategoryId === params.gameCategoryId
-  //           );
-  //         }
+          if(params.gameCategoryId && params.gameCategoryId > 0) {
+            res = res.filter((item: { GameCategoryId: number }) =>
+              item.GameCategoryId === params.gameCategoryId
+            );
+          }
           
-  //         console.log("bet types", res)
+          console.log("BettorCountByBetType Response:", res)
   
-  //         if (response.success && Array.isArray(res)) {
-  //           // Aggregate data by GameTypeId
-  //           const aggregatedData: Record<
-  //             number,
-  //             { tumbok: number; sahod: number; ramble: number }
-  //           > = {};
+          if (response.success && Array.isArray(res)) {
+            // Aggregate data by GameTypeId
+            const aggregatedData: Record<
+              number,
+              { tumbok: number; sahod: number; ramble: number }
+            > = {};
   
-  //           res.forEach(
-  //             (item: {
-  //               DrawOrder: number;
-  //               Tumbok: number;
-  //               Sahod: number;
-  //               Ramble: number;
-  //               GameCategoryId: number;
-  //             }) => {
-  //               if (!aggregatedData[item.DrawOrder]) {
-  //                 aggregatedData[item.DrawOrder] = { tumbok: 0, sahod: 0, ramble: 0 };
-  //               }
+            res.forEach(
+              (item: {
+                DrawOrder: number;
+                Tumbok: number;
+                Sahod: number;
+                Ramble: number;
+                GameCategoryId: number;
+              }) => {
+                if (!aggregatedData[item.DrawOrder]) {
+                  aggregatedData[item.DrawOrder] = { tumbok: 0, sahod: 0, ramble: 0 };
+                }
   
-  //               aggregatedData[item.DrawOrder].tumbok += item.Tumbok;
-  //               aggregatedData[item.DrawOrder].sahod += item.Sahod;
-  //               aggregatedData[item.DrawOrder].ramble += item.Ramble;
-  //             }
-  //           );
+                aggregatedData[item.DrawOrder].tumbok += item.Tumbok;
+                aggregatedData[item.DrawOrder].sahod += item.Sahod;
+                aggregatedData[item.DrawOrder].ramble += item.Ramble;
+              }
+            );
   
-  //           // Convert aggregated data into the required format
-  //           const formattedData = [
-  //             {
-  //               draw: "First Draw",
-  //               tumbok: aggregatedData[1]?.tumbok || 0,
-  //               sahod: aggregatedData[1]?.sahod || 0,
-  //               ramble: aggregatedData[1]?.ramble || 0,
-  //             },
-  //             {
-  //               draw: "Second Draw",
-  //               tumbok: aggregatedData[2]?.tumbok || 0,
-  //               sahod: aggregatedData[2]?.sahod || 0,
-  //               ramble: aggregatedData[2]?.ramble || 0,
-  //             },
-  //             {
-  //               draw: "Third Draw",
-  //               tumbok: aggregatedData[3]?.tumbok || 0,
-  //               sahod: aggregatedData[3]?.sahod || 0,
-  //               ramble: aggregatedData[3]?.ramble || 0,
-  //             },
-  //           ];
+            // Convert aggregated data into the required format
+            const formattedData = [
+              {
+                draw: "First Draw",
+                tumbok: aggregatedData[1]?.tumbok || 0,
+                sahod: aggregatedData[1]?.sahod || 0,
+                ramble: aggregatedData[1]?.ramble || 0,
+              },
+              {
+                draw: "Second Draw",
+                tumbok: aggregatedData[2]?.tumbok || 0,
+                sahod: aggregatedData[2]?.sahod || 0,
+                ramble: aggregatedData[2]?.ramble || 0,
+              },
+              {
+                draw: "Third Draw",
+                tumbok: aggregatedData[3]?.tumbok || 0,
+                sahod: aggregatedData[3]?.sahod || 0,
+                ramble: aggregatedData[3]?.ramble || 0,
+              },
+            ];
   
-  //           setData(formattedData);
-  //           console.log(formattedData)
-  //           // setLoading(false);
-  //         }
-  //       } catch (error) {
-  //         console.log(
-  //           "Error loading BettorsvsBetsPlacedSummary: " +
-  //             (error as Error).message
-  //         );
-  //       }
-  //     };
+            setData(formattedData);
+            console.log("Formatted Data ",formattedData)
+            // setLoading(false);
+          }
+        } catch (error) {
+          console.log(
+            "Error loading BettorsvsBetsPlacedSummary: " +
+              (error as Error).message
+          );
+        }
+      };
   
-  //     fetchData();
-  //     console.log(`Bettors vs Bets Placed Summary Data: ${data}`);
-  //   }, []);
+      fetchData();
+      console.log(`Bettors vs Bets Placed Summary Data: ${data}`);
+    }, []);
 
   return (
     <Box
@@ -193,37 +193,41 @@ const CustomLegend = () => (
         { loading ? (
           <CircularProgress/>
         ) : (
-                    <BarChart
+        <BarChart
             height={300}
             // width={{100%}}
             grid={{ vertical: true }}
             slotProps={{ legend: { hidden: true } }}
             layout="horizontal"
             margin={{ left: 90, right: 20, top: 20, bottom: 40 }}
-            dataset={TodaysBettorCountByGameTypeData}
-            yAxis={[
-              {
-                scaleType: "band",
-                data: ["First Draw", "Second Draw", "Third Draw"], 
-                // series={[{ data: [4, 3, 5] }, { data: [1, 6, 3] }]},
-              },
-            ]}
-            xAxis={[
-              {
-                label: "Amount (in 100,000 units)",
-                // scaleType: "linear",
-                min: 0, 
-                max: 100,
-                tickValues: xAxisTicks,
-                tickSpacing:1 ,
-              },
-            ]}
-            series={addLabelsGameTypes([
-              { dataKey: 'STL_Pares', color: '#E5C7FF' },
-              { dataKey: 'STL_Swer2', color: '#D2A7FF' },
-              { dataKey: 'STL_Swer3', color: '#BB86FC' },
-              { dataKey: 'STL_Swer4', color: '#A06FE6' }
-            ])}
+            dataset={data}
+          yAxis={[
+            {
+              scaleType: "band",
+              data: data.map(item => item.draw), // Use the draw names from your data
+            },
+          ]}
+          xAxis={[
+            {
+              label: "Amount (in 100,000 units)",
+              min: 0, 
+              max: 100,
+              tickValues: xAxisTicks,
+              tickSpacing: 1,
+            },
+          ]}
+          series={[
+            { 
+              dataKey: 'tumbok', 
+              label: 'Tumbok',
+              color: '#E5C7FF' 
+            },
+            { 
+              dataKey: 'sahod', 
+              label: 'Sahod',
+              color: '#5050A5' 
+            },
+          ]}
           />
         )}
         </Box>
