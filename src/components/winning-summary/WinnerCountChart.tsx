@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Box, Typography, Stack } from "@mui/material";
+import { Box, Typography, Stack, CircularProgress} from "@mui/material";
 import { BarChart } from "@mui/x-charts/BarChart";
 import { fetchHistoricalSummary } from "~/utils/api/transactions";
 
@@ -25,11 +25,11 @@ const CustomLegend = () => (
           width: 14,
           height: 14,
           borderRadius: "50%",
-          backgroundColor: "#E5C7FF",
+          backgroundColor: "#E57CFF",
           mr: 1.5,
         }}
       />
-      <Typography color="white">STL Pares</Typography>
+      <Typography color="#212121">STL Pares</Typography>
     </Box>
     <Box sx={{ display: "flex", alignItems: "center" }}>
       <Box
@@ -41,7 +41,7 @@ const CustomLegend = () => (
           mr: 1.5,
         }}
       />
-      <Typography color="white">STL Swer2</Typography>
+      <Typography color="#212121">STL Swer2</Typography>
     </Box>
     <Box sx={{ display: "flex", alignItems: "center" }}>
       <Box
@@ -53,7 +53,7 @@ const CustomLegend = () => (
           mr: 1.5,
         }}
       />
-      <Typography color="white">STL Swer3</Typography>
+      <Typography color="#212121">STL Swer3</Typography>
     </Box>
     <Box sx={{ display: "flex", alignItems: "center" }}>
       <Box
@@ -65,7 +65,8 @@ const CustomLegend = () => (
           mr: 1.5,
         }}
       />
-      <Typography color="white">STL Swer4</Typography>
+      <Typography color="#212121
+">STL Swer4</Typography>
     </Box>
   </Stack>
 );
@@ -239,7 +240,7 @@ const ChartWinnersSummary = () => {
               ];
     
               setData(formattedData);
-              console.log(formattedData)
+              console.log("WinnerCountChart Formatted Data: ",formattedData)
               setLoading(false);
             }
           } catch (error) {
@@ -257,11 +258,12 @@ const ChartWinnersSummary = () => {
   return (
     <Box
       sx={{
-        backgroundColor: "#171717",
+        backgroundColor: " #F8F0E3",
         padding: "1rem",
         borderRadius: "8px",
         paddingBottom: "2rem",
         marginRight: 0,
+        border: "1px solid #0038A8"
       }}
     >
       <Box>
@@ -273,7 +275,7 @@ const ChartWinnersSummary = () => {
           }}
         >
           <Typography 
-            color="#FFFFFF" 
+            color="#212121" 
             sx={{ 
               fontSize: "16px" 
             }}>
@@ -282,6 +284,9 @@ const ChartWinnersSummary = () => {
         </Box>
         <CustomLegend />
       </Box>
+      { loading ? (
+        <CircularProgress/>
+      ): (
         <Box
           sx={{
             height: "100%",
@@ -331,6 +336,8 @@ const ChartWinnersSummary = () => {
             ]}
           />
         </Box>
+      )}
+
     </Box>
   );
 };
