@@ -29,11 +29,13 @@ import { useUpdateModalState } from "../../../../store/useUpdateModalStore";
 import { useOperatorsData } from "../../../../store/useOperatorStore";
 import EditModalDataPage from "./EditLogModal";
 import Swal from "sweetalert2";
-import { generateValidPassword, updateSchema, userSchema } from "~/schemas/userSchema";
 import useUserRoleStore from "../../../../store/useUserStore";
 import Select from "react-select";
+
 import Visibility from "@mui/icons-material/Visibility";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
+import { set } from "zod";
+import { generateValidPassword } from "~/utils/passwordgenerate";
 
 const ReusableUpdateModal: React.FC<ReusableModalPageProps> = ({
   title,
@@ -43,6 +45,10 @@ const ReusableUpdateModal: React.FC<ReusableModalPageProps> = ({
   initialUserData,
   operatorMap,
   children,
+  provinces,
+  regions,
+  cities,
+  gameTypes,
 }) => {
   const {
     user,
@@ -66,10 +72,35 @@ const ReusableUpdateModal: React.FC<ReusableModalPageProps> = ({
   const [showEditButton, setShowEditButton] = useState(true);
   const { roleId } = useUserRoleStore();
   const [showPassword, setShowPassword] = useState(false);
+  const [isTouched, setIsTouched] = useState(false);
+  const [filteredProvinces, setFilteredProvinces] = useState<any[]>([]);
+  const [filteredCities, setFilteredCities] = useState<any[]>([]);
+  const [formData, setFormData] = useState<{
+    [key: string]: string | number | boolean | string[];
+  }>({});
+
+  console.log("PROVINCES OPE", cities);
+  console.log("HELLLOOOOOO GAME TYPE:", gameTypes);
+
+  const gameTypeOptions =
+    gameTypes?.map((type) => ({
+      value: type.GameCategoryId,
+      label: `${type.GameCategory} (${type.GameCategoryId})`,
+    })) || [];
+
+  const provincesOptions =
+    provinces?.map((type) => ({
+      value: type.ProvinceId,
+      label: type.ProvinceName,
+    })) || [];
 
   const handleDisable = () => {
     setIsDisabled(false);
     setShowEditButton(false); // Hide the button
+  };
+
+  const handleFocus = () => {
+    setIsTouched(true);
   };
 
   useEffect(() => {
@@ -81,10 +112,11 @@ const ReusableUpdateModal: React.FC<ReusableModalPageProps> = ({
       ...initialUserData,
       operatorId: initialUserData.OperatorId ?? null,
       userId: initialUserData.UserId || "null",
-      phoneNumber: initialUserData.PhoneNumber || "N/A",
-      email: initialUserData.Email || "N/A",
-      LastUpdatedBy: initialUserData.LastUpdatedBy || "N/A",
-      LastUpdatedDate: initialUserData.LastUpdatedDate || "N/A",
+      phoneNumber: initialUserData.PhoneNumber || "",
+      contactNumber: initialUserData.ContactNo || "",
+      email: initialUserData.Email || "",
+      LastUpdatedBy: initialUserData.LastUpdatedBy || "",
+      LastUpdatedDate: initialUserData.LastUpdatedDate || "",
     };
 
     setUser(transformedUser);
@@ -104,7 +136,22 @@ const ReusableUpdateModal: React.FC<ReusableModalPageProps> = ({
     setOperators(operator ? [operator] : []);
   }, [initialUserData, operatorMap]);
 
-  console.log('ENDPOINTTT', endpoint);
+  console.log("ENDPOINTTT", endpoint);
+
+  const handleMultiSelect = (fieldName: string, selectedOptions: any[]) => {
+    const selectedValues = Array.isArray(selectedOptions)
+      ? selectedOptions.map((option) => option.value)
+      : [];
+
+    console.log(`Field Name: ${fieldName}`);
+    console.log(`Selected Options:`, selectedOptions);
+    console.log(`Selected Values:`, selectedValues);
+
+    setUser({
+      ...user, // Merge the existing user object
+      [fieldName]: selectedValues, // Update the specific field with the selected values
+    });
+  };
 
   const roleName = getRoleName(roleId ?? 0);
   console.log("Role Name:", roleName);
@@ -132,102 +179,110 @@ const ReusableUpdateModal: React.FC<ReusableModalPageProps> = ({
     return key.replace(/([a-z])([A-Z])/g, "$1 $2");
   };
 
-  function handleChange(arg0: { target: { name: string; value: string } }) {
-    throw new Error("Function not implemented.");
-  }
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setUser((prevUser: any) => ({
+      ...prevUser,
+      [name]: value,
+    }));
+  };
 
-const handleSubmit = async () => {
-  try {
-    if (!endpoint) throw new Error("Endpoint is missing.");
-    if (typeof endpoint === "object" && !endpoint.update) {
-      throw new Error("Invalid endpoint: 'update' endpoint is required.");
-    }
-
-    const endpointUrl =
-      typeof endpoint === "string" ? endpoint : endpoint.update;
-
-    if (!originalUserData) throw new Error("Original user data is missing.");
-
-    const updatedFields: Record<string, any> = {};
-
-    // Check if we are updating user data or operator data
-    const isUserData = !!user.UserId; // If user.UserId exists, it's user data
-    const isOperatorData = !!user.OperatorId; // If user.OperatorId exists, it's operator data
-
-    // Conditional requirement based on user data or operator data
-    if (isUserData) {
-      // userId is required if we're updating user data
-      if (!user.UserId) {
-        throw new Error("userId is required for user data.");
+  const handleSubmit = async () => {
+    try {
+      if (!endpoint) throw new Error("Endpoint is missing.");
+      if (typeof endpoint === "object" && !endpoint.update) {
+        throw new Error("Invalid endpoint: 'update' endpoint is required.");
       }
-      updatedFields.userId = user.UserId; // Add userId to updated fields
-    } else if (isOperatorData) {
-      // operatorId is required if we're updating operator data
-      if (!user.OperatorId) {
-        throw new Error("operatorId is required for operator data.");
+
+      const endpointUrl =
+        typeof endpoint === "string" ? endpoint : endpoint.update;
+
+      if (!originalUserData) throw new Error("Original user data is missing.");
+
+      const updatedFields: Record<string, any> = {};
+
+      // Check if we are updating user data or operator data
+      const isUserData = !!user.UserId; // If user.UserId exists, it's user data
+      const isOperatorData = !!user.OperatorId; // If user.OperatorId exists, it's operator data
+
+      // Conditional requirement based on user data or operator data
+      if (isUserData) {
+        // userId is required if we're updating user data
+        if (!user.UserId) {
+          throw new Error("userId is required for user data.");
+        }
+        updatedFields.userId = user.UserId; // Add userId to updated fields
+      } else if (isOperatorData) {
+        // operatorId is required if we're updating operator data
+        if (!user.OperatorId) {
+          throw new Error("operatorId is required for operator data.");
+        }
+        updatedFields.operatorId = user.OperatorId; // Add operatorId to updated fields
       }
-      updatedFields.operatorId = user.OperatorId; // Add operatorId to updated fields
-    }
 
-    // Add other fields (user or operator related) if they have changed
-    Object.entries(user).forEach(([key, value]) => {
-      const originalValue = originalUserData[key];
-      if ((key !== "UserId" && key !== "OperatorId") && value !== originalValue) {
-        const normalizedKey = key.charAt(0).toLowerCase() + key.slice(1);
-        updatedFields[normalizedKey] = value;
+      // Add other fields (user or operator related) if they have changed
+      Object.entries(user).forEach(([key, value]) => {
+        const originalValue = originalUserData[key];
+        if (
+          key !== "UserId" &&
+          key !== "OperatorId" &&
+          value !== originalValue
+        ) {
+          const normalizedKey = key.charAt(0).toLowerCase() + key.slice(1);
+          updatedFields[normalizedKey] = value;
+        }
+      });
+
+      console.log("Updated Fields:", updatedFields);
+
+      // Add confirmation prompt before making the API call
+      const confirmationResult = await Swal.fire({
+        title: "Update Confirmation",
+        text: "Did you enter the correct details?",
+        icon: "question",
+        showCancelButton: true,
+        confirmButtonText: '<span style="color: #212121;">Yes, I did.</span>',
+        cancelButtonText:
+          '<span style="color: #212121;">No, let me check</span>',
+        confirmButtonColor: "#67ABEB",
+        cancelButtonColor: "#f0f0f0",
+        customClass: {
+          cancelButton: "no-hover",
+        },
+      });
+
+      if (!confirmationResult.isConfirmed) {
+        // User canceled, exit function
+        return;
       }
-    });
 
-    console.log("Updated Fields:", updatedFields);
+      const response = await axiosInstance.patch(endpointUrl, updatedFields, {
+        withCredentials: true,
+      });
 
-    // Add confirmation prompt before making the API call
-    const confirmationResult = await Swal.fire({
-      title: "Update Confirmation",
-      text: "Did you enter the correct details?",
-      icon: "question",
-      showCancelButton: true,
-      confirmButtonText: '<span style="color: #212121;">Yes, I did.</span>',
-      cancelButtonText:
-        '<span style="color: #212121;">No, let me check</span>',
-      confirmButtonColor: "#67ABEB",
-      cancelButtonColor: "#f0f0f0",
-      customClass: {
-        cancelButton: "no-hover",
-      },
-    });
+      Swal.fire({
+        icon: "success",
+        title: "Success",
+        text: "User updated successfully!",
+        timer: 2000,
+        showConfirmButton: false,
+      });
 
-    if (!confirmationResult.isConfirmed) {
-      // User canceled, exit function
-      return;
+      onClose();
+    } catch (error) {
+      const err = error as AxiosError;
+
+      Swal.fire({
+        icon: "error",
+        title: "Update Failed",
+        text:
+          (err.response?.data as { message?: string })?.message ||
+          err.message ||
+          "An unexpected error occurred.",
+      });
     }
+  };
 
-    const response = await axiosInstance.patch(endpointUrl, updatedFields, {
-      withCredentials: true,
-    });
-
-    Swal.fire({
-      icon: "success",
-      title: "Success",
-      text: "User updated successfully!",
-      timer: 2000,
-      showConfirmButton: false,
-    });
-
-    onClose();
-  } catch (error) {
-    const err = error as AxiosError;
-
-    Swal.fire({
-      icon: "error",
-      title: "Update Failed",
-      text:
-        (err.response?.data as { message?: string })?.message ||
-        err.message ||
-        "An unexpected error occurred.",
-    });
-  }
-};
-  
   return (
     <Dialog
       open={isOpen}
@@ -276,79 +331,87 @@ const handleSubmit = async () => {
           {/* Personal Information Fields */}
           <Stack direction="row" spacing={3}>
             <Stack spacing={3} sx={{ flex: 1 }}>
-              {roleName === "Operator" &&
-                ["OperatorName"].map((key) => (
-                  <FormControl
-                    fullWidth
-                    error={Boolean(errors[key])}
-                    size="small"
-                    key={key}
-                  >
-                    <InputLabel htmlFor={key}>{formatKey(key)}</InputLabel>
-                    <OutlinedInput
-                      id={key}
-                      name={key}
-                      label={formatKey(key)}
-                      placeholder={`Enter ${formatKey(key)}`}
-                      value={user[key as keyof typeof user] || "No data"}
-                      onChange={handleManagerChange}
-                      disabled={alwaysDisabledKeys.includes(key) || isDisabled}
-                    />
-                    {errors[key] && (
-                      <FormHelperText>{errors[key]}</FormHelperText>
-                    )}
-                  </FormControl>
-                ))}
+              {roleName === "Operator" && (
+                <FormControl
+                  fullWidth
+                  error={Boolean(errors["OperatorName"])}
+                  size="small"
+                >
+                  <InputLabel htmlFor="OperatorName">
+                    {formatKey("OperatorName")}
+                  </InputLabel>
+                  <OutlinedInput
+                    id="OperatorName"
+                    name="OperatorName"
+                    label={formatKey("OperatorName")}
+                    placeholder={`Enter ${formatKey("OperatorName")}`}
+                    value={user.OperatorName || "No data"}
+                    onChange={handleManagerChange}
+                    disabled={
+                      alwaysDisabledKeys.includes("OperatorName") || isDisabled
+                    }
+                  />
+                  {errors["OperatorName"] && (
+                    <FormHelperText>{errors["OperatorName"]}</FormHelperText>
+                  )}
+                </FormControl>
+              )}
             </Stack>
 
             <Stack spacing={3} sx={{ flex: 1 }}>
-              {roleName === "Operator" &&
-                ["ContactNo"].map((key) => (
-                  <FormControl
-                    fullWidth
-                    error={Boolean(errors[key])}
-                    size="small"
-                    key={key}
-                  >
-                    <InputLabel htmlFor={key}>{formatKey(key)}</InputLabel>
-                    <OutlinedInput
-                      id={key}
-                      name={key}
-                      label={formatKey(key)}
-                      placeholder={`Enter ${formatKey(key)}`}
-                      value={user[key as keyof typeof user] || "No data"}
-                      onChange={handleManagerChange}
-                      disabled={alwaysDisabledKeys.includes(key) || isDisabled}
-                    />
-                    {errors[key] && (
-                      <FormHelperText>{errors[key]}</FormHelperText>
-                    )}
-                  </FormControl>
-                ))}
+              {roleName === "Operator" && (
+                <FormControl
+                  fullWidth
+                  error={Boolean(errors["contactNumber"])}
+                  size="small"
+                >
+                  <InputLabel htmlFor="contactNumber">
+                    {formatKey("contactNumber")}
+                  </InputLabel>
+                  <OutlinedInput
+                    id="contactNumber"
+                    name="contactNumber"
+                    label={formatKey("contactNumber")}
+                    placeholder={`Enter ${formatKey("contactNumber")}`}
+                    value={user.contactNumber || ""}
+                    onChange={handleManagerChange}
+                    disabled={
+                      alwaysDisabledKeys.includes("contactNumber") || isDisabled
+                    }
+                  />
+                  {errors["contactNumber"] && (
+                    <FormHelperText>{errors["contactNumber"]}</FormHelperText>
+                  )}
+                </FormControl>
+              )}
             </Stack>
           </Stack>
 
-          {roleName === "Operator" &&
-            ["OperatorAddress"].map((key) => (
-              <FormControl
-                fullWidth
-                error={Boolean(errors[key])}
-                size="small"
-                key={key}
-              >
-                <InputLabel htmlFor={key}>{formatKey(key)}</InputLabel>
-                <OutlinedInput
-                  id={key}
-                  name={key}
-                  label={formatKey(key)}
-                  placeholder={`Enter ${formatKey(key)}`}
-                  value={user[key as keyof typeof user] || "No data"}
-                  onChange={handleManagerChange}
-                  disabled={alwaysDisabledKeys.includes(key) || isDisabled}
-                />
-                {errors[key] && <FormHelperText>{errors[key]}</FormHelperText>}
-              </FormControl>
-            ))}
+          {roleName === "Operator" && (
+            <FormControl
+              fullWidth
+              error={Boolean(errors["OperatorAddress"])}
+              size="small"
+            >
+              <InputLabel htmlFor="OperatorAddress">
+                {formatKey("OperatorAddress")}
+              </InputLabel>
+              <OutlinedInput
+                id="OperatorAddress"
+                name="OperatorAddress"
+                label={formatKey("OperatorAddress")}
+                placeholder={`Enter ${formatKey("OperatorAddress")}`}
+                value={user.OperatorAddress || ""}
+                onChange={handleManagerChange}
+                disabled={
+                  alwaysDisabledKeys.includes("OperatorAddress") || isDisabled
+                }
+              />
+              {errors["OperatorAddress"] && (
+                <FormHelperText>{errors["OperatorAddress"]}</FormHelperText>
+              )}
+            </FormControl>
+          )}
 
           <Stack direction="row" spacing={3} sx={{ mt: "1.5rem !important" }}>
             <Stack spacing={3} sx={{ flex: 1 }}>
@@ -441,115 +504,121 @@ const handleSubmit = async () => {
                       sx={selectStyles}
                       error={!status && !isDisabled}
                     >
-                      <InputLabel id="status-label">Status</InputLabel>
+                      {/* <InputLabel id="status-label">Status</InputLabel> */}
                       <Select
-                        labelId="status-label"
                         id="status"
-                        value={status || ""}
-                        // onChange={(e) => setStatus(e.target.value)}
-                        label="Status"
-                        disabled={isDisabled}
-                        size="small"
+                        value={{ label: status, value: status }}
+                        onChange={(selectedOption) =>
+                          setStatus(selectedOption?.value || "")
+                        }
+                        options={[
+                          { label: "Active", value: "Active" },
+                          { label: "Inactive", value: "Inactive" },
+                        ]}
+                        isDisabled={isDisabled}
+                        className="react-select-container"
+                        classNamePrefix="react-select"
                         autoFocus
-                      >
-                        <MenuItem value="Active">Active</MenuItem>
-                        <MenuItem value="Inactive">Inactive</MenuItem>
-                        <MenuItem value="New">New</MenuItem>
-                        <MenuItem value="Suspended">Suspended</MenuItem>
-                      </Select>
+                      />
                     </FormControl>
                   </Box>
                 ))}
 
-              {roleName === "Operator" &&
-                ["OperatorEmail"].map((key) => (
-                  <FormControl
-                    fullWidth
-                    error={Boolean(errors[key])}
-                    size="small"
-                    key={key}
-                  >
-                    <InputLabel htmlFor={key}>{formatKey(key)}</InputLabel>
-                    <OutlinedInput
-                      id={key}
-                      name={key}
-                      label={formatKey(key)}
-                      placeholder={`Enter ${formatKey(key)}`}
-                      value={user[key as keyof typeof user] || "No data"}
-                      onChange={handleManagerChange}
-                      disabled={alwaysDisabledKeys.includes(key) || isDisabled}
-                    />
-                    {errors[key] && (
-                      <FormHelperText>{errors[key]}</FormHelperText>
-                    )}
-                  </FormControl>
-                ))}
+              {roleName === "Operator" && (
+                <FormControl
+                  fullWidth
+                  error={Boolean(errors["email"])}
+                  size="small"
+                >
+                  <InputLabel htmlFor="email">{formatKey("email")}</InputLabel>
+                  <OutlinedInput
+                    id="email"
+                    name="email"
+                    label={formatKey("email")}
+                    placeholder={`Enter ${formatKey("email")}`}
+                    value={user.email || ""}
+                    onChange={handleManagerChange}
+                    disabled={
+                      alwaysDisabledKeys.includes("email") || isDisabled
+                    }
+                  />
+                  {errors["email"] && (
+                    <FormHelperText>{errors["email"]}</FormHelperText>
+                  )}
+                </FormControl>
+              )}
 
-              {roleName === "Operator" &&
-                ["gameType"].map((key) => (
-                  <FormControl
-                    fullWidth
-                    error={Boolean(errors[key])}
-                    size="small"
-                    key={key}
-                  >
-                    <InputLabel htmlFor={key}>{formatKey(key)}</InputLabel>
-                    <Select
-                      id={key}
-                      name={key}
-                      value={user[key as keyof typeof user] || ""}
-                      onChange={(selectedOption) =>
-                        handleManagerChange({
-                          target: {
-                            name: key,
-                            value: selectedOption?.value,
-                          },
-                        } as React.ChangeEvent<HTMLInputElement>)
-                      }
-                      isDisabled={
-                        alwaysDisabledKeys.includes(key) || isDisabled
-                      }
-                      className="react-select-container"
-                      classNamePrefix="react-select"
-                    />
-                    {errors[key] && (
-                      <FormHelperText>{errors[key]}</FormHelperText>
-                    )}
-                  </FormControl>
-                ))}
+              {roleName === "Operator" && (
+                <>
+                  <Select
+                    id="gameTypes"
+                    name="gameTypes"
+                    value={
+                      Array.isArray(user.gameTypes)
+                        ? gameTypeOptions.filter((option) =>
+                            user.gameTypes.includes(option.value)
+                          )
+                        : []
+                    }
+                    isMulti
+                    options={gameTypeOptions}
+                    onChange={(selectedOptions) =>
+                      handleMultiSelect(
+                        "gameTypes",
+                        Array.isArray(selectedOptions) ? selectedOptions : []
+                      )
+                    }
+                    className="react-select-container"
+                    classNamePrefix="react-select"
+                    placeholder="Select Games Provided"
+                    menuPortalTarget={
+                      typeof window !== "undefined" ? document.body : null
+                    }
+                    styles={{
+                      menuPortal: (base) => ({ ...base, zIndex: 9999 }),
+                    }}
+                  />
+                  {errors["gameTypes"] && (
+                    <FormHelperText>{errors["gameTypes"]}</FormHelperText>
+                  )}
+                </>
+              )}
 
-              {roleName === "Operator" &&
-                ["provinces"].map((key) => (
-                  <FormControl
-                    fullWidth
-                    error={Boolean(errors[key])}
-                    size="small"
-                    key={key}
-                  >
-                    <InputLabel htmlFor={key}>{formatKey(key)}</InputLabel>
-                    <Select
-                      id={key}
-                      name={key}
-                      value={user[key as keyof typeof user] || ""}
-                      onChange={(selectedOption) =>
-                        handleManagerChange({
-                          target: {
-                            name: key,
-                            value: selectedOption?.value,
-                          },
-                        } as React.ChangeEvent<HTMLInputElement>)
-                      }
-                      isDisabled={
-                        alwaysDisabledKeys.includes(key) || isDisabled
-                      }
-                      className="react-select-container"
-                      classNamePrefix="react-select"
-                    />
-                    {errors[key] && (
-                      <FormHelperText>{errors[key]}</FormHelperText>
-                    )}
-                  </FormControl>
-                ))}
+              {roleName === "Operator" && (
+                <>
+                  <Select
+                    id="provinces"
+                    name="provinces"
+                    value={
+                      Array.isArray(user.provinces)
+                        ? provincesOptions.filter((option) =>
+                            user.provinces.includes(option.value)
+                          )
+                        : []
+                    }
+                    isMulti={true}
+                    options={provincesOptions}
+                    onChange={(selectedOptions) =>
+                      handleMultiSelect(
+                        "provinces",
+                        Array.isArray(selectedOptions) ? selectedOptions : []
+                      )
+                    }
+                    className="react-select-container"
+                    classNamePrefix="react-select"
+                    placeholder="Select Province(s)"
+                    menuPortalTarget={
+                      typeof window !== "undefined" ? document.body : null
+                    }
+                    styles={{
+                      menuPortal: (base) => ({ ...base, zIndex: 9999 }),
+                    }}
+                  />
+                  {errors["provinces"] && (
+                    <FormHelperText>{errors["provinces"]}</FormHelperText>
+                  )}
+                </>
+              )}
             </Stack>
 
             <Stack spacing={3} sx={{ flex: 1 }}>
@@ -609,21 +678,16 @@ const handleSubmit = async () => {
                           id="Password"
                           name="Password"
                           type={showPassword ? "text" : "password"}
-                          label={formatKey("Password")}
-                          placeholder={`Enter ${formatKey("Password")}`}
                           value={
-                            isLoading
-                              ? ""
-                              : (user?.Password ??
-                                initialUserData?.Password ??
-                                "")
+                            !isTouched && !showPassword && user["Password"]
+                              ? "*****"
+                              : user["Password"]
                           }
-                          onChange={handleManagerChange}
-                          disabled={
-                            alwaysDisabledKeys.includes("Password") ||
-                            isDisabled ||
-                            isLoading
-                          }
+                          onFocus={handleFocus}
+                          label={formatKey("Password")}
+                          placeholder="********"
+                          onChange={handleChange}
+                          disabled={isLoading}
                           endAdornment={
                             <IconButton
                               onClick={() => setShowPassword((prev) => !prev)}
@@ -650,12 +714,10 @@ const handleSubmit = async () => {
                         type="button"
                         onClick={() => {
                           const generatedPassword = generateValidPassword();
-                          handleChange({
-                            target: {
-                              name: "Password",
-                              value: generatedPassword,
-                            },
-                          });
+                          setUser((prevUser: any) => ({
+                            ...prevUser,
+                            Password: generatedPassword,
+                          }));
                         }}
                         className="w-full bg-[#F6BA12] hover:bg-[#D1940F] text-[#181A1B] text-sm px-4 py-2 rounded-lg"
                       >
@@ -666,76 +728,114 @@ const handleSubmit = async () => {
                 </>
               )}
 
-              {roleName === "Operator" &&
-                ["DateOfOperation"].map((key) => (
-                  <FormControl
-                    fullWidth
-                    error={Boolean(errors[key])}
-                    size="small"
-                    key={key}
+              {roleName === "Operator" && (
+                <FormControl
+                  fullWidth
+                  error={Boolean(errors["DateOfOperation"])}
+                  size="small"
+                >
+                  <InputLabel htmlFor="DateOfOperation">
+                    {formatKey("DateOfOperation")}
+                  </InputLabel>
+                  <OutlinedInput
+                    id="DateOfOperation"
+                    name="DateOfOperation"
+                    label={formatKey("DateOfOperation")}
+                    placeholder={`Enter ${formatKey("DateOfOperation")}`}
+                    value={
+                      isLoading
+                        ? ""
+                        : (() => {
+                            const dateValue = user?.DateOfOperation;
+                            return dateValue &&
+                              !isNaN(Date.parse(dateValue as string))
+                              ? new Date(dateValue as string)
+                                  .toISOString()
+                                  .split("T")[0]
+                              : "";
+                          })()
+                    }
+                    onChange={handleManagerChange}
+                    disabled={
+                      alwaysDisabledKeys.includes("DateOfOperation") ||
+                      isDisabled
+                    }
+                  />
+                  {errors["DateOfOperation"] && (
+                    <FormHelperText>{errors["DateOfOperation"]}</FormHelperText>
+                  )}
+                </FormControl>
+              )}
+
+              {roleName === "Operator" && (
+                <div className="w-full">
+                  <select
+                    id="STLAreaOfOperations"
+                    name="STLAreaOfOperations"
+                    value={
+                      formData?.STLAreaOfOperations ||
+                      user?.STLAreaOfOperations ||
+                      initialUserData?.STLAreaOfOperations ||
+                      ""
+                    }
+                    onChange={(e) =>
+                      handleManagerChange({
+                        target: {
+                          name: "STLAreaOfOperations",
+                          value: e.target.value,
+                        },
+                      } as React.ChangeEvent<HTMLInputElement>)
+                    }
+                    className={`w-full border rounded px-3 py-2 text-sm ${
+                      errors?.STLAreaOfOperations?.length ||
+                      formData?.STLAreaOfOperations === ""
+                        ? "border-red-500"
+                        : "border-[#0038A8]"
+                    }`}
+                    aria-label="STLAreaOfOperations"
+                    disabled={isDisabled}
                   >
-                    <InputLabel htmlFor={key}>{formatKey(key)}</InputLabel>
-                    <OutlinedInput
-                      id={key}
-                      name={key}
-                      label={formatKey(key)}
-                      placeholder={`Enter ${formatKey(key)}`}
-                      value={
-                        isLoading
-                          ? ""
-                          : key === "DateOfOperation" ||
-                              key === "DateOfOperation"
-                            ? (() => {
-                                const dateValue =
-                                  user?.[key as keyof typeof user];
-                                return dateValue &&
-                                  !isNaN(Date.parse(dateValue as string))
-                                  ? new Date(dateValue as string)
-                                      .toISOString()
-                                      .split("T")[0]
-                                  : "";
-                              })()
-                            : (operators?.[0]?.[
-                                key as keyof (typeof operators)[0]
-                              ] ??
-                              user?.[key as keyof typeof user] ??
-                              "No Data")
-                      }
-                      onChange={handleManagerChange}
-                      disabled={alwaysDisabledKeys.includes(key) || isDisabled}
-                    />
-                    {errors[key] && (
-                      <FormHelperText>{errors[key]}</FormHelperText>
-                    )}
-                  </FormControl>
-                ))}
+                    <option value="" disabled style={{ color: "#9CA3AF" }}>
+                      Select an area of operation
+                    </option>
+                    <option value="Active">Provincial Wide</option>
+                    <option value="Inactive">City Wide</option>
+                  </select>
+
+                  {errors?.STLAreaOfOperations?.[0] && (
+                    <p className="text-sm text-red-600 mt-1">
+                      {errors.STLAreaOfOperations[0]}
+                    </p>
+                  )}
+                </div>
+              )}
 
               {/* Active Status for Operator */}
               {roleName === "Operator" && (
-                <Box sx={{ flex: 1 }}>
-                  <FormControl
-                    fullWidth
-                    sx={selectStyles}
-                    error={!status && !isDisabled}
-                  >
-                    <InputLabel id="status-label">Status</InputLabel>
-                    <Select
-                      labelId="status-label"
-                      id="status"
-                      value={status || ""}
-                      // onChange={(e) => setStatus(e.target.value)}
-                      label="Status"
-                      disabled={isDisabled}
-                      size="small"
-                      autoFocus
-                    >
-                      <MenuItem value="Active">Active</MenuItem>
-                      <MenuItem value="Inactive">Inactive</MenuItem>
-                      <MenuItem value="New">New</MenuItem>
-                      <MenuItem value="Suspended">Suspended</MenuItem>
-                    </Select>
-                  </FormControl>
-                </Box>
+                <div className="mb-4">
+                  {/* <label className="block mb-1 font-small">Status</label> */}
+                  <Select
+                    value={{ label: status, value: status }}
+                    onChange={(option) => setStatus(option?.value || "")}
+                    options={[
+                      { label: "Active", value: "Active" },
+                      { label: "Inactive", value: "Inactive" },
+                    ]}
+                    isDisabled={isDisabled}
+                    classNamePrefix="react-select"
+                    styles={{
+                      menuPortal: (base) => ({ ...base, zIndex: 999999 }),
+                      menu: (provided) => ({
+                        ...provided,
+                        maxHeight: 400,
+                        overflowY: "auto",
+                      }),
+                    }}
+                    menuPortalTarget={
+                      typeof window !== "undefined" ? document.body : null
+                    }
+                  />
+                </div>
               )}
             </Stack>
           </Stack>
@@ -756,7 +856,7 @@ const handleSubmit = async () => {
                       })()
                     : (user?.[key as keyof typeof user] ??
                       initialUserData?.[key] ??
-                      "No data");
+                      "");
 
                 return (
                   <FormControl key={key} fullWidth error={!!errors[key]}>
@@ -810,14 +910,14 @@ const handleSubmit = async () => {
                                 ? new Date(dateValue as string)
                                     .toISOString()
                                     .split("T")[0]
-                                : "N/A";
+                                : "";
                             })()
                           : (operators?.[0]?.[
                               key as keyof (typeof operators)[0]
                             ] ??
                             user?.[key as keyof typeof user] ??
                             initialUserData?.[key] ??
-                            "No data")
+                            "")
                     }
                     onChange={handleManagerChange}
                     disabled={
@@ -906,8 +1006,9 @@ const handleSubmit = async () => {
           )}
 
           {/* Show form children only when in edit mode */}
-          {!isDisabled && <div className="mt-4">{children({ handleSubmit })}</div>}
-
+          {!isDisabled && (
+            <div className="mt-4">{children({ handleSubmit })}</div>
+          )}
         </Stack>
       </DialogContent>
     </Dialog>

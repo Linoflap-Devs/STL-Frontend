@@ -73,11 +73,11 @@ const TopBettingRegionPage = () => {
 
   return (
   <div className="bg-transparent p-4 rounded-xl border border-[#0038A8]">
-      <div className="flex mb-2">
-        <div className="bg-[#2F2F2F] p-1 rounded-lg">
-          <FaDiceSix size={24} className="text-[#67ABEB]" />
+      <div className="flex items-center mb-2">
+        <div className="bg-[#0038A8] p-1 rounded-lg">
+          <FaDiceSix size={24} className="text-[#F6BA12]" />
         </div>
-        <p className="font-light text-base ml-2">Top Betting Regions Today</p>
+        <p className="font-light text-base ml-4">Top Betting Regions Today</p>
       </div>
       <div className="h-px bg-[#303030] mb-4" />
 
@@ -99,7 +99,7 @@ const TopBettingRegionPage = () => {
                 <ArrowDownward className="text-[#FF7A7A] ml-1 w-4 h-4" />
               )}
             </div>
-            <p className="text-white font-bold flex-1 ml-2">
+            <p className="flex-1 ml-2">
               {region.RegionFull}
             </p>
             <p className="text-center flex-1">

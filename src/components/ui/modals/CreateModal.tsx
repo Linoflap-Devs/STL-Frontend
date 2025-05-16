@@ -6,9 +6,10 @@ import ConfirmUserActionModalPage from './ConfirmUserActionModal';
 import Swal from 'sweetalert2';
 import Select from 'react-select';
 import { operatorSchema } from '~/schemas/operatorSchema';
-import { generateValidPassword, userSchema } from '~/schemas/userSchema';
+import { userSchema } from '~/schemas/userSchema';
 import Visibility from '@mui/icons-material/Visibility';
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
+import { generateValidPassword } from '~/utils/passwordgenerate';
 
 const ReusableCreateModalPage: React.FC<ReusableModalPageProps> = ({
   isOpen,
@@ -32,6 +33,12 @@ const ReusableCreateModalPage: React.FC<ReusableModalPageProps> = ({
   const isProvincial = formData.STLAreaOfOperations === 'ProvincialWide';
   const isCityWide = formData.STLAreaOfOperations === 'CityWide';
   const isExcludedCITY = formData.isExcludedCITY;
+
+  // console.log('CITIESS',cities)
+  // const filteredCity = (cities ?? []).map((city) => ({
+  //   value: city.CityId,
+  //   label: city.CityName.trim(), // optional trim
+  // }));
 
   // FOR TEXT FIELDS
   const handleChange = (
@@ -77,7 +84,7 @@ const ReusableCreateModalPage: React.FC<ReusableModalPageProps> = ({
     const selectedValues = selectedOptions.map((option) => option.value);
     console.log(`Selected Values for ${name}:`, selectedValues);
 
-    if (name === "STLRegion") {
+    if (name === "regions") {
       // Filter provinces based on selected region IDs
       const filteredProvinces = (provinces ?? [])
         .filter((province) => selectedValues.includes(Number(province.RegionId)))
@@ -91,15 +98,15 @@ const ReusableCreateModalPage: React.FC<ReusableModalPageProps> = ({
       // Reset province and city selections when region changes
       setFormData((prev) => ({
         ...prev,
-        STLRegion: selectedValues,
-        STLProvince: [],
-        STLCity: [],
+        regions: selectedValues,
+        provinces: [],
+        cities: [],
       }));
 
       setFilteredProvinces(filteredProvinces);
       setFilteredCities([]);
 
-    } else if (name === "STLProvince") {
+    } else if (name === "provinces") {
       // Filter cities based on selected province IDs
       const filteredCities = (cities ?? [])
         .filter((city) => selectedValues.includes(city.ProvinceId)) // Match with ProvinceId
@@ -112,19 +119,19 @@ const ReusableCreateModalPage: React.FC<ReusableModalPageProps> = ({
       // Reset city selection when province changes
       setFormData((prev) => ({
         ...prev,
-        STLProvince: selectedValues,
-        STLCity: [],
+        provinces: selectedValues,
+        cities: [],
       }));
 
       setFilteredCities(filteredCities);
 
-    } else if (name === "STLCity") {
+    } else if (name === "cities") {
       // Simply update selected city values
       console.log("Selected Cities:", selectedValues);
 
       setFormData((prev) => ({
         ...prev,
-        STLCity: selectedValues,
+        cities: selectedValues,
       }));
     } else {
       // For other fields, just update as usual
@@ -197,7 +204,10 @@ const ReusableCreateModalPage: React.FC<ReusableModalPageProps> = ({
   if (!isOpen) return null;
 
   return (
-    <Dialog open={isOpen} onClose={onClose} fullWidth
+    <Dialog
+      open={isOpen}
+      onClose={onClose}
+      fullWidth
       PaperProps={{
         sx: {
           width: "100%",
@@ -208,53 +218,81 @@ const ReusableCreateModalPage: React.FC<ReusableModalPageProps> = ({
             lg: "650px",
             xl: "680px",
           },
-        }
-      }}>
-      <DialogTitle sx={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', pb: 0, }}>
-        <IconButton sx={{ alignSelf: 'flex-end' }} onClick={onClose}>
-          <CloseIcon sx={{
-            fontSize: 28, fontWeight: 700, backgroundColor: '#ACA993',
-            borderRadius: '50%', padding: '4px', color: '#FFFFFF'
-          }} />
+        },
+      }}
+    >
+      <DialogTitle
+        sx={{
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "flex-start",
+          pb: 0,
+        }}
+      >
+        <IconButton sx={{ alignSelf: "flex-end" }} onClick={onClose}>
+          <CloseIcon
+            sx={{
+              fontSize: 28,
+              fontWeight: 700,
+              backgroundColor: "#ACA993",
+              borderRadius: "50%",
+              padding: "4px",
+              color: "#FFFFFF",
+            }}
+          />
         </IconButton>
-        <Typography sx={{ fontSize: 26, fontWeight: 'bold', mt: -4 }}>
+        <Typography sx={{ fontSize: 26, fontWeight: "bold", mt: -4 }}>
           {title}
         </Typography>
       </DialogTitle>
 
       <DialogContent>
         <Stack spacing={2} sx={{ mt: 3 }}>
-          {
-            fields.some((field) => field.name === 'name') &&
-            fields.some((field) => field.name === 'contactNumber') && (
+          {fields.some((field) => field.name === "name") &&
+            fields.some((field) => field.name === "contactNumber") && (
               <Stack direction="row" spacing={2}>
                 <Stack spacing={2} flex={1}>
                   {fields
-                    .filter((field) => field.name === 'name')
+                    .filter((field) => field.name === "name")
                     .map((field, index) => (
                       <div key={index} className="mb-4 w-full">
-                        {field.type === 'select' ? (
-                          <FormControl fullWidth variant="outlined" size="small" error={Boolean(errors[field.name]?.length)}>
-                            <InputLabel id={`${field.name}-label`}>{field.label}</InputLabel>
+                        {field.type === "select" ? (
+                          <FormControl
+                            fullWidth
+                            variant="outlined"
+                            size="small"
+                            error={Boolean(errors[field.name]?.length)}
+                          >
+                            <InputLabel id={`${field.name}-label`}>
+                              {field.label}
+                            </InputLabel>
                             <TextField
                               id={field.name}
                               name={field.name}
                               select
-                              value={formData[field.name] || '0'}
-                              onChange={(e) => handleSelectChange(e as unknown as React.ChangeEvent<HTMLSelectElement>)}
+                              value={formData[field.name] || "0"}
+                              onChange={(e) =>
+                                handleSelectChange(
+                                  e as unknown as React.ChangeEvent<HTMLSelectElement>
+                                )
+                              }
                               label={field.label}
                               variant="outlined"
                               fullWidth
-                              error={!!errors[field.name]?.length || formData[field.name] === '0'}
-                              helperText={errors[field.name]?.[0] || ''}
+                              error={
+                                !!errors[field.name]?.length ||
+                                formData[field.name] === "0"
+                              }
+                              helperText={errors[field.name]?.[0] || ""}
                               size="small"
                               SelectProps={{
                                 native: true,
                               }}
-                            >
-                            </TextField>
+                            ></TextField>
                             {errors[field.name]?.[0] && (
-                              <FormHelperText>{errors[field.name][0]}</FormHelperText>
+                              <FormHelperText>
+                                {errors[field.name][0]}
+                              </FormHelperText>
                             )}
                           </FormControl>
                         ) : (
@@ -262,14 +300,18 @@ const ReusableCreateModalPage: React.FC<ReusableModalPageProps> = ({
                             id={field.name}
                             name={field.name}
                             type={field.type}
-                            value={Array.isArray(formData[field.name]) ? (formData[field.name] as string[]).join(', ') : String(formData[field.name] || '')}
+                            value={
+                              Array.isArray(formData[field.name])
+                                ? (formData[field.name] as string[]).join(", ")
+                                : String(formData[field.name] || "")
+                            }
                             onChange={handleChange}
                             placeholder={field.placeholder}
                             label={field.label}
                             variant="outlined"
                             fullWidth
                             error={Boolean(errors[field.name]?.length)}
-                            helperText={errors[field.name]?.[0] || ''}
+                            helperText={errors[field.name]?.[0] || ""}
                             size="small"
                           />
                         )}
@@ -280,102 +322,114 @@ const ReusableCreateModalPage: React.FC<ReusableModalPageProps> = ({
                 {/* Column 2 */}
                 <div className="flex flex-col space-y-4 flex-1">
                   {fields
-                    .filter((field) => field.name === 'contactNumber')
+                    .filter((field) => field.name === "contactNumber")
                     .map((field, index) => (
                       <div key={index} className="w-full">
                         <TextField
                           id={field.name}
                           name={field.name}
                           type={field.type}
-                          value={Array.isArray(formData[field.name]) ? (formData[field.name] as string[]).join(', ') : String(formData[field.name] || '')}
+                          value={
+                            Array.isArray(formData[field.name])
+                              ? (formData[field.name] as string[]).join(", ")
+                              : String(formData[field.name] || "")
+                          }
                           onChange={handleChange}
                           placeholder={field.placeholder}
                           label={field.label}
                           variant="outlined"
                           fullWidth
                           error={Boolean(errors[field.name]?.length)}
-                          helperText={errors[field.name]?.[0] || ''}
+                          helperText={errors[field.name]?.[0] || ""}
                           size="small"
                         />
                       </div>
                     ))}
                 </div>
               </Stack>
-            )
-          }
+            )}
 
           {/* Full address - 1 full input*/}
           {fields
-            .filter((field) => field.name === 'address')
+            .filter((field) => field.name === "address")
             .map((field, index) => (
               <div key={index} className="w-full">
                 <TextField
                   id={field.name}
                   name={field.name}
                   type={field.type}
-                  value={Array.isArray(formData[field.name]) ? (formData[field.name] as string[]).join(', ') : String(formData[field.name] || '')}
+                  value={
+                    Array.isArray(formData[field.name])
+                      ? (formData[field.name] as string[]).join(", ")
+                      : String(formData[field.name] || "")
+                  }
                   onChange={handleChange}
                   placeholder={field.placeholder}
                   label={field.label}
                   variant="outlined"
                   fullWidth
                   error={Boolean(errors[field.name]?.length)}
-                  helperText={errors[field.name]?.[0] || ''}
+                  helperText={errors[field.name]?.[0] || ""}
                   size="small"
                 />
               </div>
             ))}
 
-            {/* start again without full name and contact number */}
+          {/* start again without full name and contact number */}
           <div className="flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-4">
             {/* Column 1 */}
             <div className="flex-1 space-y-4">
               {fields.map((field, index) => {
-
-                if (field.name === 'firstName') {
+                if (field.name === "firstName") {
                   return (
                     <div key={index} className="w-full">
                       <TextField
                         id={field.name}
                         name={field.name}
                         type={field.type}
-                        value={formData[field.name] || ''}
+                        value={formData[field.name] || ""}
                         onChange={handleChange}
                         placeholder={field.placeholder}
                         label={field.label}
                         variant="outlined"
                         fullWidth
                         error={!!errors[field.name]?.length}
-                        helperText={errors[field.name]?.[0] || ''}
+                        helperText={errors[field.name]?.[0] || ""}
                         size="small"
                       />
                     </div>
                   );
                 }
 
-                if (field.name === 'email' && field.gridSpan === 1) { 
+                if (field.name === "email" && field.gridSpan === 1) {
                   return (
                     <div key={index} className="w-full">
                       <TextField
                         id={field.name}
                         name={field.name}
                         type={field.type}
-                        value={Array.isArray(formData[field.name]) ? (formData[field.name] as string[]).join(', ') : String(formData[field.name] || '')}
+                        value={
+                          Array.isArray(formData[field.name])
+                            ? (formData[field.name] as string[]).join(", ")
+                            : String(formData[field.name] || "")
+                        }
                         onChange={handleChange}
                         placeholder={field.placeholder}
                         label={field.label}
                         variant="outlined"
                         fullWidth
                         error={Boolean(errors[field.name]?.length)}
-                        helperText={errors[field.name]?.[0] || ''}
+                        helperText={errors[field.name]?.[0] || ""}
                         size="small"
                       />
                     </div>
                   );
                 }
 
-                if (field.name === 'lastName' && field.gridSpan === 1) {
-                  const suffixField = fields.find(f => f.name === 'suffix' && f.gridSpan === 1);
+                if (field.name === "lastName" && field.gridSpan === 1) {
+                  const suffixField = fields.find(
+                    (f) => f.name === "suffix" && f.gridSpan === 1
+                  );
                   return (
                     <div key={index} className="w-full flex gap-4">
                       {/* Last Name */}
@@ -386,8 +440,8 @@ const ReusableCreateModalPage: React.FC<ReusableModalPageProps> = ({
                           type={field.type}
                           value={
                             Array.isArray(formData[field.name])
-                              ? (formData[field.name] as string[]).join(', ')
-                              : String(formData[field.name] || '')
+                              ? (formData[field.name] as string[]).join(", ")
+                              : String(formData[field.name] || "")
                           }
                           onChange={handleChange}
                           placeholder={field.placeholder}
@@ -395,11 +449,11 @@ const ReusableCreateModalPage: React.FC<ReusableModalPageProps> = ({
                           variant="outlined"
                           fullWidth
                           error={Boolean(errors[field.name]?.length)}
-                          helperText={errors[field.name]?.[0] || ''}
+                          helperText={errors[field.name]?.[0] || ""}
                           size="small"
                         />
                       </div>
- 
+
                       {/* Suffix */}
                       {suffixField && (
                         <div className="w-1/2">
@@ -407,21 +461,28 @@ const ReusableCreateModalPage: React.FC<ReusableModalPageProps> = ({
                             id={suffixField.name}
                             name={suffixField.name}
                             select
-                            value={formData[suffixField.name] || '0'}
+                            value={formData[suffixField.name] || "0"}
                             onChange={(e) =>
-                              handleSelectChange(e as unknown as React.ChangeEvent<HTMLSelectElement>)
+                              handleSelectChange(
+                                e as unknown as React.ChangeEvent<HTMLSelectElement>
+                              )
                             }
                             label={suffixField.label}
                             variant="outlined"
                             fullWidth
                             error={
-                              !!errors[suffixField.name]?.length || formData[suffixField.name] === '0'
+                              !!errors[suffixField.name]?.length ||
+                              formData[suffixField.name] === "0"
                             }
-                            helperText={errors[suffixField.name]?.[0] || ''}
+                            helperText={errors[suffixField.name]?.[0] || ""}
                             size="small"
                             SelectProps={{ native: true }}
                           >
-                            <option value="0" disabled style={{ color: '#9CA3AF' }}>
+                            <option
+                              value="0"
+                              disabled
+                              style={{ color: "#9CA3AF" }}
+                            >
                               {suffixField.label}
                             </option>
                             {suffixField.options?.map((option) => (
@@ -436,28 +497,32 @@ const ReusableCreateModalPage: React.FC<ReusableModalPageProps> = ({
                   );
                 }
 
-                if (field.name === 'phoneNumber' && field.gridSpan === 1) { 
+                if (field.name === "phoneNumber" && field.gridSpan === 1) {
                   return (
                     <div key={index} className="w-full">
                       <TextField
                         id={field.name}
                         name={field.name}
                         type={field.type}
-                        value={Array.isArray(formData[field.name]) ? (formData[field.name] as string[]).join(', ') : String(formData[field.name] || '')}
+                        value={
+                          Array.isArray(formData[field.name])
+                            ? (formData[field.name] as string[]).join(", ")
+                            : String(formData[field.name] || "")
+                        }
                         onChange={handleChange}
                         placeholder={field.placeholder}
                         label={field.label}
                         variant="outlined"
                         fullWidth
                         error={Boolean(errors[field.name]?.length)}
-                        helperText={errors[field.name]?.[0] || ''}
+                        helperText={errors[field.name]?.[0] || ""}
                         size="small"
                       />
                     </div>
                   );
                 }
 
-                if (field.name === 'gameTypes') {
+                if (field.name === "gameTypes") {
                   return (
                     <div key={index} className="w-full">
                       <Select
@@ -466,26 +531,35 @@ const ReusableCreateModalPage: React.FC<ReusableModalPageProps> = ({
                         options={field.options}
                         isMulti
                         value={
-                          field.options?.filter((option) =>
-                            Array.isArray(formData[field.name]) &&
-                            (formData[field.name] as string[]).includes(option.value)
+                          field.options?.filter(
+                            (option) =>
+                              Array.isArray(formData[field.name]) &&
+                              (formData[field.name] as string[]).includes(
+                                option.value
+                              )
                           ) || []
                         }
-                        onChange={(selectedOptions) => handleMultiSelect(field.name, [...selectedOptions])}
+                        onChange={(selectedOptions) =>
+                          handleMultiSelect(field.name, [...selectedOptions])
+                        }
                         className="react-select-container"
                         classNamePrefix="react-select"
                         placeholder={field.placeholder}
                         menuPortalTarget={document.body}
-                        styles={{ menuPortal: (base) => ({ ...base, zIndex: 9999 }) }}
+                        styles={{
+                          menuPortal: (base) => ({ ...base, zIndex: 9999 }),
+                        }}
                       />
                       {errors[field.name]?.[0] && (
-                        <p className="text-sm text-red-600 mt-1">{errors[field.name][0]}</p>
+                        <p className="text-sm text-red-600 mt-1">
+                          {errors[field.name][0]}
+                        </p>
                       )}
                     </div>
                   );
                 }
 
-                if (field.name === 'STLRegion' && (isProvincial || isCityWide)) {
+                if (field.name === "regions" && (isProvincial || isCityWide)) {
                   return (
                     <div key={index} className="w-full">
                       <Select
@@ -494,9 +568,12 @@ const ReusableCreateModalPage: React.FC<ReusableModalPageProps> = ({
                         options={field.options}
                         isMulti
                         value={
-                          field.options?.filter((option) =>
-                            Array.isArray(formData[field.name]) &&
-                            (formData[field.name] as string[]).includes(option.value)
+                          field.options?.filter(
+                            (option) =>
+                              Array.isArray(formData[field.name]) &&
+                              (formData[field.name] as string[]).includes(
+                                option.value
+                              )
                           ) || []
                         }
                         onChange={(selectedOptions) =>
@@ -514,61 +591,54 @@ const ReusableCreateModalPage: React.FC<ReusableModalPageProps> = ({
                         }}
                       />
                       {errors[field.name]?.[0] && (
-                        <p className="text-sm text-red-600 mt-1">{errors[field.name][0]}</p>
+                        <p className="text-sm text-red-600 mt-1">
+                          {errors[field.name][0]}
+                        </p>
                       )}
                     </div>
                   );
                 }
 
-                if (field.name === 'cities' && isCityWide) {
+                if (field.name === "cities" && isCityWide) {
+                  const isDisabled =
+                    !formData.provinces ||
+                    (Array.isArray(formData.provinces) &&
+                      formData.provinces.length === 0);
                   return (
-                    <div key={index} className="w-full">
+                    <div key={index} className="w-full mb-0">
                       <Select
                         id={field.name}
                         name={field.name}
                         options={filteredCities}
                         isMulti
-                        value={filteredCities.filter((option) =>
-                          Array.isArray(formData[field.name]) &&
-                          (formData[field.name] as (string | number)[]).includes(option.value)
+                        value={filteredCities.filter(
+                          (option) =>
+                            Array.isArray(formData[field.name]) &&
+                            (
+                              formData[field.name] as (string | number)[]
+                            ).includes(option.value)
                         )}
-                        onChange={(selectedOptions) => handleMultiSelect(field.name, [...selectedOptions])}
+                        onChange={(selectedOptions) =>
+                          handleMultiSelect(field.name, [...selectedOptions])
+                        }
                         className="react-select-container"
                         classNamePrefix="react-select"
                         placeholder="Select City(s)"
                         menuPortalTarget={document.body}
-                        styles={{ menuPortal: (base) => ({ ...base, zIndex: 9999 }) }}
+                        isDisabled={isDisabled}
+                        styles={{
+                          menuPortal: (base) => ({ ...base, zIndex: 9999 }),
+                        }}
                       />
-                      {errors[field.name]?.[0] && (
-                        <p className="text-sm text-red-600 mt-1">{errors[field.name][0]}</p>
+                      {isDisabled && (
+                        <p className="text-xs text-gray-500 mt-1">
+                          Please select provinces first.
+                        </p>
                       )}
-                    </div>
-                  );
-                }
-
-                if (field.name === 'STLExcludedCity' && isExcludedCITY && isProvincial) {
-                  return (
-                    <div key={index} className="w-full">
-                      <Select
-                        id={field.name}
-                        name={field.name}
-                        options={field.options}
-                        isMulti
-                        value={
-                          field.options?.filter((option) =>
-                            Array.isArray(formData[field.name]) &&
-                            (formData[field.name] as string[]).includes(option.value)
-                          ) || []
-                        }
-                        onChange={(selectedOptions) => handleMultiSelect(field.name, [...selectedOptions])}
-                        className="react-select-container"
-                        classNamePrefix="react-select"
-                        placeholder={field.placeholder}
-                        menuPortalTarget={document.body}
-                        styles={{ menuPortal: (base) => ({ ...base, zIndex: 9999 }) }}
-                      />
                       {errors[field.name]?.[0] && (
-                        <p className="text-sm text-red-600 mt-1">{errors[field.name][0]}</p>
+                        <p className="text-sm text-red-600 mt-1">
+                          {errors[field.name][0]}
+                        </p>
                       )}
                     </div>
                   );
@@ -579,9 +649,8 @@ const ReusableCreateModalPage: React.FC<ReusableModalPageProps> = ({
             </div>
 
             {/* Column 2 */}
-            <div className="flex-1 space-y-4">
+            <div className="flex-1 space-y-4 mb-0">
               {fields.map((field, index) => {
-
                 if (field.name === "operatorId") {
                   return (
                     <div key={index} className="w-full">
@@ -639,14 +708,14 @@ const ReusableCreateModalPage: React.FC<ReusableModalPageProps> = ({
                   );
                 }
 
-                if (field.name === 'dateOfOperation') {
+                if (field.name === "dateOfOperation") {
                   return (
                     <div key={index} className="w-full">
                       <TextField
                         id={field.name}
                         name={field.name}
                         type="date"
-                        value={String(formData[field.name] || '')}
+                        value={String(formData[field.name] || "")}
                         onChange={handleChange}
                         placeholder={field.placeholder}
                         label={field.label}
@@ -656,35 +725,39 @@ const ReusableCreateModalPage: React.FC<ReusableModalPageProps> = ({
                           shrink: true,
                         }}
                         error={Boolean(errors[field.name]?.length)}
-                        helperText={errors[field.name]?.[0] || ''}
+                        helperText={errors[field.name]?.[0] || ""}
                         size="small"
                       />
                     </div>
                   );
                 }
 
-                if (field.name === 'email' && field.gridSpan === 2) {
+                if (field.name === "email" && field.gridSpan === 2) {
                   return (
                     <div key={index} className="w-full">
                       <TextField
                         id={field.name}
                         name={field.name}
                         type={field.type}
-                        value={Array.isArray(formData[field.name]) ? (formData[field.name] as string[]).join(', ') : String(formData[field.name] || '')}
+                        value={
+                          Array.isArray(formData[field.name])
+                            ? (formData[field.name] as string[]).join(", ")
+                            : String(formData[field.name] || "")
+                        }
                         onChange={handleChange}
                         placeholder={field.placeholder}
                         label={field.label}
                         variant="outlined"
                         fullWidth
                         error={Boolean(errors[field.name]?.length)}
-                        helperText={errors[field.name]?.[0] || ''}
+                        helperText={errors[field.name]?.[0] || ""}
                         size="small"
                       />
                     </div>
                   );
                 }
 
-                if (field.name === 'password' && field.gridSpan === 2) {
+                if (field.name === "password" && field.gridSpan === 2) {
                   return (
                     <div key={index} className="w-full flex gap-4 items-end">
                       {/* Password Input */}
@@ -692,8 +765,8 @@ const ReusableCreateModalPage: React.FC<ReusableModalPageProps> = ({
                         <TextField
                           id={field.name}
                           name={field.name}
-                          type={showPassword ? 'text' : 'password'}
-                          value={formData[field.name] || ''}
+                          type={showPassword ? "text" : "password"}
+                          value={formData[field.name] || ""}
                           onChange={handleChange}
                           placeholder={field.placeholder}
                           label={field.label}
@@ -716,7 +789,7 @@ const ReusableCreateModalPage: React.FC<ReusableModalPageProps> = ({
                             ),
                           }}
                           error={!!errors[field.name]?.length}
-                          helperText={errors[field.name]?.[0] || ''}
+                          helperText={errors[field.name]?.[0] || ""}
                         />
                       </div>
 
@@ -726,7 +799,12 @@ const ReusableCreateModalPage: React.FC<ReusableModalPageProps> = ({
                           type="button"
                           onClick={() => {
                             const generatedPassword = generateValidPassword();
-                            handleChange({ target: { name: 'password', value: generatedPassword } });
+                            handleChange({
+                              target: {
+                                name: "password",
+                                value: generatedPassword,
+                              },
+                            });
                           }}
                           className="w-full bg-[#F6BA12] hover:bg-[#D1940F] text-[#181A1B] text-sm px-4 py-2 rounded-lg"
                         >
@@ -737,21 +815,23 @@ const ReusableCreateModalPage: React.FC<ReusableModalPageProps> = ({
                   );
                 }
 
-                if (field.name === 'STLAreaOfOperations') {
+                if (field.name === "STLAreaOfOperations") {
                   return (
                     <div key={index} className="w-full">
                       <select
                         id={field.name}
                         name={field.name}
-                        value={String(formData[field.name] || '')}
+                        value={String(formData[field.name] || "")}
                         onChange={handleSelectChange}
-                        className={`w-full border rounded px-3 py-2 text-sm ${errors[field.name]?.length || formData[field.name] === ''
-                          ? 'border-red-500'
-                          : 'border-[#0038A8]'
-                          }`}
+                        className={`w-full border rounded px-3 py-2 text-sm ${
+                          errors[field.name]?.length ||
+                          formData[field.name] === ""
+                            ? "border-red-500"
+                            : "border-[#0000003A]"
+                        }`}
                         aria-label={field.label}
                       >
-                        <option value="" disabled style={{ color: '#9CA3AF' }}>
+                        <option value="" disabled style={{ color: "#9CA3AF" }}>
                           Select an area of operation
                         </option>
                         {field.options?.map((option) => (
@@ -769,7 +849,14 @@ const ReusableCreateModalPage: React.FC<ReusableModalPageProps> = ({
                   );
                 }
 
-                if (field.name === 'STLProvince' && (isProvincial || isCityWide)) {
+                if (
+                  field.name === "provinces" &&
+                  (isProvincial || isCityWide)
+                ) {
+                  const isDisabled =
+                    !formData.regions ||
+                    (Array.isArray(formData.regions) &&
+                      formData.regions.length === 0);
                   return (
                     <div key={index} className="w-full">
                       <Select
@@ -777,25 +864,40 @@ const ReusableCreateModalPage: React.FC<ReusableModalPageProps> = ({
                         name={field.name}
                         options={filteredProvinces}
                         isMulti
-                        value={filteredProvinces.filter((option) =>
-                          Array.isArray(formData[field.name]) &&
-                          (formData[field.name] as (string | number)[]).includes(option.value)
+                        value={filteredProvinces.filter(
+                          (option) =>
+                            Array.isArray(formData[field.name]) &&
+                            (
+                              formData[field.name] as (string | number)[]
+                            ).includes(option.value)
                         )}
-                        onChange={(selectedOptions) => handleMultiSelect(field.name, [...selectedOptions])}
+                        onChange={(selectedOptions) =>
+                          handleMultiSelect(field.name, [...selectedOptions])
+                        }
                         className="react-select-container"
                         classNamePrefix="react-select"
                         placeholder="Select Province(s)"
                         menuPortalTarget={document.body}
-                        styles={{ menuPortal: (base) => ({ ...base, zIndex: 9999 }) }}
+                        isDisabled={isDisabled}
+                        styles={{
+                          menuPortal: (base) => ({ ...base, zIndex: 9999 }),
+                        }}
                       />
+                      {isDisabled && (
+                        <p className="text-xs text-gray-500 mt-1">
+                          Please select regions first.
+                        </p>
+                      )}
                       {errors[field.name]?.[0] && (
-                        <p className="text-sm text-red-600 mt-1">{errors[field.name][0]}</p>
+                        <p className="text-sm text-red-600 mt-1">
+                          {errors[field.name][0]}
+                        </p>
                       )}
                     </div>
                   );
                 }
 
-                if (field.name === 'isExcludedCITY' && isProvincial) {
+                if (field.name === "isExcludedCITY" && isProvincial) {
                   return (
                     <div key={index} className="w-full">
                       <FormControlLabel
@@ -813,9 +915,9 @@ const ReusableCreateModalPage: React.FC<ReusableModalPageProps> = ({
                               })
                             }
                             sx={{
-                              color: '#0038A8',
-                              '&.Mui-checked': {
-                                color: '#0038A8',
+                              color: "#0038A8",
+                              "&.Mui-checked": {
+                                color: "#0038A8",
                               },
                             }}
                           />
@@ -823,7 +925,9 @@ const ReusableCreateModalPage: React.FC<ReusableModalPageProps> = ({
                         label={field.label}
                       />
                       {errors[field.name]?.[0] && (
-                        <p className="text-sm text-red-600 mt-1">{errors[field.name][0]}</p>
+                        <p className="text-sm text-red-600 mt-1">
+                          {errors[field.name][0]}
+                        </p>
                       )}
                     </div>
                   );
@@ -834,6 +938,72 @@ const ReusableCreateModalPage: React.FC<ReusableModalPageProps> = ({
             </div>
           </div>
 
+          {/* IS EXCLUDED CITY */}
+          <div className="grid grid-cols-1 md:grid-cols-2 p-0 m-0">
+            {/* Left column (Column 1) */}
+            <div className="space-y-4">
+              {fields.map((field, index) => {
+                if (
+                  field.name === "cities" &&
+                  isExcludedCITY &&
+                  isProvincial
+                ) {
+                  return (
+                    <div key={index} className="w-full">
+                      <Select
+                      id={field.name}
+                      name={field.name}
+                      options={filteredCities}
+                      isMulti
+                      value={filteredCities.filter(
+                        (option) =>
+                        Array.isArray(formData[field.name]) &&
+                        (
+                          formData[field.name] as (string | number)[]
+                        ).includes(option.value)
+                      )}
+                      onChange={(selectedOptions) =>
+                        handleMultiSelect(field.name, [...selectedOptions])
+                      }
+                      className="react-select-container"
+                      classNamePrefix="react-select"
+                      placeholder="Select City(s)"
+                      menuPortalTarget={document.body}
+                      isDisabled={
+                        !formData.provinces ||
+                        (Array.isArray(formData.provinces) &&
+                        formData.provinces.length === 0)
+                      }
+                      styles={{
+                        menuPortal: (base) => ({ ...base, zIndex: 9999 }),
+                      }}
+                      />
+                      {!formData.provinces ||
+                      (Array.isArray(formData.provinces) &&
+                      formData.provinces.length === 0) ? (
+                      <p className="text-xs text-gray-500 mt-1">
+                        Please select provinces first.
+                      </p>
+                      ) : null}
+                      {errors[field.name]?.[0] && (
+                      <p className="text-sm text-red-600 mt-1">
+                        {errors[field.name][0]}
+                      </p>
+                      )}
+                    </div>
+                  );
+                }
+
+                return null;
+              })}
+            </div>
+
+            {/* Right column (Column 2) */}
+            <div className="space-y-4">
+              {/* Other fields or content for the right column */}
+            </div>
+          </div>
+
           <div className="mt-4">{children({ handleSubmit })}</div>
         </Stack>
         {isVerifyModalOpen && (
@@ -841,10 +1011,10 @@ const ReusableCreateModalPage: React.FC<ReusableModalPageProps> = ({
             formData={formData as { [key: string]: string | number | string[] }}
             setFormData={setFormData}
             errors={errors}
-            actionType='create'
+            actionType="create"
             setErrors={setErrors}
             open={isVerifyModalOpen}
-            endpoint={endpoint ?? { create: '', update: '' }}
+            endpoint={endpoint ?? { create: "", update: "" }}
             onClose={handleClose}
           />
         )}

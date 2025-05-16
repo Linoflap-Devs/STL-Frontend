@@ -36,7 +36,7 @@ export const operatorConfig: {
       gridSpan: 2,
     },
     {
-      name: 'STLRegion',
+      name: 'regions',
       label: 'Area of Regional Operations',
       type: 'multiselect',
       options: [],
@@ -45,7 +45,7 @@ export const operatorConfig: {
       gridSpan: 1,
     },
     {
-      name: 'STLProvince',
+      name: 'provinces',
       label: 'Area of Provincial Operations',
       type: 'multiselect',
       options: [],
@@ -74,7 +74,7 @@ export const operatorConfig: {
       label: 'Excluded City',
       type: 'multiselect',
       options: [],
-      placeholder: '',
+      placeholder: 'Area of City Operations',
       value: [],
       gridSpan: 1,
     },

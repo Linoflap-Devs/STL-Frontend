@@ -45,7 +45,7 @@ export const OperatorFieldFormPage: React.FC = () => {
         };
       }
 
-      if (field.name === 'STLRegion') {
+      if (field.name === 'regions') {
         return {
           ...field,
           options: regions.map((region) => ({
@@ -55,7 +55,7 @@ export const OperatorFieldFormPage: React.FC = () => {
         };
       }
 
-      if (field.name === 'STLProvince') {
+      if (field.name === 'provinces') {
         const filteredProvinces = provinces.filter(
           (province) => province.RegionId === selectedRegion
         );
@@ -75,8 +75,8 @@ export const OperatorFieldFormPage: React.FC = () => {
         return {
           ...field,
           options: filteredCities.map((city) => ({
-            value: city.CityId,
-            label: city.CityName,
+        value: city.CityId,
+        label: `${city.CityName} (${city.ProvinceKey})`,
           })),
         };
       }
@@ -109,6 +109,12 @@ export const OperatorFieldFormPage: React.FC = () => {
           fields={fields}
           endpoint={operatorConfig.endpoint}
           initialUserData={selectedData}
+          gameTypes={gameTypes}
+          provinces={provinces}
+          regions={regions}
+          cities={cities}
+          selectedRegion={selectedRegion}
+          selectedProvince={selectedProvince}
         />
       )}
     </div>

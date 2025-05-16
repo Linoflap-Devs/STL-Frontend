@@ -39,17 +39,41 @@ const handleVerifyUserAction = async () => {
 
     setError("");
 
+    const isDeleting = actionType === "update"; // <-- Renamed for clarity
+    const isCreating = actionType === "create";
+
+    const userId = formData.UserId;
+
+    if (isDeleting && !userId) {
+      setError("User ID is required to delete a user.");
+      return;
+    }
+
+    const endpointUrl = isDeleting ? endpoint.update : endpoint.create;
+
+    // Normalize data to use correct field names
     const dataToSend = {
-      ...formData,
+      ...(userId && { userId }),
+      ...Object.entries(formData).reduce(
+        (acc, [key, val]) => {
+          if (val !== undefined && key !== "UserId") acc[key] = val;
+          return acc;
+        },
+        {} as Record<string, any>
+      ),
       ...(roleId && { userTypeId: roleId }),
+      ...(isDeleting && { IsDeleted: 1 }), // <-- Changed from IsActive: false
     };
 
-    const response = await axiosInstance.post(endpoint.create, dataToSend, {
+    const axiosCall = isDeleting ? axiosInstance.patch : axiosInstance.post;
+
+    const response = await axiosCall(endpointUrl, dataToSend, {
       withCredentials: true,
     });
 
     if (!response?.data?.success) {
-      const errMsg = response?.data?.message || `Failed to ${actionType} user.`;
+      const errMsg =
+        response?.data?.message || `Failed to ${actionType} user.`;
       setError(errMsg);
       await Swal.fire({
         icon: "error",
@@ -60,28 +84,27 @@ const handleVerifyUserAction = async () => {
       return;
     }
 
-    // ✅ Close modal and reset states BEFORE showing success alert
     setFormData({});
     setPassword("");
     setErrors({});
-    onClose(); // e.g. closing the modal
+    onClose();
 
-    // Refresh users if roleId is set
     if (roleId) {
       fetchUsers(roleId, setData);
     }
 
-    // ✅ Now show the success alert
     await Swal.fire({
       icon: "success",
-      title: `${actionType === "create" ? "User Created!" : "Action Successful!"}`,
-      text: `${actionType === "create" ? "The user has been created successfully." : "The user action was successful."}`,
+      title: isDeleting ? "User Deleted!" : "User Created!",
+      text: isDeleting
+        ? "The user has been marked as deleted."
+        : "The user has been created successfully.",
       confirmButtonColor: "#67ABEB",
     });
-
   } catch (error: any) {
     console.error("Error during user action:", error);
     console.log("Full error response:", error?.response?.data);
+    console.log("Endpoint URL when failed:", endpoint?.update);
 
     const backendMessage =
       error?.response?.data?.message ||
