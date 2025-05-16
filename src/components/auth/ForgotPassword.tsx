@@ -1,276 +1,151 @@
-import React, { useState, useEffect } from "react";
-import {
-  Box,
-  Typography,
-  Button,
-  TextField,
-  IconButton,
-  Tooltip,
-} from "@mui/material";
-
-import { LoginSectionData } from "../../data/LoginSectionData";
+import React, { useState } from "react";
 import { useRouter } from "next/router";
-//import { loginValidate } from "../../utils/validation";
-import ArrowBackIosNewIcon from "@mui/icons-material/ArrowBackIosNew";
-import { inputStyles, inputErrorStyles } from "../../styles/theme";
+import { FaArrowLeft } from "react-icons/fa"; 
+import { LoginSectionData } from "../../data/LoginSectionData";
 
 const ForgotPassword = () => {
   const router = useRouter();
   const [credentials, setCredentials] = useState({ username: "" });
+  const [errors, setErrors] = useState<{ username?: string }>({});
+  const [isButtonDisabled] = useState(false);
+  const [showTooltip, setShowTooltip] = useState(false);
 
-  const [errors, setErrors] = useState<{
-    username?: string;
-    password?: string;
-  }>({});
-
-  //By default button is disabled.
-  const [isButtonDisabled, setIsButtonDisabled] = useState(false);
-
-
-  //check whether the email fields i empty or invalid.
-  // Function to validate email field
   const validateCredentials = (credentials: { username: string }) => {
     let errors: { username?: string } = {};
 
     if (!credentials.username.trim()) {
       errors.username = "Email Address is Required.";
-    } else if (
-      //Regular Expression(regex) - for validating email format
-      !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(credentials.username)
-    ) {
+    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(credentials.username)) {
       errors.username = "Please enter a valid email address.";
     }
 
     return errors;
   };
 
-  // Handle form submission
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
     const validationErrors = validateCredentials(credentials);
 
-    //If no errors exist, returns an empty array ( [] )
-    //if array is empty, meaning no errors exist.
     if (Object.keys(validationErrors).length === 0) {
       console.log("Login Successful.", credentials);
-      setErrors({}); // Clear errors if successful
+      setErrors({});
     } else {
       setErrors(validationErrors);
     }
   };
 
-  // temporary validation
   const handleNavigation = () => {
     const validationErrors = validateCredentials(credentials);
-    // setErrors(validationErrors)
-    //If no errors exist, returns an empty array ( [] )
-    //if array is empty, meaning no errors exist.
     if (Object.keys(validationErrors).length === 0) {
       router.push("/email-verification");
     } else {
-      setErrors(validationErrors)
+      setErrors(validationErrors);
     }
   };
 
-  // Disable button if email is empty
-  // useEffect(() => {
-  //   setIsButtonDisabled(credentials.username.trim() === "");
-  // }, [credentials.username]);
-
   return (
-    <>
-      <Box
-        sx={{
-          display: "flex",
-          margin: 0,
-          height: "100vh",
-          backgroundImage: `url(${LoginSectionData.image2})`,
-          backgroundSize: "cover",
-          backgroundRepeat: "no-repeat",
-          backgroundPosition: "center",
-        }}
-      >
-        <Box
-          sx={{
-            position: "absolute",
-            width: "100%",
-            height: "100%",
-            backgroundColor: "#242424D9",
-            zIndex: 1,
-          }}
-        />
-        {/* start content */}
-        <Box
-          sx={{
-            position: "relative",
-            zIndex: 2,
-            display: "flex",
-            width: "100%",
-            justifyContent: "center",
-            alignItems: "center",
-          }}
-        >
-          <Box
-            sx={{
-              width: { xs: "100%", sm: "100%", md: "100%" },
-              maxWidth: 500,
-              p: "8rem 1rem",
-              display: "flex",
-              flexDirection: "column",
-              alignItems: "center",
-              backgroundColor: "#181A1B",
-              borderRadius: "8px",
-              position: "relative",
-            }}
-          >
-            <Tooltip title={"Back to Login"}>
-              <IconButton
-                aria-label="close"
-                href="/"
-                sx={{
-                  position: "absolute",
-                  left: 30,
-                  top: 40,
-                  color: "#D1D5D8"[300],
-                  backgroundColor: "#374151",
-                  fontWeight: "bold",
-                }}
-              >
-                <ArrowBackIosNewIcon
-                  sx={{ fontSize: 23, fontWeight: "bold" }}
-                />
-              </IconButton>
-            </Tooltip>
+    <div className="w-full min-h-screen flex flex-col items-center justify-center lg:items-stretch lg:flex-row bg-[#F8F0E3]">
+      <div className="w-full lg:flex-1 flex flex-col justify-center items-center py-8 px-4 lg:py-0">
+        <div className="text-center w-full max-w-md">
+          <div className="flex justify-center gap-3 mb-4">
+            <img
+              src={LoginSectionData.image2}
+              alt="PCSO Logo"
+              className="w-[35%] max-w-[150px] lg:max-w-[180px]"
+              loading="lazy"
+            />
+            <img
+              src={LoginSectionData.image}
+              alt="STL Logo"
+              className="w-[35%] max-w-[120px] lg:max-w-[180px]"
+              loading="lazy"
+            />
+          </div>
+          <h1 className="text-base md:text-xl font-bold text-[#0038A8]">
+            {LoginSectionData.logoTitle}
+          </h1>
+          <p className="text-[#0038A8] text-sm">
+            {LoginSectionData.logoDescription}
+          </p>
+        </div>
+      </div>
 
-            <Box
-              sx={{
-                display: "flex",
-                justifyContent: "center",
-                flexDirection: "column",
-                textAlign: "center",
-                marginBottom: "1rem",
-              }}
+      <div className="w-full lg:flex-1 flex flex-col justify-center items-center px-4 pb-16 lg:pb-0 relative">
+        <div className="w-full max-w-md">
+          <div className="relative">
+            <div
+              className="mb-6 inline-block"
+              onMouseEnter={() => setShowTooltip(true)}
+              onMouseLeave={() => setShowTooltip(false)}
             >
-              <Box
-                component="img"
-                src={LoginSectionData.image}
-                alt="altLogo"
-                sx={{
-                  maxWidth: {
-                    xs: "10%",
-                    sm: "35%",
-                    md: "32%",
-                    lg: "32%",
-                    xl: "32%",
-                  },
-                  margin: "0 auto",
-                  display: "block",
-                  marginBottom: "0.6rem",
-                  marginTop: '-4rem',
-                }}
-                loading="lazy"
-              />
+              <a
+                href="/"
+                className="inline-flex items-center justify-center w-10 h-10 rounded-full bg-[#0038A8]"
+              >
+                <FaArrowLeft className="text-[#F8F0E3]" />
+              </a>
+              {showTooltip && (
+                <div className="absolute left-12 top-2 bg-[#0038A8] text-white text-xs px-2 py-1 rounded whitespace-nowrap">
+                  Back to Login
+                  <div className="absolute right-full top-1/2 -translate-y-1/2 w-0 h-0 border-t-4 border-t-transparent border-b-4 border-b-transparent border-r-4 border-r-gray-800"></div>
+                </div>
+              )}
+            </div>
+          </div>
 
-              <Typography variant="h4" sx={{ fontWeight: "bold" }}>
+          <div className="flex justify-center flex-col text-center mb-4">
+            <div className="mb-8">
+              <h1 className="text-4xl sm:text-5xl font-bold text-[#0038A8]">
                 {LoginSectionData.forgotPasswordTitle}
-              </Typography>
-              <Typography
-                sx={{ marginTop: 0.4, color: "#9CA3AF", fontSize: "12.5px" }}
-              >
+              </h1>
+              <p className="text-[#0038A8] text-sm">
                 {LoginSectionData.forgotPasswordDescription}
-              </Typography>
-            </Box>
+              </p>
+            </div>
+          </div>
 
-            <form onSubmit={handleLogin} style={{ width: "88%" }}>
-              <Box
-                sx={{
-                  display: "flex",
-                  flexDirection: "column",
-                  alignItems: "stretch",
-                  width: "100%",
-                }}
-              >
-                <Box sx={{ mb: "0.3rem" }}>
-                  <Typography
-                    sx={{
-                      display: "block",
-                      textAlign: "left",
-                      marginBottom: "0.5rem",
-                    }}
-                    color={errors.username ? "error" : "text.primary"}
-                  >
-                    {LoginSectionData.EmailAddressTitle}
-                  </Typography>
+          <form onSubmit={handleLogin} className="w-full">
+            <div className="flex flex-col items-stretch w-full">
+              <div className="mb-4">
+                <label className="block mb-2 text-sm text-left">
+                  {LoginSectionData.EmailAddressTitle}
+                </label>
 
-                  <TextField
-                    fullWidth
-                    variant="outlined"
-                    placeholder="Enter Email Address"
-                    value={credentials.username}
-                    onChange={(e) =>
-                      setCredentials({
-                        ...credentials,
-                        username: e.target.value,
-                      })
-                    }
-                    error={!!errors.username}
-                    helperText={errors.username}
-                    sx={inputStyles}
-                  />
-                  {/* {errors.username === "required" && (
-                    <span style={inputErrorStyles}>Email Address is Required.</span>
-                  )}
-                  {errors.username === "invalid" && (
-                    <span style={inputErrorStyles}>Please enter a valid email address.</span> */}
-                  {/* )} */}
-                </Box>
+                <input
+                  type="text"
+                  className={`w-full px-4 py-3 rounded-md border ${errors.username ? "border-[#CE1126]" : "border-[#0038A8]"} bg-[#1F2937] text-white focus:outline-none focus:ring-1 focus:ring-blue-500`}
+                  placeholder="Enter Email Address"
+                  value={credentials.username}
+                  onChange={(e) =>
+                    setCredentials({ ...credentials, username: e.target.value })
+                  }
+                />
+                {errors.username && (
+                  <span className="text-[#CE1126] text-xs mt-1 block">
+                    {errors.username}
+                  </span>
+                )}
+              </div>
+            </div>
 
-                <Box
-                  sx={{
-                    display: "flex",
-                    justifyContent: "flex-end",
-                    width: "100%",
-                    mt: 1.7,
-                  }}
-                ></Box>
-              </Box>
+            <button
+              type="submit"
+              onClick={handleNavigation}
+              className={`w-full mt-4 py-2 text-sm rounded-md transition bg-[#F6BA12] text-[#212121] hover:opacity-70 ${isButtonDisabled ? "opacity-70 cursor-not-allowed" : ""}`}
+              disabled={false}
+            >
+              {LoginSectionData.resetPasswordButton}
+            </button>
+          </form>
 
-              <Button
-                type="submit"
-                onClick={handleNavigation}
-                variant="contained"
-                fullWidth
-                sx={{
-                  marginTop: 1,
-                  py: 1.5,
-                  padding: "8px 20px",
-                  borderRadius: "8px",
-                  textTransform: "none",
-                  //backgroundColor: isButtonDisabled ? "#2563EB" : "#CCA1FD",
-                  cursor: isButtonDisabled ? "not-allowed" : "pointer",
-                }}
-
-                disabled={false}
-              >
-                {LoginSectionData.resetPasswordButton}
-              </Button>
-            </form>
-          </Box>
-          <Box
-            sx={{
-              position: "absolute",
-              bottom: 40,
-              textAlign: "center",
-              color: "#FFFFFF",
-            }}
-          >
-            <Typography sx={{ fontSize: "13px" }}>
+          <div className="absolute bottom-4 left-0 right-0 text-center px-4 lg:bottom-8">
+            <p className="text-xs text-[#0038A8]">
               {LoginSectionData.copyright}
-            </Typography>
-          </Box>
-        </Box>
-      </Box>
-    </>
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
   );
 };
 
