@@ -1,3 +1,4 @@
+import { AxiosError } from "axios";
 import axiosInstance from "../axiosInstance";
 
 // Helper to validate URL paths
@@ -66,8 +67,10 @@ const verifyOtp = async (email: string, otp: string) => {
 
         return response.data;
     } catch (error) {
+        const err = error as AxiosError
         console.error("Error verifying password:", (error as Error).message);
-        return { success: false, message: (error as Error).message, data: {} };
+        console.log(error)
+        return err.response?.data;
     }
 }
 
@@ -78,8 +81,10 @@ const updateForgottenPassword = async (email: string, resetToken: string, passwo
 
         return response.data;
     } catch (error) {
+        const err = error as AxiosError
         console.error("Error verifying password:", (error as Error).message);
-        return { success: false, message: (error as Error).message, data: {} };
+        console.log(err.response?.data)
+        return err.response?.data
     }
 }
 
