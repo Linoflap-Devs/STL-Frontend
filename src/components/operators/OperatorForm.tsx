@@ -1,4 +1,4 @@
-import React, { useCallback } from 'react';
+import React, { useCallback, useEffect } from 'react';
 import UpdateModalPage from '~/components/ui/modals/UpdateModalData';
 import { useOperatorsData } from '../../../store/useOperatorStore';
 import { useModalStore } from '../../../store/useModalStore';
@@ -26,7 +26,7 @@ export const OperatorFieldFormPage: React.FC = () => {
   const { fields, setFields } = useOperatorsData();
   const { modalOpen, modalType, selectedData, closeModal } = useModalStore();
 
-  useCallback(() => {
+  useEffect(() => {
     fetchGameCategories(setGameTypes);
     fetchRegionData(setRegions);
     fetchProvinceData(setProvinces);
@@ -34,7 +34,7 @@ export const OperatorFieldFormPage: React.FC = () => {
   }, []);
 
   // Update field options based on selected data
-  useCallback(() => {
+  useEffect(() => {
     const updatedFields = operatorConfig.fields.map((field) => {
       if (field.name === 'gameTypes') {
         return {

@@ -1,4 +1,5 @@
 import type { Config } from "tailwindcss";
+import flowbiteReact from "flowbite-react/plugin/tailwindcss";
 
 export default {
   darkMode: "class",
@@ -6,6 +7,7 @@ export default {
     "./src/pages/**/*.{js,ts,jsx,tsx,mdx}",
     "./src/components/**/*.{js,ts,jsx,tsx,mdx}",
     "./src/app/**/*.{js,ts,jsx,tsx,mdx}",
+    ".flowbite-react\\class-list.json"
   ],
   theme: {
     extend: {
@@ -18,5 +20,5 @@ export default {
       },
     },
   },
-  plugins: [],
+  plugins: [flowbiteReact],
 } satisfies Config;

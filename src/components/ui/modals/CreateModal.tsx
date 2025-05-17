@@ -1,17 +1,32 @@
-import React, { useState } from 'react';
-import { Checkbox, Dialog, DialogContent, DialogTitle, FormControl, FormControlLabel, FormHelperText, IconButton, InputLabel, MenuItem, Stack, TextField, Typography } from '@mui/material';
-import CloseIcon from '@mui/icons-material/Close';
-import { ReusableModalPageProps, } from '~/types/interfaces';
-import { FormValidationProps } from '~/types/types';
-import ConfirmUserActionModalPage from './ConfirmUserActionModal';
-import Swal from 'sweetalert2';
-import Select from 'react-select';
-import { operatorSchema } from '~/schemas/operatorSchema';
-import { userSchema } from '~/schemas/userSchema';
-import Visibility from '@mui/icons-material/Visibility';
-import VisibilityOff from '@mui/icons-material/VisibilityOff';
-import { generateValidPassword } from '~/utils/passwordgenerate';
-import { ZodSchema } from 'zod';
+import React, { useState } from "react";
+import {
+  Checkbox,
+  Dialog,
+  DialogContent,
+  DialogTitle,
+  FormControl,
+  FormControlLabel,
+  FormHelperText,
+  IconButton,
+  InputLabel,
+  MenuItem,
+  Stack,
+  TextField,
+  Typography,
+} from "@mui/material";
+import CloseIcon from "@mui/icons-material/Close";
+import { ReusableModalPageProps } from "~/types/interfaces";
+import { FormValidationProps } from "~/types/types";
+import ConfirmUserActionModalPage from "./ConfirmUserActionModal";
+import Swal from "sweetalert2";
+import Select from "react-select";
+import { operatorSchema } from "~/schemas/operatorSchema";
+import { userSchema } from "~/schemas/userSchema";
+import Visibility from "@mui/icons-material/Visibility";
+import VisibilityOff from "@mui/icons-material/VisibilityOff";
+import { generateValidPassword } from "~/utils/passwordgenerate";
+import { ZodSchema } from "zod";
+import { FloatingLabel } from "flowbite-react";
 
 const ReusableCreateModalPage: React.FC<ReusableModalPageProps> = ({
   isOpen,
@@ -23,21 +38,23 @@ const ReusableCreateModalPage: React.FC<ReusableModalPageProps> = ({
   provinces,
   cities,
   children,
-  schema
+  schema,
 }) => {
   const [errors, setErrors] = useState<Record<string, string[]>>({});
-  const [formData, setFormData] = useState<{ [key: string]: string | number | boolean | string[] }>({});
+  const [formData, setFormData] = useState<{
+    [key: string]: string | number | boolean | string[];
+  }>({});
   const [isVerifyModalOpen, setIsVerifyModalOpen] = useState(false);
   const [filteredProvinces, setFilteredProvinces] = useState<any[]>([]);
   const [filteredCities, setFilteredCities] = useState<any[]>([]);
   const [showPassword, setShowPassword] = useState(false);
 
   // conditional visibility
-  const isProvincial = formData.STLAreaOfOperations === 'ProvincialWide';
-  const isCityWide = formData.STLAreaOfOperations === 'CityWide';
+  const isProvincial = formData.STLAreaOfOperations === "ProvincialWide";
+  const isCityWide = formData.STLAreaOfOperations === "CityWide";
   const isExcludedCITY = formData.isExcludedCITY;
 
-  console.log('scheeemaaa:', schema)
+  console.log("scheeemaaa:", schema);
 
   // console.log('CITIESS',cities)
   // const filteredCity = (cities ?? []).map((city) => ({
@@ -47,20 +64,27 @@ const ReusableCreateModalPage: React.FC<ReusableModalPageProps> = ({
 
   // FOR TEXT FIELDS
   const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement> | { target: { name: string; value: string | boolean } }
+    e:
+      | React.ChangeEvent<HTMLInputElement>
+      | { target: { name: string; value: string | boolean } }
   ) => {
     const { name, value } = e.target;
 
-    if ('type' in e.target && e.target.type === 'checkbox') {
-      setFormData({ ...formData, [name]: (e.target as HTMLInputElement).checked });
+    if ("type" in e.target && e.target.type === "checkbox") {
+      setFormData({
+        ...formData,
+        [name]: (e.target as HTMLInputElement).checked,
+      });
     } else {
       setFormData({ ...formData, [name]: value });
     }
   };
 
   // FOR SELECT FIELDS
-  const handleSelectChange = (e: { target: { name: string; value: string | number } }) => {
-      const { name, value } = e.target;
+  const handleSelectChange = (e: {
+    target: { name: string; value: string | number };
+  }) => {
+    const { name, value } = e.target;
 
     const valueAsNumber = isNaN(Number(value)) ? value : Number(value);
 
@@ -92,7 +116,9 @@ const ReusableCreateModalPage: React.FC<ReusableModalPageProps> = ({
     if (name === "regions") {
       // Filter provinces based on selected region IDs
       const filteredProvinces = (provinces ?? [])
-        .filter((province) => selectedValues.includes(Number(province.RegionId)))
+        .filter((province) =>
+          selectedValues.includes(Number(province.RegionId))
+        )
         .map((province) => ({
           value: province.ProvinceId,
           label: province.ProvinceName,
@@ -110,7 +136,6 @@ const ReusableCreateModalPage: React.FC<ReusableModalPageProps> = ({
 
       setFilteredProvinces(filteredProvinces);
       setFilteredCities([]);
-
     } else if (name === "provinces") {
       // Filter cities based on selected province IDs
       const filteredCities = (cities ?? [])
@@ -129,7 +154,6 @@ const ReusableCreateModalPage: React.FC<ReusableModalPageProps> = ({
       }));
 
       setFilteredCities(filteredCities);
-
     } else if (name === "cities") {
       // Simply update selected city values
       console.log("Selected Cities:", selectedValues);
@@ -161,11 +185,17 @@ const ReusableCreateModalPage: React.FC<ReusableModalPageProps> = ({
         const fieldErrors = result.error.flatten().fieldErrors;
         console.error("Validation errors:", fieldErrors);
         // Filter to only string keys and defined string[] values
-        const filteredFieldErrors: Record<string, string[]> = Object.fromEntries(
-          Object.entries(fieldErrors)
-            .filter(([key, value]) => typeof key === "string" && Array.isArray(value) && value !== undefined)
-            .map(([key, value]) => [key, value ?? []])
-        );
+        const filteredFieldErrors: Record<string, string[]> =
+          Object.fromEntries(
+            Object.entries(fieldErrors)
+              .filter(
+                ([key, value]) =>
+                  typeof key === "string" &&
+                  Array.isArray(value) &&
+                  value !== undefined
+              )
+              .map(([key, value]) => [key, value ?? []])
+          );
         setErrors(filteredFieldErrors);
         return;
       }
@@ -180,7 +210,8 @@ const ReusableCreateModalPage: React.FC<ReusableModalPageProps> = ({
         icon: "question",
         showCancelButton: true,
         confirmButtonText: '<span style="color: #212121;">Yes, I did.</span>',
-        cancelButtonText: '<span style="color: #212121;">No, let me check</span>',
+        cancelButtonText:
+          '<span style="color: #212121;">No, let me check</span>',
         confirmButtonColor: "#67ABEB",
         cancelButtonColor: "#f0f0f0",
         customClass: {
@@ -195,7 +226,7 @@ const ReusableCreateModalPage: React.FC<ReusableModalPageProps> = ({
       setIsVerifyModalOpen(true);
     } catch (error) {
       console.error("Error during validation or confirmation:", error);
-      setErrors(prev => ({
+      setErrors((prev) => ({
         ...prev,
         general: ["An unexpected error occurred"],
       }));
@@ -297,24 +328,36 @@ const ReusableCreateModalPage: React.FC<ReusableModalPageProps> = ({
                             )}
                           </FormControl>
                         ) : (
-                          <TextField
-                            id={field.name}
-                            name={field.name}
-                            type={field.type}
-                            value={
-                              Array.isArray(formData[field.name])
-                                ? (formData[field.name] as string[]).join(", ")
-                                : String(formData[field.name] || "")
-                            }
-                            onChange={handleChange}
-                            placeholder={field.placeholder}
-                            label={field.label}
-                            variant="outlined"
-                            fullWidth
-                            error={Boolean(errors[field.name]?.length)}
-                            helperText={errors[field.name]?.[0] || ""}
-                            size="small"
-                          />
+                          <div key={index} className="w-full relative">
+                            <FloatingLabel
+                              className={`bg-[#F8F0E3] ${errors[field.name]?.[0] ? "border-red-600 focus:ring-red-600" : ""}`}
+                              id={field.name}
+                              name={field.name}
+                              type={field.type}
+                              variant="outlined"
+                              sizing="sm"
+                              label={field.placeholder ?? ""}
+                              value={
+                                Array.isArray(formData[field.name])
+                                  ? (formData[field.name] as string[]).join(
+                                      ", "
+                                    )
+                                  : String(formData[field.name] || "")
+                              }
+                              onChange={handleChange}
+                              disabled={false}
+                            />
+                            <div className="h-2 relative">
+                              {errors[field.name]?.[0] && (
+                                <p
+                                  className="text-xs text-red-600 absolute left-0 top-0"
+                                  style={{ pointerEvents: "none" }}
+                                >
+                                  {errors[field.name][0]}
+                                </p>
+                              )}
+                            </div>
+                          </div>
                         )}
                       </div>
                     ))}
@@ -325,25 +368,33 @@ const ReusableCreateModalPage: React.FC<ReusableModalPageProps> = ({
                   {fields
                     .filter((field) => field.name === "contactNumber")
                     .map((field, index) => (
-                      <div key={index} className="w-full">
-                        <TextField
+                      <div key={index} className="w-full relative">
+                        <FloatingLabel
+                          className={`bg-[#F8F0E3] ${errors[field.name]?.[0] ? "border-red-600 focus:ring-red-600" : ""}`}
                           id={field.name}
                           name={field.name}
                           type={field.type}
+                          variant="outlined"
+                          sizing="sm"
+                          label={field.placeholder ?? ""}
                           value={
                             Array.isArray(formData[field.name])
                               ? (formData[field.name] as string[]).join(", ")
                               : String(formData[field.name] || "")
                           }
                           onChange={handleChange}
-                          placeholder={field.placeholder}
-                          label={field.label}
-                          variant="outlined"
-                          fullWidth
-                          error={Boolean(errors[field.name]?.length)}
-                          helperText={errors[field.name]?.[0] || ""}
-                          size="small"
+                          disabled={false}
                         />
+                        <div className="h-2 relative">
+                          {errors[field.name]?.[0] && (
+                            <p
+                              className="text-xs text-red-600 absolute left-0 top-0"
+                              style={{ pointerEvents: "none" }}
+                            >
+                              {errors[field.name][0]}
+                            </p>
+                          )}
+                        </div>
                       </div>
                     ))}
                 </div>
@@ -354,25 +405,33 @@ const ReusableCreateModalPage: React.FC<ReusableModalPageProps> = ({
           {fields
             .filter((field) => field.name === "address")
             .map((field, index) => (
-              <div key={index} className="w-full">
-                <TextField
+              <div key={index} className="w-full relative">
+                <FloatingLabel
+                  className={`bg-[#F8F0E3] ${errors[field.name]?.[0] ? "border-red-600 focus:ring-red-600" : ""}`}
                   id={field.name}
                   name={field.name}
                   type={field.type}
+                  variant="outlined"
+                  sizing="sm"
+                  label={field.placeholder ?? ""}
                   value={
                     Array.isArray(formData[field.name])
                       ? (formData[field.name] as string[]).join(", ")
                       : String(formData[field.name] || "")
                   }
                   onChange={handleChange}
-                  placeholder={field.placeholder}
-                  label={field.label}
-                  variant="outlined"
-                  fullWidth
-                  error={Boolean(errors[field.name]?.length)}
-                  helperText={errors[field.name]?.[0] || ""}
-                  size="small"
+                  disabled={false}
                 />
+                <div className="h-2 relative">
+                  {errors[field.name]?.[0] && (
+                    <p
+                      className="text-xs text-red-600 absolute left-0 top-0"
+                      style={{ pointerEvents: "none" }}
+                    >
+                      {errors[field.name][0]}
+                    </p>
+                  )}
+                </div>
               </div>
             ))}
 
@@ -383,46 +442,66 @@ const ReusableCreateModalPage: React.FC<ReusableModalPageProps> = ({
               {fields.map((field, index) => {
                 if (field.name === "firstName") {
                   return (
-                    <div key={index} className="w-full">
-                      <TextField
+                    <div key={index} className="w-full relative">
+                      <FloatingLabel
+                        className={`bg-[#F8F0E3] ${errors[field.name]?.[0] ? "border-red-600 focus:ring-red-600" : ""}`}
                         id={field.name}
                         name={field.name}
                         type={field.type}
-                        value={formData[field.name] || ""}
-                        onChange={handleChange}
-                        placeholder={field.placeholder}
-                        label={field.label}
                         variant="outlined"
-                        fullWidth
-                        error={!!errors[field.name]?.length}
-                        helperText={errors[field.name]?.[0] || ""}
-                        size="small"
-                      />
-                    </div>
-                  );
-                }
-
-                if (field.name === "email" && field.gridSpan === 1) {
-                  return (
-                    <div key={index} className="w-full">
-                      <TextField
-                        id={field.name}
-                        name={field.name}
-                        type={field.type}
+                        sizing="sm"
+                        label={field.placeholder ?? ""}
                         value={
                           Array.isArray(formData[field.name])
                             ? (formData[field.name] as string[]).join(", ")
                             : String(formData[field.name] || "")
                         }
                         onChange={handleChange}
-                        placeholder={field.placeholder}
-                        label={field.label}
-                        variant="outlined"
-                        fullWidth
-                        error={Boolean(errors[field.name]?.length)}
-                        helperText={errors[field.name]?.[0] || ""}
-                        size="small"
+                        disabled={false}
                       />
+                      <div className="h-2 relative">
+                        {errors[field.name]?.[0] && (
+                          <p
+                            className="text-xs text-red-600 absolute left-0 top-0"
+                            style={{ pointerEvents: "none" }}
+                          >
+                            {errors[field.name][0]}
+                          </p>
+                        )}
+                      </div>
+                    </div>
+                  );
+                }
+
+                if (field.name === "email" && field.gridSpan === 1) {
+                  return (
+                    <div key={index} className="w-full relative">
+                      <FloatingLabel
+                        className={`bg-[#F8F0E3] ${errors[field.name]?.[0] ? "border-red-600 focus:ring-red-600" : ""}`}
+                        id={field.name}
+                        name={field.name}
+                        type={field.type}
+                        variant="outlined"
+                        sizing="sm"
+                        label={field.placeholder ?? ""}
+                        value={
+                          Array.isArray(formData[field.name])
+                            ? (formData[field.name] as string[]).join(", ")
+                            : String(formData[field.name] || "")
+                        }
+                        onChange={handleChange}
+                        disabled={false}
+                      />
+                      <div className="h-2 relative">
+                        {errors[field.name]?.[0] && (
+                          <p
+                            className="text-xs text-red-600 absolute left-0 top-0"
+                            style={{ pointerEvents: "none" }}
+                          >
+                            {errors[field.name][0]}
+                          </p>
+                        )}
+                      </div>
                     </div>
                   );
                 }
@@ -434,25 +513,33 @@ const ReusableCreateModalPage: React.FC<ReusableModalPageProps> = ({
                   return (
                     <div key={index} className="w-full flex gap-4">
                       {/* Last Name */}
-                      <div className="w-1/2">
-                        <TextField
+                      <div key={index} className="w-1/2 relative">
+                        <FloatingLabel
+                          className={`bg-[#F8F0E3] ${errors[field.name]?.[0] ? "border-red-600 focus:ring-red-600" : ""}`}
                           id={field.name}
                           name={field.name}
                           type={field.type}
+                          variant="outlined"
+                          sizing="sm"
+                          label={field.placeholder ?? ""}
                           value={
                             Array.isArray(formData[field.name])
                               ? (formData[field.name] as string[]).join(", ")
                               : String(formData[field.name] || "")
                           }
                           onChange={handleChange}
-                          placeholder={field.placeholder}
-                          label={field.label}
-                          variant="outlined"
-                          fullWidth
-                          error={Boolean(errors[field.name]?.length)}
-                          helperText={errors[field.name]?.[0] || ""}
-                          size="small"
+                          disabled={false}
                         />
+                        <div className="h-2 relative">
+                          {errors[field.name]?.[0] && (
+                            <p
+                              className="text-xs text-red-600 absolute left-0 top-0"
+                              style={{ pointerEvents: "none" }}
+                            >
+                              {errors[field.name][0]}
+                            </p>
+                          )}
+                        </div>
                       </div>
 
                       {/* Suffix */}
@@ -500,25 +587,33 @@ const ReusableCreateModalPage: React.FC<ReusableModalPageProps> = ({
 
                 if (field.name === "phoneNumber" && field.gridSpan === 1) {
                   return (
-                    <div key={index} className="w-full">
-                      <TextField
+                    <div key={index} className="w-full relative">
+                      <FloatingLabel
+                        className={`bg-[#F8F0E3] ${errors[field.name]?.[0] ? "border-red-600 focus:ring-red-600" : ""}`}
                         id={field.name}
                         name={field.name}
                         type={field.type}
+                        variant="outlined"
+                        sizing="sm"
+                        label={field.placeholder ?? ""}
                         value={
                           Array.isArray(formData[field.name])
                             ? (formData[field.name] as string[]).join(", ")
                             : String(formData[field.name] || "")
                         }
                         onChange={handleChange}
-                        placeholder={field.placeholder}
-                        label={field.label}
-                        variant="outlined"
-                        fullWidth
-                        error={Boolean(errors[field.name]?.length)}
-                        helperText={errors[field.name]?.[0] || ""}
-                        size="small"
+                        disabled={false}
                       />
+                      <div className="h-2 relative">
+                        {errors[field.name]?.[0] && (
+                          <p
+                            className="text-xs text-red-600 absolute left-0 top-0"
+                            style={{ pointerEvents: "none" }}
+                          >
+                            {errors[field.name][0]}
+                          </p>
+                        )}
+                      </div>
                     </div>
                   );
                 }
@@ -711,49 +806,62 @@ const ReusableCreateModalPage: React.FC<ReusableModalPageProps> = ({
 
                 if (field.name === "dateOfOperation") {
                   return (
-                    <div key={index} className="w-full">
-                      <TextField
+                    <div key={index} className="w-full relative">
+                      <FloatingLabel
+                        className={`bg-[#F8F0E3] ${errors[field.name]?.[0] ? "border-red-600 focus:ring-red-600" : ""}`}
                         id={field.name}
                         name={field.name}
                         type="date"
+                        variant="outlined"
+                        sizing="sm"
+                        label={field.placeholder ?? ""}
                         value={String(formData[field.name] || "")}
                         onChange={handleChange}
-                        placeholder={field.placeholder}
-                        label={field.label}
-                        variant="outlined"
-                        fullWidth
-                        InputLabelProps={{
-                          shrink: true,
-                        }}
-                        error={Boolean(errors[field.name]?.length)}
-                        helperText={errors[field.name]?.[0] || ""}
-                        size="small"
+                        disabled={false}
                       />
+                      <div className="h-2 relative">
+                        {errors[field.name]?.[0] && (
+                          <p
+                            className="text-xs text-red-600 absolute left-0 top-0"
+                            style={{ pointerEvents: "none" }}
+                          >
+                            {errors[field.name][0]}
+                          </p>
+                        )}
+                      </div>
                     </div>
                   );
                 }
 
                 if (field.name === "email" && field.gridSpan === 2) {
                   return (
-                    <div key={index} className="w-full">
-                      <TextField
+                    <div key={index} className="w-full relative">
+                      <FloatingLabel
+                        className={`bg-[#F8F0E3] ${errors[field.name]?.[0] ? "border-red-600 focus:ring-red-600" : ""}`}
                         id={field.name}
                         name={field.name}
                         type={field.type}
+                        variant="outlined"
+                        sizing="sm"
+                        label={field.placeholder ?? ""}
                         value={
                           Array.isArray(formData[field.name])
                             ? (formData[field.name] as string[]).join(", ")
                             : String(formData[field.name] || "")
                         }
                         onChange={handleChange}
-                        placeholder={field.placeholder}
-                        label={field.label}
-                        variant="outlined"
-                        fullWidth
-                        error={Boolean(errors[field.name]?.length)}
-                        helperText={errors[field.name]?.[0] || ""}
-                        size="small"
+                        disabled={false}
                       />
+                      <div className="h-2 relative">
+                        {errors[field.name]?.[0] && (
+                          <p
+                            className="text-xs text-red-600 absolute left-0 top-0"
+                            style={{ pointerEvents: "none" }}
+                          >
+                            {errors[field.name][0]}
+                          </p>
+                        )}
+                      </div>
                     </div>
                   );
                 }
@@ -762,40 +870,52 @@ const ReusableCreateModalPage: React.FC<ReusableModalPageProps> = ({
                   return (
                     <div key={index} className="w-full flex gap-4 items-end">
                       {/* Password Input */}
-                      <div className="w-3/5">
-                        <TextField
+                      <div className="flex-1 relative flex items-center">
+                        <FloatingLabel
+                          className={`bg-[#F8F0E3] ${errors[field.name]?.[0] ? "border-red-600 focus:ring-red-600" : ""}`}
                           id={field.name}
                           name={field.name}
                           type={showPassword ? "text" : "password"}
-                          value={formData[field.name] || ""}
-                          onChange={handleChange}
-                          placeholder={field.placeholder}
-                          label={field.label}
                           variant="outlined"
-                          fullWidth
-                          size="small"
-                          InputProps={{
-                            endAdornment: (
-                              <IconButton
-                                onClick={() => setShowPassword((prev) => !prev)}
-                                edge="end"
-                                tabIndex={-1}
-                              >
-                                {showPassword ? (
-                                  <VisibilityOff fontSize="small" />
-                                ) : (
-                                  <Visibility fontSize="small" />
-                                )}
-                              </IconButton>
-                            ),
-                          }}
-                          error={!!errors[field.name]?.length}
-                          helperText={errors[field.name]?.[0] || ""}
+                          sizing="sm"
+                          label={field.placeholder ?? ""}
+                          value={
+                            Array.isArray(formData[field.name])
+                              ? (formData[field.name] as string[]).join(", ")
+                              : String(formData[field.name] || "")
+                          }
+                          onChange={handleChange}
+                          disabled={false}
+                          style={{ paddingRight: "2.5rem" }}
                         />
+                        <IconButton
+                          size="small"
+                          onClick={() => setShowPassword((prev) => !prev)}
+                          style={{
+                            position: "absolute",
+                            right: "0.5rem",
+                            top: "50%",
+                            transform: "translateY(-50%)",
+                            zIndex: 2,
+                          }}
+                          tabIndex={-1}
+                        >
+                          {showPassword ? <VisibilityOff /> : <Visibility />}
+                        </IconButton>
+                        <div className="h-2 absolute left-0 -bottom-5 w-full">
+                          {errors[field.name]?.[0] && (
+                            <p
+                              className="text-xs text-red-600"
+                              style={{ pointerEvents: "none" }}
+                            >
+                              {errors[field.name][0]}
+                            </p>
+                          )}
+                        </div>
                       </div>
 
                       {/* Generate Button */}
-                      <div className="w-2/5">
+                      <div style={{ width: "120px" }}>
                         <button
                           type="button"
                           onClick={() => {
@@ -944,52 +1064,48 @@ const ReusableCreateModalPage: React.FC<ReusableModalPageProps> = ({
             {/* Left column (Column 1) */}
             <div className="space-y-4">
               {fields.map((field, index) => {
-                if (
-                  field.name === "cities" &&
-                  isExcludedCITY &&
-                  isProvincial
-                ) {
+                if (field.name === "cities" && isExcludedCITY && isProvincial) {
                   return (
                     <div key={index} className="w-full">
                       <Select
-                      id={field.name}
-                      name={field.name}
-                      options={filteredCities}
-                      isMulti
-                      value={filteredCities.filter(
-                        (option) =>
-                        Array.isArray(formData[field.name]) &&
-                        (
-                          formData[field.name] as (string | number)[]
-                        ).includes(option.value)
-                      )}
-                      onChange={(selectedOptions) =>
-                        handleMultiSelect(field.name, [...selectedOptions])
-                      }
-                      className="react-select-container"
-                      classNamePrefix="react-select"
-                      placeholder="Select City(s)"
-                      menuPortalTarget={document.body}
-                      isDisabled={
-                        !formData.provinces ||
-                        (Array.isArray(formData.provinces) &&
-                        formData.provinces.length === 0)
-                      }
-                      styles={{
-                        menuPortal: (base) => ({ ...base, zIndex: 9999 }),
-                      }}
+                        id={field.name}
+                        name={field.name}
+                        options={filteredCities}
+                        isMulti
+                        value={filteredCities.filter(
+                          (option) =>
+                            Array.isArray(formData[field.name]) &&
+                            (
+                              formData[field.name] as (string | number)[]
+                            ).includes(option.value)
+                        )}
+                        onChange={(selectedOptions) =>
+                          handleMultiSelect(field.name, [...selectedOptions])
+                        }
+                        className="react-select-container"
+                        classNamePrefix="react-select"
+                        placeholder="Select City(s)"
+                        menuPortalTarget={document.body}
+                        isDisabled={
+                          !formData.provinces ||
+                          (Array.isArray(formData.provinces) &&
+                            formData.provinces.length === 0)
+                        }
+                        styles={{
+                          menuPortal: (base) => ({ ...base, zIndex: 9999 }),
+                        }}
                       />
                       {!formData.provinces ||
                       (Array.isArray(formData.provinces) &&
-                      formData.provinces.length === 0) ? (
-                      <p className="text-xs text-gray-500 mt-1">
-                        Please select provinces first.
-                      </p>
+                        formData.provinces.length === 0) ? (
+                        <p className="text-xs text-gray-500 mt-1">
+                          Please select provinces first.
+                        </p>
                       ) : null}
                       {errors[field.name]?.[0] && (
-                      <p className="text-sm text-red-600 mt-1">
-                        {errors[field.name][0]}
-                      </p>
+                        <p className="text-sm text-red-600 mt-1">
+                          {errors[field.name][0]}
+                        </p>
                       )}
                     </div>
                   );
@@ -1025,6 +1141,3 @@ const ReusableCreateModalPage: React.FC<ReusableModalPageProps> = ({
 };
 
 export default ReusableCreateModalPage;
-
-
-

@@ -84,8 +84,21 @@ select option:disabled {
   background-color: #0038A8 !important;      /* Highlight color when selected */
   color: white !important;
 }
+label.floatingLabel {
+  background-color: transparent !important;
+}
 
 
+@layer components {
+  input + label {
+    @apply bg-transparent px-1 text-gray-600;
+  }
+}
 
+.floating-label-class label {
+  background-color: #F8F0E3 !important; /* yellow-300 */
+  padding-left: 0.25rem;
+  padding-right: 0.25rem;
+}
 
 
