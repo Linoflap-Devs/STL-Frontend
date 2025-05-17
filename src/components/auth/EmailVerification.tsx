@@ -2,6 +2,8 @@ import React, { useState, useEffect } from "react";
 import { useRouter } from "next/router";
 import { FaArrowLeft } from "react-icons/fa";
 import { LoginSectionData } from "../../data/LoginSectionData";
+import { useAuthStore } from "../../../store/useForgetAuthStore";
+import { forgetPassEmail, verifyOtp } from "~/utils/api/auth";
 
 const EmailVerification = () => {
   const router = useRouter();
@@ -13,6 +15,12 @@ const EmailVerification = () => {
   const [isOtpVerified, setIsOTPVerified] = useState(false);
   const [userEmail, setUserEmail] = useState("example@email.com");
   const [showTooltip, setShowTooltip] = useState(false);
+
+  const authStore = useAuthStore();
+
+  useEffect(() => {
+    setUserEmail(authStore.email);
+  }, [])
 
   useEffect(() => {
     setIsButtonDisabled(otp.some((digit) => digit === ""));
@@ -42,20 +50,26 @@ const EmailVerification = () => {
     }
   };
 
-  const handleNavigation = () => {
+  const handleNavigation = async () => {
     setIsLoading(true);
     setIsOtpValid(true);
-    setIsOTPVerified(false);
+    
+    const result = await verifyOtp(authStore.email, otp.join(""));
+    console.log("Auth store email is: " + authStore.email, "| OTP is: " + otp.join(""))
+    console.log(result)
+    
+    if(!result.success) {
+      setIsOTPVerified(false);
+    }
 
-    setTimeout(() => {
-      setIsLoading(false);
-      if (otp.join("") === correctOTP) {
-        setIsOTPVerified(true);
-        router.push("/set-password"); 
-      } else {
-        setIsOtpValid(false);
-      }
-    }, 2000);
+    else {
+      authStore.setResetToken(result.data.resetToken)
+      console.log("reset token is: " + authStore.resetToken)
+      setIsOTPVerified(true);
+      router.push("/set-password"); 
+    }
+
+    setIsLoading(false)
   };
 
   const VerifyEmailDescription = (userEmail: string) => {
@@ -63,6 +77,10 @@ const EmailVerification = () => {
       EmailVerificationDescription: `We have sent a verification code to ${userEmail}. Please check your email and enter the code below.`,
     };
   };
+
+  const handleResend = () => {
+    const result = forgetPassEmail(authStore.email);
+  }
 
   useEffect(() => {
     setIsOtpValid(true);
@@ -180,13 +198,21 @@ const EmailVerification = () => {
                 className={`w-full mt-4 py-2 text-sm rounded-md transition bg-[#F6BA12] text-[#212121] hover:opacity-70 ${isButtonDisabled ? "bg-[#F6BA12] text-[#212121] cursor-not-allowed opacity-50" : "bg-[#F6BA12] text-[#212121] cursor-pointer"}`}
                 disabled={isButtonDisabled}
               >
-                {LoginSectionData.resetPasswordButton}
+                {LoginSectionData.resetPasswordButton}  
               </button>
             )}
 
             {!isOtpVerified && (
               <p className="text-[#0038A8] text-center text-xs mt-4">
                 {LoginSectionData.resendEmailDescription}
+                
+                <a 
+                  href="#" 
+                  onClick={handleResend}
+                  className="font-bold"
+                >
+                  Resend email
+                </a>
               </p>
             )}
           </div>

@@ -47,4 +47,40 @@ const verifyPass = async (password: string) => {
     }
 };
 
-export { getCurrentUser, verifyPass, logoutUser };
+const forgetPassEmail = async (email: string) => {
+    try {
+        const url = validateRelativeUrl("/auth/forgetPassword");
+        const response = await axiosInstance.post(url, { email });
+
+        return response.data;
+    } catch (error) {
+        console.error("Error verifying password:", (error as Error).message);
+        return { success: false, message: (error as Error).message, data: {} };
+    }
+}
+
+const verifyOtp = async (email: string, otp: string) => {
+    try {
+        const url = validateRelativeUrl("/auth/verifyOTP");
+        const response = await axiosInstance.post(url, { email, otp });
+
+        return response.data;
+    } catch (error) {
+        console.error("Error verifying password:", (error as Error).message);
+        return { success: false, message: (error as Error).message, data: {} };
+    }
+}
+
+const updateForgottenPassword = async (email: string, resetToken: string, password: string) => {
+    try {
+        const url = validateRelativeUrl("/auth/updateForgottenPassword");
+        const response = await axiosInstance.post(url, { email, resetToken, password });
+
+        return response.data;
+    } catch (error) {
+        console.error("Error verifying password:", (error as Error).message);
+        return { success: false, message: (error as Error).message, data: {} };
+    }
+}
+
+export { getCurrentUser, verifyPass, logoutUser, forgetPassEmail, verifyOtp, updateForgottenPassword };

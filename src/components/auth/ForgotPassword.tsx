@@ -2,13 +2,17 @@ import React, { useState } from "react";
 import { useRouter } from "next/router";
 import { FaArrowLeft } from "react-icons/fa";
 import { LoginSectionData } from "../../data/LoginSectionData";
+import { useAuthStore } from "../../../store/useForgetAuthStore";
+import { forgetPassEmail } from "~/utils/api/auth";
 
 const ForgotPassword = () => {
   const router = useRouter();
   const [credentials, setCredentials] = useState({ username: "" });
   const [errors, setErrors] = useState<{ username?: string }>({});
-  const [isButtonDisabled] = useState(false);
+  const [isButtonDisabled, setIsButtonDisabled] = useState(false);
   const [showTooltip, setShowTooltip] = useState(false);
+
+  const authStore = useAuthStore();
 
   const validateCredentials = (credentials: { username: string }) => {
     let errors: { username?: string } = {};
@@ -29,14 +33,27 @@ const ForgotPassword = () => {
     if (Object.keys(validationErrors).length === 0) {
       console.log("Login Successful.", credentials);
       setErrors({});
+
+
     } else {
       setErrors(validationErrors);
     }
   };
 
-  const handleNavigation = () => {
+  const handleNavigation = async () => {
     const validationErrors = validateCredentials(credentials);
     if (Object.keys(validationErrors).length === 0) {
+      setIsButtonDisabled(true)
+
+
+
+      authStore.setEmail(credentials.username)
+      const result = await forgetPassEmail(credentials.username)
+
+      setIsButtonDisabled(false)
+      if(!result.success) return
+
+      console.log(authStore.email, result)
       router.push("/email-verification");
     } else {
       setErrors(validationErrors);
@@ -130,7 +147,7 @@ const ForgotPassword = () => {
               type="submit"
               onClick={handleNavigation}
               className={`w-full mt-4 py-2 text-sm rounded-md transition bg-[#F6BA12] text-[#212121] hover:opacity-70 ${isButtonDisabled ? "opacity-70 cursor-not-allowed" : ""}`}
-              disabled={false}
+              disabled={isButtonDisabled}
             >
               {LoginSectionData.resetPasswordButton}
             </button>

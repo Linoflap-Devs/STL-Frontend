@@ -37,9 +37,9 @@ export const LoginSectionData = {
     <>
       <span className="text-[#0038A8]">
         Haven’t got the email yet?{" "}
-        <a href="/resend-email" className="font-bold hover:underline">
+        {/* <a href="/resend-email" className="font-bold hover:underline">
           Resend email
-        </a>
+        </a> */}
       </span>
     </>
   ),

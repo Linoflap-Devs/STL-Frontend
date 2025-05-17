@@ -3,6 +3,8 @@ import { Visibility, VisibilityOff } from "@mui/icons-material";
 import { LoginSectionData } from "../../data/LoginSectionData";
 import { useRouter } from "next/router";
 import Swal from "sweetalert2";
+import { useAuthStore } from "../../../store/useForgetAuthStore";
+import { updateForgottenPassword } from "~/utils/api/auth";
 
 const SetNewPassword = () => {
   const router = useRouter();
@@ -19,6 +21,8 @@ const SetNewPassword = () => {
     passwordLimit?: string;
   }>({});
   const [isButtonDisabled, setIsButtonDisabled] = useState(true);
+
+  const authStore = useAuthStore()
 
   // Validation Function
   const validatePasswords = () => {
@@ -44,13 +48,17 @@ const SetNewPassword = () => {
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
     if (!validatePasswords()) return;
 
     if (!errors.passwordLimit && !errors.passwordMismatch) {
-      console.log("Password reset successful", credentials);
+      console.log("Data: ", authStore.email, authStore.resetToken, credentials.newpassword);
+
+      const result = await updateForgottenPassword(authStore.email, authStore.resetToken, credentials.newpassword)
+
+      if(!result.success) return
 
       Swal.fire({
         title: "Success!",
@@ -82,6 +90,10 @@ const SetNewPassword = () => {
         credentials.confirmPassword.trim() === ""
     );
   }, [credentials.newpassword, credentials.confirmPassword]);
+
+  useEffect(() => {
+    console.log("Reset token is " + authStore.resetToken)
+  }, [])
 
   return (
     <div className="w-full min-h-screen flex flex-col items-center justify-center lg:items-stretch lg:flex-row bg-[#F8F0E3]">
