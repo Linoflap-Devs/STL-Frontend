@@ -1,4 +1,5 @@
-import { AppProps } from "next/app";
+// pages/_app.tsx
+import App, { AppProps, AppContext } from "next/app";
 import {
   ThemeProvider,
   CssBaseline,
@@ -7,14 +8,11 @@ import {
 } from "@mui/material";
 import Layout from "../layout";
 import darkTheme from "../styles/theme";
-import { useRouter } from "next/router";
-import { useEffect, useState } from "react";
-import { getCurrentUser } from "../utils/api/auth";
 import "../styles/globals.css";
-import axiosInstance, {
-  isRefreshing,
-  refreshSubscribers,
-} from "../utils/axiosInstance";
+import axiosInstance from "../utils/axiosInstance";
+import { getCurrentUser } from "../utils/api/auth";
+import Router from "next/router";
+import { useEffect, useState } from "react";
 
 const excludedPaths = [
   "/",
@@ -25,85 +23,23 @@ const excludedPaths = [
   "/auth/set-password",
 ];
 
-const App = ({ Component, pageProps }: AppProps) => {
-  const router = useRouter();
+function MyApp({ Component, pageProps, router, isAuthenticated }: AppProps & { isAuthenticated: boolean }) {
   const isExcludedPath = excludedPaths.includes(router.pathname);
-  console.log(router.pathname)
-  const [loading, setLoading] = useState(true);
-
-  // Helper function: Wait until token refresh is done
-  const waitUntilNotRefreshing = async () => {
-    while (isRefreshing) {
-      await new Promise((r) => requestAnimationFrame(r)); // Lighter than setInterval
-    }
-  };
+  const [loading, setLoading] = useState(!isAuthenticated && !isExcludedPath);
 
   useEffect(() => {
-    if (isExcludedPath) {
+    if (!isAuthenticated && !isExcludedPath) {
+      Router.replace("/auth/login");
+    } else {
       setLoading(false);
-      return;
     }
-
-    const handleAuthFailure = () => {
-      console.log(router.pathname)
-      console.log("No valid auth found! Redirecting to login...");
-      router.replace("/Auth/login");
-    };
-
-    const checkAuth = async () => {
-      try {
-        await waitUntilNotRefreshing();
-        const data = await getCurrentUser({});
-        if (data?.success) {
-          setLoading(false);
-          return;
-        }
-        throw new Error("No valid auth found!");
-      } catch (error: any) {
-        const isTokenExpired =
-          error?.response?.status === 403 &&
-          error.response?.data?.message === "Token expired.";
-        if (isTokenExpired) {
-          await new Promise<void>((resolve) =>
-            refreshSubscribers.push(() => resolve())
-          );
-
-          try {
-            const data = await getCurrentUser({});
-            if (data?.success) {
-              setLoading(false);
-              return;
-            }
-          } catch {
-            handleAuthFailure();
-          }
-        } else {
-          handleAuthFailure();
-        }
-      }
-    };
-
-    checkAuth();
-
-    // refreshing every 1 minute
-    const refreshInterval = setInterval(() => {
-      console.log("Refreshing token...");
-      axiosInstance.post("/auth/tokenRefresh", {}, { withCredentials: true });
-    }, 60000);
-
-    return () => clearInterval(refreshInterval);
-  }, [isExcludedPath, router]);
+  }, [isAuthenticated, isExcludedPath]);
 
   if (loading) {
     return (
       <ThemeProvider theme={darkTheme}>
         <CssBaseline />
-        <Box
-          display="flex"
-          justifyContent="center"
-          alignItems="center"
-          height="100vh"
-        >
+        <Box display="flex" justifyContent="center" alignItems="center" height="100vh">
           <CircularProgress />
         </Box>
       </ThemeProvider>
@@ -122,6 +58,29 @@ const App = ({ Component, pageProps }: AppProps) => {
       )}
     </ThemeProvider>
   );
+}
+
+// Runs on server & client during navigation
+MyApp.getInitialProps = async (appContext: AppContext) => {
+  const appProps = await App.getInitialProps(appContext);
+  const ctx = appContext.ctx;
+  const isExcludedPath = excludedPaths.includes(ctx.pathname);
+  let isAuthenticated = false;
+
+  if (isExcludedPath) {
+    return { ...appProps, isAuthenticated: true };
+  }
+
+  try {
+    const response = await getCurrentUser({ req: ctx.req }); // Make sure getCurrentUser uses `axiosInstance` and forwards cookies on server
+    if (response?.success) {
+      isAuthenticated = true;
+    }
+  } catch {
+    isAuthenticated = false;
+  }
+
+  return { ...appProps, isAuthenticated };
 };
 
-export default App;
+export default MyApp;
