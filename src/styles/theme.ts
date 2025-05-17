@@ -1,6 +1,6 @@
 import { createTheme } from "@mui/material/styles";
 
-const darkTheme = createTheme({
+const lightTheme = createTheme({
   palette: {
     mode: "light",
     background: {
@@ -136,7 +136,7 @@ const darkTheme = createTheme({
     MuiDialog: {
       styleOverrides: {
         paper: {
-          backgroundColor: '#F8F0E3',
+          backgroundColor: "#F8F0E3",
           borderRadius: "6px",
           // padding: "25px 8px 27px 8px",
           padding: "20px 8px 12px 8px",
@@ -170,7 +170,7 @@ const darkTheme = createTheme({
     MuiInputLabel: {
       styleOverrides: {
         root: {
-          fontSize: '15px',
+          fontSize: "15px",
           //color: "#ACA993 !important",
         },
       },
@@ -190,11 +190,11 @@ const darkTheme = createTheme({
         input: {
           width: "100% !important",
           fontSize: "0.85rem",
-          color: '#000000 !important',
+          color: "#000000 !important",
         },
       },
     },
-    MuiTooltip: { 
+    MuiTooltip: {
       styleOverrides: {
         tooltip: {
           backgroundColor: "#2F2F2F !important", // Custom background color
@@ -203,7 +203,6 @@ const darkTheme = createTheme({
         },
       },
     },
-
   },
 });
 
@@ -226,9 +225,9 @@ export const deleteStyles = {
   backgroundColor: "#F05252",
   width: "auto",
   marginRight: "0.9rem",
-  '&:hover': {
-    backgroundColor: '#D43D38',
-  }
+  "&:hover": {
+    backgroundColor: "#D43D38",
+  },
 };
 
 export const inputStyles = {
@@ -250,7 +249,6 @@ export const selectStyles = {
       borderColor: "#D1D5DB",
       padding: "14px 40px 10px 14px",
     },
-
   },
 };
 
@@ -264,17 +262,21 @@ export const inputErrorStyles = {
 export const filterStyles = {
   marginTop: 0,
   marginBottom: 0,
-  color: '#E0DCBD',
+  color: "#E0DCBD !important",
   padding: "4px",
   fontSize: "12px",
   backgroundColor: "none",
-  "& .MuiFilledInput-root": {
-    paddingTop: "1px",
-    paddingBottom: "8px",
-    backgroundColor: "transparent  !important",
+  "& .MuiFilledInput-input::placeholder": {
+    color: "#E0DCBD",
+    opacity: 1, // ensure full opacity if needed
+    fontSize: "12px",
   },
   "& .MuiInputBase-input": {
     padding: 0,
+    paddingBottom: 0,
+    // color: '#E0DCBD'
+    fontSize: "12px",
+    margin: 0,
   },
 };
 
@@ -290,16 +292,15 @@ export const cardDashboardStyles = {
 };
 
 export const buttonDrawStyles = {
-  width: 'auto',
-  height: 'auto',
-  border: '1px solid',
-  borderColor: '#575757',
-  borderRadius: '8px',
+  width: "auto",
+  height: "auto",
+  border: "1px solid",
+  borderColor: "#575757",
+  borderRadius: "8px",
   py: 1.5,
-  paddingLeft: '0.8rem',
-  paddingRight: '3.7rem',
+  paddingLeft: "0.8rem",
+  paddingRight: "3.7rem",
 };
-
 
 export const skeletonRowStyles = {
   display: "flex",
@@ -316,9 +317,9 @@ export const buttonUpdateStyles = {
   textTransform: "none",
   borderRadius: "8px",
   color: "#181A1B",
-  width: '100%',
-  '&:hover': {
-    backgroundColor: '#FFD100', // Hover color
+  width: "100%",
+  "&:hover": {
+    backgroundColor: "#FFD100", // Hover color
   },
 };
 
@@ -328,10 +329,10 @@ export const legendCircle = {
   borderRadius: "50%",
   mr: 1,
   fontSize: "10px !important",
-}
+};
 
 export const selectDrawStyles = {
   backgroundColor: "#F6BA12 !important",
-}
+};
 
-export default darkTheme;
+export default lightTheme;
