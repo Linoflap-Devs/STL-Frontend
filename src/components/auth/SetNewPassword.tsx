@@ -5,6 +5,7 @@ import { useRouter } from "next/router";
 import Swal from "sweetalert2";
 import { useAuthStore } from "../../../store/useForgetAuthStore";
 import { updateForgottenPassword } from "~/utils/api/auth";
+import ActivityIndicator from "./ActivityIndicator";
 
 const SetNewPassword = () => {
   const router = useRouter();
@@ -21,6 +22,9 @@ const SetNewPassword = () => {
     passwordLimit?: string;
   }>({});
   const [isButtonDisabled, setIsButtonDisabled] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
+  const [currentError, setCurrentError] = useState("");
+  const [displayedError, setDisplayedError] = useState("");
 
   const authStore = useAuthStore()
 
@@ -50,15 +54,23 @@ const SetNewPassword = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setIsLoading(true)
 
-    if (!validatePasswords()) return;
+    if (!validatePasswords()) {
+      setIsLoading(false)
+      return;
+    }
 
     if (!errors.passwordLimit && !errors.passwordMismatch) {
       console.log("Data: ", authStore.email, authStore.resetToken, credentials.newpassword);
 
       const result = await updateForgottenPassword(authStore.email, authStore.resetToken, credentials.newpassword)
 
-      if(!result.success) return
+      setIsLoading(false)
+      if(!result.success) {
+        setCurrentError(result.message)
+        return
+      }
 
       Swal.fire({
         title: "Success!",
@@ -67,11 +79,12 @@ const SetNewPassword = () => {
         confirmButtonText: "Redirect",
         confirmButtonColor: "#0038A8",
       }).then((result) => {
-        if (result.isConfirmed) {
+        if (result.isConfirmed || result.isDismissed) {
           window.location.href = "auth/login";
         }
       });
     }
+    setIsLoading(false)
   };
 
   const handleTogglePasswordVisibility = (
@@ -92,11 +105,24 @@ const SetNewPassword = () => {
   }, [credentials.newpassword, credentials.confirmPassword]);
 
   useEffect(() => {
+    if(currentError.toLowerCase().includes("token not found")) {
+      setDisplayedError("Your token has expired or is invalid. Please return to the first step and try again.");
+    }
+
+    if(currentError.toLowerCase().includes("missing required")) {
+      setDisplayedError("Some information are missing. Please return to the first step and try again.")
+    }
+  }, [currentError])
+
+  useEffect(() => {
     console.log("Reset token is " + authStore.resetToken)
   }, [])
 
   return (
     <div className="w-full min-h-screen flex flex-col items-center justify-center lg:items-stretch lg:flex-row bg-[#F8F0E3]">
+      {isLoading && (
+        <ActivityIndicator />
+      )}
       <div className="w-full lg:flex-1 flex flex-col justify-center items-center py-8 px-4 lg:py-0">
         <div className="text-center w-full max-w-md">
           <div className="flex justify-center gap-3 mb-4">
@@ -222,6 +248,13 @@ const SetNewPassword = () => {
                 {errors.passwordMismatch}
               </span>
             )}
+            {
+              displayedError.length > 0 && (
+                <span className="text-[#CE1126] text-xs">
+                  {displayedError}
+                </span>
+              )
+            }
             <button
               type="submit"
               className={`w-full mt-4 py-2 text-sm rounded-md transition ${

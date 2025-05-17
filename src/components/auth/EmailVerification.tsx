@@ -4,23 +4,36 @@ import { FaArrowLeft } from "react-icons/fa";
 import { LoginSectionData } from "../../data/LoginSectionData";
 import { useAuthStore } from "../../../store/useForgetAuthStore";
 import { forgetPassEmail, verifyOtp } from "~/utils/api/auth";
+import ActivityIndicator from "./ActivityIndicator";
 
 const EmailVerification = () => {
   const router = useRouter();
   const [otp, setOtp] = useState(Array(6).fill(""));
   const [isButtonDisabled, setIsButtonDisabled] = useState(false);
   const [isOtpValid, setIsOtpValid] = useState(true);
-  const correctOTP = "123456";
   const [isLoading, setIsLoading] = useState(false);
   const [isOtpVerified, setIsOTPVerified] = useState(false);
   const [userEmail, setUserEmail] = useState("example@email.com");
   const [showTooltip, setShowTooltip] = useState(false);
+
+  const [displayedError, setDisplayedError] = useState("");
+  const [currentError, setCurrentError] = useState("");
 
   const authStore = useAuthStore();
 
   useEffect(() => {
     setUserEmail(authStore.email);
   }, [])
+
+  useEffect(() => {
+    if(currentError.toLowerCase().includes("no otp found")) {
+      setDisplayedError("The OTP you entered is incorrect. Check your email for the correct code and try again.");
+    }
+
+    if(currentError.toLowerCase().includes("no email")) {
+      setDisplayedError("No email provided. Please return to the previous step and enter your email.");
+    }
+  }, [currentError])
 
   useEffect(() => {
     setIsButtonDisabled(otp.some((digit) => digit === ""));
@@ -54,12 +67,18 @@ const EmailVerification = () => {
     setIsLoading(true);
     setIsOtpValid(true);
     
+    if(authStore.email.length <= 0) {
+      setCurrentError("No email")
+      setIsLoading(false)
+      return
+    }
+
     const result = await verifyOtp(authStore.email, otp.join(""));
     console.log("Auth store email is: " + authStore.email, "| OTP is: " + otp.join(""))
     console.log(result)
     
     if(!result.success) {
-      setIsOTPVerified(false);
+      setCurrentError(result.message)
     }
 
     else {
@@ -78,8 +97,10 @@ const EmailVerification = () => {
     };
   };
 
-  const handleResend = () => {
-    const result = forgetPassEmail(authStore.email);
+  const handleResend = async () => {
+    setIsLoading(true)
+    const result = await forgetPassEmail(authStore.email);
+    setIsLoading(false)
   }
 
   useEffect(() => {
@@ -155,9 +176,7 @@ const EmailVerification = () => {
             )}
 
             {isLoading && (
-              <div className="fixed inset-0 z-50 bg-[#212121]/70 flex items-center justify-center">
-                <div className="w-10 h-10 border-4 border-white border-t-transparent rounded-full animate-spin"></div>
-              </div>
+              <ActivityIndicator />
             )}
 
             {!isOtpVerified && (
@@ -180,15 +199,16 @@ const EmailVerification = () => {
                               ? "border-[#ACA993]"
                               : "border-[#CE1126]"
                       } focus:border-[#0038A8]`}
+                      disabled={isLoading}
                     />
                   ))}
                 </div>
               </div>
             )}
 
-            {!isOtpValid && (
+            {displayedError.trim().length > 0 && (
               <p className=" text-[#CE1126] mt-2 text-sm">
-                Invalid OTP. Please check your email and enter the correct OTP.
+                {displayedError}
               </p>
             )}
 

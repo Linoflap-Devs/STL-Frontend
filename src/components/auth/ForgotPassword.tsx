@@ -4,12 +4,14 @@ import { FaArrowLeft } from "react-icons/fa";
 import { LoginSectionData } from "../../data/LoginSectionData";
 import { useAuthStore } from "../../../store/useForgetAuthStore";
 import { forgetPassEmail } from "~/utils/api/auth";
+import ActivityIndicator from "./ActivityIndicator";
 
 const ForgotPassword = () => {
   const router = useRouter();
   const [credentials, setCredentials] = useState({ username: "" });
   const [errors, setErrors] = useState<{ username?: string }>({});
   const [isButtonDisabled, setIsButtonDisabled] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const [showTooltip, setShowTooltip] = useState(false);
 
   const authStore = useAuthStore();
@@ -43,18 +45,20 @@ const ForgotPassword = () => {
   const handleNavigation = async () => {
     const validationErrors = validateCredentials(credentials);
     if (Object.keys(validationErrors).length === 0) {
+
+      setIsLoading(true)
       setIsButtonDisabled(true)
-
-
 
       authStore.setEmail(credentials.username)
       const result = await forgetPassEmail(credentials.username)
 
+      setIsLoading(false)
       setIsButtonDisabled(false)
       if(!result.success) return
 
       console.log(authStore.email, result)
       router.push("/email-verification");
+
     } else {
       setErrors(validationErrors);
     }
@@ -62,6 +66,11 @@ const ForgotPassword = () => {
 
   return (
     <div className="w-full min-h-screen flex flex-col items-center justify-center lg:items-stretch lg:flex-row bg-[#F8F0E3]">
+      {/* Loading Overlay (if needed) */}
+      {isLoading && (
+        <ActivityIndicator />
+      )}
+
       <div className="w-full lg:flex-1 flex flex-col justify-center items-center py-8 px-4 lg:py-0">
         <div className="text-center w-full max-w-md">
           <div className="flex justify-center gap-3 mb-4">
@@ -134,6 +143,7 @@ const ForgotPassword = () => {
                   onChange={(e) =>
                     setCredentials({ ...credentials, username: e.target.value })
                   }
+                  disabled={isLoading}
                 />
                 {errors.username && (
                   <span className="text-[#CE1126] text-xs mt-1 block">
@@ -147,7 +157,7 @@ const ForgotPassword = () => {
               type="submit"
               onClick={handleNavigation}
               className={`w-full mt-4 py-2 text-sm rounded-md transition bg-[#F6BA12] text-[#212121] hover:opacity-70 ${isButtonDisabled ? "opacity-70 cursor-not-allowed" : ""}`}
-              disabled={isButtonDisabled}
+              disabled={isLoading || isButtonDisabled}
             >
               {LoginSectionData.resetPasswordButton}
             </button>
