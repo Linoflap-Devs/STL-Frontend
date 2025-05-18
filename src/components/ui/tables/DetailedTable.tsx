@@ -16,6 +16,7 @@ import dayjs from "dayjs";
 import CSVExportButtonTable from "../buttons/CSVExportButtonTable";
 import ConfirmUserActionModalPage from "../modals/ConfirmUserActionModal";
 import Swal from 'sweetalert2';
+import router from "next/router";
 
 const DetailedTable = <T extends User | Operator>({
   data,
@@ -25,6 +26,7 @@ const DetailedTable = <T extends User | Operator>({
   operatorMap,
   onClose,
   endpoint,
+  source,
 }: DetailedTableProps<T>) => {
   const { searchQuery, setIsFilterActive, isFilterActive, page, rowsPerPage, sortConfig, filters, handleChangePage, handleChangeRowsPerPage, setSearchQuery, anchorEl, selectedRow, setAnchorEl, setSelectedRow, resetMenu } = useDetailTableStore();
   const [openEditLogModal, setOpenEditLogModal] = useState(false);
@@ -66,7 +68,6 @@ const DetailedTable = <T extends User | Operator>({
     if (!filteredData || !sortConfig) {
       return [];
     }
-
     // console.log('Filtered Data before Sorting:', filteredData);
     // console.log('Sort Config:', sortConfig);
 
@@ -84,11 +85,31 @@ const DetailedTable = <T extends User | Operator>({
     return sortedData.slice(start, end);
   }, [sortedData, page, rowsPerPage]);
 
-  // Function to handle opening the modal
-  const handleOpenViewModal = () => {
-    useModalStore.getState().openModal("view", selectedRow);
-    setOpenEditLogModal(false);
-  };
+const generateSlug = (name: string) =>
+  name.toLowerCase().replace(/\s+/g, '-').replace(/[^\w\-]+/g, '');
+
+const handleOpenViewModal = () => {
+  console.log("[handleOpenViewModal] Called");
+  console.log("[handleOpenViewModal] source:", source);
+  console.log("[handleOpenViewModal] selectedRow:", selectedRow);
+
+  if (source === 'operators') {
+    const slug = selectedRow?.OperatorName ? generateSlug(selectedRow.OperatorName) : null;
+    console.log("[handleOpenViewModal] Generated slug:", slug);
+    if (slug) {
+      console.log(`[handleOpenViewModal] Navigating to /operators/${slug}`);
+      router.push(`/operators/${slug}`);
+    } else {
+      console.warn('[handleOpenViewModal] Cannot generate slug. OperatorName missing or invalid.');
+    }
+  } else {
+    console.log("[handleOpenViewModal] Opening modal with selectedRow:", selectedRow);
+    useModalStore.getState().openModal('view', selectedRow);
+  }
+
+  console.log("[handleOpenViewModal] Closing edit log modal");
+  setOpenEditLogModal(false);
+};
 
   const handleClose = () => {
     setIsVerifyModalOpen(false); // Close the verification modal

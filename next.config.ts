@@ -63,8 +63,16 @@ const nextConfig: NextConfig = {
         destination: '/Protected/operators',
       },
       {
+        source: '/operators/:slug',
+        destination: '/Protected/operators/:slug',
+      },
+      {
         source: '/draw-selected',
         destination: '/Protected/draw-selected',
+      },
+      {
+        source: '/operators-view',
+        destination: '/Protected/operators-view',
       },
     ];
   },

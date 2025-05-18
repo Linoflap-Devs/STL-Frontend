@@ -39,6 +39,7 @@ const OperatorsPage = () => {
         data={data}
         columns={tableColumns}
         pageType="operator"
+        source="operators"
       />
       <OperatorFieldFormPage />
     </div>

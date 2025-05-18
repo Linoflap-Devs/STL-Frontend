@@ -115,6 +115,8 @@ export interface DetailedTableProps<T> {
     create: string;
     update: string;
   };
+shouldOpenAsPage?: boolean;
+source: 'users' | 'operators';
 }
 
 export interface ChartBarItem {
@@ -162,17 +164,17 @@ export interface Field {
 }
 
 export interface ReusableModalPageProps {
-  title: string;
+  title?: string;
   endpoint?: {
     create: string;
     update: string;
   };
-  isOpen: boolean;
-  onClose: () => void;
-  fields: Field[];
+  isOpen?: boolean;
+  onClose?: () => void;
+  fields?: Field[];
   onSuccess?: () => void;
   onSubmit?: (formData: Record<string, string>) => Promise<void>;
-  children: (props: { handleSubmit: () => void }) => React.ReactNode;
+  children?: (props: { handleSubmit: () => void }) => React.ReactNode;
   loading?: boolean;
   formData?: Record<string, string>;
   setFormData?: (data: Record<string, string>) => void;
@@ -187,7 +189,8 @@ export interface ReusableModalPageProps {
   cities?: any[];
   setSelectedRegion?: (regionId: string) => void;
   setSelectedProvince?: (provinceId: string) => void;
-  schema: ZodSchema<any>;
+  schema?: ZodSchema<any>;
+
 }
 
 export interface ModalPageProps {
