@@ -8,6 +8,8 @@ import useUpdateModalState from "../../../store/useUpdateModalStore";
 import Swal from "sweetalert2";
 import axiosInstance from "~/utils/axiosInstance";
 import { AxiosError } from "axios";
+import Input from "../ui/inputs/TextInputs";
+import dayjs from "dayjs";
 type GameTypeOption = {
   value: number;
   label: string;
@@ -18,26 +20,18 @@ const OperatorViewPage: React.FC<ReusableModalPageProps> = ({
   regions,
   provinces,
   cities,
+  areaofoperations,
 }) => {
-  const {
-    user,
-    setUser,
-    errors,
-    setErrors,
-    status,
-    setStatus,
-    isLoading,
-    isViewMode,
-    selectedUserId,
-    setSelectedUserId,
-    openEditLogModal,
-    setOpenEditLogModal,
-    handleManagerChange,
-  } = useUpdateModalState();
+  const { user, setUser, errors, setErrors, handleManagerChange } =
+    useUpdateModalState();
+
   const [formData, setFormData] = useState<Record<string, any>>({});
   const [isDisabled, setIsDisabled] = useState(true);
   const [showEditButton, setShowEditButton] = useState(true);
   const [selectedGameTypes, setSelectedGameTypes] = useState([]);
+  const [area, setArea] = useState<string | null>(null);
+
+  console.log("hihihh", areaofoperations);
 
   const handleDisable = () => {
     setIsDisabled(false);
@@ -46,42 +40,60 @@ const OperatorViewPage: React.FC<ReusableModalPageProps> = ({
 
   const gameTypeOptions: GameTypeOption[] =
     gameTypes?.map((type) => ({
-      value: type.GameCategoryId!, // <-- tells TypeScript this is never undefined
-      label: `${type.GameCategory} (ID: ${type.GameCategoryId})`,
+      value: type.GameCategoryId!,
+      label: `${type.GameCategory}`,
     })) || [];
+
+  const statusOptions = [
+    { value: 1, label: "Active" },
+    { value: 0, label: "Inactive" },
+  ];
+
+  const areaOfOperationsOptions = areaofoperations.map((item: any) => ({
+    label: item.AreaOfOperations,
+    value: item.AreaOfOperationsOptionsId,
+  }));
 
   useEffect(() => {
     console.log("initialUserData:", initialUserData);
 
-    const operatorData = initialUserData?.data;
+    if (initialUserData && Object.keys(initialUserData).length > 0) {
+      const operatorData = initialUserData.data;
 
-    if (operatorData && operatorData.GameTypes) {
-      const mappedGameTypes = operatorData.GameTypes.map(
-        (gt: { GameCategory: any; GameCategoryId: any }) => ({
-          label: gt.GameCategory,
-          value: gt.GameCategoryId,
-        })
-      );
+      if (operatorData && operatorData.GameTypes) {
+        const mappedGameTypes = operatorData.GameTypes.map(
+          (gt: { GameCategory: any; GameCategoryId: any }) => ({
+            label: gt.GameCategory,
+            value: gt.GameCategoryId,
+          })
+        );
 
-      console.log("Mapped GameTypes for Select:", mappedGameTypes);
+        console.log("Mapped GameTypes for Select:", mappedGameTypes);
+        setSelectedGameTypes(mappedGameTypes);
+      } else {
+        setSelectedGameTypes([]);
+        console.log("No GameTypes found. Resetting selected game types.");
+      }
 
-      setSelectedGameTypes(mappedGameTypes);
       setFormData(operatorData);
-
       console.log("Form data set:", operatorData);
     } else {
       setFormData({});
       setSelectedGameTypes([]);
-
-      console.log(
-        "No initialUserData or GameTypes found. Resetting form and selected game types."
-      );
+      console.log("No initialUserData found. Resetting form and game types.");
     }
   }, [initialUserData]);
 
   const operator = formData?.data || {};
 
   // FOR SELECT FIELDS
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+  };
 
   const handleMultiSelect = (fieldName: string, selectedOptions: any[]) => {
     const selectedValues = Array.isArray(selectedOptions)
@@ -111,13 +123,11 @@ const OperatorViewPage: React.FC<ReusableModalPageProps> = ({
             >
               Created By
             </label>
-            <input
-              type="text"
+            <Input
               id="createdBy"
               name="createdBy"
-              className={`w-full border rounded px-3 py-2 text-sm bg-[#F8F0E3] border-[#0038A8]`}
-              placeholder="Admin User"
-              value={operator?.CreatedBy || ""}
+              value={formData.CreatedBy || ""}
+              onChange={handleChange}
               disabled
             />
           </div>
@@ -129,13 +139,11 @@ const OperatorViewPage: React.FC<ReusableModalPageProps> = ({
             >
               Last Updated By
             </label>
-            <input
-              type="text"
+            <Input
               id="lastUpdatedBy"
               name="lastUpdatedBy"
-              className={`w-full border rounded px-3 py-2 text-sm bg-[#F8F0E3] border-[#0038A8]`}
-              placeholder="2025-05-01"
-              value={operator?.CreatedBy || ""}
+              value={formData.CreatedBy || ""}
+              onChange={handleChange}
               disabled
             />
           </div>
@@ -146,12 +154,16 @@ const OperatorViewPage: React.FC<ReusableModalPageProps> = ({
             >
               Creation Date
             </label>
-            <input
-              type="text"
+            <Input
               id="creationDate"
               name="creationDate"
-              className={`w-full border rounded px-3 py-2 text-sm bg-[#F8F0E3] border-[#0038A8]`}
-              value={operator?.CreatedAt || ""}
+              value={
+                formData.CreatedAt
+                  ? dayjs(formData.CreatedAt).format("YYYY-MM-DD")
+                  : ""
+              }
+              onChange={handleChange}
+              disabled
             />
           </div>
 
@@ -162,100 +174,102 @@ const OperatorViewPage: React.FC<ReusableModalPageProps> = ({
             >
               Last Updated Date
             </label>
-            <input
-              type="text"
+            <Input
               id="lastUpdatedDate"
               name="lastUpdatedDate"
-              className={`w-full border rounded px-3 py-2 text-sm bg-[#F8F0E3] border-[#0038A8]`}
-              value={operator?.CreatedAt || ""}
+              value={formData.lastUpdatedDate || ""}
+              onChange={handleChange}
+              disabled
             />
           </div>
         </div>
       </div>
 
       {/* AAC Information */}
-      <div className="mt-6">
+      <div className="mt-5">
         <div className="text-base font-bold mb-2">AAC Information</div>
         <div className="grid grid-cols-2 gap-4">
           <div>
             <label
-              htmlFor="operatorsName"
+              htmlFor="operatorName"
               className="block text-sm font-medium text-gray-700 mb-1"
             >
               Operator's Name
             </label>
-            <input
-              type="text"
-              id="operatorsName"
-              name="operatorsName"
-              className={`w-full border rounded px-3 py-2 text-sm bg-[#F8F0E3] border-[#0038A8]`}
-              placeholder="Operators Name"
-              value={operator?.OperatorName || ""}
+            <Input
+              id="operatorName"
+              name="OperatorName"
+              disabled={isDisabled}
+              value={formData.OperatorName || ""}
+              onChange={handleChange}
             />
           </div>
-
           <div>
             <label
-              htmlFor="phoneNumber"
+              htmlFor="ContactNo"
               className="block text-sm font-medium text-gray-700 mb-1"
             >
               Operator's Phone Number
             </label>
-            <input
+            <Input
+              id="ContactNo"
+              name="ContactNo"
               type="text"
-              id="phoneNumber"
-              name="phoneNumber"
-              className={`w-full border rounded px-3 py-2 text-sm bg-[#F8F0E3] border-[#0038A8]`}
-              value={operator?.ContactNo || "N/A"}
+              disabled={isDisabled}
+              value={formData.ContactNo || ""}
+              onChange={handleChange}
             />
           </div>
           <div className="col-span-2">
             <label
-              htmlFor="operatorAddress"
+              htmlFor="OperatorAddress"
               className="block text-sm font-medium text-gray-700 mb-1"
             >
               Operator's Address
             </label>
-            <input
-              type="text"
-              id="operatorAddress"
-              name="operatorAddress"
-              className={`w-full border rounded px-3 py-2 text-sm bg-[#F8F0E3] border-[#0038A8]`}
-              value={operator?.OperatorAddress || ""}
+            <Input
+              id="OperatorAddress"
+              name="OperatorAddress"
+              value={formData.OperatorAddress || ""}
+              onChange={handleChange}
+              disabled
             />
           </div>
 
           <div>
             <label
-              htmlFor="email"
+              htmlFor="Email"
               className="block text-sm font-medium text-gray-700 mb-1"
             >
               Operator's Email Address
             </label>
-            <input
-              type="text"
-              id="email"
-              name="email"
-              className={`w-full border rounded px-3 py-2 text-sm bg-[#F8F0E3] border-[#0038A8]`}
-              placeholder="2025-05-01"
-              value={operator?.OperatorEmail || ""}
+            <Input
+              id="Email"
+              name="Email"
+              disabled={isDisabled}
+              value={formData.Email || ""}
+              onChange={handleChange}
             />
           </div>
 
           <div>
             <label
-              htmlFor="dateOfOperations"
+              htmlFor="DateOfOperation"
               className="block text-sm font-medium text-gray-700 mb-1"
             >
               Date of Operations
             </label>
-            <input
-              type="text"
-              id="dateOfOperations"
-              name="dateOfOperations"
-              className={`w-full border rounded px-3 py-2 text-sm bg-[#F8F0E3] border-[#0038A8]`}
-              placeholder="2025-05-01"
-              value={operator?.DateOfOperation || ""}
+            <Input
+              id="DateOfOperation"
+              name="DateOfOperation"
+              type="date"
+              disabled={isDisabled}
+              value={
+                formData.DateOfOperation
+                  ? dayjs(formData.DateOfOperation).format("YYYY-MM-DD")
+                  : ""
+              }
+              onChange={handleChange}
             />
           </div>
 
@@ -291,22 +305,31 @@ const OperatorViewPage: React.FC<ReusableModalPageProps> = ({
             />
           </div>
 
-          {/* Area of Operations */}
+          {/* Area of Operator */}
           <div className="w-full">
             <label
-              htmlFor="areofOperations"
+              htmlFor="Status"
               className="block text-sm font-medium text-gray-700 mb-1"
             >
-              Area of Operations
+              Status
             </label>
             <Select
-              id="gameTypes"
-              name="gameTypes"
-              isMulti
-              // options={gameTypeOptions}
+              id="Status"
+              name="Status"
+              options={statusOptions}
               className="react-select-container"
               classNamePrefix="react-select"
-              placeholder="Select Area of Operations"
+              placeholder="Select Status"
+              value={
+                statusOptions.find((opt) => opt.value === formData.Status) ||
+                null
+              }
+              onChange={(selectedOption) => {
+                setFormData((prev) => ({
+                  ...prev,
+                  Status: selectedOption ? selectedOption.value : null,
+                }));
+              }}
               menuPortalTarget={
                 typeof window !== "undefined" ? document.body : null
               }
@@ -361,36 +384,29 @@ const OperatorViewPage: React.FC<ReusableModalPageProps> = ({
           {/* Status */}
           <div className="w-full">
             <label
-              htmlFor="areofOperations"
+              htmlFor="Status"
               className="block text-sm font-medium text-gray-700 mb-1"
             >
-              Status
+              Area Of Operations
             </label>
             <Select
-              id="gameTypes"
-              name="gameTypes"
-              isMulti
-              // options={gameTypeOptions}
-              className="react-select-container"
-              classNamePrefix="react-select"
-              placeholder="Select Status"
-              menuPortalTarget={
-                typeof window !== "undefined" ? document.body : null
+              id="AreaOfOperations"
+              name="AreaOfOperations"
+              options={areaOfOperationsOptions}
+              value={
+                areaOfOperationsOptions.find(
+                  (opt) => opt.value === formData.AreaOfOperations
+                ) || null
               }
-              styles={{
-                menuPortal: (base) => ({
-                  ...base,
-                  zIndex: 1000000,
-                }),
-                menu: (provided) => ({
-                  ...provided,
-                  maxHeight: 400,
-                  overflowY: "auto",
-                }),
+              isDisabled={isDisabled}
+              onChange={(selected) => {
+                setFormData((prev) => ({
+                  ...prev,
+                  AreaOfOperations: selected?.value || null,
+                }));
               }}
-              classNames={{
-                control: () => "rounded text-sm",
-              }}
+              placeholder="Select Area of Operations"
+              classNamePrefix="react-select"
             />
           </div>
         </div>
@@ -423,16 +439,10 @@ const OperatorViewPage: React.FC<ReusableModalPageProps> = ({
           )}
         </div>
       )}
-      {Object.keys(formData).length > 0 ? (
-        <pre className="whitespace-pre-wrap max-h-96 overflow-auto bg-gray-50 p-4 rounded border">
-          {JSON.stringify(formData, null, 2)}
-        </pre>
-      ) : (
-        <p className="text-gray-500 italic">No operator data to display.</p>
-      )}
+
       {/* Show only when `showEditButton` is true */}
       {showEditButton && (
-        <div className="w-full mt-4">
+        <div className="w-full mt-5">
           <button
             onClick={isDisabled ? handleDisable : handleDisable}
             className="w-full bg-[#F6BA12] hover:bg-[#FFD100] text-black font-base text-sm px-7 py-2 rounded mt-1"

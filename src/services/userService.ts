@@ -128,6 +128,26 @@ export async function fetchOperatorById(operatorId: number | string) {
   }
 }
 
+export const fetchAreaOfOperations = async (setAreaOfOperations: React.Dispatch<React.SetStateAction<any>>) => {
+  try {
+    const response = await getGameTypesData<GetGameCategoriesResponse>("/operators/getAreaOptions");
+    if (response.success && Array.isArray(response.data?.data)) {
+      const fetchedAreaOfOperations = response.data.data;
+      console.log("Fetched Area Of Operations:", fetchedAreaOfOperations);
+
+      setAreaOfOperations(fetchedAreaOfOperations);
+    } else {
+      setAreaOfOperations([]);
+    }
+  } catch (error) {
+    console.error("Error fetching Area Of Operations:", error);
+    setAreaOfOperations([]);
+  }
+};
+
+
+
+
 
 
 

@@ -6,7 +6,7 @@ import {
   fetchProvinceData,
   fetchRegionData,
 } from "~/services/locationService";
-import { fetchGameCategories } from "~/services/userService";
+import { fetchAreaOfOperations, fetchGameCategories } from "~/services/userService";
 import { useOperatorsData } from "../../../../store/useOperatorStore";
 import { operatorConfig } from "~/config/operatorFormFields";
 import { operatorSchema } from "~/schemas/operatorSchema";
@@ -28,12 +28,14 @@ const OperatorsView: React.FC<OperatorViewPageProps> = ({ slug, operator }) => {
     regions,
     provinces,
     cities,
+    areaofoperations,
     selectedRegion,
     selectedProvince,
     setGameTypes,
     setRegions,
     setProvinces,
     setCities,
+    setAreaOfOperations
   } = useOperatorFormStore();
 
   const { fields, setFields } = useOperatorsData();
@@ -43,7 +45,6 @@ const OperatorsView: React.FC<OperatorViewPageProps> = ({ slug, operator }) => {
   useEffect(() => {
     if (operator) {
       setSelectedData(operator);
-      console.log("HELLLO", operator);
     }
   }, [operator, setSelectedData]);
 
@@ -54,8 +55,9 @@ const OperatorsView: React.FC<OperatorViewPageProps> = ({ slug, operator }) => {
       fetchRegionData(setRegions),
       fetchProvinceData(setProvinces),
       fetchCityData(setCities),
+      fetchAreaOfOperations(setAreaOfOperations)
     ]).catch(console.error);
-  }, [setGameTypes, setRegions, setProvinces, setCities]);
+  }, [setGameTypes, setRegions, setProvinces, setCities, setAreaOfOperations]);
 
   // Update form fields options
   useEffect(() => {
@@ -160,6 +162,7 @@ const OperatorsView: React.FC<OperatorViewPageProps> = ({ slug, operator }) => {
             provinces={provinces}
             regions={regions}
             cities={cities}
+            areaofoperations={areaofoperations}
             schema={operatorSchema}
             isOpen={false}
             onClose={function (): void {
