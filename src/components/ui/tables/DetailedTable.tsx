@@ -88,75 +88,82 @@ const DetailedTable = <T extends User | Operator>({
   const generateSlug = (name: string) =>
     name.toLowerCase().replace(/\s+/g, '-').replace(/[^\w\-]+/g, '');
 
-const handleOpenViewModal = () => {
-  console.log("[handleOpenViewModal] Called");
-  console.log("[handleOpenViewModal] source:", source);
-  console.log("[handleOpenViewModal] selectedRow:", selectedRow);
+  const handleOpenViewModal = () => {
+    console.log("[handleOpenViewModal] Called");
+    console.log("[handleOpenViewModal] source:", source);
+    console.log("[handleOpenViewModal] selectedRow:", selectedRow);
 
-  if (source === 'operators') {
-    const slug = selectedRow?.OperatorName ? generateSlug(selectedRow.OperatorName) : null;
-    console.log("[handleOpenViewModal] Generated slug:", slug);
+    const { OperatorId, OperatorName } = selectedRow || {};
 
-    if (slug) {
-      // Set selectedData in your Zustand store before navigation
-      useModalStore.getState().setSelectedData(selectedRow);
+    if (source === "operators") {
+      if (!OperatorId || !OperatorName) {
+        console.warn("[handleOpenViewModal] Missing OperatorId or OperatorName.");
+        return;
+      }
 
-      console.log(`[handleOpenViewModal] Navigating to /operators/${slug}`);
-      router.push(`/operators/${slug}`);
+      const slug = generateSlug(OperatorName);
+
+      // Save to Zustand state
+      const modalStore = useModalStore.getState();
+      modalStore.setSelectedData(selectedRow);
+      modalStore.setOperatorId(OperatorId);
+
+      console.log(`[handleOpenViewModal] Navigating to /operators/${slug}?id=${OperatorId}`);
+
+      router.push({
+        pathname: `/operators/${slug}`,
+        query: { id: OperatorId },
+      });
     } else {
-      console.warn('[handleOpenViewModal] Cannot generate slug. OperatorName missing or invalid.');
+      console.log("[handleOpenViewModal] Opening modal with selectedRow:", selectedRow);
+      useModalStore.getState().openModal("view", selectedRow);
     }
-  } else {
-    console.log("[handleOpenViewModal] Opening modal with selectedRow:", selectedRow);
-    useModalStore.getState().openModal('view', selectedRow);
-  }
 
-  console.log("[handleOpenViewModal] Closing edit log modal");
-  setOpenEditLogModal(false);
-};
-
+    console.log("[handleOpenViewModal] Closing edit log modal");
+    setOpenEditLogModal(false);
+  };
 
   const handleClose = () => {
     setIsVerifyModalOpen(false); // Close the verification modal
     onClose?.();
   };
 
-const handleDelete = async (row: T) => {
-  // Log the selected user
-  console.log('Selected user for deletion:', row);
+  const handleDelete = async (row: T) => {
+    // Log the selected user
+    console.log('Selected user for deletion:', row);
 
-  if (!row || ('UserId' in row && !row.UserId)) {
-    setErrors({ form: 'Invalid user data. Cannot proceed with delete.' });
-    return;
-  }
+    if (!row || ('UserId' in row && !row.UserId)) {
+      setErrors({ form: 'Invalid user data. Cannot proceed with delete.' });
+      return;
+    }
 
-  const result = await Swal.fire({
-    title: 'Are you sure?',
-    text: 'Do you really want to delete this user? This action cannot be undone.',
-    icon: 'warning',
-    showCancelButton: true,
-    confirmButtonColor: '#d33',
-    cancelButtonColor: '#3085d6',
-    confirmButtonText: 'Yes, delete it!',
-  });
-
-  if (result.isConfirmed) {
-    // Pass the entire user row or at least UserId in formData
-    setFormData({
-      UserId: 'UserId' in row ? row.UserId ?? '' : '',
-      // Optionally, add other fields if needed
-      // FirstName: row.FirstName,
-      // LastName: row.LastName,
-      // etc.
+    const result = await Swal.fire({
+      title: 'Are you sure?',
+      text: 'Do you really want to delete this user? This action cannot be undone.',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#d33',
+      cancelButtonColor: '#3085d6',
+      confirmButtonText: 'Yes, delete it!',
     });
 
-    setActionType('suspend'); // or 'delete' if supported
-    setIsVerifyModalOpen(true);
+    if (result.isConfirmed) {
+      // Pass the entire user row or at least UserId in formData
+      setFormData({
+        UserId: 'UserId' in row ? row.UserId ?? '' : '',
+        // Optionally, add other fields if needed
+        // FirstName: row.FirstName,
+        // LastName: row.LastName,
+        // etc.
+      });
 
-    setSelectedRow(null);
-    resetMenu();
-  }
-};
+      setActionType('suspend'); // or 'delete' if supported
+      setIsVerifyModalOpen(true);
+
+      setSelectedRow(null);
+      resetMenu();
+    }
+  };
 
   return (
     <React.Fragment>

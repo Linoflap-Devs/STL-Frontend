@@ -87,7 +87,6 @@ export const fetchGameCategories = async (setGameTypes: React.Dispatch<React.Set
   }
 };
 
-
 export const fetchOperatorsEditLogs = async (setOperatorsLog: React.Dispatch<React.SetStateAction<any>>) => {
   try {
     const response = await getOperatorsData<GetOperatorsResponse>("/operators/getOperatorEdits");
@@ -106,15 +105,32 @@ export const fetchOperatorsEditLogs = async (setOperatorsLog: React.Dispatch<Rea
 };
 
 export async function fetchOperatorById(operatorId: number | string) {
+  if (!operatorId) {
+    console.warn("fetchOperatorById: No operatorId provided.");
+    return null;
+  }
+
   try {
-    const response = await axiosInstance.get(`/operators/getOperator`, {
+    const response = await axiosInstance.get("/operators/getOperator", {
       params: { operatorId },
     });
-    return response.data; // Adjust depending on your API response shape
-  } catch (error) {
-    console.error("Failed to fetch operator by ID:", error);
+
+    // Optional: Check if data actually exists
+    if (!response.data) {
+      console.warn("fetchOperatorById: Empty response for operatorId", operatorId);
+      return null;
+    }
+
+    return response.data;
+  } catch (error: any) {
+    console.error(`Failed to fetch operator by ID (${operatorId}):`, error?.response?.data || error.message);
     return null;
   }
 }
+
+
+
+
+
 
 
