@@ -194,8 +194,6 @@ const AACRetailReportPage = () => {
         )}
       </div>
 
-
-      
     </div>
   );
 };

@@ -8,7 +8,10 @@ import useUpdateModalState from "../../../store/useUpdateModalStore";
 import Swal from "sweetalert2";
 import axiosInstance from "~/utils/axiosInstance";
 import { AxiosError } from "axios";
-
+type GameTypeOption = {
+  value: number;
+  label: string;
+};
 const OperatorViewPage: React.FC<ReusableModalPageProps> = ({
   initialUserData,
   gameTypes,
@@ -31,21 +34,48 @@ const OperatorViewPage: React.FC<ReusableModalPageProps> = ({
     setOpenEditLogModal,
     handleManagerChange,
   } = useUpdateModalState();
-
   const [formData, setFormData] = useState<Record<string, any>>({});
   const [isDisabled, setIsDisabled] = useState(true);
   const [showEditButton, setShowEditButton] = useState(true);
+  const [selectedGameTypes, setSelectedGameTypes] = useState([]);
+
   const handleDisable = () => {
     setIsDisabled(false);
     setShowEditButton(false);
   };
 
+  const gameTypeOptions: GameTypeOption[] =
+    gameTypes?.map((type) => ({
+      value: type.GameCategoryId!, // <-- tells TypeScript this is never undefined
+      label: `${type.GameCategory} (ID: ${type.GameCategoryId})`,
+    })) || [];
+
   useEffect(() => {
-    if (initialUserData && Object.keys(initialUserData).length > 0) {
-      setFormData(initialUserData);
-      console.log("DATAAA", initialUserData);
+    console.log("initialUserData:", initialUserData);
+
+    const operatorData = initialUserData?.data;
+
+    if (operatorData && operatorData.GameTypes) {
+      const mappedGameTypes = operatorData.GameTypes.map(
+        (gt: { GameCategory: any; GameCategoryId: any }) => ({
+          label: gt.GameCategory,
+          value: gt.GameCategoryId,
+        })
+      );
+
+      console.log("Mapped GameTypes for Select:", mappedGameTypes);
+
+      setSelectedGameTypes(mappedGameTypes);
+      setFormData(operatorData);
+
+      console.log("Form data set:", operatorData);
     } else {
       setFormData({});
+      setSelectedGameTypes([]);
+
+      console.log(
+        "No initialUserData or GameTypes found. Resetting form and selected game types."
+      );
     }
   }, [initialUserData]);
 
@@ -67,13 +97,6 @@ const OperatorViewPage: React.FC<ReusableModalPageProps> = ({
       [fieldName]: selectedValues,
     });
   };
-
-  // gametype options
-  const gameTypeOptions =
-    gameTypes?.map((type) => ({
-      value: type.GameCategoryId,
-      label: `${type.GameCategory} (ID: ${type.GameCategoryId})`,
-    })) || [];
 
   return (
     <div>
@@ -244,11 +267,12 @@ const OperatorViewPage: React.FC<ReusableModalPageProps> = ({
             >
               Games Provided
             </label>
-            <Select
+            <Select<GameTypeOption, true> // true = isMulti
               id="gameTypes"
               name="gameTypes"
               isMulti
               options={gameTypeOptions}
+              value={selectedGameTypes}
               className="react-select-container"
               classNamePrefix="react-select"
               placeholder="Select Games Provided"
@@ -399,7 +423,13 @@ const OperatorViewPage: React.FC<ReusableModalPageProps> = ({
           )}
         </div>
       )}
-
+      {Object.keys(formData).length > 0 ? (
+        <pre className="whitespace-pre-wrap max-h-96 overflow-auto bg-gray-50 p-4 rounded border">
+          {JSON.stringify(formData, null, 2)}
+        </pre>
+      ) : (
+        <p className="text-gray-500 italic">No operator data to display.</p>
+      )}
       {/* Show only when `showEditButton` is true */}
       {showEditButton && (
         <div className="w-full mt-4">
@@ -411,11 +441,6 @@ const OperatorViewPage: React.FC<ReusableModalPageProps> = ({
           </button>
         </div>
       )}
-
-
-
-
-
     </div>
   );
 };

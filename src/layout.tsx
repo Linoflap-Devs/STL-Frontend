@@ -10,13 +10,10 @@ const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
       </div>
       {/* Content Area */}
       <div className="flex flex-col flex-grow h-full pt-4">
-        <main className="flex-grow overflow-y-auto p-7">
-          {children}
-        </main>
+        <main className="flex-grow overflow-y-auto p-7">{children}</main>
       </div>
     </div>
   );
 };
 
 export default Layout;
-
