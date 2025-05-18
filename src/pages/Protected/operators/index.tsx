@@ -17,7 +17,6 @@ const OperatorsPage = () => {
 
   const tableColumns = operatorTableColumns();
 
-  // Prepare dashboard data with region name fallback
   const dashboardData = data.map(op => ({
     ...op,
     region: op.OperatorRegion?.RegionName ?? "Unknown",
@@ -27,10 +26,10 @@ const OperatorsPage = () => {
     <div className="mx-auto px-0 py-1">
       <h1 className="text-3xl font-bold mb-3">Small Town Lottery Operators</h1>
       <CardsPage 
-        dashboardData={data} 
-        textlabel={textlabel} 
+        dashboardData={data}
+        textlabel={textlabel}
       />
-      <ChartsDataPage 
+      <ChartsDataPage
         userType="operator" 
         pageType="operator" 
         dashboardData={dashboardData}

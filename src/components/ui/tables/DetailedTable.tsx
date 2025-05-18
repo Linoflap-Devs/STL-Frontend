@@ -85,8 +85,8 @@ const DetailedTable = <T extends User | Operator>({
     return sortedData.slice(start, end);
   }, [sortedData, page, rowsPerPage]);
 
-const generateSlug = (name: string) =>
-  name.toLowerCase().replace(/\s+/g, '-').replace(/[^\w\-]+/g, '');
+  const generateSlug = (name: string) =>
+    name.toLowerCase().replace(/\s+/g, '-').replace(/[^\w\-]+/g, '');
 
 const handleOpenViewModal = () => {
   console.log("[handleOpenViewModal] Called");
@@ -96,7 +96,11 @@ const handleOpenViewModal = () => {
   if (source === 'operators') {
     const slug = selectedRow?.OperatorName ? generateSlug(selectedRow.OperatorName) : null;
     console.log("[handleOpenViewModal] Generated slug:", slug);
+
     if (slug) {
+      // Set selectedData in your Zustand store before navigation
+      useModalStore.getState().setSelectedData(selectedRow);
+
       console.log(`[handleOpenViewModal] Navigating to /operators/${slug}`);
       router.push(`/operators/${slug}`);
     } else {
@@ -110,6 +114,7 @@ const handleOpenViewModal = () => {
   console.log("[handleOpenViewModal] Closing edit log modal");
   setOpenEditLogModal(false);
 };
+
 
   const handleClose = () => {
     setIsVerifyModalOpen(false); // Close the verification modal
@@ -299,7 +304,6 @@ const handleDelete = async (row: T) => {
             endpoint={endpoint ?? { create: '', update: '' }}
             onClose={handleClose}
           />
-
         )}
 
       </TableContainer>

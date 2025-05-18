@@ -5,6 +5,7 @@ import { Operator, User } from "~/types/types";
 import { getOperatorsData } from "~/utils/api/operators/get.operators.service";
 import { getUsersData } from "~/utils/api/users/get.users.service";
 import { getGameTypesData } from "~/utils/api/gameTypes/get.gameTypes.service";
+import axiosInstance from "~/utils/axiosInstance";
 
 export const fetchUsers = async (
   roleId: number,
@@ -104,6 +105,16 @@ export const fetchOperatorsEditLogs = async (setOperatorsLog: React.Dispatch<Rea
   }
 };
 
-
+export async function fetchOperatorById(operatorId: number | string) {
+  try {
+    const response = await axiosInstance.get(`/operators/getOperator`, {
+      params: { operatorId },
+    });
+    return response.data; // Adjust depending on your API response shape
+  } catch (error) {
+    console.error("Failed to fetch operator by ID:", error);
+    return null;
+  }
+}
 
 

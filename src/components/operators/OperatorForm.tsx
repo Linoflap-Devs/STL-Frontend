@@ -1,5 +1,4 @@
-import React, { useCallback, useEffect, useState } from "react";
-import UpdateModalPage from "~/components/ui/modals/UpdateModalData";
+import React, { useCallback, useEffect } from "react";
 import { useOperatorsData } from "../../../store/useOperatorStore";
 import { useModalStore } from "../../../store/useModalStore";
 import { fetchGameCategories } from "~/services/userService";
@@ -12,11 +11,6 @@ import { operatorConfig } from "~/config/operatorFormFields";
 import { useOperatorFormStore } from "../../../store/useOperatorFormStore";
 import CreateModalDataPage from "../ui/modals/CreateModalData";
 import { operatorSchema } from "~/schemas/operatorSchema";
-import OperatorViewPage from "./OperatorView";
-import { useRouter } from "next/router";
-import axiosInstance from "~/utils/axiosInstance";
-// REMOVE THIS LINE:
-// import OperatorsView from '~/pages/Protected/operators-view';
 
 export const OperatorFieldFormPage: React.FC = () => {
   const {
@@ -34,23 +28,13 @@ export const OperatorFieldFormPage: React.FC = () => {
 
   const { fields, setFields } = useOperatorsData();
   const { modalOpen, modalType, selectedData, closeModal } = useModalStore();
-  const { query } = useRouter();
-  const operatorId = query.id as string;
 
-  const [operatorData, setOperatorData] = useState(null);
   useEffect(() => {
     fetchGameCategories(setGameTypes);
     fetchRegionData(setRegions);
     fetchProvinceData(setProvinces);
     fetchCityData(setCities);
   }, []);
-
-  useEffect(() => {
-    if (operatorId) {
-      axiosInstance.get(`/api/operators/${operatorId}`)
-        .then((res) => setOperatorData(res.data));
-    }
-  }, [operatorId]);
 
   useEffect(() => {
     const updatedFields = operatorConfig.fields.map((field) => {
@@ -126,10 +110,6 @@ export const OperatorFieldFormPage: React.FC = () => {
           schema={operatorSchema}
         />
       )}
-      <OperatorViewPage
-        initialUserData={operatorData}
-        // other props...
-      />
     </div>
   );
 };

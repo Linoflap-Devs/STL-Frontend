@@ -25,6 +25,10 @@ export interface OperatorsState {
 
   fields: Field[];
   setFields: (fields: Field[]) => void;
+
+
+  selectedData: Operator | null;
+  setSelectedData: (data: Operator | null) => void;
 }
 
 export const useOperatorsData = create<OperatorsState>((set) => ({
@@ -49,4 +53,7 @@ export const useOperatorsData = create<OperatorsState>((set) => ({
 
   fields: [],
   setFields: (fields) => set({ fields }),
+
+  selectedData: null,
+  setSelectedData: (data) => set({ selectedData: data }),
 }));
