@@ -189,7 +189,7 @@ export interface ReusableModalPageProps {
   cities?: any[];
   areaofoperations: any[];
   setSelectedRegion?: (regionId: string) => void;
-  setSelectedProvince?: (provinceId: string) => void;
+  setSelectedProvince?: (provinceId?: string) => void;
   schema?: ZodSchema<any>;
 }
 
@@ -213,11 +213,11 @@ export interface ModalPageProps {
   selectedRegion?: string;
   selectedProvince?: string;
   onRegionSelect?: (regionId: string) => void;
-  onProvinceSelect?: (provinceId: string) => void;
+  onProvinceSelect?: (provinceId?: string) => void;
   handleMultiSelect?: (fieldName: string, selectedOptions: MultiValue<FieldOption>) => void;
 
   setSelectedRegion?: (regionId: string) => void;
-  setSelectedProvince?: (provinceId: string) => void;
+  setSelectedProvince?: (provinceId?: string) => void;
   schema: ZodSchema<any>;
 }
 

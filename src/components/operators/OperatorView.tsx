@@ -10,10 +10,12 @@ import axiosInstance from "~/utils/axiosInstance";
 import { AxiosError } from "axios";
 import Input from "../ui/inputs/TextInputs";
 import dayjs from "dayjs";
+
 type GameTypeOption = {
   value: number;
   label: string;
 };
+
 const OperatorViewPage: React.FC<ReusableModalPageProps> = ({
   initialUserData,
   gameTypes,
@@ -31,7 +33,7 @@ const OperatorViewPage: React.FC<ReusableModalPageProps> = ({
   const [selectedGameTypes, setSelectedGameTypes] = useState([]);
   const [area, setArea] = useState<string | null>(null);
 
-  console.log("hihihh", areaofoperations);
+  // console.log("hihihh", areaofoperations);
 
   const handleDisable = () => {
     setIsDisabled(false);

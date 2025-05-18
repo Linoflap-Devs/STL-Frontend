@@ -9,13 +9,13 @@ const RetailReceiptOperatorsPage = () => {
       {/* Date of Report */}
       <div className="flex flex-col gap-1 mb-4">
         <label
-          htmlFor="operationDate"
+          htmlFor="dateofReport"
           className="font-medium text-sm text-gray-700"
         >
           Date of Report
         </label>
         <input
-          id="operationDate"
+          id="dateofReport"
           type="date"
           className={`w-full border rounded px-3 py-1.5 text-sm bg-[#F8F0E3] border-[#0038A8]`}
         />

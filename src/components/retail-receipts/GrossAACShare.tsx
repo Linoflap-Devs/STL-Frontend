@@ -28,7 +28,7 @@ const GrossAACSharePage = () => {
         </button>
 
         {/* Accordion Content */}
-        {isAACShareOpen && (
+        {!isAACShareOpen && (
           <div className="bg-transparent border border-[#0038A8] p-2 rounded-md mt-3">
             <span className="text-sm font-bold">AAC Share Breakdown</span>
 

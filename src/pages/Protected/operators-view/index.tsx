@@ -44,13 +44,6 @@ const OperatorsView: React.FC<OperatorViewPageProps> = ({ slug, operator }) => {
   const { fields, setFields } = useOperatorsData();
   const { setSelectedData } = useModalStore();
 
-  // mount
-  useEffect(() => {
-    if (operator) {
-      setSelectedData(operator);
-    }
-  }, [operator, setSelectedData]);
-
   // Fetch gameTypes and location data once on mount
   useEffect(() => {
     Promise.all([
@@ -84,27 +77,32 @@ const OperatorsView: React.FC<OperatorViewPageProps> = ({ slug, operator }) => {
         };
       }
       if (field.name === "provinces") {
-        const filtered = provinces.filter((p) => p.RegionId === selectedRegion);
+        const filtered =
+          Array.isArray(provinces) && selectedRegion
+            ? provinces.filter((p) => p?.RegionId === selectedRegion)
+            : [];
         return {
           ...field,
           options: filtered.map((p) => ({
-            value: p.ProvinceId,
-            label: p.ProvinceName,
+            value: p?.ProvinceId ?? 0,
+            label: p?.ProvinceName ?? "Unknown",
           })),
         };
       }
       if (field.name === "cities") {
-        const filtered = cities.filter(
-          (c) => c.ProvinceId === selectedProvince
-        );
+        const filtered =
+          Array.isArray(cities) && selectedProvince
+            ? cities.filter((c) => c?.ProvinceId === selectedProvince)
+            : [];
         return {
           ...field,
           options: filtered.map((c) => ({
-            value: c.CityId,
-            label: `${c.CityName} (${c.ProvinceKey})`,
+            value: c?.CityId ?? 0,
+            label: `${c?.CityName ?? "Unknown"} (${c?.ProvinceKey ?? ""})`,
           })),
         };
       }
+
       return field;
     });
 
