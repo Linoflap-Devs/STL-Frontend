@@ -74,6 +74,10 @@ const nextConfig: NextConfig = {
         source: '/operators-view',
         destination: '/Protected/operators-view',
       },
+      {
+        source: '/retail-receipt',
+        destination: '/Protected/retail-receipt',
+      },
     ];
   },
 };

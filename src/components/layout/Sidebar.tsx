@@ -16,6 +16,7 @@ import {
   FaChevronRight,
   FaChevronDown,
   FaChevronUp,
+  FaReceipt,
 } from "react-icons/fa";
 import Skeleton from "@mui/material/Skeleton";
 import clsx from "clsx";
@@ -148,6 +149,7 @@ const Sidebar: React.FC = () => {
       "Winning Summary": <FaMoneyBillAlt size={iconSize} />,
       "Draw Summary": <FaBroadcastTower size={iconSize} />,
       Operators: <FaStoreAlt size={iconSize} />,
+      "Retail Receipt": <FaReceipt size={iconSize} />,
     };
 
     const routeMap: Record<string, string> = {
@@ -158,6 +160,7 @@ const Sidebar: React.FC = () => {
       "Winning Summary": "/winning-summary",
       "Draw Summary": "/draw-summary",
       Operators: "/operators",
+      "Retail Receipt": "/retail-receipt",
     };
 
     const submenu =
