@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import AACRetailReportPage from "./AACReport";
+import GrossAACSharePage from "../retail-receipts/GrossAACShare";
 
 const RetailReceiptOperatorsPage = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -27,16 +27,11 @@ const RetailReceiptOperatorsPage = () => {
         onClick={() => setIsOpen(!isOpen)}
         className="bg-[#F6BA12] p-2 text-sm font-bold rounded-md w-full text-left"
       >
-        STL COLLECTIONS 
+        STL COLLECTIONS
         {/* {isOpen ? "▲" : "▼"} */}
       </button>
 
-      {isOpen && (
-        <div className="mt-4 space-y-2">
-          <div className="text-sm font-bold">Authorize Agent Corporation</div>
-          <AACRetailReportPage />
-        </div>
-      )}
+      {isOpen && <GrossAACSharePage />}
     </div>
   );
 };

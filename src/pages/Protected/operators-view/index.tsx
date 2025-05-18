@@ -6,7 +6,10 @@ import {
   fetchProvinceData,
   fetchRegionData,
 } from "~/services/locationService";
-import { fetchAreaOfOperations, fetchGameCategories } from "~/services/userService";
+import {
+  fetchAreaOfOperations,
+  fetchGameCategories,
+} from "~/services/userService";
 import { useOperatorsData } from "../../../../store/useOperatorStore";
 import { operatorConfig } from "~/config/operatorFormFields";
 import { operatorSchema } from "~/schemas/operatorSchema";
@@ -35,7 +38,7 @@ const OperatorsView: React.FC<OperatorViewPageProps> = ({ slug, operator }) => {
     setRegions,
     setProvinces,
     setCities,
-    setAreaOfOperations
+    setAreaOfOperations,
   } = useOperatorFormStore();
 
   const { fields, setFields } = useOperatorsData();
@@ -55,7 +58,7 @@ const OperatorsView: React.FC<OperatorViewPageProps> = ({ slug, operator }) => {
       fetchRegionData(setRegions),
       fetchProvinceData(setProvinces),
       fetchCityData(setCities),
-      fetchAreaOfOperations(setAreaOfOperations)
+      fetchAreaOfOperations(setAreaOfOperations),
     ]).catch(console.error);
   }, [setGameTypes, setRegions, setProvinces, setCities, setAreaOfOperations]);
 
