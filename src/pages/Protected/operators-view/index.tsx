@@ -12,6 +12,10 @@ import { operatorConfig } from "~/config/operatorFormFields";
 import { operatorSchema } from "~/schemas/operatorSchema";
 import { useModalStore } from "../../../../store/useModalStore";
 import { Operator } from "~/types/types";
+import { IconButton } from "@mui/material";
+import ArrowBackIosIcon from "@mui/icons-material/ArrowBackIos";
+import router from "next/router";
+import RetailReceiptOperatorsPage from "~/components/operators/RetailReceipts";
 
 export interface OperatorViewPageProps {
   slug: string;
@@ -35,10 +39,11 @@ const OperatorsView: React.FC<OperatorViewPageProps> = ({ slug, operator }) => {
   const { fields, setFields } = useOperatorsData();
   const { setSelectedData } = useModalStore();
 
-  // mount 
-  useCallback(() => {
+  // mount
+  useEffect(() => {
     if (operator) {
       setSelectedData(operator);
+      console.log("HELLLO", operator);
     }
   }, [operator, setSelectedData]);
 
@@ -84,7 +89,9 @@ const OperatorsView: React.FC<OperatorViewPageProps> = ({ slug, operator }) => {
         };
       }
       if (field.name === "cities") {
-        const filtered = cities.filter((c) => c.ProvinceId === selectedProvince);
+        const filtered = cities.filter(
+          (c) => c.ProvinceId === selectedProvince
+        );
         return {
           ...field,
           options: filtered.map((c) => ({
@@ -97,17 +104,54 @@ const OperatorsView: React.FC<OperatorViewPageProps> = ({ slug, operator }) => {
     });
 
     setFields(updatedFields);
-  }, [gameTypes, regions, provinces, cities, selectedRegion, selectedProvince, setFields]);
+  }, [
+    gameTypes,
+    regions,
+    provinces,
+    cities,
+    selectedRegion,
+    selectedProvince,
+    setFields,
+  ]);
 
   return (
-    <div className="flex gap-4 w-full">
-      <div className="flex flex-col w-full md:w-2/3">
-        <div className="bg-gray-100 p-4 rounded mb-4">
-          <p className="text-sm text-gray-600">
-            Slug: <strong>{slug}</strong>
-          </p>
+    <div className="w-full flex flex-col gap-4">
+      <div className="flex items-center space-x-4">
+        <IconButton
+          aria-label="back"
+          onClick={() => router.push("/operators")}
+          sx={{
+            backgroundColor: "#ACA993",
+            width: 30,
+            height: 30,
+            borderRadius: "50%",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            "&:hover": {
+              backgroundColor: "#928F7F",
+            },
+          }}
+        >
+          <ArrowBackIosIcon
+            style={{
+              fontWeight: "bold",
+              fontSize: 20,
+              color: "#F8F0E3",
+              paddingLeft: "7px",
+            }}
+          />
+        </IconButton>
+
+        <div className="text-2xl md:text-3xl font-bold truncate">
+          {operator?.data?.OperatorName || "N/A"}
         </div>
-        <div className="bg-gray-100 p-4 rounded">
+      </div>
+
+      {/* Main Content */}
+      <div className="flex flex-col md:flex-row md:gap-x-8 gap-y-4 w-full mt-1">
+        {/* Left Side - Operator View */}
+        <div className="flex flex-col w-full md:w-3/5">
           <OperatorViewPage
             fields={fields}
             endpoint={operatorConfig.endpoint}
@@ -117,11 +161,22 @@ const OperatorsView: React.FC<OperatorViewPageProps> = ({ slug, operator }) => {
             regions={regions}
             cities={cities}
             schema={operatorSchema}
+            isOpen={false}
+            onClose={function (): void {
+              throw new Error("Function not implemented.");
+            }}
+            children={function (props: {
+              handleSubmit: () => void;
+            }): React.ReactNode {
+              throw new Error("Function not implemented.");
+            }}
           />
         </div>
-      </div>
-      <div className="flex flex-col gap-4 w-full md:w-1/3">
-        <div className="bg-gray-100 p-4 rounded">Right Column</div>
+
+        {/* Right Side - Retail Receipt */}
+        <div className="flex flex-col w-full md:w-2/5 min-w-0">
+          <RetailReceiptOperatorsPage />
+        </div>
       </div>
     </div>
   );

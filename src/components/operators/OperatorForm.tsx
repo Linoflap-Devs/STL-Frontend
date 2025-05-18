@@ -1,3 +1,5 @@
+// used only for create
+
 import React, { useCallback, useEffect } from "react";
 import { useOperatorsData } from "../../../store/useOperatorStore";
 import { useModalStore } from "../../../store/useModalStore";

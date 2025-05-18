@@ -38,9 +38,9 @@ export interface User {
   Cities: { CityId: number; CityName: string }[];
 }
 
-
 // Define the Operator type
 export interface Operator {
+  data?: any; // for operator update
   OperatorId: number;
   OperatorName: string;
   Executive: string;
