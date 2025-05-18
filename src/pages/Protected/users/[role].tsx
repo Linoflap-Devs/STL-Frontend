@@ -57,6 +57,7 @@ const RolePage = () => {
         roleId={roleId}
         statsPerRegion={data} // for csv
         endpoint={endpoint ?? { create: "", update: "" }}
+        source="users"
       />
       <UserFieldFormPage operatorMap={operatorMap} setOperatorMap={setOperatorMap} />
     </div>

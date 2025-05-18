@@ -115,6 +115,8 @@ export interface DetailedTableProps<T> {
     create: string;
     update: string;
   };
+shouldOpenAsPage?: boolean;
+source: 'users' | 'operators';
 }
 
 export interface ChartBarItem {
@@ -162,7 +164,7 @@ export interface Field {
 }
 
 export interface ReusableModalPageProps {
-  title: string;
+  title?: string;
   endpoint?: {
     create: string;
     update: string;
@@ -185,9 +187,10 @@ export interface ReusableModalPageProps {
   provinces?: any[];
   regions?: any[];
   cities?: any[];
+  areaofoperations: any[];
   setSelectedRegion?: (regionId: string) => void;
   setSelectedProvince?: (provinceId: string) => void;
-  schema: ZodSchema<any>;
+  schema?: ZodSchema<any>;
 }
 
 export interface ModalPageProps {

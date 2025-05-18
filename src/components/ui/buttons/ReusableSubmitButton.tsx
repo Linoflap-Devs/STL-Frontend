@@ -18,7 +18,7 @@ const ReusableButton: React.FC<ReusableButtonProps> = ({
       onClick={handleSubmit}
       disabled={loading}
       sx={{
-        mt: 1.5,
+        mt: 2,
         width: '100%',
         backgroundColor: '#F6BA12',  // Default color
         textTransform: 'none',

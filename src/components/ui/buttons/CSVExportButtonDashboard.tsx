@@ -6,18 +6,17 @@ import { getRoleName } from "~/utils/dashboarddata";
 
 const convertToCSV = (data: any[], title: string) => {
   const headers = ["Region", "Total", "Active", "Inactive", "Deleted", "New"];
-  const columnWidths = headers.map((header) =>
-    Math.max(
-      ...data.map(item => String(item[header.toLowerCase()] ?? "").length),
-      header.length
-    )
-  );
 
   const createRow = (item: any, isHeader: boolean = false) => {
-    return headers.map((header, index) => {
-      const value = isHeader ? header : item[header.toLowerCase()] ?? "";
-      return String(value).padEnd(columnWidths[index] + 2);
-    }).join("");
+    return headers.map(header => {
+      const value = isHeader ? header : (item[header.toLowerCase()] ?? "");
+      // If value contains spaces or commas, wrap with quotes
+      const stringValue = String(value);
+      if (stringValue.includes(",") || stringValue.includes(" ")) {
+        return `"${stringValue}"`;
+      }
+      return stringValue;
+    }).join(",");
   };
 
   const titleRow = title + "\n";
@@ -30,6 +29,7 @@ const convertToCSV = (data: any[], title: string) => {
 
   return csvContent;
 };
+
 
 const CSVExportButtonDashboard: React.FC<CSVExportButtonProps> = ({ statsPerRegion, pageType, roleId }) => {
   const downloadCSV = (data: any[], pageType: string) => {

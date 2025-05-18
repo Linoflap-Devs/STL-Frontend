@@ -16,6 +16,7 @@ import dayjs from "dayjs";
 import CSVExportButtonTable from "../buttons/CSVExportButtonTable";
 import ConfirmUserActionModalPage from "../modals/ConfirmUserActionModal";
 import Swal from 'sweetalert2';
+import router from "next/router";
 
 const DetailedTable = <T extends User | Operator>({
   data,
@@ -25,6 +26,7 @@ const DetailedTable = <T extends User | Operator>({
   operatorMap,
   onClose,
   endpoint,
+  source,
 }: DetailedTableProps<T>) => {
   const { searchQuery, setIsFilterActive, isFilterActive, page, rowsPerPage, sortConfig, filters, handleChangePage, handleChangeRowsPerPage, setSearchQuery, anchorEl, selectedRow, setAnchorEl, setSelectedRow, resetMenu } = useDetailTableStore();
   const [openEditLogModal, setOpenEditLogModal] = useState(false);
@@ -66,7 +68,6 @@ const DetailedTable = <T extends User | Operator>({
     if (!filteredData || !sortConfig) {
       return [];
     }
-
     // console.log('Filtered Data before Sorting:', filteredData);
     // console.log('Sort Config:', sortConfig);
 
@@ -84,9 +85,41 @@ const DetailedTable = <T extends User | Operator>({
     return sortedData.slice(start, end);
   }, [sortedData, page, rowsPerPage]);
 
-  // Function to handle opening the modal
+  const generateSlug = (name: string) =>
+    name.toLowerCase().replace(/\s+/g, '-').replace(/[^\w\-]+/g, '');
+
   const handleOpenViewModal = () => {
-    useModalStore.getState().openModal("view", selectedRow);
+    console.log("[handleOpenViewModal] Called");
+    console.log("[handleOpenViewModal] source:", source);
+    console.log("[handleOpenViewModal] selectedRow:", selectedRow);
+
+    const { OperatorId, OperatorName } = selectedRow || {};
+
+    if (source === "operators") {
+      if (!OperatorId || !OperatorName) {
+        console.warn("[handleOpenViewModal] Missing OperatorId or OperatorName.");
+        return;
+      }
+
+      const slug = generateSlug(OperatorName);
+
+      // Save to Zustand state
+      const modalStore = useModalStore.getState();
+      modalStore.setSelectedData(selectedRow);
+      modalStore.setOperatorId(OperatorId);
+
+      console.log(`[handleOpenViewModal] Navigating to /operators/${slug}?id=${OperatorId}`);
+
+      router.push({
+        pathname: `/operators/${slug}`,
+        query: { id: OperatorId },
+      });
+    } else {
+      console.log("[handleOpenViewModal] Opening modal with selectedRow:", selectedRow);
+      useModalStore.getState().openModal("view", selectedRow);
+    }
+
+    console.log("[handleOpenViewModal] Closing edit log modal");
     setOpenEditLogModal(false);
   };
 
@@ -95,42 +128,42 @@ const DetailedTable = <T extends User | Operator>({
     onClose?.();
   };
 
-const handleDelete = async (row: T) => {
-  // Log the selected user
-  console.log('Selected user for deletion:', row);
+  const handleDelete = async (row: T) => {
+    // Log the selected user
+    console.log('Selected user for deletion:', row);
 
-  if (!row || ('UserId' in row && !row.UserId)) {
-    setErrors({ form: 'Invalid user data. Cannot proceed with delete.' });
-    return;
-  }
+    if (!row || ('UserId' in row && !row.UserId)) {
+      setErrors({ form: 'Invalid user data. Cannot proceed with delete.' });
+      return;
+    }
 
-  const result = await Swal.fire({
-    title: 'Are you sure?',
-    text: 'Do you really want to delete this user? This action cannot be undone.',
-    icon: 'warning',
-    showCancelButton: true,
-    confirmButtonColor: '#d33',
-    cancelButtonColor: '#3085d6',
-    confirmButtonText: 'Yes, delete it!',
-  });
-
-  if (result.isConfirmed) {
-    // Pass the entire user row or at least UserId in formData
-    setFormData({
-      UserId: 'UserId' in row ? row.UserId ?? '' : '',
-      // Optionally, add other fields if needed
-      // FirstName: row.FirstName,
-      // LastName: row.LastName,
-      // etc.
+    const result = await Swal.fire({
+      title: 'Are you sure?',
+      text: 'Do you really want to delete this user? This action cannot be undone.',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#d33',
+      cancelButtonColor: '#3085d6',
+      confirmButtonText: 'Yes, delete it!',
     });
 
-    setActionType('suspend'); // or 'delete' if supported
-    setIsVerifyModalOpen(true);
+    if (result.isConfirmed) {
+      // Pass the entire user row or at least UserId in formData
+      setFormData({
+        UserId: 'UserId' in row ? row.UserId ?? '' : '',
+        // Optionally, add other fields if needed
+        // FirstName: row.FirstName,
+        // LastName: row.LastName,
+        // etc.
+      });
 
-    setSelectedRow(null);
-    resetMenu();
-  }
-};
+      setActionType('suspend'); // or 'delete' if supported
+      setIsVerifyModalOpen(true);
+
+      setSelectedRow(null);
+      resetMenu();
+    }
+  };
 
   return (
     <React.Fragment>
@@ -278,7 +311,6 @@ const handleDelete = async (row: T) => {
             endpoint={endpoint ?? { create: '', update: '' }}
             onClose={handleClose}
           />
-
         )}
 
       </TableContainer>

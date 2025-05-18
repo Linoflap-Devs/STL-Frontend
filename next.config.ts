@@ -63,11 +63,23 @@ const nextConfig: NextConfig = {
         destination: '/Protected/operators',
       },
       {
+        source: '/operators/:slug',
+        destination: '/Protected/operators/:slug',
+      },
+      {
         source: '/draw-selected',
         destination: '/Protected/draw-selected',
+      },
+      {
+        source: '/operators-view',
+        destination: '/Protected/operators-view',
+      },
+      {
+        source: '/retail-receipt',
+        destination: '/Protected/retail-receipt',
       },
     ];
   },
 };
 
-export default nextConfig;
+export default (nextConfig);

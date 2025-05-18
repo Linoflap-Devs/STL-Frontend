@@ -42,21 +42,8 @@ select option:disabled {
   border: 1px solid rgba(0, 0, 0, 0.23) !important;      /* Set border color */
 }
 
-/* Handle the hover state for react-select control */
-.react-select__control:hover {
-  background-color: transparent !important;  /* Ensure background stays transparent on hover */
-  border-color: #0038A8 !important;          /* Border color on hover */
-}
-
-/* Handle focus state for react-select control */
-.react-select__control--is-focused {
-  background-color: transparent !important;  /* Keep transparent background on focus */
-  border-color: #0038A8 !important;          /* Set focus border color */
-}
-
 /* Error state for react-select */
 .react-select__control--is-invalid {
-  border-color: #CE1126 !important;          /* Red border on error */
   font-size: 12px !important;             /* Font size for error message */
 }
 
@@ -83,6 +70,10 @@ select option:disabled {
 .react-select__multi-value {
   background-color: #0038A8 !important;      /* Highlight color when selected */
   color: white !important;
+}
+
+.react-select__control {
+  padding: .2px !important;
 }
 
 

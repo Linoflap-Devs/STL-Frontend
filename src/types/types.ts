@@ -38,9 +38,9 @@ export interface User {
   Cities: { CityId: number; CityName: string }[];
 }
 
-
 // Define the Operator type
 export interface Operator {
+  data?: any; // for operator update
   OperatorId: number;
   OperatorName: string;
   Executive: string;
@@ -56,6 +56,7 @@ export interface Operator {
   OperatorRepresentative: string;
   OperatorRegion?: any; // Ideally replace `any` with a specific Region type
   Region?: any;         // Same here
+  Slug?: string;
 
   // Optional shared fields (if reused with users)
   LastLogin?: string;

@@ -54,20 +54,22 @@ export const SortableTableCell: React.FC<SortableTableCellProps> = ({
     }));
   };
 
+  // Always show the sort icon, but only highlight the selected one
+  const isActive = sortConfig.key === sortKey;
+  const icon = sortConfig.key === sortKey
+    ? (sortConfig.direction === "asc"
+        ? <KeyboardArrowUpIcon sx={{ fontSize: 16, marginRight: 1, color: 'primary.main' }} />
+        : <KeyboardArrowDownIcon sx={{ fontSize: 16, marginRight: 1, color: 'primary.main' }} />)
+    : <KeyboardArrowDownIcon sx={{ fontSize: 16, marginRight: 1, opacity: 0.3 }} />;
+
   return (
     <LocalizationProvider dateAdapter={AdapterDayjs}>
-      <TableCell sx={{ cursor: 'pointer' }} onClick={handleSort}>
-        {sortConfig.key === sortKey && (
-          <Tooltip title={`Sort ${label} ${sortConfig.direction === 'asc' ? 'Ascending' : 'Descending'}`}>
-            <span>
-              {sortConfig.direction === "asc" ? (
-                <KeyboardArrowUpIcon sx={{ fontSize: 16, marginRight: 1 }} />
-              ) : (
-                <KeyboardArrowDownIcon sx={{ fontSize: 16, marginRight: 1 }} />
-              )}
-            </span>
-          </Tooltip>
-        )}
+      <TableCell sx={{ cursor: 'pointer', userSelect: 'none' }} onClick={handleSort}>
+        <Tooltip title={isActive ? `Sort ${label} ${sortConfig.direction === 'asc' ? 'Ascending' : 'Descending'}` : `Sort by ${label}`}>
+          <span>
+            {icon}
+          </span>
+        </Tooltip>
         {label}
         {isFilterVisible && (
           <div>
@@ -80,8 +82,15 @@ export const SortableTableCell: React.FC<SortableTableCellProps> = ({
                   textField: {
                     variant: 'filled',
                     fullWidth: true,
-                    sx: filterStyles,
-                    placeholder: 'YYYY/MM/DD',
+                    sx: { 
+                      ...filterStyles, 
+                      m: 0, 
+                      p: 0, 
+                      "& .MuiFilledInput-root": {
+                        paddingBottom: "0px",
+                        backgroundColor: "transparent !important",
+                      },
+                    },
                   },
                 }}
               />
@@ -92,7 +101,16 @@ export const SortableTableCell: React.FC<SortableTableCellProps> = ({
                 value={filters[sortKey] || ''}
                 onChange={(event) => handleFilterChange(sortKey)(event.target.value)}
                 fullWidth
-                sx={filterStyles}
+                sx={{ 
+                  ...filterStyles, 
+                  m: 0, 
+                  p: 0, 
+                  "& .MuiFilledInput-root": {
+                    paddingBottom: "8px",
+                    paddingTop: "8px",
+                    backgroundColor: "transparent !important",
+                  },
+                }}
               />
             )}
           </div>

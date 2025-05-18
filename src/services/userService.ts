@@ -5,6 +5,7 @@ import { Operator, User } from "~/types/types";
 import { getOperatorsData } from "~/utils/api/operators/get.operators.service";
 import { getUsersData } from "~/utils/api/users/get.users.service";
 import { getGameTypesData } from "~/utils/api/gameTypes/get.gameTypes.service";
+import axiosInstance from "~/utils/axiosInstance";
 
 export const fetchUsers = async (
   roleId: number,
@@ -86,7 +87,6 @@ export const fetchGameCategories = async (setGameTypes: React.Dispatch<React.Set
   }
 };
 
-
 export const fetchOperatorsEditLogs = async (setOperatorsLog: React.Dispatch<React.SetStateAction<any>>) => {
   try {
     const response = await getOperatorsData<GetOperatorsResponse>("/operators/getOperatorEdits");
@@ -103,6 +103,53 @@ export const fetchOperatorsEditLogs = async (setOperatorsLog: React.Dispatch<Rea
     setOperatorsLog([]);
   }
 };
+
+export async function fetchOperatorById(operatorId: number | string) {
+  if (!operatorId) {
+    console.warn("fetchOperatorById: No operatorId provided.");
+    return null;
+  }
+
+  try {
+    const response = await axiosInstance.get("/operators/getOperator", {
+      params: { operatorId },
+    });
+
+    // Optional: Check if data actually exists
+    if (!response.data) {
+      console.warn("fetchOperatorById: Empty response for operatorId", operatorId);
+      return null;
+    }
+
+    return response.data;
+  } catch (error: any) {
+    console.error(`Failed to fetch operator by ID (${operatorId}):`, error?.response?.data || error.message);
+    return null;
+  }
+}
+
+export const fetchAreaOfOperations = async (setAreaOfOperations: React.Dispatch<React.SetStateAction<any>>) => {
+  try {
+    const response = await getGameTypesData<GetGameCategoriesResponse>("/operators/getAreaOptions");
+    if (response.success && Array.isArray(response.data?.data)) {
+      const fetchedAreaOfOperations = response.data.data;
+      console.log("Fetched Area Of Operations:", fetchedAreaOfOperations);
+
+      setAreaOfOperations(fetchedAreaOfOperations);
+    } else {
+      setAreaOfOperations([]);
+    }
+  } catch (error) {
+    console.error("Error fetching Area Of Operations:", error);
+    setAreaOfOperations([]);
+  }
+};
+
+
+
+
+
+
 
 
 
