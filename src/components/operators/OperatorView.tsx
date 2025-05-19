@@ -51,7 +51,7 @@ const OperatorViewPage: React.FC<ReusableModalPageProps> = ({
     { value: 0, label: "Inactive" },
   ];
 
-  const areaOfOperationsOptions = areaofoperations.map((item: any) => ({
+  const areaOfOperationsOptions = areaofoperations?.map((item: any) => ({
     label: item.AreaOfOperations,
     value: item.AreaOfOperationsOptionsId,
   }));
@@ -396,7 +396,7 @@ const OperatorViewPage: React.FC<ReusableModalPageProps> = ({
               name="AreaOfOperations"
               options={areaOfOperationsOptions}
               value={
-                areaOfOperationsOptions.find(
+                areaOfOperationsOptions?.find(
                   (opt) => opt.value === formData.AreaOfOperations
                 ) || null
               }

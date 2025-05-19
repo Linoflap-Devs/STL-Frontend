@@ -1,6 +1,6 @@
 // used only for create
 
-import React, { useCallback, useEffect } from "react";
+import React, { useEffect } from "react";
 import { useOperatorsData } from "../../../store/useOperatorStore";
 import { useModalStore } from "../../../store/useModalStore";
 import { fetchGameCategories } from "~/services/userService";
