@@ -54,7 +54,7 @@ const RolePage = () => {
         pageType={roleKey}
         operatorMap={operatorMap}
         roleId={roleId}
-        statsPerRegion={data} // for csv
+        statsPerRegion={data}
         endpoint={endpoint ?? { create: "", update: "" }}
         source="users"
       />
