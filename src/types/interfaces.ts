@@ -187,7 +187,7 @@ export interface ReusableModalPageProps {
   provinces?: any[];
   regions?: any[];
   cities?: any[];
-  areaofoperations: any[];
+  areaofoperations?: any[];
   setSelectedRegion?: (regionId: string) => void;
   setSelectedProvince?: (provinceId?: string) => void;
   schema?: ZodSchema<any>;

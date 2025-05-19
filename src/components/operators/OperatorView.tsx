@@ -434,7 +434,7 @@ const OperatorViewPage: React.FC<ReusableModalPageProps> = ({
                 ? "border-red-600 focus:ring-red-600"
                 : "border-gray-300 focus:ring-blue-500"
             }`}
-            rows={3} // same as minRows
+            rows={3}
           />
           {errors.remarks && (
             <p className="text-red-600 text-xs mt-1">{errors.remarks}</p>

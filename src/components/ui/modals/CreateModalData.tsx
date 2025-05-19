@@ -43,7 +43,7 @@ const CreateModalDataPage: React.FC<ModalPageProps> = ({
           setSelectedRegion={setSelectedRegion ?? (() => {})}
           setSelectedProvince={setSelectedProvince ?? (() => {})}
           schema={schema}
-        >
+          >
         {({ handleSubmit }) => (
           <ReusableButton
             handleSubmit={handleSubmit}

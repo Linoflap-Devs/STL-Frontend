@@ -28,10 +28,11 @@ const RetailReceiptOperatorsPage = () => {
         className="bg-[#F6BA12] p-2 text-sm font-bold rounded-md w-full text-left"
       >
         STL COLLECTIONS
-        {/* {isOpen ? "▲" : "▼"} */}
+        {isOpen ? "▲" : "▼"}
       </button>
 
-      {isOpen && <GrossAACSharePage />}
+      {isOpen && <GrossAACSharePage />
+      }
     </div>
   );
 };

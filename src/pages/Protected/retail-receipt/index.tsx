@@ -17,30 +17,34 @@ const RetailReceiptPage = () => {
       {/* Cards */}
       <CardsPage roleLabel={""} textlabel={""} dashboardData={[]} />
 
-      {/* STL COLLECTIONS REPORT */}
       <div className="flex gap-4 mb-4 mt-4">
         {/* Left column - 50% width */}
         <div className="flex flex-col w-1/2">
           <label
             htmlFor="operationDate"
-            className="font-medium text-sm text-gray-700"
+            className="font-medium text-sm text-gray-700 mb-1"
           >
             Date of Report
           </label>
           <input
             id="operationDate"
-            type="date"
+            type="month"
             className="w-full border rounded px-3 py-2 text-sm bg-[#F8F0E3] border-[#0038A8]"
           />
         </div>
 
         {/* Right column - 50% width */}
         <div className="flex items-end w-1/2">
-          <button
-            onClick={() => setIsOpen(!isOpen)}
-            className="bg-[#F6BA12] p-2 pb-3 text-sm font-bold rounded-md w-full"
-          >
-            STL COLLECTIONS
+          <button className="w-full bg-[#F6BA12] p-2 rounded-md grid grid-cols-1 md:grid-cols-2 items-center gap-2 text-left">
+            {/* Column 1 */}
+            <div className="flex flex-col">
+              <span className="text-sm font-bold">STL Collections</span>
+            </div>
+
+            {/* Column 2 */}
+            <div className="flex justify-center md:justify-end text-base font-semibold">
+              ₱ 20,927,344.00
+            </div>
           </button>
         </div>
       </div>

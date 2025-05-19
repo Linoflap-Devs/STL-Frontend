@@ -5,7 +5,7 @@ const GrossPSCOSharePage = () => {
 
   return (
     <div className="flex flex-col">
-        
+
       <div className="mb-2">
         {/* Accordion Header */}
         <button
@@ -26,7 +26,7 @@ const GrossPSCOSharePage = () => {
         </button>
 
         {/* Accordion Content */}
-        {isGrossPSCOShareOpen && (
+        {!isGrossPSCOShareOpen && (
           <div className="bg-transparent border border-[#0038A8] p-2 rounded-md mt-3">
             <span className="text-sm font-bold">AAC Share Breakdown</span>
 

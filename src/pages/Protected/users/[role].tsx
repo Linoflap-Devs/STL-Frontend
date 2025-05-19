@@ -31,7 +31,6 @@ const RolePage = () => {
     }
   }, [roleConfig, setOperatorMap, setData]);
 
-  // Safe to return now
   if (!roleConfig) {
     return (
       <div className="container mx-auto px-0 py-1">
