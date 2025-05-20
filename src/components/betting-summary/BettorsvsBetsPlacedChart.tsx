@@ -72,8 +72,9 @@ const ChartBettorsvsBetsPlacedSummary = (params: { gameCategoryId?: number }) =>
 
         // setChartData(Object.values(drawMap));
         const today = new Date().toISOString().split('T')[0];
-
         const response = await fetchHistoricalSummary({from: today, to: today});
+
+        console.log("Bettors Bets" ,response)
 
         let data = response.data as TransactionData[];
 
@@ -136,32 +137,40 @@ const ChartBettorsvsBetsPlacedSummary = (params: { gameCategoryId?: number }) =>
         </div>
       </div>
       <div className="h-full w-full">
-        <BarChart
-          slotProps={{ legend: { hidden: true } }}
-          height={300}
-          grid={{ vertical: true }}
-          layout="horizontal"
-          margin={{ left: 90, right: 20, top: 20, bottom: 40 }}
-          dataset={chartData}
-          yAxis={[
-            {
-              scaleType: "band",
-              data: chartData.map((item) => item.draw),
-            },
-          ]}
-          xAxis={[
-            {
-              label: "Amount (in 100,000 units)",
-              min: 0,
-              max: 100,
-              // tickValues: xAxisTicks,
-            },
-          ]}
-          series={addLabels([
-            { dataKey: "bettors", color: "#E5C7FF" },
-            { dataKey: "bets", color: "#D2A7FF" },
-          ])}
-        />
+      {
+        loading ? (
+          <div className="flex items-center justify-center h-[300px]">
+            <CircularProgress />
+          </div>
+        ) : (
+          <BarChart
+            slotProps={{ legend: { hidden: true } }}
+            height={300}
+            grid={{ vertical: true }}
+            layout="horizontal"
+            margin={{ left: 90, right: 20, top: 20, bottom: 40 }}
+            dataset={chartData}
+            yAxis={[
+              {
+                scaleType: "band",
+                data: chartData.map((item) => item.draw),
+              },
+            ]}
+            xAxis={[
+              {
+                label: "Amount (in 100,000 units)",
+                min: 0,
+                max: 100,
+                // tickValues: xAxisTicks,
+              },
+            ]}
+            series={addLabels([
+              { dataKey: "bettors", color: "#E5C7FF" },
+              { dataKey: "bets", color: "#D2A7FF" },
+            ])}
+          />
+        )
+      }
       </div>
     </div>
   );

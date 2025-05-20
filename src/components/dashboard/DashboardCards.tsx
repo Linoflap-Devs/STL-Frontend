@@ -19,11 +19,15 @@ const DashboardCardsPage = (params: { gameCategoryId?: number }) => {
 
         if (response.success) {
 
-          // Filter data for today's date
-          let filteredData = response.data.filter(
-            (item: { TransactionDate: string }) =>
-              item.TransactionDate.startsWith(today)
-          );
+          let filteredData = response.data
+
+          console.log("Dashboard caards", filteredData)
+
+          // // Filter data for today's date
+          // let filteredData = response.data.filter(
+          //   (item: { TransactionDate: string }) =>
+          //     item.TransactionDate.startsWith(today)
+          // );
 
           // Filter by category
           if (params.gameCategoryId && params.gameCategoryId > 0) {

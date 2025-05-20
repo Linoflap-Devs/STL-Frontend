@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Button } from "@mui/material";
 import { useRouter } from "next/router";
 
@@ -15,13 +15,35 @@ const BettingSummaryPage = (params: { gameCategoryId?: number }) => {
   const router = useRouter();
   console.log("Game Category: ", params.gameCategoryId);
 
+   const [ title, setTitle ] = useState('STL')
+
+  useEffect(() => {
+    switch(params.gameCategoryId) {
+      case 0: 
+        setTitle('STL')
+        break;
+      case 1:
+        setTitle('STL Pares')
+        break;
+      case 2:
+        setTitle('STL Swer 2')
+        break;
+      case 3:
+        setTitle('STL Swer 3')
+        break;
+      case 4:
+        setTitle('STL Swer 4')
+        break;
+    }
+  }, [params.gameCategoryId])
+
   const handleViewComparisonClick = () => {
     router.push("/bets-comparisons");
   };
 
   return (
     <div className="space-y-4 h-full">
-      <h1 className="text-3xl font-bold">STL Betting Summary</h1>
+      <h1 className="text-3xl font-bold">{title} Betting Summary</h1>
       <DashboardCardsPage gameCategoryId={params.gameCategoryId} />
       <div className="flex flex-col items-center space-y-4">
         <div className="w-full space-y-4">
