@@ -34,10 +34,11 @@ export const fetchHistoricalRegion = async (p0?: { date: string; }) => {
     }
 };
 
-export const fetchTransactions = async (p0?: { date: string; }) => {
+export const fetchTransactions = async (filters?: { from?: string, to?: string }) => {
     try {
         const url = validateRelativeUrl("/transactions/getTransactions");
         const response = await axiosInstance.get(url, {
+            params: filters
         });
 
         return response.data;
