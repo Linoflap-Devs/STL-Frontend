@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Box, Typography, Stack, CircularProgress } from "@mui/material";
 import { BarChart } from "@mui/x-charts/BarChart";
 import { fetchHistoricalSummary } from "~/utils/api/transactions";
+import { addLabelsGameTypes } from "./tooltips/dataSet";
 // import fetchHistoricalSummary from "~/utils/api/transactions/getHistoricalSummary";
 
 // Mapping GameTypeId to Draw Names
@@ -87,11 +88,11 @@ const ChartBettorsSummary = () => {
       const fetchData = async () => {
         setLoading(true);
         try {
-          const response = await fetchHistoricalSummary(); // Add query params if needed
           
           const today = new Date().toISOString().split("T")[0];
+          const response = await fetchHistoricalSummary({from: today, to: today}); // Add query params if needed
           console.log(today); // Output: "2025-03-25T00:00:00.000Z"
-
+          console.log(response);
           // Filter Data for Today's Date
           const res = response.data.filter((item: { TransactionDate: string }) =>
             item.TransactionDate.startsWith(today)
@@ -109,7 +110,7 @@ const ChartBettorsSummary = () => {
               { pares: number; swer2: number; swer3: number; swer4: number }
             > = {};
   
-            res.forEach(
+            response.data.forEach(
               (item: {
                 DrawOrder: number;
                 TotalBettors: number;
@@ -152,7 +153,13 @@ const ChartBettorsSummary = () => {
               },
             ];
   
-            setData(formattedData);
+            setData(formattedData.map((item) => ({ 
+              ...item,
+              pares: item.pares / 100000,
+              swer2: item.swer2 / 100000,
+              swer3: item.swer3 / 100000,
+              swer4: item.swer4 / 100000 
+            })));
             console.log(formattedData)
             setLoading(false);
           }
@@ -209,26 +216,32 @@ const ChartBettorsSummary = () => {
             height={350}
             // width={{100%}}
             grid={{ vertical: true }}
+            slotProps={ { legend: { hidden: true } } }
             layout="horizontal"
             margin={{ left: 90, right: 20, top: 20, bottom: 40 }}
-            series={[
+            dataset={data}
+            series={addLabelsGameTypes([
               {
-                data: data.map((item) => item.pares),
+                dataKey: "pares",
+                label: "STL Pares",
                 color: "#E5C7FF",
               },
               {
-                data: data.map((item) => item.swer2),
+                dataKey: "swer2", 
+                label: "STL Swer2",
                 color: "#5050A5",
               },
               {
-                data: data.map((item) => item.swer3),  
+                dataKey: "swer3", 
+                label: "STL Swer3",
                 color: "#7266C9",
               },
               {
-                data: data.map((item) => item.swer4),
+                dataKey: "swer4",
+                label: "STL Swer4", 
                 color: "#3B3B81",
               },
-            ]}
+            ])}
             yAxis={[
               {
                 scaleType: "band",
@@ -241,7 +254,7 @@ const ChartBettorsSummary = () => {
                 label: "Amount (in 100,000 units)",
                 // scaleType: "linear",
                 min: 0,
-                max: 50,
+                max: 100,
                 tickValues: xAxisTicks,
                 tickSpacing: 1,
               } as any,

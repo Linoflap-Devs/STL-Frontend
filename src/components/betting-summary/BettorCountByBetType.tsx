@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Box, Typography, Stack, CircularProgress } from "@mui/material";
 import { BarChart } from "@mui/x-charts/BarChart";
 import { fetchTransactions } from "~/utils/api/transactions";
-import { TodaysBettorCountByGameTypeData, addLabelsGameTypes } from "~/components/betting-summary/tooltips/dataSet";
+import { TodaysBettorCountByGameTypeData, addLabelsBets, addLabelsGameTypes } from "~/components/betting-summary/tooltips/dataSet";
 // import fetchHistoricalSummary from "~/utils/api/transactions/getHistoricalSummary";
 
 
@@ -72,10 +72,10 @@ const ChartBettorsBetTypeSummary = (params: {gameCategoryId?: number}) => {
       const fetchData = async () => {
         // setLoading(true);
         try {
-          const response = await fetchTransactions(); // Add query params if needed
-          console.log(response)
           const today = new Date().toISOString().split("T")[0];
           console.log(today); // Output: "2025-03-25T00:00:00.000Z"
+          const response = await fetchTransactions({from: today, to: today}); // Add query params if needed
+          console.log(response)
 
           // Filter Data for Today's Date
           let res = response.data.filter((item: { DateOfTransaction: string, GameCategoryId: number }) =>
@@ -137,7 +137,13 @@ const ChartBettorsBetTypeSummary = (params: {gameCategoryId?: number}) => {
               },
             ];
   
-            setData(formattedData);
+            setData(formattedData.map((item) => ({
+                ...item,
+                tumbok: item.tumbok / 100000,
+                sahod: item.sahod / 100000,
+                ramble: item.ramble / 100000
+              }))
+            );
             console.log("Formatted Data ",formattedData)
             // setLoading(false);
           }
@@ -212,11 +218,11 @@ const ChartBettorsBetTypeSummary = (params: {gameCategoryId?: number}) => {
               label: "Amount (in 100,000 units)",
               min: 0, 
               max: 100,
-              tickValues: xAxisTicks,
-              tickSpacing: 1,
+              //tickValues: xAxisTicks,
+              //tickSpacing: 1,
             },
           ]}
-          series={[
+          series={addLabelsBets([
             { 
               dataKey: 'tumbok', 
               label: 'Tumbok',
@@ -227,7 +233,17 @@ const ChartBettorsBetTypeSummary = (params: {gameCategoryId?: number}) => {
               label: 'Sahod',
               color: '#5050A5' 
             },
-          ]}
+            { 
+              dataKey: 'ramble', 
+              label: 'Ramble',
+              color: '#7266C9' 
+            },
+            {
+              dataKey: 'casas',
+              label: 'Casas',
+              color: '#E5C7FF'
+            }
+          ])}
           />
         )}
         </Box>
