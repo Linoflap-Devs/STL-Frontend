@@ -48,7 +48,7 @@ const safeMax = maxValue < 1000 ? 1000 : maxValue;
           console.log("Processing data...");
 
           const today = new Date().toISOString().split("T")[0];
-          console.log(today); // Output: "2025-03-25T00:00:00.000Z"
+          console.log(today);
 
           // Filter Data for Today's Date
           const filteredData = response.data.filter(
@@ -68,12 +68,12 @@ const safeMax = maxValue < 1000 ? 1000 : maxValue;
             (item: {
               DrawOrder: number;
               TotalBettors: number;
-              TotalBets: number;
+              TotalBetAmount: number;
               TotalWinners: number;
             }) => {
               if (summaryRecord[item.DrawOrder]) {
                 summaryRecord[item.DrawOrder].bettors += item.TotalBettors || 0;
-                summaryRecord[item.DrawOrder].bets += item.TotalBets || 0;
+                summaryRecord[item.DrawOrder].bets += item.TotalBetAmount || 0;
                 summaryRecord[item.DrawOrder].winners += item.TotalWinners || 0;
               }
             }
