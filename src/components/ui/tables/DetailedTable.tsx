@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo, useCallback } from "react";
 import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TablePagination, Button, IconButton, Menu, MenuItem } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
 import FilterListIcon from "@mui/icons-material/FilterList";
@@ -37,7 +37,8 @@ const DetailedTable = <T extends User | Operator>({
   const [formData, setFormData] = useState<{ [key: string]: string | number | string[] }>({});
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
   const [actionType, setActionType] = useState<'suspend' | 'create' | 'update' | 'delete'>('suspend');
-  
+  const modalStore = useModalStore.getState();
+
   // FILTER + SEARCH
   const filteredData = useMemo(() => {
     const filterKeys = columns
@@ -86,46 +87,41 @@ const DetailedTable = <T extends User | Operator>({
     return sortedData.slice(start, end);
   }, [sortedData, page, rowsPerPage]);
 
-  const generateSlug = (name: string) =>
-    name.toLowerCase().replace(/\s+/g, '-').replace(/[^\w\-]+/g, '');
+  const generateSlug = (operatorName: string, operatorId: number) =>
+    `${operatorId}-${operatorName
+      .toLowerCase()
+      .replace(/\s+/g, "-")
+      .replace(/[^\w\-]+/g, "")}`;
 
-  const handleOpenViewModal = () => {
-    console.log("[handleOpenViewModal] Called");
-    console.log("[handleOpenViewModal] source:", source);
-    console.log("[handleOpenViewModal] selectedRow:", selectedRow);
-
+  const handleOpenViewModal = useCallback(() => {
     if (!selectedRow) {
       console.warn("[handleOpenViewModal] No selected row available.");
       return;
     }
 
-    const { OperatorId, OperatorName } = selectedRow;
-
-    const modalStore = useModalStore.getState();
+    const { OperatorName, OperatorId } = selectedRow;
 
     if (source === "operators") {
-      if (!OperatorId || !OperatorName) {
-        console.warn("[handleOpenViewModal] Missing OperatorId or OperatorName.");
+      if (!OperatorName || !OperatorId) {
+        console.warn(
+          "[handleOpenViewModal] Missing OperatorName or OperatorId."
+        );
         return;
       }
+      
+      // Include OperatorId in the slug to ensure correct fetch on refresh
+      const slug = generateSlug(OperatorName, OperatorId);
 
-      const slug = generateSlug(OperatorName);
       modalStore.setSelectedData(selectedRow);
       modalStore.setOperatorId(OperatorId);
 
-      console.log(`[handleOpenViewModal] Navigating to /operators/${slug}?id=${OperatorId}`);
-      router.push({
-        pathname: `/operators/${slug}`,
-        query: { id: OperatorId },
-      });
+      router.push(`/operators/${slug}`);
     } else {
-      console.log("[handleOpenViewModal] Opening modal with selectedRow:", selectedRow);
       modalStore.openModal("view", selectedRow);
     }
 
-    console.log("[handleOpenViewModal] Closing edit log modal");
     setOpenEditLogModal(false);
-  };
+  }, [selectedRow, source, router, setOpenEditLogModal]);
 
   const handleClose = () => {
     setIsVerifyModalOpen(false); // Close the verification modal

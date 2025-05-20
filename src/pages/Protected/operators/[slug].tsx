@@ -6,29 +6,38 @@ import { Operator } from "~/types/types";
 
 const OperatorSlugPage = () => {
   const router = useRouter();
-  const { slug, id } = router.query;
+  const { slug } = router.query;
 
   const [operator, setOperator] = useState<Operator | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const operatorId = typeof id === "string" ? Number(id) : null;
+    if (!slug || typeof slug !== "string") return;
 
-    if (!slug || typeof slug !== "string" || !operatorId) return;
+    // Extract operator ID from slug
+    const [idStr] = slug.split("-");
+    const operatorId = Number(idStr);
 
-    console.log("Fetching operator for slug:", slug, "and ID:", operatorId);
+    if (isNaN(operatorId)) {
+      console.error("Invalid operator ID in slug:", slug);
+      setOperator(null);
+      setLoading(false);
+      return;
+    }
 
+    setLoading(true);
     fetchOperatorById(operatorId)
       .then((data) => {
         setOperator(data);
       })
       .catch((err) => {
         console.error("Error fetching operator by ID:", err);
+        setOperator(null);
       })
       .finally(() => {
         setLoading(false);
       });
-  }, [slug, id]);
+  }, [slug]);
 
   if (loading) {
     return (
