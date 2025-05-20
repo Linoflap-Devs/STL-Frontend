@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useEffect } from "react";
+import React, { useState, useMemo } from "react";
 import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TablePagination, Button, IconButton, Menu, MenuItem } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
 import FilterListIcon from "@mui/icons-material/FilterList";
@@ -14,7 +14,6 @@ import { useModalStore } from "../../../../store/useModalStore";
 import { getUserStatus } from "~/utils/dashboarddata";
 import dayjs from "dayjs";
 import CSVExportButtonTable from "../buttons/CSVExportButtonTable";
-import ConfirmUserActionModalPage from "../modals/ConfirmUserActionModal";
 import Swal from 'sweetalert2';
 import router from "next/router";
 import ConfirmSuspendModal from "~/components/shared/ConfirmSuspendModal";
@@ -95,7 +94,14 @@ const DetailedTable = <T extends User | Operator>({
     console.log("[handleOpenViewModal] source:", source);
     console.log("[handleOpenViewModal] selectedRow:", selectedRow);
 
-    const { OperatorId, OperatorName } = selectedRow || {};
+    if (!selectedRow) {
+      console.warn("[handleOpenViewModal] No selected row available.");
+      return;
+    }
+
+    const { OperatorId, OperatorName } = selectedRow;
+
+    const modalStore = useModalStore.getState();
 
     if (source === "operators") {
       if (!OperatorId || !OperatorName) {
@@ -104,21 +110,17 @@ const DetailedTable = <T extends User | Operator>({
       }
 
       const slug = generateSlug(OperatorName);
-
-      // Save to Zustand state
-      const modalStore = useModalStore.getState();
       modalStore.setSelectedData(selectedRow);
       modalStore.setOperatorId(OperatorId);
 
       console.log(`[handleOpenViewModal] Navigating to /operators/${slug}?id=${OperatorId}`);
-
       router.push({
         pathname: `/operators/${slug}`,
         query: { id: OperatorId },
       });
     } else {
       console.log("[handleOpenViewModal] Opening modal with selectedRow:", selectedRow);
-      useModalStore.getState().openModal("view", selectedRow);
+      modalStore.openModal("view", selectedRow);
     }
 
     console.log("[handleOpenViewModal] Closing edit log modal");
