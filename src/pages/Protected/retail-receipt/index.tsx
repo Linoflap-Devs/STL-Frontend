@@ -35,7 +35,7 @@ const RetailReceiptPage = () => {
 
         {/* Right column - 50% width */}
         <div className="flex items-end w-1/2">
-          <button className="w-full bg-[#F6BA12] p-2 rounded-md grid grid-cols-1 md:grid-cols-2 items-center gap-2 text-left">
+          <div className="w-full bg-[#F6BA12] p-2 rounded-md grid grid-cols-1 md:grid-cols-2 items-center gap-2 text-left">
             {/* Column 1 */}
             <div className="flex flex-col">
               <span className="text-sm font-bold">STL Collections</span>
@@ -45,7 +45,7 @@ const RetailReceiptPage = () => {
             <div className="flex justify-center md:justify-end text-base font-semibold">
               ₱ 20,927,344.00
             </div>
-          </button>
+          </div>
         </div>
       </div>
 
