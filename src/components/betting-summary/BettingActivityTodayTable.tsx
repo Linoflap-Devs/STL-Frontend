@@ -3,6 +3,7 @@ import { Box, Typography, Divider, CircularProgress } from "@mui/material";
 import CasinoIcon from '@mui/icons-material/Casino';
 import { fetchHistoricalRegion, fetchHistoricalSummary } from "~/utils/api/transactions";
 import { historicalSummaryByRegionCategory } from "~/utils/transforms";
+import { FaDiceSix } from "react-icons/fa";
 
 interface RegionData {
   Region: string;
