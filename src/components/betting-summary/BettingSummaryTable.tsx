@@ -235,7 +235,6 @@ const TableBettingSummary = (params: {gameCategoryId?: number}) => {
       response.data = response.data.filter((item: { GameCategoryId: number }) => item.GameCategoryId === params.gameCategoryId);
     }
 
-
     const formattedData: User[] = response.data.map((transaction: any) => {
       return {
         transactionNumber: transaction.TransactionNumber,
