@@ -40,7 +40,7 @@ const CustomLegend = () => (
       />
       <Typography color="#212121">Sahod</Typography>
     </Box>
-    {/* <Box sx={{ display: "flex", alignItems: "center" }}>
+    <Box sx={{ display: "flex", alignItems: "center" }}>
       <Box
         sx={{
           width: 14,
@@ -51,7 +51,7 @@ const CustomLegend = () => (
         }}
       />
       <Typography color="#212121">Ramble</Typography>
-    </Box> */}
+    </Box>
   </Stack>
 );
 
@@ -61,7 +61,7 @@ const ChartBettorsBetTypeSummary = (params: {gameCategoryId?: number}) => {
   const [data, setData] = useState<
       { draw: string; tumbok: number, sahod: number, ramble: number }[]
     >([]);
-  const [loading] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   const xAxisTicks = [
     0, 1, 5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 55, 60, 65, 70, 75, 80, 85, 90,
@@ -70,7 +70,7 @@ const ChartBettorsBetTypeSummary = (params: {gameCategoryId?: number}) => {
 
   useEffect(() => {
       const fetchData = async () => {
-        // setLoading(true);
+        setLoading(true);
         try {
           const today = new Date().toISOString().split("T")[0];
           console.log(today); // Output: "2025-03-25T00:00:00.000Z"
@@ -144,6 +144,8 @@ const ChartBettorsBetTypeSummary = (params: {gameCategoryId?: number}) => {
                 ramble: item.ramble / 100000
               }))
             );
+
+            setLoading(false);
             console.log("Formatted Data ",formattedData)
             // setLoading(false);
           }
@@ -154,10 +156,10 @@ const ChartBettorsBetTypeSummary = (params: {gameCategoryId?: number}) => {
           );
         }
       };
-  
+      
       fetchData();
       console.log(`Bettors vs Bets Placed Summary Data: ${data}`);
-    }, []);
+    }, [params.gameCategoryId]);
 
   return (
     <Box
@@ -197,7 +199,10 @@ const ChartBettorsBetTypeSummary = (params: {gameCategoryId?: number}) => {
           }}
         >
         { loading ? (
-          <CircularProgress/>
+          // Height and margin bottom matched with BarChart values to avoid layout shifts
+          <Box sx={{ display: "flex", justifyContent: "center", alignItems: "center", height: "300px" }}>
+            <CircularProgress/>
+          </Box>
         ) : (
         <BarChart
             height={300}
