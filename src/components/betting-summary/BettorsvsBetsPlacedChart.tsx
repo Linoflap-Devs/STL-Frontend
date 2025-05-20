@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from "react";
-import { Box, Typography, Stack, CircularProgress } from "@mui/material";
+import { Box, Typography, Stack, CircularProgress, Button } from "@mui/material";
 import { BarChart } from "@mui/x-charts/BarChart";
 import getTransactionsData from "~/utils/api/transactions/get.TransactionsData.service";
 import { addLabels } from "./tooltips/dataSet";
 import { fetchHistoricalSummary } from "~/utils/api/transactions";
+import { buttonStyles } from "~/styles/theme";
 
 const CustomLegend = () => (
   <Stack direction="row" spacing={2} justifyContent="left" sx={{ mt: 0.5, mr: 4 }}>
