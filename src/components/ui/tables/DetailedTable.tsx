@@ -17,6 +17,7 @@ import CSVExportButtonTable from "../buttons/CSVExportButtonTable";
 import ConfirmUserActionModalPage from "../modals/ConfirmUserActionModal";
 import Swal from 'sweetalert2';
 import router from "next/router";
+import ConfirmSuspendModal from "~/components/shared/ConfirmSuspendModal";
 
 const DetailedTable = <T extends User | Operator>({
   data,
@@ -32,6 +33,7 @@ const DetailedTable = <T extends User | Operator>({
   const [openEditLogModal, setOpenEditLogModal] = useState(false);
   const sevenDaysAgo = useMemo(() => dayjs().subtract(7, "day"), []);
   const [isVerifyModalOpen, setIsVerifyModalOpen] = useState(false);
+  const [isVerifySuspendModalOpen, setIsVerifySuspendModalOpen] = useState(false);
 
   const [formData, setFormData] = useState<{ [key: string]: string | number | string[] }>({});
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
@@ -128,40 +130,44 @@ const DetailedTable = <T extends User | Operator>({
     onClose?.();
   };
 
-  const handleDelete = async (row: T) => {
-    // Log the selected user
-    console.log('Selected user for deletion:', row);
+  const handleSuspend = async (row: T) => {
+    console.log('handleSuspend called with row:', row);
 
-    if (!row || ('UserId' in row && !row.UserId)) {
-      setErrors({ form: 'Invalid user data. Cannot proceed with delete.' });
+    // Adjust this check according to your actual id field
+    if (!row || (!('OperatorId' in row) || !row.OperatorId)) {
+      console.error('Invalid user data:', row);
+      setErrors({ form: 'Invalid user data. Cannot proceed with suspension.' });
       return;
     }
 
     const result = await Swal.fire({
       title: 'Are you sure?',
-      text: 'Do you really want to delete this user? This action cannot be undone.',
+      text: 'Do you really want to suspend this user?',
       icon: 'warning',
       showCancelButton: true,
       confirmButtonColor: '#d33',
       cancelButtonColor: '#3085d6',
-      confirmButtonText: 'Yes, delete it!',
+      confirmButtonText: 'Yes, suspend!',
     });
 
+    console.log('User confirmed suspension:', result.isConfirmed);
+
     if (result.isConfirmed) {
-      // Pass the entire user row or at least UserId in formData
+      const userId = 'OperatorId' in row ? row.OperatorId ?? '' : '';
+      console.log('Setting formData with UserId:', userId);
+
       setFormData({
-        UserId: 'UserId' in row ? row.UserId ?? '' : '',
-        // Optionally, add other fields if needed
-        // FirstName: row.FirstName,
-        // LastName: row.LastName,
-        // etc.
+        UserId: userId,
       });
 
-      setActionType('suspend'); // or 'delete' if supported
-      setIsVerifyModalOpen(true);
+      console.log('Setting actionType to suspend and opening verify suspend modal');
+      setActionType('suspend'); 
+      setIsVerifySuspendModalOpen(true);
 
       setSelectedRow(null);
       resetMenu();
+    } else {
+      console.log('Suspension cancelled by user');
     }
   };
 
@@ -274,7 +280,7 @@ const DetailedTable = <T extends User | Operator>({
                       </MenuItem>
                       <MenuItem
                         onClick={() => {
-                          if (selectedRow) handleDelete(selectedRow);
+                          if (selectedRow) handleSuspend(selectedRow);
                           resetMenu(); // close menu after delete
                         }}
                       >
@@ -300,14 +306,14 @@ const DetailedTable = <T extends User | Operator>({
           />
         </div>
 
-        {isVerifyModalOpen && (
-          <ConfirmUserActionModalPage
+        {isVerifySuspendModalOpen && (
+          <ConfirmSuspendModal
             formData={formData}
             setFormData={setFormData}
             errors={errors}
-            actionType='update'
+            actionType='suspend'
             setErrors={setErrors}
-            open={isVerifyModalOpen}
+            open={isVerifySuspendModalOpen}
             endpoint={endpoint ?? { create: '', update: '' }}
             onClose={handleClose}
           />

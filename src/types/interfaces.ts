@@ -260,7 +260,7 @@ export interface ConfirmUserActionModalProps {
   setErrors: React.Dispatch<React.SetStateAction<any>>;
   selectedUser?: User | null;
   setSelectedUser?: React.Dispatch<React.SetStateAction<User | null>>;
-  actionType: "create" | "update";
+  actionType: "create" | "update" | "suspend" | "delete";
   formData: { [key: string]: string | number | string[] };
   setFormData: (data: { [key: string]: string | number }) => void;
   endpoint: {

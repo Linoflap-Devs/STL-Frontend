@@ -123,7 +123,6 @@ const handleVerifyUserAction = async () => {
   }
 };
 
-
   return (
     <>
       {open && (
