@@ -2,8 +2,8 @@ import React, { useState, useEffect } from "react";
 import { FaBroadcastTower } from "react-icons/fa";
 import { getTodaysWinningCombination } from "../../utils/api/winningcombinations";
 import { fetchRegions, fetchProvinces } from "../../utils/api/location";
-import Select from "react-select";
 import { fetchGameCategories } from "~/utils/api/gamecategories";
+import Select from "react-select";
 
 const DrawResultsPage = () => {
   // States for filters
@@ -78,45 +78,19 @@ const DrawResultsPage = () => {
     (option) => option.value === Number(selectedProvince)
   );
 
-  // Load regions on mount
   useEffect(() => {
-    const loadRegions = async () => {
-      const response = await fetchRegions();
-      if (response.success) {
-        setRegions(response.data);
-      } else {
-        console.error("Failed to fetch regions:", response.message);
-      }
-    };
-    loadRegions();
-  }, []);
+    async function loadData() {
+      const regionsRes = await fetchRegions();
+      if (regionsRes.success) setRegions(regionsRes.data);
 
-  // Load provinces on mount
-  useEffect(() => {
-    const loadProvinces = async () => {
-      const response = await fetchProvinces();
-      if (response.success) {
-        // Filter out RegionId === 0 (as your original code did)
-        const filtered = response.data.filter((p: any) => p.RegionId !== 0);
-        setProvinces(filtered);
-      } else {
-        console.error("Failed to fetch provinces:", response.message);
-      }
-    };
-    loadProvinces();
-  }, []);
+      const provincesRes = await fetchProvinces();
+      if (provincesRes.success)
+        setProvinces(provincesRes.data.filter((p: any) => p.RegionId !== 0));
 
-  // Load game categories on mount
-  useEffect(() => {
-    const loadGameCategories = async () => {
-      const response = await fetchGameCategories();
-      if (response.success) {
-        setGameCategories(response.data);
-      } else {
-        console.error("Failed to fetch game categories:", response.message);
-      }
-    };
-    loadGameCategories();
+      const gameCategoriesRes = await fetchGameCategories();
+      if (gameCategoriesRes.success) setGameCategories(gameCategoriesRes.data);
+    }
+    loadData();
   }, []);
 
   // Load winning combinations only when provinces, regions, and gameCategories are loaded
@@ -164,11 +138,11 @@ const DrawResultsPage = () => {
   }, [provinces, regions, gameCategories]);
 
   useEffect(() => {
-    console.log("🔍 useEffect triggered with:");
-    console.log("Selected Region:", selectedRegion);
-    console.log("Selected Province:", selectedProvince);
-    console.log("Selected Game Category:", selectedGameCategory);
-    console.log("Original winningCombinations:", winningCombinations);
+    //console.log("useEffect triggered with:");
+    //console.log("Selected Region:", selectedRegion);
+    //console.log("Selected Province:", selectedProvince);
+    //console.log("Selected Game Category:", selectedGameCategory);
+    //console.log("Original winningCombinations:", winningCombinations);
 
     let filtered = winningCombinations;
 
@@ -178,32 +152,29 @@ const DrawResultsPage = () => {
       ? Number(selectedGameCategory)
       : null;
 
-    console.log("Parsed filter values:", {
-      regionId,
-      provinceId,
-      gameCategoryId,
-    });
+    // console.log("Parsed filter values:", {
+    //   regionId,
+    //   provinceId,
+    //   gameCategoryId,
+    // });
 
     if (regionId !== null) {
       filtered = filtered.filter((c) => c.RegionId === regionId);
-      console.log(`✅ Filtered by RegionId (${regionId}):`, filtered);
+      //console.log(`Filtered by RegionId (${regionId}):`, filtered);
     }
 
     if (provinceId !== null) {
       filtered = filtered.filter((c) => c.ProvinceId === provinceId);
-      console.log(`✅ Filtered by ProvinceId (${provinceId}):`, filtered);
+      //console.log(`Filtered by ProvinceId (${provinceId}):`, filtered);
     }
 
     if (gameCategoryId !== null) {
       filtered = filtered.filter((c) => c.GameCategoryId === gameCategoryId);
-      console.log(
-        `✅ Filtered by GameCategoryId (${gameCategoryId}):`,
-        filtered
-      );
+      //console.log(`Filtered by GameCategoryId (${gameCategoryId}):`, filtered);
     }
 
     setFilteredWinningCombinations(filtered);
-    console.log("✅ Final filtered combinations set:", filtered);
+    //console.log("Final filtered combinations set:", filtered);
   }, [
     selectedRegion,
     selectedProvince,
@@ -216,28 +187,25 @@ const DrawResultsPage = () => {
     return value === 0 || value === "0" ? "0" : value || "\u00A0";
   };
 
-  const displayInGrid = true;
-  const totalBoxes = 4;
-
   return (
     <div className="bg-transparent p-4 rounded-xl border border-[#0038A8]">
-      <div className="flex mb-2 items-center">
-        <div className="bg-[#0038A8] p-1 rounded-lg">
+      <div className="flex mb-2 items-center w-full">
+        <div className="bg-[#0038A8] rounded-lg p-1">
           <FaBroadcastTower size={24} color={"#F6BA12"} />
         </div>
-        <p className="text-base ml-4">Draw Results Today</p>
+        <div className="flex items-center justify-between flex-1 ml-3">
+          <p className="text-base">Draw Results Today</p>
+          <button className="text-xs bg-[#0038A8] hover:bg-blue-700 text-white px-3 py-2 rounded-lg">
+            View Draw Result
+          </button>
+        </div>
       </div>
+
       <div className="h-px bg-[#303030] mb-4" />
 
       <div className="flex gap-4 w-full mt-2 mb-4">
         {/* Game Category Select */}
         <div className="w-full relative">
-          <label
-            htmlFor="gamecategory-select"
-            className="block text-sm font-medium mb-1"
-          >
-            Select a Game Category
-          </label>
           <Select
             id="gamecategory-select"
             value={selectedGameCategoryOption ?? null}
@@ -248,7 +216,7 @@ const DrawResultsPage = () => {
             styles={{
               control: (provided, state) => ({
                 ...provided,
-                backgroundColor: "#F6BA12",
+                backgroundColor: "#F6BA12 important",
                 borderRadius: "0.5rem",
                 padding: "0.25rem",
                 borderColor: state.isFocused ? "#555" : provided.borderColor,
@@ -268,12 +236,6 @@ const DrawResultsPage = () => {
       <div className="flex gap-4 w-full">
         {/* Region Select */}
         <div className="w-full relative">
-          <label
-            htmlFor="region-select"
-            className="block text-sm font-medium mb-1"
-          >
-            Select a Region
-          </label>
           <Select
             id="region-select"
             value={selectedRegionOption ?? null}
@@ -281,6 +243,7 @@ const DrawResultsPage = () => {
               setSelectedRegion(option?.value ?? "");
               setSelectedProvince("");
             }}
+            isDisabled={!selectedGameCategory}
             options={regionOptions}
             placeholder="Select a Region"
             classNamePrefix="react-select"
@@ -305,12 +268,6 @@ const DrawResultsPage = () => {
 
         {/* Province Select */}
         <div className="w-full relative">
-          <label
-            htmlFor="province-select"
-            className="block text-sm font-medium mb-1"
-          >
-            Select a Province
-          </label>
           <Select
             id="province-select"
             value={selectedProvinceOption ?? null}
@@ -342,82 +299,80 @@ const DrawResultsPage = () => {
       </div>
 
       <div className="mt-4 w-full">
-        {(!selectedRegion || !selectedProvince) ? (
-          <div className="bg-[#F6BA12] border border-[#F6BA12] p-8 rounded-lg">
-            <p className="text-center text-base">Please select from the filter</p>
-          </div>
-        ) : (
-          <div className="flex gap-4 justify-between w-full">
-            {[1, 2, 3].map((gameTypeId) => {
-              const item = filteredWinningCombinations.find(
-                (combo) => combo.GameScheduleID === gameTypeId
-              );
+        <div className="flex gap-4 justify-between w-full">
+          {[1, 2, 3].map((gameTypeId) => {
+            const item =
+              selectedGameCategory && selectedRegion && selectedProvince
+                ? filteredWinningCombinations.find(
+                    (combo) => combo.GameScheduleID === gameTypeId
+                  )
+                : null;
 
-              // Determine boxes count fallback to 2 if no item
-              const gameCategoryId = item?.GameCategoryId ?? 0;
-              const totalBoxes =
-                gameCategoryId >= 4 ? 4 : gameCategoryId >= 3 ? 3 : 2;
-              const displayInGrid = totalBoxes > 2;
+            // Determine boxes count; fallback to 2 if no item or invalid state
+            const gameCategoryId = item?.GameCategoryId ?? 0;
+            const totalBoxes =
+              gameCategoryId >= 4 ? 4 : gameCategoryId >= 3 ? 3 : 2;
+            const displayInGrid = totalBoxes > 2;
 
-              return (
-                <div key={gameTypeId} className="flex-1">
-                  <p className="text-sm font-light mb-1">
-                    {gameTypeId === 1
-                      ? "First Draw"
-                      : gameTypeId === 2
+            return (
+              <div key={gameTypeId} className="flex-1">
+                <p className="text-sm font-light mb-1">
+                  {gameTypeId === 1
+                    ? "First Draw"
+                    : gameTypeId === 2
                       ? "Second Draw"
                       : "Third Draw"}
-                  </p>
+                </p>
+                <div
+                  className={`flex ${
+                    displayInGrid ? "flex-wrap" : "flex-nowrap"
+                  } gap-2 w-full`}
+                >
+                  {/* Box 1 */}
                   <div
-                    className={`flex ${displayInGrid ? "flex-wrap" : "flex-nowrap"} gap-2 w-full`}
+                    className={`bg-transparent border border-[#0038A8] rounded-lg p-2 flex items-center justify-center ${
+                      displayInGrid ? "w-[calc(50%-4px)]" : "flex-1"
+                    }`}
                   >
-                    {/* Box 1 */}
-                    <div
-                      className={`bg-transparent border border-[#0038A8] rounded-lg p-2 flex items-center justify-center ${
-                        displayInGrid ? "w-[calc(50%-4px)]" : "flex-1"
-                      }`}
-                    >
-                      <p className="font-bold text-2xl">
-                        {displayValue(item?.WinningCombinationOne ?? "-")}
-                      </p>
-                    </div>
-
-                    {/* Box 2 */}
-                    <div
-                      className={`bg-transparent border border-[#0038A8] rounded-lg p-2 flex items-center justify-center ${
-                        displayInGrid ? "w-[calc(50%-4px)]" : "flex-1"
-                      }`}
-                    >
-                      <p className="font-bold text-2xl">
-                        {displayValue(item?.WinningCombinationTwo ?? "-")}
-                      </p>
-                    </div>
-
-                    {/* Box 3 */}
-                    {totalBoxes >= 3 && (
-                      <div className="bg-transparent border border-[#0038A8] rounded-lg p-2 flex items-center justify-center w-[calc(50%-4px)] mt-1">
-                        <p className="font-bold text-2xl">
-                          {displayValue(item?.WinningCombinationThree ?? "-")}
-                        </p>
-                      </div>
-                    )}
-
-                    {/* Box 4 */}
-                    {totalBoxes >= 4 && (
-                      <div className="bg-transparent border border-[#0038A8] rounded-lg p-2 flex items-center justify-center w-[calc(50%-4px)] mt-1">
-                        <p className="font-bold text-2xl">
-                          {displayValue(item?.WinningCombinationFour ?? "-")}
-                        </p>
-                      </div>
-                    )}
+                    <p className="font-bold text-2xl">
+                      {displayValue(item?.WinningCombinationOne ?? "-")}
+                    </p>
                   </div>
-                </div>
-              );
-            })}
-          </div>
-        )}
-      </div>
 
+                  {/* Box 2 */}
+                  <div
+                    className={`bg-transparent border border-[#0038A8] rounded-lg p-2 flex items-center justify-center ${
+                      displayInGrid ? "w-[calc(50%-4px)]" : "flex-1"
+                    }`}
+                  >
+                    <p className="font-bold text-2xl">
+                      {displayValue(item?.WinningCombinationTwo ?? "-")}
+                    </p>
+                  </div>
+
+                  {/* Box 3 */}
+                  {totalBoxes >= 3 && (
+                    <div className="bg-transparent border border-[#0038A8] rounded-lg p-2 flex items-center justify-center w-[calc(50%-4px)] mt-1">
+                      <p className="font-bold text-2xl">
+                        {displayValue(item?.WinningCombinationThree ?? "-")}
+                      </p>
+                    </div>
+                  )}
+
+                  {/* Box 4 */}
+                  {totalBoxes >= 4 && (
+                    <div className="bg-transparent border border-[#0038A8] rounded-lg p-2 flex items-center justify-center w-[calc(50%-4px)] mt-1">
+                      <p className="font-bold text-2xl">
+                        {displayValue(item?.WinningCombinationFour ?? "-")}
+                      </p>
+                    </div>
+                  )}
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      </div>
     </div>
   );
 };

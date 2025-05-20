@@ -2,16 +2,18 @@ import React, { useEffect, useState } from "react";
 import { BarChart } from "@mui/x-charts/BarChart";
 import { fetchHistoricalSummary } from "../../utils/api/transactions";
 import { useRouter } from "next/navigation";
+import { Button } from "@mui/material";
+import { buttonStyles } from "~/styles/theme";
 
 // Custom Legend circle
 const CustomLegend = () => (
-  <div className="flex flex-row space-x-8 justify-start mt-1 mr-4">
+  <div className="flex flex-row text-sm space-x-8 justify-start mt-1 mr-4">
     <div className="flex items-center">
-      <div className="w-3.5 h-3.5 rounded-full bg-[#BB86FC] mr-1.5" />
+      <div className="w-3.5 h-3.5 rounded-full bg-[#BB86FC] mr-2" />
       <p>Bettors</p>
     </div>
     <div className="flex items-center">
-      <div className="w-3.5 h-3.5 rounded-full bg-[#5050A5] mr-1.5" />
+      <div className="w-3.5 h-3.5 rounded-full bg-[#5050A5] mr-2" />
       <p>Bets</p>
     </div>
   </div>
@@ -36,8 +38,8 @@ const SummaryBettorsBetsPlacedPage = () => {
   >;
 
   const router = useRouter();
-const maxValue = Math.max(...data.map((item) => item.bets));
-const safeMax = maxValue < 1000 ? 1000 : maxValue;
+  const maxValue = Math.max(...data.map((item) => item.bets));
+  const safeMax = maxValue < 1000 ? 1000 : maxValue;
   useEffect(() => {
     const fetchDataDashboard = async () => {
       try {
@@ -102,16 +104,18 @@ const safeMax = maxValue < 1000 ? 1000 : maxValue;
   };
 
   return (
-  <div className="bg-transparent p-4 rounded-xl border border-[#0038A8]">
+    <div className="bg-transparent px-4 py-7 rounded-xl border border-[#0038A8]">
       <div>
         <div className="flex justify-between items-center w-full">
-          <p className="text-xl">
-            Summary of Bettors and Bets Placed Today
-          </p>
+          <div className="flex flex-col leading-none">
+            <p className="text-lg leading-none">Summary of Bettors and Bets Placed Today</p>
+            <CustomLegend />
+          </div>
+          <Button sx={buttonStyles} variant="contained">
+            Export as CSV
+          </Button>
         </div>
-        <CustomLegend />
       </div>
-
       <div className="h-full w-full">
         <BarChart
           height={300}

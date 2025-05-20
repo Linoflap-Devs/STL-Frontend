@@ -56,13 +56,16 @@ const TopWinningRegionPage = () => {
 
   return (
   <div className="bg-transparent p-4 rounded-xl border border-[#0038A8]">
-      <div className="flex items-center mb-2">
-        <div className="bg-[#0038A8] p-1 rounded-lg">
-          <FaMoneyBillAlt size={24} color={"#F6BA12"}/>
+      <div className="flex mb-2 items-center w-full">
+        <div className="bg-[#0038A8] rounded-lg p-1">
+          <FaMoneyBillAlt size={24} color={"#F6BA12"} />
         </div>
-        <p className="font-light text-base ml-4">
-          Top Winning Regions Today
-        </p>
+        <div className="flex items-center justify-between flex-1 ml-3">
+          <p className="text-base">Top Betting Regions Today</p>
+          <button className="text-xs bg-[#0038A8] hover:bg-blue-700 text-white px-3 py-2 rounded-lg">
+            View Winners
+          </button>
+        </div>
       </div>
       <div className="bg-[#303030] h-px mb-4" />
 
@@ -89,9 +92,10 @@ const TopWinningRegionPage = () => {
           </div>
         ))
       ) : (
-        <p className="text-center text-[#888]">
-          No data available
-        </p>
+        <div className="p-8 text-center text-[#888]">
+          <p>Top Betting Regions </p>
+          <p> data will be displayed once available.</p>
+        </div>
       )}
     </div>
   );

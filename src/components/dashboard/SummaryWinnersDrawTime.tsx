@@ -2,6 +2,8 @@ import React, { useState, useEffect } from "react";
 import { BarChart } from "@mui/x-charts/BarChart";
 import { fetchHistoricalSummary } from "../../utils/api/transactions";
 import { useRouter } from "next/navigation";
+import { Button } from "@mui/material";
+import { buttonStyles } from "~/styles/theme";
 
 // Custom Legend Component
 const CustomLegend = () => (
@@ -124,12 +126,17 @@ const SummaryWinnersDrawTimePage = () => {
   }, []);
 
   return (
-  <div className="bg-transparent p-4 rounded-xl border border-[#0038A8]">
+    <div className="bg-transparent px-4 py-7 rounded-xl border border-[#0038A8]">
       <div>
         <div className="flex justify-between items-center w-full">
-          <p className="text-xl">Summary of Winners</p>
+          <div className="flex flex-col leading-none">
+            <p className="text-lg leading-none">Summary of Winners</p>
+            <CustomLegend />
+          </div>
+          <Button sx={buttonStyles} variant="contained">
+            Export as CSV
+          </Button>
         </div>
-        <CustomLegend />
       </div>
       <div>
         <BarChart
