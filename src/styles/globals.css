@@ -73,8 +73,42 @@ select option:disabled {
 }
 
 .react-select__control {
-  padding: .2px !important;
+  padding: 0px !important;
 }
+
+.react-select-dashboard__control {
+  background-color: #F6BA12 !important;
+  border-radius: 0.5rem !important;
+  border: none !important;         /* use 'none' to remove border */
+  font-size: 14px !important;      /* specify units for font-size */
+  padding: 0px !important;
+  color: #0038A8 !important;
+}
+.react-select-dashboard__option {
+  background-color: transparent !important;  /* Transparent background for options */
+  color: inherit !important;                  /* Inherit text color */
+  border-bottom: 1px solid #0038A8;
+  font-size: 14px !important;
+}
+
+.react-select-dashboard__option--is-selected {
+  background-color: #0038A8 !important;      /* Highlight color when selected */
+  color: white !important;
+}
+/* Hover state for options */
+.react-select-dashboard__option:hover {
+  background-color: #d9a80f !important; /* Slightly darker blue on hover */
+}
+
+.react-select-dashboard__dropdown-indicator {
+  color: #0038A8 !important;
+}
+
+.react-select-dashboard__placeholder {
+  color: #0038A8 !important;
+}
+
+
 
 
 

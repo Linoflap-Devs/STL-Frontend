@@ -31,7 +31,6 @@ const RolePage = () => {
     }
   }, [roleConfig, setOperatorMap, setData]);
 
-  // Safe to return now
   if (!roleConfig) {
     return (
       <div className="container mx-auto px-0 py-1">
@@ -55,7 +54,7 @@ const RolePage = () => {
         pageType={roleKey}
         operatorMap={operatorMap}
         roleId={roleId}
-        statsPerRegion={data} // for csv
+        statsPerRegion={data}
         endpoint={endpoint ?? { create: "", update: "" }}
         source="users"
       />

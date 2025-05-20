@@ -5,7 +5,7 @@ const GrossPSCOSharePage = () => {
 
   return (
     <div className="flex flex-col">
-        
+
       <div className="mb-2">
         {/* Accordion Header */}
         <button
@@ -26,14 +26,14 @@ const GrossPSCOSharePage = () => {
         </button>
 
         {/* Accordion Content */}
-        {isGrossPSCOShareOpen && (
+        {!isGrossPSCOShareOpen && (
           <div className="bg-transparent border border-[#0038A8] p-2 rounded-md mt-3">
-            <span className="text-sm font-bold">AAC Share Breakdown</span>
+            <span className="text-sm font-bold">PSCO Share Breakdown</span>
 
             {/* Breakdown Row 1 */}
             <div className="mt-2 grid grid-cols-1 md:grid-cols-2 items-center gap-2">
               <div className="flex flex-col">
-                <span className="text-sm font-bold">Gross AAC Share</span>
+                <span className="text-sm font-bold">Gross PSCO Share</span>
                 <span className="text-sm font-medium">51.21%</span>
               </div>
               <div className="flex justify-center md:justify-end text-base font-semibold">

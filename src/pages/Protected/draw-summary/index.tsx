@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import dynamic from "next/dynamic";
-import { FormControl, InputLabel, MenuItem, Select, styled } from "@mui/material";
+import { FormControl, InputLabel, MenuItem, styled } from "@mui/material";
 import { selectDrawStyles } from "~/styles/theme";
 import HotNumberPage from "~/components/draw-summary/HotNumbers";
 import DrawResultsSummaryPage from "~/components/draw-summary/DrawResultsSummary";
@@ -10,6 +10,7 @@ import { fetchProvinces, fetchRegions } from "~/utils/api/location";
 import { set } from "zod";
 import { fetchGameCategories } from "~/utils/api/gamecategories";
 import { fetchDrawSummary } from "~/utils/api/transactions";
+import Select from 'react-select';
 
 const DashboardSkeletonPage = dynamic(() =>
   import("~/components/dashboard/DashboardSkeleton").then((mod) => ({
@@ -182,7 +183,7 @@ const DrawSelectedPage = () => {
 
   return (
     <div className="flex flex-col gap-4">
-      <div className="flex flex-row mb-3">
+      <div className="flex flex-row mb-1">
         <h1 className="text-3xl font-bold">
           STL Pares Provincial Draw Summary
         </h1>
@@ -191,161 +192,180 @@ const DrawSelectedPage = () => {
       {/* Input Selects */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         {/* First Select */}
-        <FormControl sx={selectDrawStyles} fullWidth>
-          <InputLabel id="select-1-label">Region</InputLabel>
-          <Select
-            labelId="select-1-label"
-            id="select-1"
-            label="Region"
-            value={selectedRegion}
-            onChange={
-              (e: any) => {
-                const val = e.target.value
-                setSelectedRegion(val)
-                setSelectedProvince("")
-              }
-            }
+        <div className="w-full">
+          <label
+            htmlFor="region"
+            className="block text-sm font-medium text-gray-700 mb-1"
           >
-            {
-              regions.map((region) => 
-                  <MenuItem value={region.value}>{region.label}</MenuItem>
-              )
-            }
-          </Select>
-        </FormControl>
+            Region
+          </label>
+          <select
+            id="region"
+            value={selectedRegion}
+            onChange={(e) => {
+              const val = e.target.value;
+              setSelectedRegion(val);
+              setSelectedProvince("");
+            }}
+            className="w-full border rounded px-3 py-3 text-sm !bg-[#F6BA12] focus:outline-none focus:ring-2 focus:ring-blue-500"
+          >
+            <option value="" className="bg-white text-black">
+              Select Region
+            </option>
+            {regions.map((region) => (
+              <option key={region.value} value={region.value} className="bg-white text-black" >
+                {region.label}
+              </option>
+            ))}
+          </select>
+        </div>
 
         {/* Second Select */}
-        <FormControl sx={selectDrawStyles} fullWidth>
-          <InputLabel id="select-2-label">Province</InputLabel>
-          <Select
-            labelId="select-2-label"
-            id="select-2"
-            label="Province"
+        <div className="flex flex-col w-full">
+          <label htmlFor="province" className="font-medium text-sm text-gray-700 mb-1">
+            Province
+          </label>
+          <select
+            id="province"
             value={selectedProvince}
-            onChange={
-              (e: any) => {
-                const val = e.target.value
-                console.log("Province changed to " + val)
-                setSelectedProvince(val.toString())
-              }
-            }
+            onChange={(e) => {
+              const val = e.target.value;
+              console.log("Province changed to " + val);
+              setSelectedProvince(val);
+            }}
+            className="w-full border rounded px-3 py-3 text-sm !bg-[#F6BA12] text-black focus:outline-none focus:ring-2 focus:ring-blue-500"
           >
-            {
-              filteredProvinces.map((province) => 
-                  <MenuItem key={province.value} value={province.value}>{province.label}</MenuItem>
-              )
-            }
-          </Select>
-        </FormControl>
+            {filteredProvinces.map((province) => (
+              <option key={province.value} value={province.value} className="bg-white text-black">
+                {province.label}
+              </option>
+            ))}
+          </select>
+        </div>
 
         {/* Third Select */}
-        <FormControl sx={selectDrawStyles} fullWidth>
-          <InputLabel id="select-3-label">Game Category</InputLabel>
-          <Select
-            labelId="select-3-label"
-            id="select-3"
-            label="Game Category"
+        <div className="flex flex-col w-full">
+          <label htmlFor="gameCategory" className="font-medium text-sm text-gray-700 mb-1">
+            Game Category
+          </label>
+          <select
+            id="gameCategory"
             value={selectedGameCategory}
-            onChange={
-              (e: any) => {
-                const val = e.target.value
-                setSelectedGameCategory(val)
-              }
-            }
+            onChange={(e) => {
+              const val = e.target.value;
+              setSelectedGameCategory(val);
+            }}
+            className="w-full border rounded px-3 py-3 text-sm !bg-[#F6BA12] text-black focus:outline-none focus:ring-2 focus:ring-blue-500"
           >
-            {
-              gameCategories.map((gameCategory) => 
-                  <MenuItem value={gameCategory.value}>{gameCategory.label}</MenuItem>
-              )
-            }
-          </Select>
-        </FormControl>
-        
-        {/* Fourth Select */}
-        <FormControl sx={selectDrawStyles} fullWidth>
-          <InputLabel id="select-4-label">Month</InputLabel>
-          <Select
-            labelId="select-4-label"
-            id="select-4"
-            label="Month"
-            value={selectedMonth}
-            onChange={
-              (e: any) => {
-                const val = e.target.value
-                setSelectedMonth(val)
-              }
-            }
-          >
-            <MenuItem value="1">January</MenuItem>
-            <MenuItem value="2">February</MenuItem>
-            <MenuItem value="3">March</MenuItem>
-            <MenuItem value="4">April</MenuItem>
-            <MenuItem value="5">May</MenuItem>
-            <MenuItem value="6">June</MenuItem>
-            <MenuItem value="7">July</MenuItem>
-            <MenuItem value="8">August</MenuItem>
-            <MenuItem value="9">September</MenuItem>
-            <MenuItem value="10">October</MenuItem>
-            <MenuItem value="11">November</MenuItem>
-            <MenuItem value="12">December</MenuItem>
-          </Select>
-        </FormControl>
-      </div>
+            {gameCategories.map((gameCategory) => (
+              <option
+                key={gameCategory.value}
+                value={gameCategory.value}
+                className="bg-white text-black"
+              >
+                {gameCategory.label}
+              </option>
+            ))}
+          </select>
+        </div>
 
+
+        {/* Fourth Select */}
+        <div className="flex flex-col w-full">
+          <label htmlFor="month" className="font-medium text-sm text-gray-700 mb-1">
+            Month
+          </label>
+          <select
+            id="select-4"
+            value={selectedMonth}
+            onChange={(e: any) => {
+              const val = e.target.value;
+              setSelectedMonth(val);
+            }}
+            className="w-full border rounded px-3 py-3 text-sm !bg-[#F6BA12] text-black focus:outline-none focus:ring-2 focus:ring-blue-500"
+          >
+            <option value="" className="bg-white text-black">Select Month</option>
+            <option value="1" className="bg-white text-black">January</option>
+            <option value="2" className="bg-white text-black">February</option>
+            <option value="3" className="bg-white text-black">March</option>
+            <option value="4" className="bg-white text-black">April</option>
+            <option value="5" className="bg-white text-black">May</option>
+            <option value="6" className="bg-white text-black">June</option>
+            <option value="7" className="bg-white text-black">July</option>
+            <option value="8" className="bg-white text-black">August</option>
+            <option value="9" className="bg-white text-black">September</option>
+            <option value="10" className="bg-white text-black">October</option>
+            <option value="11" className="bg-white text-black">November</option>
+            <option value="12" className="bg-white text-black">December</option>
+          </select>
+        </div>
+
+      </div>
 
       <div className="flex flex-col items-center gap-4m mt-2">
         <div className="flex flex-col w-full gap-4">
           <h1 className="text-3xl font-bold">
-            {filteredProvinces.find((province) => province.value == selectedProvince.toString())?.label} - {gameCategories.find((gameCategory) => gameCategory.value == selectedGameCategory.toString())?.label}
+            {
+              filteredProvinces.find(
+                (province) => province.value == selectedProvince.toString()
+              )?.label
+            }{" "}
+            -{" "}
+            {
+              gameCategories.find(
+                (gameCategory) =>
+                  gameCategory.value == selectedGameCategory.toString()
+              )?.label
+            }
           </h1>
           <div className="flex flex-col md:flex-row w-full gap-2">
             <div className="flex flex-col w-full md:w-2/3">
-            <div>
-              <p className="text-md font-bold mb-1">
-                Draw Results
-              </p>
-              {
-                data && (
-                  <DrawResultsSummaryPage 
-                    firstDraw={getTodayResults(1) || []} 
-                    secondDraw={getTodayResults(2) || []} 
-                    thirdDraw={getTodayResults(3) || []} 
+              <div>
+                <p className="text-md font-bold mb-1">Draw Results</p>
+                {data && (
+                  <DrawResultsSummaryPage
+                    firstDraw={getTodayResults(1) || []}
+                    secondDraw={getTodayResults(2) || []}
+                    thirdDraw={getTodayResults(3) || []}
                   />
-                )
-              }
-              <div className="flex gap-2">
-                {
-                  data?.HotNumbers && (
-                    <HotNumberPage number={data?.HotNumbers[0]?.number || "-"} />
-                  )
-                }
-                {
-                  data?.ColdNumbers && (
-                    <ColdNumberPage number={data?.ColdNumbers[0]?.number || "-"} />
-                  )
-                }
-              </div>
+                )}
+                <div className="flex gap-2">
+                  {data?.HotNumbers && (
+                    <HotNumberPage
+                      number={data?.HotNumbers[0]?.number || "-"}
+                    />
+                  )}
+                  {data?.ColdNumbers && (
+                    <ColdNumberPage
+                      number={data?.ColdNumbers[0]?.number || "-"}
+                    />
+                  )}
+                </div>
 
-              <div className="flex gap-2 mt-5">
-                {
-                  data && (
-                    <DrawCounterTablePage numberArr={data?.FrequencyMap || []} gameCategory={Number(selectedGameCategory)} />
-                  )
-                }
-              </div>
+                <div className="flex gap-2 mt-5">
+                  {data && (
+                    <DrawCounterTablePage
+                      numberArr={data?.FrequencyMap || []}
+                      gameCategory={Number(selectedGameCategory)}
+                    />
+                  )}
+                </div>
               </div>
             </div>
             {/* Right Column */}
             <div className="flex flex-col gap-4 w-full md:w-1/3">
-            {
-              data && (
-                <DrawListSummaryPage 
-                  location={filteredProvinces.find((province) => province.value == selectedProvince.toString())?.label || ""}
+              {data && (
+                <DrawListSummaryPage
+                  location={
+                    filteredProvinces.find(
+                      (province) =>
+                        province.value == selectedProvince.toString()
+                    )?.label || ""
+                  }
                   month={selectedMonth}
                   values={transformResultSummary(Number(selectedGameCategory))}
                 />
-              )
-            }
+              )}
             </div>
           </div>
         </div>

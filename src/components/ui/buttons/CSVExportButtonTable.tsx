@@ -27,7 +27,6 @@ const convertToCSV = (data: any[], columns: any[], title: string, operatorMap: a
         return status;
       }
 
-      // Special case: Cities array
       if (columnKey === "Cities") {
         const cityNames = Array.isArray(item.Cities)
           ? item.Cities.map((c: any) => c.CityName).join(", ")
@@ -35,9 +34,16 @@ const convertToCSV = (data: any[], columns: any[], title: string, operatorMap: a
         return cityNames;
       }
 
-      const value = columnKey.split('.').reduce((obj: { [x: string]: any; }, key: string | number) => obj?.[key], item);
+      if (columnKey === "DateOfRegistration") {
+        const formattedDate = item.DateOfRegistration
+          ? dayjs(item.DateOfRegistration).format("MMMM D, YYYY h:mm A")
+          : "";
+        return formattedDate;
+      }
+
+      const value = columnKey.split('.').reduce((obj: any, key: string) => obj?.[key], item);
       return String(value ?? "");
-    }).join(","); // Use comma as separator instead of spaces
+    }).join(",");
   };
 
   const titleRow = `${title}\n\n`; // Add title with a newline

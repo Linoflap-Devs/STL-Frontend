@@ -39,12 +39,18 @@ const WINNING_SUBMENUS = [
 
 const getUserRole = (userTypeId: number) => {
   switch (userTypeId) {
-    case 1: return "Collector";
-    case 2: return "Manager";
-    case 3: return "Executive";
-    case 4: return "Admin";
-    case 5: return "System Admin";
-    default: return "Unknown Role";
+    case 1:
+      return "Collector";
+    case 2:
+      return "Manager";
+    case 3:
+      return "Executive";
+    case 4:
+      return "Admin";
+    case 5:
+      return "System Admin";
+    default:
+      return "Unknown Role";
   }
 };
 
@@ -53,7 +59,8 @@ const Sidebar: React.FC = () => {
   const currentPath = router.asPath;
   const { SideBarActiveGameType, setSideBarActiveGameType } = useSideBarStore();
   const isCurrent = (path: string) => currentPath === path;
-  const isGroupActive = (groupPath: string) => currentPath.startsWith(groupPath);
+  const isGroupActive = (groupPath: string) =>
+    currentPath.startsWith(groupPath);
 
   const [collapsed, setCollapsed] = useState(false);
   const [openSubmenu, setOpenSubmenu] = useState<string | null>(null);
@@ -64,18 +71,20 @@ const Sidebar: React.FC = () => {
     userTypeId: number;
   } | null>(null);
 
-  const formattedDate = dateTime?.toLocaleDateString("en-PH", {
-    month: "long",
-    day: "numeric",
-    year: "numeric",
-  }) ?? "N/A";
+  const formattedDate =
+    dateTime?.toLocaleDateString("en-PH", {
+      month: "long",
+      day: "numeric",
+      year: "numeric",
+    }) ?? "N/A";
 
-  const formattedTime = dateTime?.toLocaleTimeString("en-PH", {
-    hour: "2-digit",
-    minute: "2-digit",
-    second: "2-digit",
-    hour12: true,
-  }) ?? "N/A";
+  const formattedTime =
+    dateTime?.toLocaleTimeString("en-PH", {
+      hour: "2-digit",
+      minute: "2-digit",
+      second: "2-digit",
+      hour12: true,
+    }) ?? "N/A";
 
   useEffect(() => {
     const updateDateTime = () => setDateTime(new Date());
@@ -119,24 +128,28 @@ const Sidebar: React.FC = () => {
   };
 
   const renderSubmenu = (items: typeof BETTING_SUBMENUS) =>
-    items.map(({ name, path }) => (
-      <div
-        key={path}
-        onClick={() => handleListItemClick({ name, path })}
-        className={clsx(
-          "ml-6 py-2 pl-4 pr-2 rounded-md cursor-pointer text-sm transition-colors",
-          SideBarActiveGameType === name
-            ? "bg-[#F6BA12] text-purple-800 font-bold"
-            : "text-gray-300 hover:text-white"
-        )}
-      >
-        {name}
-      </div>
-    ));
-    
-    const toggleCollapse = () => {
-      setCollapsed((prev) => !prev);
-    };
+    items.map(({ name, path }) => {
+      const isActive = SideBarActiveGameType === name;
+
+      return (
+        <div
+          key={path}
+          onClick={() => handleListItemClick({ name, path })}
+          className={clsx(
+            "ml-6 py-2 pl-4 pr-2 pt-3 rounded-md cursor-pointer text-sm transition-colors",
+            isActive
+              ? "text-[#F6BA12] font-semibold"
+              : "text-gray-300 hover:text-white"
+          )}
+        >
+          {name}
+        </div>
+      );  
+    });
+
+  const toggleCollapse = () => {
+    setCollapsed((prev) => !prev);
+  };
 
   const renderMenuItem = (label: string) => {
     const iconSize = 20;
@@ -167,10 +180,11 @@ const Sidebar: React.FC = () => {
       label === "Betting Summary"
         ? BETTING_SUBMENUS
         : label === "Winning Summary"
-        ? WINNING_SUBMENUS
-        : null;
+          ? WINNING_SUBMENUS
+          : null;
 
-    const path = routeMap[label] ?? `/${label.toLowerCase().replace(/\s+/g, "-")}`;
+    const path =
+      routeMap[label] ?? `/${label.toLowerCase().replace(/\s+/g, "-")}`;
 
     const isGroup = submenu !== null;
 
@@ -192,30 +206,29 @@ const Sidebar: React.FC = () => {
             "flex items-center justify-between px-4 py-2 cursor-pointer rounded-md",
             isGroupActive(path)
               ? "bg-[#F6BA12] text-[#0038A8] font-semibold"
-              : "hover:text-[#F6BA12] text-gray-300",
+              : "hover:text-[#F6BA12] text-gray-300"
           )}
         >
           <span className="flex items-center gap-2 text-sm">
             {iconMap[label]}
             {!collapsed && label}
           </span>
-          {!collapsed &&
-            isGroup &&
-            (openSubmenu === label ? <FaChevronUp /> : <FaChevronDown />)}
         </div>
-        {!collapsed && openSubmenu === label && submenu && renderSubmenu(submenu)}
+        {!collapsed &&
+          openSubmenu === label &&
+          submenu &&
+          renderSubmenu(submenu)}
       </div>
     );
   };
 
   return (
     <aside
-      className={clsx(
-        "p-3.5 bg-[#0038A8] text-white flex flex-col transition-all duration-300 min-h-screen",
+      className={`p-3 bg-blue-800 text-white flex flex-col ${
         collapsed ? "w-20" : "w-60"
-      )}
+      } duration-200`}
     >
-      <div  
+      <div
         className={clsx(
           "flex items-center",
           collapsed ? "flex-col justify-center" : "flex-row justify-center"
@@ -226,7 +239,7 @@ const Sidebar: React.FC = () => {
           <div className="flex justify-between px-3 p-3 w-full">
             {/* Toggle Collapse Icon (Left Corner) */}
             <button
-             onClick={toggleCollapse}
+              onClick={toggleCollapse}
               className="flex justify-center items-center bg-[#0038A8] 
                 text-[#ACA993] rounded-full w-6 h-6 p-1 hover:bg-gray-300 transition-colors duration-200"
             >
@@ -260,20 +273,18 @@ const Sidebar: React.FC = () => {
               <div className="text-xs md:text-sm lg:text-2xl font-bold leading-none mb-0">
                 {formattedTime}
               </div>
-              <div className="text-xs leading-none mt-0">
-                {formattedDate}
-              </div>
+              <div className="text-xs leading-none mt-0">{formattedDate}</div>
             </div>
           )}
-          
         </div>
       </div>
 
       {!collapsed && (
         <div className="pt-5 pb-3 px-1">
-          {/* User Details */}
           <div className="text-2xl font-bold text-white leading-tight">
-            {user ? `${user.firstName} ${user.lastName}` : (
+            {user ? (
+              `${user.firstName} ${user.lastName}`
+            ) : (
               <Skeleton variant="text" width={100} height={20} />
             )}
           </div>
@@ -284,18 +295,17 @@ const Sidebar: React.FC = () => {
       )}
 
       {/* Navigation Menu */}
-      <nav className={`flex-1 space-y-3 ${collapsed ? "mt-5" : "" } `}>
+      <nav className={`flex-1 space-y-3 ${collapsed ? "mt-5" : ""} `}>
         {UserSectionData.pages.map(renderMenuItem)}
         {/* Logout Button */}
         <div
           onClick={handleLogout}
-              className={`flex items-center px-4 py-2 cursor-pointer rounded-md text-sm transition-colors`}
-            >
+          className={`flex items-center px-4 py-2 cursor-pointer rounded-md text-sm transition-colors`}
+        >
           <FaSignOutAlt size={20} />
           {!collapsed && <span className="ml-2">Logout</span>}
         </div>
       </nav>
-
     </aside>
   );
 };

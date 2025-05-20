@@ -72,12 +72,17 @@ const TopBettingRegionPage = () => {
   }, []);
 
   return (
-  <div className="bg-transparent p-4 rounded-xl border border-[#0038A8]">
-      <div className="flex items-center mb-2">
-        <div className="bg-[#0038A8] p-1 rounded-lg">
-          <FaDiceSix size={24} className="text-[#F6BA12]" />
+    <div className="bg-transparent p-4 rounded-xl border border-[#0038A8]">
+      <div className="flex mb-2 items-center w-full">
+        <div className="bg-[#0038A8] rounded-lg p-1">
+          <FaDiceSix size={24} color={"#F6BA12"} />
         </div>
-        <p className="font-light text-base ml-4">Top Betting Regions Today</p>
+        <div className="flex items-center justify-between flex-1 ml-3">
+          <p className="text-base">Top Betting Regions Today</p>
+          <button className="text-xs bg-[#0038A8] hover:bg-blue-700 text-white px-3 py-2 rounded-lg">
+            View Bettors
+          </button>
+        </div>
       </div>
       <div className="h-px bg-[#303030] mb-4" />
 
@@ -99,16 +104,17 @@ const TopBettingRegionPage = () => {
                 <ArrowDownward className="text-[#FF7A7A] ml-1 w-4 h-4" />
               )}
             </div>
-            <p className="flex-1 ml-2">
-              {region.RegionFull}
-            </p>
+            <p className="flex-1 ml-2">{region.RegionFull}</p>
             <p className="text-center flex-1">
               {region.TotalBettors.toLocaleString()}
             </p>
           </div>
         ))
       ) : (
-        <p className="text-center text-[#888]">No data available</p>
+        <div className="p-8 text-center text-[#888]">
+          <p>Top Betting Regions </p>
+          <p> data will be displayed once available.</p>
+        </div>
       )}
     </div>
   );

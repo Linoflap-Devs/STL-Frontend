@@ -5,10 +5,8 @@ import {
   Button, 
   Typography, 
   Modal,
-  Paper,
   MenuItem,
   IconButton,
-  InputAdornment
 } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
 import { addWinningCombination } from '~/utils/api/winningcombinations';

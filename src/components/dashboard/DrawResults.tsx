@@ -1,18 +1,31 @@
 import React, { useState, useEffect } from "react";
 import { FaBroadcastTower } from "react-icons/fa";
 import { getTodaysWinningCombination } from "../../utils/api/winningcombinations";
-
-const displayValue = (value: string | null) => (value ? value : "\u00A0");
+import { fetchRegions, fetchProvinces } from "../../utils/api/location";
+import { fetchGameCategories } from "~/utils/api/gamecategories";
+import Select from "react-select";
 
 const DrawResultsPage = () => {
-  const [selectedRegion, setSelectedRegion] = useState("");
-  const [selectedProvince, setSelectedProvince] = useState("");
-  const [selectedGameType, setSelectedGameType] = useState("");
+  // States for filters
+  const [selectedRegion, setSelectedRegion] = useState<number | "">("");
+  const [selectedProvince, setSelectedProvince] = useState<number | "">("");
+  const [selectedGameCategory, setSelectedGameCategory] = useState<number | "">(
+    ""
+  );
+  const [filteredWinningCombinations, setFilteredWinningCombinations] =
+    useState<any[]>([]);
+
+  // Data states
   const [regions, setRegions] = useState<
-    { RegionId: number; Region: string }[]
+    { RegionName: string; RegionId: number; Region: string }[]
   >([]);
   const [provinces, setProvinces] = useState<
-    { ProvinceId: number; Province: string }[]
+    {
+      ProvinceName: string;
+      ProvinceId: number;
+      Province: string;
+      RegionId: number;
+    }[]
   >([]);
   const [gameCategories, setGameCategories] = useState<
     { GameCategoryId: number; GameCategory: string }[]
@@ -35,333 +48,325 @@ const DrawResultsPage = () => {
     }[]
   >([]);
 
+  // Prepare options for selects
+  const gameCategoryOptions = gameCategories.map((cat) => ({
+    value: cat.GameCategoryId,
+    label: cat.GameCategory,
+  }));
+
+  const regionOptions = regions.map((region) => ({
+    value: region.RegionId,
+    label: region.RegionName,
+  }));
+
+  // Filter provinces based on selectedRegion
+  const filteredProvinceOptions = provinces
+    .filter((p) => selectedRegion === "" || p.RegionId === selectedRegion)
+    .map((province) => ({
+      value: province.ProvinceId,
+      label: province.ProvinceName,
+    }));
+
+  // Find selected options
+  const selectedGameCategoryOption = gameCategoryOptions.find(
+    (option) => option.value === Number(selectedGameCategory)
+  );
+  const selectedRegionOption = regionOptions.find(
+    (option) => option.value === Number(selectedRegion)
+  );
+  const selectedProvinceOption = filteredProvinceOptions.find(
+    (option) => option.value === Number(selectedProvince)
+  );
+
   useEffect(() => {
-    const fetchWinningCombinations = async () => {
-      try {
-        const response = await getTodaysWinningCombination();
-        const data = Array.isArray(response.data)
-          ? response.data
-          : response.data.data;
+    async function loadData() {
+      const regionsRes = await fetchRegions();
+      if (regionsRes.success) setRegions(regionsRes.data);
 
-        if (!Array.isArray(data)) {
-          console.error("Invalid data format:", data);
-          return;
-        }
+      const provincesRes = await fetchProvinces();
+      if (provincesRes.success)
+        setProvinces(provincesRes.data.filter((p: any) => p.RegionId !== 0));
 
-        const processedData = data.map((item) => ({
-          ...item,
-          WinningCombinationOne: item.WinningCombinationOne || "\u00A0",
-          WinningCombinationTwo: item.WinningCombinationTwo || "\u00A0",
-        }));
+      const gameCategoriesRes = await fetchGameCategories();
+      if (gameCategoriesRes.success) setGameCategories(gameCategoriesRes.data);
+    }
+    loadData();
+  }, []);
 
-        const uniqueRegions = Array.from(
-          new Map(
-            processedData.map((item) => [
-              item.RegionId,
-              { RegionId: item.RegionId, Region: item.RegionName },
-            ])
-          ).values()
+  // Load winning combinations only when provinces, regions, and gameCategories are loaded
+  useEffect(() => {
+    const loadWinningCombinations = async () => {
+      const response = await getTodaysWinningCombination();
+      if (response.success) {
+        // Enrich data with names from provinces, regions, and gameCategories
+        const enrichedCombinations = response.data.map((combination: any) => {
+          const matchedProvince = provinces.find(
+            (prov) => Number(prov.ProvinceId) === Number(combination.ProvinceId)
+          );
+          const matchedRegion = regions.find(
+            (reg) => Number(reg.RegionId) === Number(combination.RegionId)
+          );
+          const matchedGameCategory = gameCategories.find(
+            (cat) =>
+              Number(cat.GameCategoryId) === Number(combination.GameCategoryId)
+          );
+
+          return {
+            ...combination,
+            ProvinceName: matchedProvince?.ProvinceName || "Unknown Province",
+            RegionName: matchedRegion?.RegionName || "Unknown Region",
+            GameCategory:
+              matchedGameCategory?.GameCategory || "Unknown Game Category",
+          };
+        });
+        setWinningCombinations(enrichedCombinations);
+      } else {
+        console.error(
+          "Failed to fetch winning combinations:",
+          response.message
         );
-        console.log(uniqueRegions);
-        setRegions(uniqueRegions);
-
-        setWinningCombinations(processedData);
-        console.log(winningCombinations);
-      } catch (error) {
-        console.error("Error fetching winning combinations:", error);
       }
     };
 
-    fetchWinningCombinations();
-  }, []);
+    if (
+      provinces.length > 0 &&
+      regions.length > 0 &&
+      gameCategories.length > 0
+    ) {
+      loadWinningCombinations();
+    }
+  }, [provinces, regions, gameCategories]);
 
   useEffect(() => {
-    if (selectedRegion) {
-      const filteredProvinces = winningCombinations.filter(
-        (item) => item.RegionId === Number(selectedRegion)
-      );
-      const uniqueProvinces = Array.from(
-        new Map(
-          filteredProvinces.map((item) => [
-            item.ProvinceId,
-            { ProvinceId: item.ProvinceId, Province: item.ProvinceName },
-          ])
-        ).values()
-      );
-      setProvinces(uniqueProvinces);
-    } else {
-      setProvinces([]);
-    }
-  }, [selectedRegion, winningCombinations]);
+    //console.log("useEffect triggered with:");
+    //console.log("Selected Region:", selectedRegion);
+    //console.log("Selected Province:", selectedProvince);
+    //console.log("Selected Game Category:", selectedGameCategory);
+    //console.log("Original winningCombinations:", winningCombinations);
 
-  useEffect(() => {
-    if (selectedProvince) {
-      const filteredProvinces = winningCombinations.filter(
-        (item) => item.ProvinceId === Number(selectedProvince)
-      );
-      const gameCategories = Array.from(
-        new Map(
-          filteredProvinces.map((item) => [
-            item.GameCategoryId,
-            {
-              GameCategoryId: item.GameCategoryId,
-              GameCategory: item.GameCategory,
-            },
-          ])
-        ).values()
-      );
-      setGameCategories(gameCategories);
-    } else {
-      setGameCategories([]);
+    let filtered = winningCombinations;
+
+    const regionId = selectedRegion ? Number(selectedRegion) : null;
+    const provinceId = selectedProvince ? Number(selectedProvince) : null;
+    const gameCategoryId = selectedGameCategory
+      ? Number(selectedGameCategory)
+      : null;
+
+    // console.log("Parsed filter values:", {
+    //   regionId,
+    //   provinceId,
+    //   gameCategoryId,
+    // });
+
+    if (regionId !== null) {
+      filtered = filtered.filter((c) => c.RegionId === regionId);
+      //console.log(`Filtered by RegionId (${regionId}):`, filtered);
     }
-  }, [selectedProvince, winningCombinations]);
+
+    if (provinceId !== null) {
+      filtered = filtered.filter((c) => c.ProvinceId === provinceId);
+      //console.log(`Filtered by ProvinceId (${provinceId}):`, filtered);
+    }
+
+    if (gameCategoryId !== null) {
+      filtered = filtered.filter((c) => c.GameCategoryId === gameCategoryId);
+      //console.log(`Filtered by GameCategoryId (${gameCategoryId}):`, filtered);
+    }
+
+    setFilteredWinningCombinations(filtered);
+    //console.log("Final filtered combinations set:", filtered);
+  }, [
+    selectedRegion,
+    selectedProvince,
+    selectedGameCategory,
+    winningCombinations,
+  ]);
+
+  // Helper
+  const displayValue = (value: string | number) => {
+    return value === 0 || value === "0" ? "0" : value || "\u00A0";
+  };
 
   return (
-  <div className="bg-transparent p-4 rounded-xl border border-[#0038A8]">
-      <div className="flex mb-2 items-center">
-        <div className="bg-[#0038A8] p-1 rounded-lg">
-          <FaBroadcastTower size={24} color={"#F6BA12"}/>
+    <div className="bg-transparent p-4 rounded-xl border border-[#0038A8]">
+      <div className="flex mb-2 items-center w-full">
+        <div className="bg-[#0038A8] rounded-lg p-1">
+          <FaBroadcastTower size={24} color={"#F6BA12"} />
         </div>
-        <p className="text-base ml-4">Draw Results Today</p>
+        <div className="flex items-center justify-between flex-1 ml-3">
+          <p className="text-base">Draw Results Today</p>
+          <button className="text-xs bg-[#0038A8] hover:bg-blue-700 text-white px-3 py-2 rounded-lg">
+            View Draw Result
+          </button>
+        </div>
       </div>
+
       <div className="h-px bg-[#303030] mb-4" />
 
       <div className="flex gap-4 w-full mt-2 mb-4">
+        {/* Game Category Select */}
         <div className="w-full relative">
-          <label
-            htmlFor="gametype-select"
-            className="block text-sm font-medium text-gray-300 mb-1"
-          >
-            Select a Game Type
-          </label>
-
-          <div className="relative">
-            <select
-              id="gametype-select"
-              value={selectedGameType}
-              onChange={(e) => {
-                setSelectedGameType(e.target.value);
-                console.log(selectedGameType);
-              }}
-              disabled={!selectedProvince}
-              className="w-full appearance-none p-2 pr-10 rounded-lg !bg-[#F6BA12] border border-[#404040] focus:outline-none focus:ring-1 focus:ring-[#555] disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              <option className="bg-[#2F2F2F]" value="">
-                Select a Game Type
-              </option>
-              {gameCategories.map((category) => (
-                <option
-                  key={category.GameCategoryId}
-                  value={category.GameCategory}
-                  className="bg-[#2F2F2F]"
-                >
-                  {category.GameCategory}
-                </option>
-              ))}
-            </select>
-
-            <div className="pointer-events-none absolute top-1/2 right-3 -translate-y-1/2">
-              <svg
-                className="w-3 h-3 fill-current"
-                viewBox="0 0 10 6"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <path d="M0 0l5 6 5-6H0z" />
-              </svg>
-            </div>
-          </div>
+          <Select
+            id="gamecategory-select"
+            value={selectedGameCategoryOption ?? null}
+            onChange={(option) => setSelectedGameCategory(option?.value || "")}
+            options={gameCategoryOptions}
+            placeholder="Select a Game Category"
+            classNamePrefix="react-select-dashboard"  
+            styles={{
+              control: (provided, state) => ({
+                ...provided,
+                borderRadius: "0.5rem",
+                padding: "0.25rem",
+                boxShadow: state.isFocused
+                  ? "none"
+                  : provided.boxShadow,
+              }),
+              menu: (provided) => ({
+                ...provided,
+                backgroundColor: "#F6BA12", // add this if you want menu background
+                zIndex: 10,
+              }),
+            }}
+          />
         </div>
       </div>
 
       <div className="flex gap-4 w-full">
+        {/* Region Select */}
         <div className="w-full relative">
-          <label
-            htmlFor="region-select"
-            className="block text-sm font-medium mb-1"
-          >
-            Select a Region
-          </label>
-
-          <div className="relative">
-            <select
-              id="region-select"
-              value={selectedRegion}
-              onChange={(e) => {
-              setSelectedRegion(e.target.value);
+          <Select
+            id="region-select"
+            value={selectedRegionOption ?? null}
+            onChange={(option) => {
+              setSelectedRegion(option?.value ?? "");
               setSelectedProvince("");
-              }}
-              className="w-full appearance-none p-2 pr-10 rounded-lg !bg-[#F6BA12] focus:outline-none focus:ring-1 focus:ring-[#555]"
-            >
-              <option className="bg-[#2F2F2F]" value="">
-              Select a Region
-              </option>
-              {regions.map((region) => (
-              <option
-                key={region.RegionId}
-                value={region.RegionId}
-                className="bg-[#2F2F2F] text-white"
-              >
-                {region.Region}
-              </option>
-              ))}
-            </select>
-
-            <div className="pointer-events-none absolute top-1/2 right-3 -translate-y-1/2 text-white">
-              <svg
-                className="w-3 h-3 fill-current"
-                viewBox="0 0 10 6"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <path d="M0 0l5 6 5-6H0z" />
-              </svg>
-            </div>
-          </div>
+            }}
+            isDisabled={!selectedGameCategory}
+            options={regionOptions}
+            placeholder="Select a Region"
+            classNamePrefix="react-select-dashboard"
+            styles={{
+              control: (provided, state) => ({
+                ...provided,
+                borderRadius: "0.5rem",
+                padding: "0.25rem",
+                boxShadow: state.isFocused
+                  ? "none"
+                  : provided.boxShadow,
+              }),
+              menu: (provided) => ({
+                ...provided,
+                backgroundColor: "#F6BA12", // add this if you want menu background
+                zIndex: 10,
+              }),
+            }}
+          />
         </div>
 
-        <div className="flex gap-4 w-full">
-          <div className="w-full relative">
-            <label
-              htmlFor="province-select"
-              className="block text-sm font-medium mb-1"
-            >
-              Select a Province
-            </label>
-            <div className="relative">
-              <select
-                id="province-select"
-                value={selectedProvince}
-                onChange={(e) => setSelectedProvince(e.target.value)}
-                disabled={!selectedRegion}
-                className="w-full appearance-none p-2 pr-10 rounded-lg !bg-[#F6BA12] border border-[#404040] focus:outline-none focus:ring-1 focus:ring-[#555] disabled:opacity-50 disabled:cursor-not-allowed"
-              >
-                <option className="bg-[#2F2F2F]" value="">
-                  Select a Province
-                </option>
-                {provinces.map((province) => (
-                  <option
-                    key={province.ProvinceId}
-                    value={province.ProvinceId}
-                    className="bg-[#2F2F2F]"
-                  >
-                    {province.Province}
-                  </option>
-                ))}
-              </select>
-
-              <div className="pointer-events-none absolute top-1/2 right-3 -translate-y-1/2">
-                <svg
-                  className="w-3 h-3 fill-current"
-                  viewBox="0 0 10 6"
-                  xmlns="http://www.w3.org/2000/svg"
-                >
-                  <path d="M0 0l5 6 5-6H0z" />
-                </svg>
-              </div>
-            </div>
-          </div>
+        {/* Province Select */}
+        <div className="w-full relative">
+          <Select
+            id="province-select"
+            value={selectedProvinceOption ?? null}
+            onChange={(option) => setSelectedProvince(option?.value || "")}
+            options={filteredProvinceOptions}
+            placeholder="Select a Province"
+            isDisabled={!selectedRegion}
+            classNamePrefix="react-select-dashboard"
+            styles={{
+              control: (provided, state) => ({
+                ...provided,
+                borderRadius: "0.5rem",
+                padding: "0.25rem",
+                boxShadow: state.isFocused
+                  ? "none"
+                  : provided.boxShadow,
+              }),
+              menu: (provided) => ({
+                ...provided,
+                backgroundColor: "#F6BA12", // add this if you want menu background
+                zIndex: 10,
+              }),
+            }}
+          />
         </div>
       </div>
 
       <div className="mt-4 w-full">
-        {selectedRegion && !selectedProvince ? (
-          <div className="bg-[#2F2F2F] p-8 rounded-lg">
-            <p className="text-white text-center text-base">
-              Please select a province
-            </p>
-          </div>
-        ) : (
-          <div className="flex gap-4 justify-between w-full">
-            {[1, 2, 3].map((gameTypeId) => {
-              // Find the selected game category details
-              const selectedCategoryDetails = gameCategories.find(
-                (category) => category.GameCategory === selectedGameType
-              );
+        <div className="flex gap-4 justify-between w-full">
+          {[1, 2, 3].map((gameTypeId) => {
+            const item =
+              selectedGameCategory && selectedRegion && selectedProvince
+                ? filteredWinningCombinations.find(
+                    (combo) => combo.GameScheduleID === gameTypeId
+                  )
+                : null;
 
-              // Find the winning combination for this draw
-              const winningCombo = winningCombinations.find(
-                (item) =>
-                  item.GameScheduleID === gameTypeId &&
-                  item.RegionId === Number(selectedRegion) &&
-                  item.ProvinceId === Number(selectedProvince) &&
-                  item.GameCategory === selectedGameType
-              );
+            // Determine boxes count; fallback to 2 if no item or invalid state
+            const gameCategoryId = item?.GameCategoryId ?? 0;
+            const totalBoxes =
+              gameCategoryId >= 4 ? 4 : gameCategoryId >= 3 ? 3 : 2;
+            const displayInGrid = totalBoxes > 2;
 
-              // Get the GameCategoryId from either the winning combo or the selected category
-              const gameCategoryId =
-                winningCombo?.GameCategoryId ||
-                selectedCategoryDetails?.GameCategoryId ||
-                0;
-
-              // Number of boxes to display based on GameCategoryId
-              const totalBoxes =
-                gameCategoryId >= 4 ? 4 : gameCategoryId >= 3 ? 3 : 2;
-              const displayInGrid = totalBoxes > 2;
-
-              return (
-                <div key={gameTypeId} className="flex-1">
-                  <p className="text-sm font-light mb-1">
-                    {gameTypeId === 1
-                      ? "First Draw"
-                      : gameTypeId === 2
-                        ? "Second Draw"
-                        : "Third Draw"}
-                  </p>
+            return (
+              <div key={gameTypeId} className="flex-1">
+                <p className="text-sm font-light mb-1">
+                  {gameTypeId === 1
+                    ? "First Draw"
+                    : gameTypeId === 2
+                      ? "Second Draw"
+                      : "Third Draw"}
+                </p>
+                <div
+                  className={`flex ${
+                    displayInGrid ? "flex-wrap" : "flex-nowrap"
+                  } gap-2 w-full`}
+                >
+                  {/* Box 1 */}
                   <div
-                    className={`flex ${displayInGrid ? "flex-wrap" : "flex-nowrap"} gap-1 w-full`}
+                    className={`bg-transparent border border-[#0038A8] rounded-lg p-2 flex items-center justify-center ${
+                      displayInGrid ? "w-[calc(50%-4px)]" : "flex-1"
+                    }`}
                   >
-                    {/* First Winning Number */}
-                    <div
-                      className={`bg-transparent border border-[#0038A8] rounded-lg p-4 flex items-center justify-center ${displayInGrid ? "w-[calc(50%-4px)]" : "flex-1"}`}
-                    >
-                      <p className="text-white font-bold text-3xl lg:text-2xl">
-                        {displayValue(
-                          winningCombo?.WinningCombinationOne || "\u00A0"
-                        )}
-                      </p>
-                    </div>
-
-                    {/* Second Winning Number */}
-                    <div
-                      className={`bg-transparent border border-[#0038A8] rounded-lg p-4 flex items-center justify-center ${displayInGrid ? "w-[calc(50%-4px)]" : "flex-1"}`}
-                    >
-                      <p className="text-white font-bold text-3xl lg:text-2xl">
-                        {displayValue(
-                          winningCombo?.WinningCombinationTwo || "\u00A0"
-                        )}
-                      </p>
-                    </div>
-
-                    {/* Third Winning Number - Only shown if needed */}
-                    {totalBoxes >= 3 && (
-                      <div
-                        className={`bg-transparent border border-[#0038A8] rounded-lg pb-4 flex items-center justify-center w-[calc(50%-4px)] mt-1`}
-                      >
-                        <p className="font-bold text-3xl">
-                          {displayValue(
-                            winningCombo?.WinningCombinationThree || "\u00A0"
-                          )}
-                        </p>
-                      </div>
-                    )}
-
-                    {/* Fourth Winning Number - Only shown if needed */}
-                    {totalBoxes >= 4 && (
-                      <div
-                        className={`bg-transparent border border-[#0038A8] rounded-lg p-4 flex items-center justify-center w-[calc(50%-4px)] mt-1`}
-                      >
-                        <p className="font-bold text-3xl">
-                          {displayValue(
-                            winningCombo?.WinningCombinationFour || "\u00A0"
-                          )}
-                        </p>
-                      </div>
-                    )}
+                    <p className="font-bold text-2xl">
+                      {displayValue(item?.WinningCombinationOne ?? "-")}
+                    </p>
                   </div>
+
+                  {/* Box 2 */}
+                  <div
+                    className={`bg-transparent border border-[#0038A8] rounded-lg p-2 flex items-center justify-center ${
+                      displayInGrid ? "w-[calc(50%-4px)]" : "flex-1"
+                    }`}
+                  >
+                    <p className="font-bold text-2xl">
+                      {displayValue(item?.WinningCombinationTwo ?? "-")}
+                    </p>
+                  </div>
+
+                  {/* Box 3 */}
+                  {totalBoxes >= 3 && (
+                    <div className="bg-transparent border border-[#0038A8] rounded-lg p-2 flex items-center justify-center w-[calc(50%-4px)] mt-1">
+                      <p className="font-bold text-2xl">
+                        {displayValue(item?.WinningCombinationThree ?? "-")}
+                      </p>
+                    </div>
+                  )}
+
+                  {/* Box 4 */}
+                  {totalBoxes >= 4 && (
+                    <div className="bg-transparent border border-[#0038A8] rounded-lg p-2 flex items-center justify-center w-[calc(50%-4px)] mt-1">
+                      <p className="font-bold text-2xl">
+                        {displayValue(item?.WinningCombinationFour ?? "-")}
+                      </p>
+                    </div>
+                  )}
                 </div>
-              );
-            })}
-          </div>
-        )}
+              </div>
+            );
+          })}
+        </div>
       </div>
     </div>
   );

@@ -30,29 +30,27 @@ const SummaryWinnersDrawTimePage = React.lazy(
 const DashboardPage = () => {
   return (
     <div className="space-y-4 h-full">
-      <Suspense fallback={<DashboardSkeletonPage />}>
-        <h1 className="text-3xl font-bold">Dashboard</h1>
-        <DashboardCardsPage />
-        <div className="flex flex-col items-center space-y-4">
-          <div className="w-full space-y-4">
-            <div className="w-full flex flex-col lg:flex-row space-y-4 lg:space-y-0 lg:space-x-4">
-              {/* Left Column */}
-              <div className="space-y-6 w-full lg:w-1/3">
-                <DrawResultsPage />
-                <TopBettingRegionPage />
-                <TopWinningRegionPage />
-                <GameCombinationModal />
-              </div>
+      <h1 className="text-3xl font-bold">Dashboard</h1>
+      <DashboardCardsPage />
+      <div className="flex flex-col items-center space-y-4">
+        <div className="w-full space-y-4">
+          <div className="w-full flex flex-col lg:flex-row space-y-4 lg:space-y-0 lg:space-x-4">
+            {/* Left Column */}
+            <div className="space-y-6 w-full lg:w-1/3">
+              <DrawResultsPage />
+              <TopBettingRegionPage />
+              <TopWinningRegionPage />
+              <GameCombinationModal />
+            </div>
 
-              {/* Right Column */}
-              <div className="space-y-6 w-full lg:w-2/3">
-                <SummaryBettorsBetsPlacedPage />
-                <SummaryWinnersDrawTimePage />
-              </div>
+            {/* Right Column */}
+            <div className="space-y-6 w-full lg:w-2/3">
+              <SummaryBettorsBetsPlacedPage />
+              <SummaryWinnersDrawTimePage />
             </div>
           </div>
         </div>
-      </Suspense>
+      </div>
     </div>
   );
 };

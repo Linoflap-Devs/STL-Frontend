@@ -10,10 +10,12 @@ import axiosInstance from "~/utils/axiosInstance";
 import { AxiosError } from "axios";
 import Input from "../ui/inputs/TextInputs";
 import dayjs from "dayjs";
+
 type GameTypeOption = {
   value: number;
   label: string;
 };
+
 const OperatorViewPage: React.FC<ReusableModalPageProps> = ({
   initialUserData,
   gameTypes,
@@ -31,7 +33,7 @@ const OperatorViewPage: React.FC<ReusableModalPageProps> = ({
   const [selectedGameTypes, setSelectedGameTypes] = useState([]);
   const [area, setArea] = useState<string | null>(null);
 
-  console.log("hihihh", areaofoperations);
+  // console.log("hihihh", areaofoperations);
 
   const handleDisable = () => {
     setIsDisabled(false);
@@ -49,7 +51,7 @@ const OperatorViewPage: React.FC<ReusableModalPageProps> = ({
     { value: 0, label: "Inactive" },
   ];
 
-  const areaOfOperationsOptions = areaofoperations.map((item: any) => ({
+  const areaOfOperationsOptions = areaofoperations?.map((item: any) => ({
     label: item.AreaOfOperations,
     value: item.AreaOfOperationsOptionsId,
   }));
@@ -394,7 +396,7 @@ const OperatorViewPage: React.FC<ReusableModalPageProps> = ({
               name="AreaOfOperations"
               options={areaOfOperationsOptions}
               value={
-                areaOfOperationsOptions.find(
+                areaOfOperationsOptions?.find(
                   (opt) => opt.value === formData.AreaOfOperations
                 ) || null
               }
@@ -432,7 +434,7 @@ const OperatorViewPage: React.FC<ReusableModalPageProps> = ({
                 ? "border-red-600 focus:ring-red-600"
                 : "border-gray-300 focus:ring-blue-500"
             }`}
-            rows={3} // same as minRows
+            rows={3}
           />
           {errors.remarks && (
             <p className="text-red-600 text-xs mt-1">{errors.remarks}</p>

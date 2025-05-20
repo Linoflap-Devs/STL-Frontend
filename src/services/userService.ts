@@ -22,7 +22,6 @@ export const fetchUsers = async (
             fullName: [user.FirstName, user.LastName].filter(Boolean).join(" "),
           }));
         setData(filteredUsers.length > 0 ? filteredUsers : []);
-        console.log('USERSSS', filteredUsers)
       } else {
         setData([]);
       }
