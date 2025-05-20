@@ -1,5 +1,5 @@
 import React from "react";
-import { Box, Typography, Grid, Button } from "@mui/material";
+import { Button } from "@mui/material";
 import { useRouter } from 'next/router';
 
 // Components
@@ -9,7 +9,7 @@ import ChartWinnersvsWinningsSummary from "~/components/winning-summary/Winnersv
 import TableWinningSummary from "~/components/winning-summary/WinningSummaryTable";
 import ChartWinnersSummary from "~/components/winning-summary/WinnerCountChart";
 import ChartWinnersBetTypeSummary from "~/components/winning-summary/WinnerCountBetTypeChart";
-
+import { buttonStyles } from "~/styles/theme";
 
 const WinningSummaryPage = (params: {gameCategoryId?: number}) => {
 
@@ -19,76 +19,45 @@ const WinningSummaryPage = (params: {gameCategoryId?: number}) => {
     router.push("/wins-comparisons")
   }
   return (
-    <>
-      <Box>
-          <Typography sx={{ fontWeight: 700 }} variant="h4">
-            Small Town Lottery Winning Summary
-          </Typography>
-
-          <Box>
-            <DashboardCardsPage gameCategoryId={params.gameCategoryId}/>
-          </Box>
-        
-        <Box 
-        sx={{
-          mt: 2 
-        }}>
-          <Grid container spacing={0.5} alignItems="stretch">
-            <Grid item xs={12} md={5}>
-              <TableWinningActivityToday gameCategoryId={params.gameCategoryId}/>
-            </Grid>
-            
-            <Grid item xs={12} md={7}>
-              <Box sx={{ display: "flex", flexDirection: "column", gap: 2, height: "100%", width: "100%" }}>
+    <div className="space-y-4 h-full">
+      <h1 className="text-3xl font-bold">STL Winning Summary</h1>
+      <DashboardCardsPage gameCategoryId={params.gameCategoryId} />
+      <div className="flex flex-col items-center space-y-4">
+        <div className="w-full space-y-4">
+          <div className="w-full flex flex-col lg:flex-row lg:items-stretch lg:min-h-[500px] space-y-4 lg:space-y-0 lg:space-x-4">
+            {/* Left Column */}
+            <div className="w-full lg:w-1/3 h-full flex flex-col">
+              <div className="flex-1">
+                <TableWinningActivityToday
+                  gameCategoryId={params.gameCategoryId}
+                />
+              </div>
+            </div>
+            {/* Right Column */}
+            <div className="w-full lg:w-2/3 h-full flex flex-col">
+              <div className="flex-1 flex flex-col space-y-6">
                 <ChartWinnersvsWinningsSummary gameCategoryId={params.gameCategoryId}/>
                 {
                 params.gameCategoryId && params.gameCategoryId > 0 ? <ChartWinnersBetTypeSummary gameCategoryId={params.gameCategoryId}/> : <ChartWinnersSummary />
               }
-              </Box>
-            </Grid>
-          </Grid>
-        </Box>
-      </Box>
-
-      <Box sx={{ mt: 2 }}>
-        <Grid container spacing={2}>
-          <Grid item xs={12} md={5} sx={{ display: "flex", justifyContent: "flex-end" }}>
-            <Button
-              variant="contained"
-              sx={{
-                backgroundColor: "#67ABEB",
-                borderRadius: "10px",
-                textTransform: "none",
-                paddingX: 4,
-              }}
-              onClick={handleViewComparisonClick}
-            >
-              View Comparison
-            </Button>
-          </Grid>
-          <Grid item xs={12} md={7} sx={{ display: "flex", justifyContent: "flex-end" }}>
-            <Button
-              variant="contained"
-              sx={{
-                backgroundColor: "#67ABEB",
-                borderRadius: "10px",
-                textTransform: "none",
-                paddingX: 4,
-              }}
-              onClick={handleViewComparisonClick}
-            >
-              View Comparison
-            </Button>
-          </Grid>
-        </Grid>
-      </Box>
-      <Box>
-        {/* TableBettingSummary component */}
-        <Box sx={{ width: '100%', mt: 2 }}>
-          <TableWinningSummary gameCategoryId={params.gameCategoryId}/>
-        </Box>
-      </Box>
-    </>
+              </div>
+              <div className="self-end my-4">
+                <Button
+                  variant="contained"
+                  sx={buttonStyles}
+                  onClick={handleViewComparisonClick}
+                >
+                  View Comparison
+                </Button>
+              </div>
+            </div>
+          </div>
+          <div className="mt-2">
+            <TableWinningSummary gameCategoryId={params.gameCategoryId}/>
+          </div>
+        </div>
+      </div>
+    </div>
   );
 };
 

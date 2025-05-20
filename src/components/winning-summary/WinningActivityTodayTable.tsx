@@ -4,6 +4,7 @@ import MoneyIcon from "@mui/icons-material/AttachMoney";
 //import { fetchWinners } from "~/utils/api/winners";
 import { fetchHistoricalRegion, fetchHistoricalSummary } from "~/utils/api/transactions";
 import { historicalSummaryByRegionCategory } from "~/utils/transforms";
+import { FaDiceSix } from "react-icons/fa";
 // import fetchHistoricalRegion from "~/utils/api/getHistoricalRegion";
 
 // Define types
@@ -72,138 +73,58 @@ const TableWinningActivityToday = (params: {gameCategoryId?: number}) => {
       useEffect(() => {
         getWinningRegions();
       }, []);
-  // Hardcoded data for all Philippine regions
-  const [regionData] = useState<RegionData[]>([
-    { Region: "National Capital Region (NCR)", TotalPayout: 1850000, trend: 3 },
-    { Region: "Cordillera Administrative Region (CAR)", TotalPayout: 320000, trend: 1 },
-    { Region: "Ilocos Region (Region I)", TotalPayout: 450000, trend: -1 },
-    { Region: "Cagayan Valley (Region II)", TotalPayout: 380000, trend: 2 },
-    { Region: "Central Luzon (Region III)", TotalPayout: 920000, trend: 1 },
-    { Region: "Calabarzon (Region IV-A)", TotalPayout: 1150000, trend: 2 },
-    { Region: "Mimaropa (Region IV-B)", TotalPayout: 280000, trend: 2 },
-    { Region: "Bicol Region (Region V)", TotalPayout: 350000, trend: -1 },
-    { Region: "Western Visayas (Region VI)", TotalPayout: 510000, trend: 1 },
-    { Region: "Central Visayas (Region VII)", TotalPayout: 680000, trend: 3 },
-    { Region: "Eastern Visayas (Region VIII)", TotalPayout: 290000, trend: -2 },
-    { Region: "Zamboanga Peninsula (Region IX)", TotalPayout: 310000, trend: 2 },
-    { Region: "Northern Mindanao (Region X)", TotalPayout: 390000, trend: 1 },
-    { Region: "Davao Region (Region XI)", TotalPayout: 550000, trend: 2 },
-    { Region: "Soccsksargen (Region XII)", TotalPayout: 330000, trend: -1 },
-  ]);  
 
   return (
-    <Box 
-      sx={{ 
-        backgroundColor: "#F8F0E3", 
-        padding: 2, 
-        borderRadius: "10px",
-        width: "100%",
-        height: "720px",
-        border: "1px solid #0038A8"
-      }}>
-      <Box sx={{ display: "flex", mb: 1 }}>
-        <Box
-          sx={{
-            backgroundColor: "#2F2F2F",
-            padding: "5px",
-            borderRadius: "5px",
-          }}
-        >
-          <MoneyIcon 
-          sx={{ color: "#67ABEB" }} />
-        </Box>
-        <Typography
-          sx={{ 
-            fontWeight: 300, 
-            fontSize: "16px", 
-            ml: 1, 
-            color: "#212121" 
-          }}
-        >
-          Today&apos;s Total Winnings by Region
-        </Typography>
-      </Box>
-      <Divider 
-        sx={{ 
-          backgroundColor: "#303030",
-          mb: "1rem" 
-          }} 
-      />
-      <Box 
-        sx={{ 
-          mt: 2, 
-          width: "100%", 
-          maxHeight: "720px",
-          overflowY: "auto"
-          }}
-      >
+    <div className="w-full flex-1 bg-transparent p-4 rounded-xl border border-[#0038A8] flex flex-col">
+      <div className="flex mb-2 items-center w-full">
+        <div className="bg-[#0038A8] rounded-lg p-1">
+          <FaDiceSix size={24} color={"#F6BA12"} />
+        </div>
+        <div className="flex items-center justify-between flex-1 ml-3">
+          <p className="text-base">Top Winning Regions Today</p>
+          <button className="text-xs bg-[#0038A8] hover:bg-blue-700 text-white px-3 py-2 rounded-lg">
+            View Comparison 
+          </button>
+        </div>
+      </div>
+      <div className="h-px bg-[#303030] mb-4" />
+      <div className="mt-2 w-full max-h-[720px] overflow-y-auto">
         {rankedRegions.map((item, index) => (
-          <Box
+          <div
             key={index}
-            sx={{ 
-              display: "flex", 
-              alignItems: "center", 
-              padding: "8px 0",
-              borderBottom: "1px solid #303030",
-              '&:last-child': {
-                borderBottom: "none"
-              }
-            }}
+            className={`flex items-center py-2 ${
+              index === rankedRegions.length - 1 ? "border-none" : ""
+            }`}
           >
-            <Box 
-              sx={{ 
-                display: "flex", 
-                alignItems: "center", 
-                width: "15%" 
-                }}
-            >
-              <Typography
-                sx={{
-                  fontWeight: "bold",
-                  fontSize: "0.85rem",
-                  color:
-                    item.trend! > 0
-                      ? "#046115"
-                      : item.trend! < 0
-                        ? "#894747"
-                        : "#aaa",
-                }}
+            <div className="flex items-center w-[15%]">
+              <span
+                className={`font-bold text-[0.85rem] ${
+                  item.trend > 0
+                    ? "text-[#046115]"
+                    : item.trend < 0
+                      ? "text-[#CE1126]"
+                      : "text-[#aaa]"
+                }`}
               >
-                {item.trend! > 0
+                {item.trend > 0
                   ? `↑${item.trend}`
-                  : item.trend! < 0
-                    ? `↓${Math.abs(item.trend ?? 0)}`
+                  : item.trend < 0
+                    ? `↓${Math.abs(item.trend)}`
                     : "→"}
-              </Typography>
-            </Box>
-            <Typography 
-              sx={{ 
-                color: "#212121", 
-                flex: 1, 
-                ml: 2, 
-                fontSize: "0.9rem",
-                whiteSpace: "nowrap",
-                overflow: "hidden",
-                textOverflow: "ellipsis"
-              }}
-            >
+              </span>
+            </div>
+
+            <p className="text-[#0038A8] flex-1 ml-2 text-[0.9rem] whitespace-nowrap overflow-hidden text-ellipsis">
               {item.region.Region}
-            </Typography>
-            <Typography
-              sx={{
-                color: "#67ABEB",
-                fontWeight: "bold",
-                textAlign: "right",
-                flex: 1,
-                fontSize: "0.95rem",
-              }}
-            >
+            </p>
+
+            <p className="text-[#212121] font-bold text-right flex-1 text-[0.95rem]">
               ₱{item.region.TotalPayout.toLocaleString()}
-            </Typography>
-          </Box>
+            </p>
+          </div>
         ))}
-      </Box>
-    </Box>
+      </div>
+    </div>
   );
 };
 
