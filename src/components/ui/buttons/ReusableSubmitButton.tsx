@@ -1,5 +1,4 @@
-import React from 'react';
-import { Button } from '@mui/material';
+import React from "react";
 
 export interface ReusableButtonProps {
   handleSubmit: () => void;
@@ -14,26 +13,30 @@ const ReusableButton: React.FC<ReusableButtonProps> = ({
   label,
 }) => {
   return (
-    <Button
+    <button
       onClick={handleSubmit}
       disabled={loading}
-      sx={{
-        mt: 2,
-        width: '100%',
-        backgroundColor: '#F6BA12',  // Default color
-        textTransform: 'none',
-        fontSize: '12px',
-        padding: '0.6rem',
-        borderRadius: '8px',
-        color: '#181A1B',
-        '&:hover': {
-          backgroundColor: '#FFD100', // Hover color
-        },
-      }}
-      variant="contained"
+      className={`
+        mt-2
+        w-full
+        rounded-lg
+        px-6
+        py-2.5
+        text-xs
+        font-normal
+        text-[#181A1B]
+        bg-[#F6BA12]
+        hover:bg-[#FFD100]
+        disabled:opacity-50
+        disabled:cursor-not-allowed
+        disabled:hover:bg-[#F6BA12]
+        transition-colors
+        ease-in-out
+      `}
+      style={{ textTransform: "none",}}
     >
-      {loading ? 'Submitting...' : label}
-    </Button>
+      {loading ? "Submitting..." : label}
+    </button>
   );
 };
 
