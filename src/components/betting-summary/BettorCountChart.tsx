@@ -204,63 +204,72 @@ const ChartBettorsSummary = () => {
         </Box>
         <CustomLegend/>
       </Box>
-        <Box
-          sx={{
-            height: "100%",
-            display: "flex",
-            flexDirection: "column",
-            flexGrow: 1,
-          }}
-        >
-          <BarChart
-            height={350}
-            // width={{100%}}
-            grid={{ vertical: true }}
-            slotProps={ { legend: { hidden: true } } }
-            layout="horizontal"
-            margin={{ left: 90, right: 20, top: 20, bottom: 40 }}
-            dataset={data}
-            series={addLabelsGameTypes([
-              {
-                dataKey: "pares",
-                label: "STL Pares",
-                color: "#E5C7FF",
-              },
-              {
-                dataKey: "swer2", 
-                label: "STL Swer2",
-                color: "#5050A5",
-              },
-              {
-                dataKey: "swer3", 
-                label: "STL Swer3",
-                color: "#7266C9",
-              },
-              {
-                dataKey: "swer4",
-                label: "STL Swer4", 
-                color: "#3B3B81",
-              },
-            ])}
-            yAxis={[
-              {
-                scaleType: "band",
-                data: ["First Draw", "Second Draw", "Third Draw"],
-                // series={[{ data: [4, 3, 5] }, { data: [1, 6, 3] }]},
-              } as any,
-            ]}
-            xAxis={[
-              {
-                label: "Amount (in 100,000 units)",
-                // scaleType: "linear",
-                min: 0,
-                max: 100,
-                tickValues: xAxisTicks,
-                tickSpacing: 1,
-              } as any,
-            ]}
-          />
-        </Box>
+
+      {
+        loading ? (
+          <Box sx={{ display: "flex", justifyContent: "center", alignItems: "center", height: "350px" }}>
+            <CircularProgress />
+          </Box>
+        ) : (
+          <Box
+            sx={{
+              height: "100%",
+              display: "flex",
+              flexDirection: "column",
+              flexGrow: 1,
+            }}
+          >
+            <BarChart
+              height={350}
+              // width={{100%}}
+              grid={{ vertical: true }}
+              slotProps={ { legend: { hidden: true } } }
+              layout="horizontal"
+              margin={{ left: 90, right: 20, top: 20, bottom: 40 }}
+              dataset={data}
+              series={addLabelsGameTypes([
+                {
+                  dataKey: "pares",
+                  label: "STL Pares",
+                  color: "#E5C7FF",
+                },
+                {
+                  dataKey: "swer2", 
+                  label: "STL Swer2",
+                  color: "#5050A5",
+                },
+                {
+                  dataKey: "swer3", 
+                  label: "STL Swer3",
+                  color: "#7266C9",
+                },
+                {
+                  dataKey: "swer4",
+                  label: "STL Swer4", 
+                  color: "#3B3B81",
+                },
+              ])}
+              yAxis={[
+                {
+                  scaleType: "band",
+                  data: ["First Draw", "Second Draw", "Third Draw"],
+                  // series={[{ data: [4, 3, 5] }, { data: [1, 6, 3] }]},
+                } as any,
+              ]}
+              xAxis={[
+                {
+                  label: "Amount (in 100,000 units)",
+                  // scaleType: "linear",
+                  min: 0,
+                  max: 100,
+                  tickValues: xAxisTicks,
+                  tickSpacing: 1,
+                } as any,
+              ]}
+            />
+          </Box>
+        )
+      }
     </Box>
   );
 };
