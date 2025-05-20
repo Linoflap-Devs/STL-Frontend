@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Box, Typography, Divider } from "@mui/material";
+import { Box, Typography, Divider, CircularProgress } from "@mui/material";
 import CasinoIcon from '@mui/icons-material/Casino';
 import { fetchHistoricalRegion, fetchHistoricalSummary } from "~/utils/api/transactions";
 import { historicalSummaryByRegionCategory } from "~/utils/transforms";
@@ -14,8 +14,10 @@ const TableBettingActivityToday = (params: {gameCategoryId?: number}) => {
   const [rankedRegions, setRankedRegions] = useState<
       { region: RegionData; rank: number; trend: number }[]
     >([]);
+  const [ isLoading, setIsLoading ] = useState(false);
   
     const getBettingRegions = async () => {
+      setIsLoading(true)
       const today = new Date().toISOString().split('T')[0];
   
       console.log("Date Today, TopBettingRegion: ", today)
@@ -67,11 +69,12 @@ const TableBettingActivityToday = (params: {gameCategoryId?: number}) => {
         }));
     
       setRankedRegions(ranked);
+      setIsLoading(false)
     };
     
     useEffect(() => {
       getBettingRegions();
-    }, []);
+    }, [params.gameCategoryId]);
 
   // Hardcoded data for all Philippine regions
   // const [regionData] = useState<RegionData[]>([
@@ -130,78 +133,88 @@ const TableBettingActivityToday = (params: {gameCategoryId?: number}) => {
         }} 
       />
 
-      <Box 
-        sx={{ 
-          mt: 2,
-          width: "100%", 
-          maxHeight: "720px", 
-          overflowY: "auto" 
-          }}
-      >
-        {rankedRegions.map((item, index) => (
-          <Box
-            key={index}
+      {
+        isLoading ? (
+          <Box sx={{ display: "flex", alignItems: "center", justifyContent: "center", height: "720px" }}>
+            <CircularProgress />
+          </Box>
+        ) : (
+          <Box 
             sx={{ 
-              display: "flex", 
-              alignItems: "center", 
-              padding: "8px 0",
-              borderBottom: "1px solid #303030",
-              '&:last-child': {
-                borderBottom: "none"
-              }
-            }}
+              mt: 2,
+              width: "100%", 
+              maxHeight: "720px", 
+              overflowY: "auto" 
+              }}
           >
-            <Box 
-              sx={{ 
-                display: "flex", alignItems: "center", width: "15%" 
-                }}
-            >
-              <Typography
-                sx={{
-                  fontWeight: "bold",
-                  fontSize: "0.85rem",
-                  color:
-                    item.trend! > 0
-                      ? "#046115"
-                      : item.trend! < 0
-                        ? "#CE1126"
-                        : "#aaa",
+            {rankedRegions.map((item, index) => (
+              <Box
+                key={index}
+                sx={{ 
+                  display: "flex", 
+                  alignItems: "center", 
+                  padding: "8px 0",
+                  borderBottom: "1px solid #303030",
+                  '&:last-child': {
+                    borderBottom: "none"
+                  }
                 }}
               >
-                {item.trend! > 0
-                  ? `↑${item.trend}`
-                  : item.trend! < 0
-                    ? `↓${Math.abs(item.trend ?? 0)}`
-                    : "→"}
-              </Typography>
-            </Box>
-            <Typography 
-              sx={{ 
-                color: "#0038A8", 
-                flex: 1, 
-                ml: 2, 
-                fontSize: "0.9rem",
-                whiteSpace: "nowrap",
-                overflow: "hidden",
-                textOverflow: "ellipsis"
-              }}
-            >
-              {item.region.Region}
-            </Typography>
-            <Typography
-              sx={{
-                color: "#212121",
-                fontWeight: "bold",
-                textAlign: "right",
-                flex: 1,
-                fontSize: "0.95rem",
-              }}
-            >
-              ₱{item.region.TotalBetAmount.toLocaleString()}
-            </Typography>
+                <Box 
+                  sx={{ 
+                    display: "flex", alignItems: "center", width: "15%" 
+                    }}
+                >
+                  <Typography
+                    sx={{
+                      fontWeight: "bold",
+                      fontSize: "0.85rem",
+                      color:
+                        item.trend! > 0
+                          ? "#046115"
+                          : item.trend! < 0
+                            ? "#CE1126"
+                            : "#aaa",
+                    }}
+                  >
+                    {item.trend! > 0
+                      ? `↑${item.trend}`
+                      : item.trend! < 0
+                        ? `↓${Math.abs(item.trend ?? 0)}`
+                        : "→"}
+                  </Typography>
+                </Box>
+                <Typography 
+                  sx={{ 
+                    color: "#0038A8", 
+                    flex: 1, 
+                    ml: 2, 
+                    fontSize: "0.9rem",
+                    whiteSpace: "nowrap",
+                    overflow: "hidden",
+                    textOverflow: "ellipsis"
+                  }}
+                >
+                  {item.region.Region}
+                </Typography>
+                <Typography
+                  sx={{
+                    color: "#212121",
+                    fontWeight: "bold",
+                    textAlign: "right",
+                    flex: 1,
+                    fontSize: "0.95rem",
+                  }}
+                >
+                  ₱{item.region.TotalBetAmount.toLocaleString()}
+                </Typography>
+              </Box>
+            ))}
           </Box>
-        ))}
-      </Box>
+
+        )
+      }
+
     </Box>
   );
 };
