@@ -12,7 +12,6 @@ const GrossAACSharePage = () => {
   //   });
   // }, []);
 
-
   return (
     <div className="flex flex-col">
         
@@ -74,13 +73,6 @@ const GrossAACSharePage = () => {
                 ₱ 6,530,377.70
               </div>
             </div>
-
-
-
-
-
-
-
             
           </div>
         )}
