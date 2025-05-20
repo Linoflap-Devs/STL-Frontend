@@ -7,10 +7,11 @@ const validateRelativeUrl = (url: string) => {
     return url;
 };
 
-export const fetchHistoricalSummary = async () => {
+export const fetchHistoricalSummary = async (filters?: { from?: string; to?: string;}) => {
     try {
         const url = validateRelativeUrl("/transactions/getHistorical");
         const response = await axiosInstance.get(url, {
+            params: filters
         });
 
         return response.data;

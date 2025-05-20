@@ -3,6 +3,7 @@ import { Box, Typography, Stack, CircularProgress } from "@mui/material";
 import { BarChart } from "@mui/x-charts/BarChart";
 import getTransactionsData from "~/utils/api/transactions/get.TransactionsData.service";
 import { addLabels } from "./tooltips/dataSet";
+import { fetchHistoricalSummary } from "~/utils/api/transactions";
 
 const CustomLegend = () => (
   <Stack direction="row" spacing={2} justifyContent="left" sx={{ mt: 0.5, mr: 4 }}>
@@ -52,23 +53,53 @@ const ChartBettorsvsBetsPlacedSummary = (params: { gameCategoryId?: number }) =>
     const fetchData = async () => {
       setLoading(true);
       try {
-        const res = await getTransactionsData("/transactions/getHistorical", {}) as TransactionData[];
-        console.log('BettorsvsBetsPlaceChart', res)
+        // const res = await getTransactionsData("/transactions/getHistorical", '') as TransactionData[];
+        // console.log('BettorsvsBetsPlaceChart', res)
+        // const drawMap = {
+        //   1: { draw: "First Draw", bettors: 0, bets: 0 },
+        //   2: { draw: "Second Draw", bettors: 0, bets: 0 },
+        //   3: { draw: "Third Draw", bettors: 0, bets: 0 },
+        // };
+
+        // res.forEach((item) => {
+        //   const drawOrder = item.DrawOrder as 1 | 2 | 3;
+        //   if (drawMap[drawOrder]) {
+        //     drawMap[drawOrder].bettors += item.TotalBettors ?? 0;
+        //     drawMap[drawOrder].bets += item.TotalBetAmount ?? 0;
+        //   }
+        // });
+
+        // setChartData(Object.values(drawMap));
+        const today = new Date().toISOString().split('T')[0];
+
+        const res = await fetchHistoricalSummary({from: today, to: today});
+        const data = res.data as TransactionData[];
+
         const drawMap = {
           1: { draw: "First Draw", bettors: 0, bets: 0 },
           2: { draw: "Second Draw", bettors: 0, bets: 0 },
           3: { draw: "Third Draw", bettors: 0, bets: 0 },
         };
 
-        res.forEach((item) => {
+        data.forEach((item) => {
           const drawOrder = item.DrawOrder as 1 | 2 | 3;
           if (drawMap[drawOrder]) {
             drawMap[drawOrder].bettors += item.TotalBettors ?? 0;
-            drawMap[drawOrder].bets += item.TotalBets ?? 0;
+            drawMap[drawOrder].bets += item.TotalBetAmount ?? 0;
           }
         });
+        
+       // setChartData(Object.values(drawMap));
 
-        setChartData(Object.values(drawMap));
+        setChartData(
+          Object.values(drawMap).map((item) => ({
+            draw: item.draw,
+            bettors: item.bettors / 100000,
+            bets: item.bets / 100000,
+          }))
+        );
+
+        console.log("BettorsvsBetsPlacedSummary chart: ", data)
       } catch (error) {
         console.error("Error loading BettorsvsBetsPlacedSummary:", (error as Error).message);
       } finally {
@@ -133,7 +164,7 @@ const ChartBettorsvsBetsPlacedSummary = (params: { gameCategoryId?: number }) =>
             ]}
             series={addLabels([
               { dataKey: "bettors", color: "#E5C7FF" },
-              { dataKey: "bets", color: "#D2A7FF" },
+              { dataKey: "bets", color: "#D2A7FF" },              
             ])}
           />
         </Box>
