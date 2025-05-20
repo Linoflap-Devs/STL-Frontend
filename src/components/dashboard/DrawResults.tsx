@@ -212,20 +212,19 @@ const DrawResultsPage = () => {
             onChange={(option) => setSelectedGameCategory(option?.value || "")}
             options={gameCategoryOptions}
             placeholder="Select a Game Category"
-            classNamePrefix="react-select"
+            classNamePrefix="react-select-dashboard"  
             styles={{
               control: (provided, state) => ({
                 ...provided,
-                backgroundColor: "#F6BA12 important",
                 borderRadius: "0.5rem",
                 padding: "0.25rem",
-                borderColor: state.isFocused ? "#555" : provided.borderColor,
                 boxShadow: state.isFocused
-                  ? "0 0 0 1px #555"
+                  ? "none"
                   : provided.boxShadow,
               }),
               menu: (provided) => ({
                 ...provided,
+                backgroundColor: "#F6BA12", // add this if you want menu background
                 zIndex: 10,
               }),
             }}
@@ -246,20 +245,19 @@ const DrawResultsPage = () => {
             isDisabled={!selectedGameCategory}
             options={regionOptions}
             placeholder="Select a Region"
-            classNamePrefix="react-select"
+            classNamePrefix="react-select-dashboard"
             styles={{
               control: (provided, state) => ({
                 ...provided,
-                backgroundColor: "#F6BA12",
                 borderRadius: "0.5rem",
                 padding: "0.25rem",
-                borderColor: state.isFocused ? "#555" : provided.borderColor,
                 boxShadow: state.isFocused
-                  ? "0 0 0 1px #555"
+                  ? "none"
                   : provided.boxShadow,
               }),
               menu: (provided) => ({
                 ...provided,
+                backgroundColor: "#F6BA12", // add this if you want menu background
                 zIndex: 10,
               }),
             }}
@@ -275,22 +273,19 @@ const DrawResultsPage = () => {
             options={filteredProvinceOptions}
             placeholder="Select a Province"
             isDisabled={!selectedRegion}
-            classNamePrefix="react-select"
+            classNamePrefix="react-select-dashboard"
             styles={{
               control: (provided, state) => ({
                 ...provided,
-                backgroundColor: "#F6BA12",
                 borderRadius: "0.5rem",
                 padding: "0.25rem",
-                borderColor: state.isFocused ? "#555" : provided.borderColor,
                 boxShadow: state.isFocused
-                  ? "0 0 0 1px #555"
+                  ? "none"
                   : provided.boxShadow,
-                opacity: !selectedRegion ? 0.5 : 1,
-                cursor: !selectedRegion ? "not-allowed" : "default",
               }),
               menu: (provided) => ({
                 ...provided,
+                backgroundColor: "#F6BA12", // add this if you want menu background
                 zIndex: 10,
               }),
             }}

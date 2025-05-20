@@ -19,6 +19,13 @@ const CustomLegend = () => (
   </div>
 );
 
+const CustomNoDataOverlay = () => (
+  <div className="h-full flex flex-col items-center justify-end pb-4 text-gray-500 text-base">
+    <span>Summary of Bettors and Bets Placed</span>
+    <span>data will be displayed once available.</span>
+  </div>
+);
+
 const summary: Record<
   number,
   { gameName: string; bettors: number; bets: number; winners: number }
@@ -122,7 +129,9 @@ const SummaryBettorsBetsPlacedPage = () => {
           grid={{ vertical: true }}
           layout="horizontal"
           margin={{ left: 90, right: 20, top: 20, bottom: 40 }}
-          slotProps={{ legend: { hidden: true } }}
+          slotProps={{ 
+            noDataOverlay: { message: 'Summary of Bettors and Bets Placed data will be displayed once available.' },
+            legend: { hidden: true } }}
           series={[
             {
               data: data.map((item) => item.bettors),

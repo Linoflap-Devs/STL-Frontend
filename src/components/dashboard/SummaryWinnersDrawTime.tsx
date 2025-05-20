@@ -7,11 +7,18 @@ import { buttonStyles } from "~/styles/theme";
 
 // Custom Legend Component
 const CustomLegend = () => (
-  <div className="flex flex-row space-x-8 justify-start mt-0.5 mr-4">
+  <div className="flex flex-row text-sm space-x-8 justify-start mt-1 mr-4">
     <div className="flex items-center">
       <div className="w-3.5 h-3.5 rounded-full bg-[#BB86FC] mr-1.5" />
       <p>Winners</p>
     </div>
+  </div>
+);
+
+const CustomNoDataOverlay = () => (
+  <div className="h-full flex flex-col items-center justify-end pb-4 text-gray-500 text-base">
+    <span>Summary of Winners</span>
+    <span>data will be displayed once available.</span>
   </div>
 );
 
@@ -144,7 +151,9 @@ const SummaryWinnersDrawTimePage = () => {
           grid={{ vertical: true }}
           layout="horizontal"
           margin={{ left: 90, right: 20, top: 20, bottom: 40 }}
-          slotProps={{ legend: { hidden: true } }}
+          slotProps={{ 
+            noDataOverlay: { message: 'Summary of Winners data will be displayed once available.' },
+            legend: { hidden: true } }}
           series={[
             {
               data: data.map((item) => item.winners),
