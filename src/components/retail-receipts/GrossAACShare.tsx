@@ -1,9 +1,16 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
+import { fetchRetailReceipts } from "~/utils/api/transactions";
 
 const GrossAACSharePage = () => {
   const [isAACShareOpen, setIsAACShareOpen] = useState(false);
   const [isTaxOpen, setIsTaxOpen] = useState(false);
   const [isNetIncomeTaxOpen, setNetIncomeTaxOpen] = useState(false);
+
+  // useEffect(() => {
+  //   fetchRetailReceipts(2025, 5).then(data => {
+  //     console.log("Retail Receipts:", data);
+  //   });
+  // }, []);
 
   return (
     <div className="flex flex-col">
@@ -66,6 +73,7 @@ const GrossAACSharePage = () => {
                 ₱ 6,530,377.70
               </div>
             </div>
+            
           </div>
         )}
       </div>

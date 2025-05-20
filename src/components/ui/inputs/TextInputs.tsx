@@ -12,8 +12,8 @@ const Input = ({ disabled, error, className, ...rest }: Props) => {
     ${disabled
       ? "bg-gray-200 border-gray-400 text-gray-500 cursor-not-allowed"
       : error
-      ? "bg-[#F8F0E3] border-red-600 text-black focus:ring-red-600 focus:border-red-600"
-      : "bg-[#F8F0E3] border-[#0038A8] text-black focus:border-[#0038A8] focus:ring-[#0038A8]"
+      ? "bg-[#F8F0E3] border-red-600 focus:ring-red-600 focus:border-red-600"
+      : "bg-[#F8F0E3] border-[#0038A8] focus:border-[#0038A8] focus:ring-[#0038A8]"
     }`;
 
   return <input disabled={disabled} className={`${classes} ${className || ""}`} {...rest} />;

@@ -1,3 +1,4 @@
+import axios from 'axios';
 import axiosInstance from '../axiosInstance';
 
 const validateRelativeUrl = (url: string) => {
@@ -65,6 +66,46 @@ export const fetchDrawSummary = async(provinceId: number, gameCategoryId: number
         return { success: false, message: (error as Error).message, data: [] };
     }
 }
+
+export const fetchRetailReceipts = async (year: number, month: number) => {
+  try {
+    const urlTemplate = "/transactions/getRetailReceipts/metrics/:year/:month";
+    const url = urlTemplate
+      .replace(":year", year.toString())
+      .replace(":month", month.toString());
+
+    console.log("[fetchRetailReceipts] Constructed URL:", url);
+
+    const response = await axiosInstance.get(url);
+
+    console.log("[fetchRetailReceipts] Response status:", response.status);
+    console.log("[fetchRetailReceipts] Response data:", response.data);
+
+    return response.data;
+  } catch (error: unknown) {
+    if (axios.isAxiosError(error)) {
+      // error is narrowed to AxiosError here
+      console.error("[fetchRetailReceipts] Axios error message:", error.message);
+      if (error.response) {
+        console.error("[fetchRetailReceipts] Axios error response status:", error.response.status);
+        console.error("[fetchRetailReceipts] Axios error response data:", error.response.data);
+      }
+      return {
+        success: false,
+        message: error.response?.data?.message || error.message,
+        data: [],
+      };
+    } else {
+      console.error("[fetchRetailReceipts] Unknown error:", error);
+      return {
+        success: false,
+        message: "Unknown error occurred",
+        data: [],
+      };
+    }
+  }
+};
+
 
 export default { fetchHistoricalSummary, fetchHistoricalRegion, fetchTransactions, fetchDrawSummary };
 

@@ -217,6 +217,12 @@ const ConfirmSuspendModal: React.FC<ConfirmUserActionModalProps> = ({
 
                 {/* Password Input */}
                 <div className="relative w-full mb-2">
+                  <label
+                    htmlFor="password"
+                    className="block text-sm font-medium mb-1.5"
+                  >
+                    Password
+                  </label>
                   <input
                     id="password"
                     type={showPassword ? "text" : "password"}

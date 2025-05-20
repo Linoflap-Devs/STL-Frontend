@@ -1,7 +1,14 @@
 import React, { useEffect, useState } from "react";
-import { Box, Typography, Stack, CircularProgress} from "@mui/material";
+import {
+  Box,
+  Typography,
+  Stack,
+  CircularProgress,
+  Button,
+} from "@mui/material";
 import { BarChart } from "@mui/x-charts/BarChart";
 import { fetchHistoricalSummary } from "~/utils/api/transactions";
+import { buttonStyles } from "~/styles/theme";
 
 // Mapping GameTypeId to Draw Names
 // const drawNames: Record<number, string> = {
@@ -12,64 +19,26 @@ import { fetchHistoricalSummary } from "~/utils/api/transactions";
 
 // Custom Legend (Dynamically Handles Bet Types)
 const CustomLegend = () => (
-  <Stack
-    direction="row"
-    spacing={2}
-    justifyContent="left"
-    sx={{ mt: 0.5, mr: 4 }}
-    fontSize={12}
-  >
-    <Box sx={{ display: "flex", alignItems: "center" }}>
-      <Box
-        sx={{
-          width: 14,
-          height: 14,
-          borderRadius: "50%",
-          backgroundColor: "#E57CFF",
-          mr: 1.5,
-        }}
-      />
-      <Typography color="#212121">STL Pares</Typography>
-    </Box>
-    <Box sx={{ display: "flex", alignItems: "center" }}>
-      <Box
-        sx={{
-          width: 14,
-          height: 14,
-          borderRadius: "50%",
-          backgroundColor: "#D2A7FF",
-          mr: 1.5,
-        }}
-      />
-      <Typography color="#212121">STL Swer2</Typography>
-    </Box>
-    <Box sx={{ display: "flex", alignItems: "center" }}>
-      <Box
-        sx={{
-          width: 14,
-          height: 14,
-          borderRadius: "50%",
-          backgroundColor: "#BB86FC",
-          mr: 1.5,
-        }}
-      />
-      <Typography color="#212121">STL Swer3</Typography>
-    </Box>
-    <Box sx={{ display: "flex", alignItems: "center" }}>
-      <Box
-        sx={{
-          width: 14,
-          height: 14,
-          borderRadius: "50%",
-          backgroundColor: "#A06FE6",
-          mr: 1.5,
-        }}
-      />
-      <Typography color="#212121
-">STL Swer4</Typography>
-    </Box>
-  </Stack>
+  <div className="flex flex-row text-sm space-x-5 justify-start mt-1 mr-4">
+    <div className="flex items-center">
+      <div className="w-3.5 h-3.5 rounded-full bg-[#E57CFF] mr-2" />
+      <p className="text-sm">STL Swer1</p>
+    </div>
+    <div className="flex items-center">
+      <div className="w-3.5 h-3.5 rounded-full bg-[#D2A7FF] mr-2" />
+      <p className="text-sm">STL Swer2</p>
+    </div>
+    <div className="flex items-center">
+      <div className="w-3.5 h-3.5 rounded-full bg-[#BB86FC] mr-2" />
+      <p className="text-sm">STL Swer3</p>
+    </div>
+    <div className="flex items-center">
+      <div className="w-3.5 h-3.5 rounded-full bg-[#A06FE6] mr-2" />
+      <p className="text-sm">STL Swer4</p>
+    </div>
+  </div>
 );
+
 
 const ChartWinnersSummary = () => {
   // const [chartData, setChartData] = useState<
@@ -165,10 +134,16 @@ const ChartWinnersSummary = () => {
   //     : 70;
   // const xAxisTicks = Array.from({ length: 15 }, (_, i) => (i + 1) * 5); // Generates [5, 10, ..., 70]
 
-   const [data, setData] = useState<
-        { draw: string; pares: number, swer2: number, swer3: number, swer4: number }[]
-      >([]);
-    const [loading, setLoading] = useState(false);
+  const [data, setData] = useState<
+    {
+      draw: string;
+      pares: number;
+      swer2: number;
+      swer3: number;
+      swer4: number;
+    }[]
+  >([]);
+  const [loading, setLoading] = useState(false);
 
   const xAxisTicks = [
     0, 1, 5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 55, 60, 65, 70, 75, 80, 85, 90,
@@ -176,125 +151,114 @@ const ChartWinnersSummary = () => {
   ];
 
   useEffect(() => {
-        const fetchData = async () => {
-          setLoading(true);
-          try {
-            const response = await fetchHistoricalSummary(); // Add query params if needed
-            
-            const today = new Date().toISOString().split("T")[0];
-            console.log(today); // Output: "2025-03-25T00:00:00.000Z"
-  
-            // Filter Data for Today's Date
-            const res = response.data.filter((item: { TransactionDate: string }) =>
-              item.TransactionDate.startsWith(today)
-            );
-    
-            if (response.success && Array.isArray(res)) {
-              // Aggregate data by GameTypeId
-              const aggregatedData: Record<
-                number,
-                { pares: number; swer2: number; swer3: number; swer4: number }
-              > = {};
-    
-              res.forEach(
-                (item: {
-                  DrawOrder: number;
-                  TotalWinners: number;
-                  TotalPayout: number; 
-                  GameCategoryId: number;
-                }) => {
-                  if (!aggregatedData[item.DrawOrder]) {
-                    aggregatedData[item.DrawOrder] = { pares: 0, swer2: 0, swer3: 0, swer4: 0 };
-                  }
-    
-                  aggregatedData[item.DrawOrder].pares += item.GameCategoryId == 1 ? item.TotalWinners : 0;
-                  aggregatedData[item.DrawOrder].swer2 += item.GameCategoryId == 2 ? item.TotalWinners : 0;
-                  aggregatedData[item.DrawOrder].swer3 += item.GameCategoryId == 3 ? item.TotalWinners : 0;
-                  aggregatedData[item.DrawOrder].swer4 += item.GameCategoryId == 4 ? item.TotalWinners : 0;
-                }
-              );
-    
-              // Convert aggregated data into the required format
-              const formattedData = [
-                {
-                  draw: "First Draw",
-                  pares: aggregatedData[1]?.pares || 0,
-                  swer2: aggregatedData[1]?.swer2 || 0,
-                  swer3: aggregatedData[1]?.swer3 || 0,
-                  swer4: aggregatedData[1]?.swer4 || 0,
-                },
-                {
-                  draw: "Second Draw",
-                  pares: aggregatedData[2]?.pares || 0,
-                  swer2: aggregatedData[2]?.swer2 || 0,
-                  swer3: aggregatedData[2]?.swer3 || 0,
-                  swer4: aggregatedData[2]?.swer4 || 0,
-                },
-                {
-                  draw: "Third Draw",
-                  pares: aggregatedData[3]?.pares || 0,
-                  swer2: aggregatedData[3]?.swer2 || 0,
-                  swer3: aggregatedData[3]?.swer3 || 0,
-                  swer4: aggregatedData[3]?.swer4 || 0,
-                },
-              ];
-    
-              setData(formattedData);
-              console.log("WinnerCountChart Formatted Data: ",formattedData)
-              setLoading(false);
+    const fetchData = async () => {
+      setLoading(true);
+      try {
+        const response = await fetchHistoricalSummary(); // Add query params if needed
+
+        const today = new Date().toISOString().split("T")[0];
+        console.log(today); // Output: "2025-03-25T00:00:00.000Z"
+
+        // Filter Data for Today's Date
+        const res = response.data.filter((item: { TransactionDate: string }) =>
+          item.TransactionDate.startsWith(today)
+        );
+
+        if (response.success && Array.isArray(res)) {
+          // Aggregate data by GameTypeId
+          const aggregatedData: Record<
+            number,
+            { pares: number; swer2: number; swer3: number; swer4: number }
+          > = {};
+
+          res.forEach(
+            (item: {
+              DrawOrder: number;
+              TotalWinners: number;
+              TotalPayout: number;
+              GameCategoryId: number;
+            }) => {
+              if (!aggregatedData[item.DrawOrder]) {
+                aggregatedData[item.DrawOrder] = {
+                  pares: 0,
+                  swer2: 0,
+                  swer3: 0,
+                  swer4: 0,
+                };
+              }
+
+              aggregatedData[item.DrawOrder].pares +=
+                item.GameCategoryId == 1 ? item.TotalWinners : 0;
+              aggregatedData[item.DrawOrder].swer2 +=
+                item.GameCategoryId == 2 ? item.TotalWinners : 0;
+              aggregatedData[item.DrawOrder].swer3 +=
+                item.GameCategoryId == 3 ? item.TotalWinners : 0;
+              aggregatedData[item.DrawOrder].swer4 +=
+                item.GameCategoryId == 4 ? item.TotalWinners : 0;
             }
-          } catch (error) {
-            console.log(
-              "Error loading BettorsvsBetsPlacedSummary: " +
-                (error as Error).message
-            );
-          }
-        };
-    
-        fetchData();
-        console.log(`Bettors vs Bets Placed Summary Data: ${data}`);
-      }, []);
+          );
+
+          // Convert aggregated data into the required format
+          const formattedData = [
+            {
+              draw: "First Draw",
+              pares: aggregatedData[1]?.pares || 0,
+              swer2: aggregatedData[1]?.swer2 || 0,
+              swer3: aggregatedData[1]?.swer3 || 0,
+              swer4: aggregatedData[1]?.swer4 || 0,
+            },
+            {
+              draw: "Second Draw",
+              pares: aggregatedData[2]?.pares || 0,
+              swer2: aggregatedData[2]?.swer2 || 0,
+              swer3: aggregatedData[2]?.swer3 || 0,
+              swer4: aggregatedData[2]?.swer4 || 0,
+            },
+            {
+              draw: "Third Draw",
+              pares: aggregatedData[3]?.pares || 0,
+              swer2: aggregatedData[3]?.swer2 || 0,
+              swer3: aggregatedData[3]?.swer3 || 0,
+              swer4: aggregatedData[3]?.swer4 || 0,
+            },
+          ];
+
+          setData(formattedData);
+          console.log("WinnerCountChart Formatted Data: ", formattedData);
+          setLoading(false);
+        }
+      } catch (error) {
+        console.log(
+          "Error loading BettorsvsBetsPlacedSummary: " +
+            (error as Error).message
+        );
+      }
+    };
+
+    fetchData();
+    console.log(`Bettors vs Bets Placed Summary Data: ${data}`);
+  }, []);
 
   return (
-    <Box
-      sx={{
-        backgroundColor: " #F8F0E3",
-        padding: "1rem",
-        borderRadius: "8px",
-        paddingBottom: "2rem",
-        marginRight: 0,
-        border: "1px solid #0038A8"
-      }}
-    >
-      <Box>
-        <Box
-          sx={{
-            display: "flex",
-            justifyContent: "space-between",
-            alignItems: "center",
-          }}
-        >
-          <Typography 
-            color="#212121" 
-            sx={{ 
-              fontSize: "16px" 
-            }}>
-            Today&apos;s Winner Count by Game Type
-          </Typography>
-        </Box>
-        <CustomLegend />
-      </Box>
-      { loading ? (
-        <CircularProgress/>
-      ): (
-        <Box
-          sx={{
-            height: "100%",
-            display: "flex",
-            flexDirection: "column",
-            flexGrow: 1,
-          }}
-        >
+    <div className="bg-transparent px-4 py-7 rounded-xl border border-[#0038A8]">
+      <div className="flex justify-between items-center w-full mb-4">
+        <div className="flex flex-col leading-none">
+          <p className="text-lg leading-none">
+            Today&apos;s Winners and Winnings
+          </p>
+          <CustomLegend />
+        </div>
+        <Button sx={buttonStyles} variant="contained">
+          Export as CSV
+        </Button>
+      </div>
+
+      <div className="h-full w-full">
+        {loading ? (
+          <div className="flex items-center justify-center h-[300px]">
+            <CircularProgress />
+          </div>
+        ) : (
           <BarChart
             height={350}
             // width={{100%}}
@@ -311,7 +275,7 @@ const ChartWinnersSummary = () => {
                 color: "#D2A7FF",
               },
               {
-                data: data.map((item) => item.swer3),  
+                data: data.map((item) => item.swer3),
                 color: "#BB86FC",
               },
               {
@@ -335,10 +299,9 @@ const ChartWinnersSummary = () => {
               },
             ]}
           />
-        </Box>
-      )}
-
-    </Box>
+        )}
+      </div>
+    </div>
   );
 };
 

@@ -1,7 +1,8 @@
 import React, { useState } from "react";
-import { Box, Typography, Stack } from "@mui/material";
+import { Box, Typography, Stack, Button, CircularProgress } from "@mui/material";
 import { BarChart } from "@mui/x-charts/BarChart";
 import {TodaysWinnerCountByGameTypeData,addLabelsGameTypes } from "~/components/winning-summary/tooltips/dataSet";
+import { buttonStyles } from "~/styles/theme";
 // import { fetchHistoricalSummary, fetchTransactions } from "~/utils/api/transactions";
 // import { fetchWinners } from "~/utils/api/winners";
 // import fetchHistoricalSummary from "~/utils/api/transactions/getHistoricalSummary";
@@ -12,7 +13,6 @@ import {TodaysWinnerCountByGameTypeData,addLabelsGameTypes } from "~/components/
 //   2: "Second Draw",
 //   3: "Third Draw",
 // };
-
 
 // Custom Legend (Dynamically Handles Bet Types)
 const CustomLegend = () => (
@@ -63,7 +63,7 @@ const CustomLegend = () => (
 );
 
 const ChartWinnersBetTypeSummary = (params: {gameCategoryId?: number}) => {
-
+  const [loading, setLoading] = useState(true);
   // const [data, setData] = useState<
   //     { draw: string; tumbok: number, sahod: number, ramble: number }[]
   //   >([]);
@@ -162,42 +162,25 @@ const ChartWinnersBetTypeSummary = (params: {gameCategoryId?: number}) => {
   //   }, []);
 
   return (
-    <Box
-      sx={{
-        backgroundColor: "#F8F0E3",
-        padding: "1rem",
-        borderRadius: "8px",
-        paddingBottom: "2rem",
-        marginRight: 0,
-        border: "1px solid #0038A8"
-      }}
-    >
-      <Box>
-        <Box
-          sx={{
-            display: "flex",
-            justifyContent: "space-between",
-            alignItems: "center",
-          }}
-        >
-          <Typography 
-            color="#212121" 
-            sx={{ 
-              fontSize: "16px" 
-            }}>
-            Today&apos;s Bet Count by Bet Type
-          </Typography>
-        </Box>
-        <CustomLegend/>
-      </Box>
-        <Box
-          sx={{
-            height: "100%",
-            display: "flex",
-            flexDirection: "column",
-            flexGrow: 1,
-          }}
-        >
+    <div className="bg-transparent px-4 py-7 rounded-xl border border-[#0038A8]">
+      <div className="flex justify-between items-center w-full mb-4">
+        <div className="flex flex-col leading-none">
+          <p className="text-lg leading-none">
+            Today&apos;s Winners and Winnings
+          </p>
+          <CustomLegend />
+        </div>
+        <Button sx={buttonStyles} variant="contained">
+          Export as CSV
+        </Button>
+      </div>
+
+      <div className="h-full w-full">
+        {loading ? (
+          <div className="flex items-center justify-center h-[300px]">
+            <CircularProgress />
+          </div>
+        ) : (
           <BarChart
             height={350}
             // width={{100%}}
@@ -219,8 +202,8 @@ const ChartWinnersBetTypeSummary = (params: {gameCategoryId?: number}) => {
                 // scaleType: "linear",
                 min: 0, 
                 max: 100,
-                tickValues: xAxisTicks,
-                tickSpacing:1 ,
+                //tickValues: xAxisTicks,
+                //tickSpacing:1 ,
               },
             ]}
             series={addLabelsGameTypes([
@@ -230,8 +213,9 @@ const ChartWinnersBetTypeSummary = (params: {gameCategoryId?: number}) => {
               { dataKey: 'STL_Swer4', color: '#3B3B81' }
             ])}
           />
-        </Box>
-    </Box>
+        )}
+      </div>
+    </div>
   );
 };
 

@@ -19,7 +19,10 @@ import FilterListIcon from "@mui/icons-material/FilterList";
 import ArrowUpwardIcon from "@mui/icons-material/ArrowUpward";
 import ArrowDownwardIcon from "@mui/icons-material/ArrowDownward";
 import PersonOffIcon from "@mui/icons-material/PersonOff";
-import { fetchHistoricalRegion, fetchTransactions } from "~/utils/api/transactions";
+import {
+  fetchHistoricalRegion,
+  fetchTransactions,
+} from "~/utils/api/transactions";
 
 export interface User {
   transactionNumber: string;
@@ -34,7 +37,7 @@ export interface User {
   status: string;
 }
 
-const TableBettingSummary = (params: {gameCategoryId?: number}) => {
+const TableBettingSummary = (params: { gameCategoryId?: number }) => {
   const [transactions, setTransactions] = useState<User[]>([
     {
       transactionNumber: "2025040300000001",
@@ -221,7 +224,10 @@ const TableBettingSummary = (params: {gameCategoryId?: number}) => {
   const [searchQuery, setSearchQuery] = useState<string>("");
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
-  const [sortConfig, setSortConfig] = useState<{ key: string; direction: "asc" | "desc" } | null>(null);
+  const [sortConfig, setSortConfig] = useState<{
+    key: string;
+    direction: "asc" | "desc";
+  } | null>(null);
 
   const fetchTransactionsData = async () => {
     let response = await fetchTransactions();
@@ -230,32 +236,40 @@ const TableBettingSummary = (params: {gameCategoryId?: number}) => {
       console.warn("No data found in API response!");
       return;
     }
-    
-    if(params.gameCategoryId && params.gameCategoryId > 0) {
-      response.data = response.data.filter((item: { GameCategoryId: number }) => item.GameCategoryId === params.gameCategoryId);
+
+    if (params.gameCategoryId && params.gameCategoryId > 0) {
+      response.data = response.data.filter(
+        (item: { GameCategoryId: number }) =>
+          item.GameCategoryId === params.gameCategoryId
+      );
     }
 
     const formattedData: User[] = response.data.map((transaction: any) => {
       return {
         transactionNumber: transaction.TransactionNumber,
         date: transaction.DateOfTransaction,
-        drawTime: transaction.DrawOrder == 1 ? "First Draw" : transaction.DrawOrder == 2 ? "Second Draw" : "Third Draw",
+        drawTime:
+          transaction.DrawOrder == 1
+            ? "First Draw"
+            : transaction.DrawOrder == 2
+              ? "Second Draw"
+              : "Third Draw",
         betAmount: transaction.BetAmount,
         tumbok: transaction.Tumbok,
         sahod: transaction.Sahod,
         ramble: transaction.Ramble,
         gameType: transaction.GameCategory,
-        selectedPair: `${transaction.CombinationOne}-${transaction.CombinationTwo}${ transaction.CombinationThree > 0 ? `-${transaction.CombinationThree}` : ""}${transaction.CombinationFour > 0 ? `-${transaction.CombinationFour}` : ""}`,
-        status: transaction.TransactionStatus
-      }
-    })
+        selectedPair: `${transaction.CombinationOne}-${transaction.CombinationTwo}${transaction.CombinationThree > 0 ? `-${transaction.CombinationThree}` : ""}${transaction.CombinationFour > 0 ? `-${transaction.CombinationFour}` : ""}`,
+        status: transaction.TransactionStatus,
+      };
+    });
 
-    setTransactions(formattedData)
-  }
+    setTransactions(formattedData);
+  };
 
   useEffect(() => {
     fetchTransactionsData();
-  }, [])
+  }, []);
 
   // Apply search functionality
   useEffect(() => {
@@ -263,7 +277,9 @@ const TableBettingSummary = (params: {gameCategoryId?: number}) => {
       const lowercasedQuery = searchQuery.toLowerCase();
       const filtered = transactions.filter(
         (transaction) =>
-          transaction.transactionNumber.toLowerCase().includes(lowercasedQuery) ||
+          transaction.transactionNumber
+            .toLowerCase()
+            .includes(lowercasedQuery) ||
           transaction.gameType.toLowerCase().includes(lowercasedQuery) ||
           transaction.selectedPair.toLowerCase().includes(lowercasedQuery)
       );
@@ -276,7 +292,11 @@ const TableBettingSummary = (params: {gameCategoryId?: number}) => {
   // Sort functionality
   const handleSort = (key: string) => {
     let direction: "asc" | "desc" = "asc";
-    if (sortConfig && sortConfig.key === key && sortConfig.direction === "asc") {
+    if (
+      sortConfig &&
+      sortConfig.key === key &&
+      sortConfig.direction === "asc"
+    ) {
       direction = "desc";
     }
     setSortConfig({ key, direction });
@@ -295,15 +315,15 @@ const TableBettingSummary = (params: {gameCategoryId?: number}) => {
 
     // Format the date components
     const year = date.getFullYear();
-    const month = String(date.getMonth() + 1).padStart(2, '0'); // Months are 0-indexed
-    const day = String(date.getDate()).padStart(2, '0');
-    const hours = String(date.getHours()).padStart(2, '0');
-    const minutes = String(date.getMinutes()).padStart(2, '0');
-    const seconds = String(date.getSeconds()).padStart(2, '0');
+    const month = String(date.getMonth() + 1).padStart(2, "0"); // Months are 0-indexed
+    const day = String(date.getDate()).padStart(2, "0");
+    const hours = String(date.getHours()).padStart(2, "0");
+    const minutes = String(date.getMinutes()).padStart(2, "0");
+    const seconds = String(date.getSeconds()).padStart(2, "0");
 
     // Create the formatted date string
     return `${year}/${month}/${day} ${hours}:${minutes}:${seconds}`;
-  } 
+  };
 
   // Render table
   return (
@@ -317,10 +337,17 @@ const TableBettingSummary = (params: {gameCategoryId?: number}) => {
             display: "flex",
             justifyContent: "space-between",
             alignItems: "center",
-            backgroundColor: "#F8F0E3"
+            backgroundColor: "#F8F0E3",
           }}
         >
-          <Box sx={{ display: "flex", alignItems: "center", width: "100%", backgroundColor: "#F8F0E3"}}>
+          <Box
+            sx={{
+              display: "flex",
+              alignItems: "center",
+              width: "100%",
+              backgroundColor: "#F8F0E3",
+            }}
+          >
             <TextField
               variant="outlined"
               placeholder="Search"
@@ -360,7 +387,11 @@ const TableBettingSummary = (params: {gameCategoryId?: number}) => {
               { label: "BET AMOUNT", key: "betAmount" },
               { label: "GAME TYPE", key: "gameType" },
             ].map((column) => (
-              <TableCell key={column.key} onClick={() => handleSort(column.key)} sx={{ cursor: "pointer" }}>
+              <TableCell
+                key={column.key}
+                onClick={() => handleSort(column.key)}
+                sx={{ cursor: "pointer" }}
+              >
                 {column.label}
                 {sortConfig?.key === column.key ? (
                   sortConfig.direction === "asc" ? (
@@ -425,7 +456,9 @@ const TableBettingSummary = (params: {gameCategoryId?: number}) => {
                         padding: "1.2px 13.5px",
                         fontSize: "14px",
                         backgroundColor:
-                          transaction.status === "Inactive" ? "#FF7A7A" : "#4CAF50",
+                          transaction.status === "Inactive"
+                            ? "#FF7A7A"
+                            : "#4CAF50",
                         color: "#171717",
                         "&:hover": {
                           backgroundColor:

@@ -1,3 +1,4 @@
+import { Button } from "@mui/material";
 import React, { useState } from "react";
 import AACTaxesPage from "~/components/retail-receipts/ACCSTaxes";
 import GrossAACSharePage from "~/components/retail-receipts/GrossAACShare";
@@ -6,6 +7,7 @@ import NetAACIncomePage from "~/components/retail-receipts/NetAACIncome";
 import NetPSCOIncomePage from "~/components/retail-receipts/NetPSCOIncome";
 import PCSOTaxesPage from "~/components/retail-receipts/PCSOTaxes";
 import CardsPage from "~/components/ui/dashboardcards/CardsData";
+import { buttonStyles } from "~/styles/theme";
 
 const RetailReceiptPage = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -17,7 +19,17 @@ const RetailReceiptPage = () => {
       {/* Cards */}
       <CardsPage roleLabel={""} textlabel={""} dashboardData={[]} />
 
-      <div className="flex gap-4 mb-4 mt-4">
+      <div className="flex justify-end space-x-2 mt-5">
+        <Button sx={buttonStyles} variant="contained">
+          Export as CSV
+        </Button>
+
+        <Button sx={buttonStyles} variant="contained">
+          Export as PDF
+        </Button>
+      </div>
+
+      <div className="flex gap-4 mb-4 mt-2">
         {/* Left column - 50% width */}
         <div className="flex flex-col w-1/2">
           <label
@@ -35,7 +47,7 @@ const RetailReceiptPage = () => {
 
         {/* Right column - 50% width */}
         <div className="flex items-end w-1/2">
-          <button className="w-full bg-[#F6BA12] p-2 rounded-md grid grid-cols-1 md:grid-cols-2 items-center gap-2 text-left">
+          <div className="w-full bg-[#F6BA12] p-2 rounded-md grid grid-cols-1 md:grid-cols-2 items-center gap-2 text-left">
             {/* Column 1 */}
             <div className="flex flex-col">
               <span className="text-sm font-bold">STL Collections</span>
@@ -45,7 +57,7 @@ const RetailReceiptPage = () => {
             <div className="flex justify-center md:justify-end text-base font-semibold">
               ₱ 20,927,344.00
             </div>
-          </button>
+          </div>
         </div>
       </div>
 

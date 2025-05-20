@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import ReusableButton from '../buttons/ReusableSubmitButton';
+import ReusableButton from '../buttons/SubmitButton';
 import useUserRoleStore from '../../../../store/useUserStore';
 import { getRoleName } from '~/utils/dashboarddata';
 import { ModalPageProps } from '../../../types/interfaces';

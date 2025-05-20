@@ -10,11 +10,11 @@ const CustomLegend = () => (
   <div className="flex flex-row text-sm space-x-5 justify-start mt-1 mr-4">
     <div className="flex items-center">
       <div className="w-3.5 h-3.5 rounded-full bg-[#BB86FC] mr-2" />
-      <p>Bettors</p>
+      <p className="text-sm">Bettors</p>
     </div>
     <div className="flex items-center">
       <div className="w-3.5 h-3.5 rounded-full bg-[#5050A5] mr-2" />
-      <p>Bets</p>
+      <p className="text-sm">Bets</p> 
     </div>
   </div>
 );

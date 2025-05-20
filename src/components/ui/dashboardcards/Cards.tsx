@@ -13,7 +13,7 @@ export const Card = <T extends React.ReactNode>({ label, value, color, style }: 
         ...style,
       }}
     >
-      <p className="text-xs opacity-70">{label}</p>
+      <p className="text-xs">{label}</p>
       <p className="text-3xl font-bold leading-[1.1]">{value}</p>
     </div>
   );

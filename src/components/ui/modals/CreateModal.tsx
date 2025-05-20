@@ -11,7 +11,6 @@ import {
 } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 import { ReusableModalPageProps } from "~/types/interfaces";
-import ConfirmUserActionModalPage from "./ConfirmUserActionModal";
 import Swal from "sweetalert2";
 import Select from "react-select";
 import Visibility from "@mui/icons-material/Visibility";
@@ -19,6 +18,7 @@ import VisibilityOff from "@mui/icons-material/VisibilityOff";
 import { generateValidPassword } from "~/utils/passwordgenerate";
 import Input from "../inputs/TextInputs";
 import CustomSelect from "../inputs/SelectInputs";
+import ConfirmUserActionModalPage from "~/components/shared/ConfirmUserActionModal";
 
 const ReusableCreateModalPage: React.FC<ReusableModalPageProps> = ({
   isOpen,
@@ -291,12 +291,6 @@ const ReusableCreateModalPage: React.FC<ReusableModalPageProps> = ({
                     .filter((field: any) => field.name === "name")
                     .map((field: any, index: number) => (
                       <div key={index} className="w-full">
-                        <label
-                          htmlFor={field.name}
-                          className="block text-sm font-medium text-gray-700 mb-1"
-                        >
-                          {field.placeholder ?? field.label}
-                        </label>
                         <Input
                           id={field.name}
                           name={field.name}
@@ -310,7 +304,7 @@ const ReusableCreateModalPage: React.FC<ReusableModalPageProps> = ({
                           placeholder={field.placeholder}
                         />
                         {/* Error message area with fixed height */}
-                        <div className="relative h-2">
+                        <div className="relative h-3">
                           {errors[field.name]?.[0] && (
                             <p className="absolute text-[11px] text-red-600 top-0 left-0">
                               {errors[field.name][0]}
@@ -327,12 +321,6 @@ const ReusableCreateModalPage: React.FC<ReusableModalPageProps> = ({
                     .filter((field: any) => field.name === "contactNumber")
                     .map((field: any, index: number) => (
                       <div key={index} className="w-full">
-                        <label
-                          htmlFor={field.name}
-                          className="block text-sm font-medium text-gray-700 mb-1"
-                        >
-                          {field.placeholder ?? field.label}
-                        </label>
                         <Input
                           id={field.name}
                           name={field.name}
@@ -345,7 +333,7 @@ const ReusableCreateModalPage: React.FC<ReusableModalPageProps> = ({
                           onChange={handleChange}
                           placeholder={field.placeholder}
                         />
-                        <div className="relative h-2">
+                        <div className="relative h-3">
                           {errors[field.name]?.[0] && (
                             <p
                               className="absolute text-[11px] text-red-600 top-0 left-0"
@@ -366,12 +354,6 @@ const ReusableCreateModalPage: React.FC<ReusableModalPageProps> = ({
             .filter((field) => field.name === "address")
             .map((field, index) => (
               <div key={index} className="w-full !mt-3">
-                <label
-                  htmlFor={field.name}
-                  className="block text-sm font-medium text-gray-700 mb-1"
-                >
-                  {field.placeholder ?? field.label}
-                </label>
                 <Input
                   id={field.name}
                   name={field.name}
@@ -384,7 +366,7 @@ const ReusableCreateModalPage: React.FC<ReusableModalPageProps> = ({
                   onChange={handleChange}
                   placeholder={field.placeholder}
                 />
-                <div className="h-2 relative">
+                <div className="h-3 relative">
                   {errors[field.name]?.[0] && (
                     <p
                       className="text-[11px] text-red-600 absolute left-0 top-0"
@@ -405,12 +387,6 @@ const ReusableCreateModalPage: React.FC<ReusableModalPageProps> = ({
                 if (field.name === "firstName") {
                   return (
                     <div key={index} className="w-full">
-                      <label
-                        htmlFor={field.name}
-                        className="block text-sm font-medium text-gray-700 mb-1"
-                      >
-                        {field.placeholder ?? field.label}
-                      </label>
                       <Input
                         id={field.name}
                         name={field.name}
@@ -423,7 +399,7 @@ const ReusableCreateModalPage: React.FC<ReusableModalPageProps> = ({
                         onChange={handleChange}
                         placeholder={field.placeholder}
                       />
-                      <div className="h-2 relative">
+                      <div className="h-3 relative">
                         {errors[field.name]?.[0] && (
                           <p
                             className="text-[11px] text-red-600 absolute left-0 top-0"
@@ -449,12 +425,6 @@ const ReusableCreateModalPage: React.FC<ReusableModalPageProps> = ({
                     >
                       {/* Last Name */}
                       <div className="w-full">
-                        <label
-                          htmlFor={field.name}
-                          className="block text-sm font-medium text-gray-700 mb-1"
-                        >
-                          {field.placeholder ?? field.label}
-                        </label>
                         <Input
                           id={field.name}
                           name={field.name}
@@ -467,7 +437,7 @@ const ReusableCreateModalPage: React.FC<ReusableModalPageProps> = ({
                           onChange={handleChange}
                           placeholder={field.placeholder}
                         />
-                        <div className="h-2 relative">
+                        <div className="h-3 relative">
                           {errors[field.name]?.[0] && (
                             <p
                               className="text-[11px] text-red-600 absolute left-0 top-0"
@@ -482,12 +452,6 @@ const ReusableCreateModalPage: React.FC<ReusableModalPageProps> = ({
                       {/* Suffix */}
                       {suffixField && (
                         <div className="w-full">
-                          <label
-                            htmlFor={suffixField.name}
-                            className="block text-sm font-medium text-gray-700 mb-1"
-                          >
-                            {suffixField.placeholder ?? suffixField.label}
-                          </label>
                           <CustomSelect
                             name={suffixField.name}
                             value={
@@ -501,7 +465,7 @@ const ReusableCreateModalPage: React.FC<ReusableModalPageProps> = ({
                             placeholder="Suffix"
                             error={!!errors[suffixField.name]?.length}
                           />
-                          <div className="h-2 relative">
+                          <div className="h-3 relative">
                             {errors[suffixField.name]?.[0] && (
                               <p
                                 className="text-[11px] text-red-600 absolute left-0 top-0"
@@ -520,12 +484,6 @@ const ReusableCreateModalPage: React.FC<ReusableModalPageProps> = ({
                 if (field.name === "phoneNumber" && field.gridSpan === 1) {
                   return (
                     <div key={index} className="w-full">
-                      <label
-                        htmlFor={field.name}
-                        className="block text-sm font-medium text-gray-700 mb-1"
-                      >
-                        {field.placeholder ?? field.label}
-                      </label>
                       <Input
                         id={field.name}
                         name={field.name}
@@ -539,7 +497,7 @@ const ReusableCreateModalPage: React.FC<ReusableModalPageProps> = ({
                         onChange={handleChange}
                         placeholder={field.placeholder}
                       />
-                      <div className="h-2 relative">
+                      <div className="h-3 relative">
                         {errors[field.name]?.[0] && (
                           <p
                             className="text-[11px] text-red-600 absolute left-0 top-0"
@@ -563,12 +521,6 @@ const ReusableCreateModalPage: React.FC<ReusableModalPageProps> = ({
                 if (field.name === "operatorId") {
                   return (
                     <div key={index} className="w-full">
-                      <label
-                        htmlFor={field.name}
-                        className="block text-sm font-medium text-gray-700 mb-1"
-                      >
-                        {field.placeholder ?? field.label}
-                      </label>
                       <CustomSelect
                         name={field.name}
                         value={
@@ -581,7 +533,7 @@ const ReusableCreateModalPage: React.FC<ReusableModalPageProps> = ({
                         placeholder="Select Assigned Company"
                         error={!!errors.operatorId?.length}
                       />
-                      <div className="relative h-2">
+                      <div className="relative h-3">
                         {errors[field.name]?.[0] && (
                           <p className="absolute text-[11px] text-[#CE1126] top-0 left-0">
                             {errors[field.name][0]}
@@ -595,12 +547,6 @@ const ReusableCreateModalPage: React.FC<ReusableModalPageProps> = ({
                 if (field.name === "email" && field.gridSpan === 2) {
                   return (
                     <div key={index} className="w-full">
-                      <label
-                        htmlFor={field.name}
-                        className="block text-sm font-medium text-gray-700 mb-1"
-                      >
-                        {field.placeholder ?? field.label}
-                      </label>
                       <Input
                         id={field.name}
                         name={field.name}
@@ -614,7 +560,7 @@ const ReusableCreateModalPage: React.FC<ReusableModalPageProps> = ({
                         onChange={handleChange}
                         placeholder={field.placeholder}
                       />
-                      <div className="h-2 relative">
+                      <div className="h-3 relative">
                         {errors[field.name]?.[0] && (
                           <p
                             className="text-[11px] text-red-600 absolute left-0 top-0"
@@ -634,12 +580,6 @@ const ReusableCreateModalPage: React.FC<ReusableModalPageProps> = ({
                       <div className="flex flex-row items-end gap-2">
                         {/* Password Input with Eye Icon */}
                         <div className="flex-1">
-                          <label
-                            htmlFor={field.name}
-                            className="block text-sm font-medium text-gray-700 mb-1"
-                          >
-                            {field.placeholder ?? field.label}
-                          </label>
                           <div className="relative">
                             <Input
                               id={field.name}
@@ -720,12 +660,6 @@ const ReusableCreateModalPage: React.FC<ReusableModalPageProps> = ({
                   if (field.name === "email" && field.gridSpan === 1) {
                     return (
                       <div key={index} className="w-full">
-                        <label
-                          htmlFor={field.name}
-                          className="block text-sm font-medium text-gray-700 mb-1"
-                        >
-                          {field.placeholder ?? field.label}
-                        </label>
                         <Input
                           id={field.name}
                           name={field.name}
@@ -738,7 +672,7 @@ const ReusableCreateModalPage: React.FC<ReusableModalPageProps> = ({
                           onChange={handleChange}
                           placeholder={field.placeholder}
                         />
-                        <div className="h-2 relative">
+                        <div className="h-3 relative">
                           {errors[field.name]?.[0] && (
                             <p
                               className="text-[11px] text-red-600 absolute left-0 top-0"
@@ -755,12 +689,6 @@ const ReusableCreateModalPage: React.FC<ReusableModalPageProps> = ({
                   if (field.name === "dateOfOperation") {
                     return (
                       <div key={index} className="w-full ">
-                        <label
-                          htmlFor={field.name}
-                          className="block text-sm font-medium text-gray-700 mb-1"
-                        >
-                          {field.label}
-                        </label>
                         <Input
                           id={field.name}
                           name={field.name}
@@ -774,7 +702,7 @@ const ReusableCreateModalPage: React.FC<ReusableModalPageProps> = ({
                           onChange={handleChange}
                           placeholder={field.placeholder}
                         />
-                        <div className="h-2 relative">
+                        <div className="h-3 relative">
                           {errors[field.name]?.[0] && (
                             <p
                               className="text-[11px] text-red-600 absolute left-0 top-0"
@@ -791,12 +719,6 @@ const ReusableCreateModalPage: React.FC<ReusableModalPageProps> = ({
                   if (field.name === "gameTypes") {
                     return (
                       <div key={index} className="w-full">
-                        <label
-                          htmlFor={field.name}
-                          className="block text-sm font-medium text-gray-700 mb-1"
-                        >
-                          {field.placeholder ?? field.label}
-                        </label>
                         <Select
                           id={field.name}
                           name={field.name}
@@ -824,7 +746,7 @@ const ReusableCreateModalPage: React.FC<ReusableModalPageProps> = ({
                             menuPortal: (base) => ({ ...base, zIndex: 9999 }),
                           }}
                         />
-                        <div className="relative h-2">
+                        <div className="relative h-3">
                           {errors[field.name]?.[0] && (
                             <p className="absolute text-[12px] text-[#CE1126] top-0 left-0">
                               {errors[field.name][0]}
@@ -838,12 +760,6 @@ const ReusableCreateModalPage: React.FC<ReusableModalPageProps> = ({
                   if (field.name === "STLAreaOfOperations") {
                     return (
                       <div key={index} className="w-full">
-                        <label
-                          htmlFor={field.name}
-                          className="block text-sm font-medium text-gray-700 mb-1"
-                        >
-                          {field.label}
-                        </label>
                         <CustomSelect
                           name={field.name}
                           value={
@@ -857,7 +773,7 @@ const ReusableCreateModalPage: React.FC<ReusableModalPageProps> = ({
                           error={!!errors[field.name]?.[0]}
                         />
                         {/* Reserve space for the error message */}
-                        <div className="relative h-2">
+                        <div className="relative h-3">
                           {errors[field.name]?.[0] && (
                             <p className="absolute text-[12px] text-[#CE1126] top-0 left-0">
                               {errors[field.name][0]}
@@ -874,12 +790,6 @@ const ReusableCreateModalPage: React.FC<ReusableModalPageProps> = ({
                   ) {
                     return (
                       <div key={index} className="w-full">
-                        <label
-                          htmlFor={field.name}
-                          className="block text-sm font-medium text-gray-700 mb-1"
-                        >
-                          {field.placeholder ?? field.label}
-                        </label>
                         <Select
                           id={field.name}
                           name={field.name}
@@ -908,7 +818,7 @@ const ReusableCreateModalPage: React.FC<ReusableModalPageProps> = ({
                             }),
                           }}
                         />
-                        <div className="relative h-2">
+                        <div className="relative h-3">
                           {errors[field.name]?.[0] && (
                             <p className="absolute text-[11px] text-[#CE1126] top-0 left-0">
                               {errors[field.name][0]}
@@ -929,12 +839,6 @@ const ReusableCreateModalPage: React.FC<ReusableModalPageProps> = ({
                         formData.regions.length === 0);
                     return (
                       <div key={index} className="w-full">
-                        <label
-                          htmlFor={field.name}
-                          className="block text-sm font-medium text-gray-700 mb-1"
-                        >
-                          {field.placeholder ?? field.label}
-                        </label>
                         <Select
                           inputId={field.name}
                           name={field.name}
@@ -990,7 +894,7 @@ const ReusableCreateModalPage: React.FC<ReusableModalPageProps> = ({
                           </p>
                         )}
                         {/* Reserve space for the error message */}
-                        <div className="relative h-2">
+                        <div className="relative h-3">
                           {errors[field.name]?.[0] && (
                             <p className="absolute text-[12px] text-[#CE1126] top-0 left-0">
                               {errors[field.name][0]}
@@ -1016,12 +920,6 @@ const ReusableCreateModalPage: React.FC<ReusableModalPageProps> = ({
 
                       return (
                         <div key={index} className="w-full mb-0">
-                          <label
-                            htmlFor={field.name}
-                            className="block text-sm font-medium text-gray-700 mb-1"
-                          >
-                            {field.placeholder ?? field.label}
-                          </label>
                           <Select
                             id={field.name}
                             name={field.name}
@@ -1053,7 +951,7 @@ const ReusableCreateModalPage: React.FC<ReusableModalPageProps> = ({
                               Please select provinces first.
                             </p>
                           )}
-                          <div className="relative h-2">
+                          <div className="relative h-3">
                             {errors[field.name]?.[0] && (
                               <p className="absolute text-[11px] text-[#CE1126] top-0 left-0">
                                 {errors[field.name][0]}
@@ -1079,12 +977,6 @@ const ReusableCreateModalPage: React.FC<ReusableModalPageProps> = ({
 
                       return (
                         <div key={index} className="w-full mb-0">
-                          <label
-                            htmlFor={field.name}
-                            className="block text-sm font-medium text-gray-700 mb-1"
-                          >
-                            {field.placeholder ?? field.label}
-                          </label>
                           <Select
                             id={field.name}
                             name={field.name}
@@ -1116,7 +1008,7 @@ const ReusableCreateModalPage: React.FC<ReusableModalPageProps> = ({
                               Please select provinces first.
                             </p>
                           )}
-                          <div className="relative h-2">
+                          <div className="relative h-3">
                             {errors[field.name]?.[0] && (
                               <p className="absolute text-[11px] text-[#CE1126] top-0 left-0">
                                 {errors[field.name][0]}

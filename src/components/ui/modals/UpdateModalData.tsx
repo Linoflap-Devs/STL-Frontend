@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { ModalPageProps } from "../../../types/interfaces";
 import useUserRoleStore from "../../../../store/useUserStore";
 import ReusableUpdateModalPage from "./UpdateModal";
-import ReusableButton from "../buttons/ReusableSubmitButton";
+import ReusableButton from "../buttons/SubmitButton";
 import { getRoleName } from "~/utils/dashboarddata";
 
 export const isManager = (roleId: number) => roleId === 2;

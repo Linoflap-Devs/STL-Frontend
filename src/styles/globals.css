@@ -50,7 +50,6 @@ select option:disabled {
 /* Adjust dropdown option styles */
 .react-select__option {
   background-color: transparent !important;  /* Transparent background for options */
-  color: inherit !important;                  /* Inherit text color */
 }
 
 .react-select__option--is-selected {
