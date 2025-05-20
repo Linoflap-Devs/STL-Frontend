@@ -7,7 +7,7 @@ import { buttonStyles } from "~/styles/theme";
 
 // Custom Legend circle
 const CustomLegend = () => (
-  <div className="flex flex-row text-sm space-x-8 justify-start mt-1 mr-4">
+  <div className="flex flex-row text-sm space-x-5 justify-start mt-1 mr-4">
     <div className="flex items-center">
       <div className="w-3.5 h-3.5 rounded-full bg-[#BB86FC] mr-2" />
       <p>Bettors</p>

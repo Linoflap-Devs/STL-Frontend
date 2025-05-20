@@ -120,64 +120,49 @@ const ChartBettorsvsBetsPlacedSummary = (params: { gameCategoryId?: number }) =>
   // const xAxisTicks = Array.from({ length: 21 }, (_, i) => i * 5); // 0 to 100
 
   return (
-    <Box
-      sx={{
-        backgroundColor: "#F8F0E3",
-        padding: "1rem",
-        borderRadius: "8px",
-        paddingBottom: "2rem",
-        width: "100%",
-        border: "1px solid #0038A8"
-      }}
-    >
-      <Typography color="#212121" sx={{ fontSize: "16px" }}>
-        Today&apos;s Bettors and Total Bets
-      </Typography>
-      <CustomLegend />
-
-      {loading ? (
-        // Matched height value with BarChart to prevent layout shift
-        <Box sx={{ display: "flex", justifyContent: "center", alignItems: "center", height: "300px" }}>
-          <CircularProgress />
-        </Box>
-      ) : (
-        <Box
-          sx={{
-            height: "100%",
-            display: "flex",
-            flexDirection: "column",
-            flexGrow: 1,
-          }}
-        >
-          <BarChart
-            slotProps={{ legend: { hidden: true } }}
-            height={300}
-            grid={{ vertical: true }}
-            layout="horizontal"
-            margin={{ left: 90, right: 20, top: 20, bottom: 40 }}
-            dataset={chartData}
-            yAxis={[
-              {
-                scaleType: "band",
-                data: chartData.map((item) => item.draw),
-              },
-            ]}
-            xAxis={[
-              {
-                label: "Amount (in 100,000 units)",
-                min: 0,
-                max: 100,
-                // tickValues: xAxisTicks,
-              },
-            ]}
-            series={addLabels([
-              { dataKey: "bettors", color: "#E5C7FF" },
-              { dataKey: "bets", color: "#D2A7FF" },              
-            ])}
-          />
-        </Box>
-      )}
-    </Box>
+    <div className="bg-transparent px-4 py-7 rounded-xl border border-[#0038A8]">
+      <div>
+        <div className="flex justify-between items-center w-full">
+          <div className="flex flex-col leading-none">
+            <p className="text-lg leading-none">
+              Summary of Bettors and Bets Placed Today
+            </p>
+            <CustomLegend />
+          </div>
+          <Button sx={buttonStyles} variant="contained">
+            Export as CSV
+          </Button>
+        </div>
+      </div>
+      <div className="h-full w-full">
+        <BarChart
+          slotProps={{ legend: { hidden: true } }}
+          height={300}
+          grid={{ vertical: true }}
+          layout="horizontal"
+          margin={{ left: 90, right: 20, top: 20, bottom: 40 }}
+          dataset={chartData}
+          yAxis={[
+            {
+              scaleType: "band",
+              data: chartData.map((item) => item.draw),
+            },
+          ]}
+          xAxis={[
+            {
+              label: "Amount (in 100,000 units)",
+              min: 0,
+              max: 100,
+              // tickValues: xAxisTicks,
+            },
+          ]}
+          series={addLabels([
+            { dataKey: "bettors", color: "#E5C7FF" },
+            { dataKey: "bets", color: "#D2A7FF" },
+          ])}
+        />
+      </div>
+    </div>
   );
 };
 

@@ -96,126 +96,56 @@ const TableBettingActivityToday = (params: {gameCategoryId?: number}) => {
   // ]);
 
   return (
-    <Box 
-      sx={{ 
-        backgroundColor: "#F8F0E3", padding: 2, 
-        borderRadius: "10px", 
-        width: "100%", 
-        height: "720px",
-        border: "1px solid #0038A8"
-      }}>
-      <Box sx={{ display: "flex", mb: 1}}>
-        <Box
-          sx={{
-            backgroundColor: "#2F2F2F",
-            padding: "5px",
-            borderRadius: "5px",
-          }}
-        >
-          <CasinoIcon 
-          sx={{ color: "#67ABEB" }} />
-        </Box>
-        <Typography
-          sx={{ 
-            fontWeight: 300,
-            fontSize: "16px", 
-            ml: 1, 
-            color: "#0038A8" 
-          }}
-        >
-          Today&apos;s Total Bets Placed by Region 
-        </Typography>
-      </Box>
-      <Divider 
-      sx={{ 
-        backgroundColor: "#303030", 
-        mb: "1rem" 
-        }} 
-      />
-
-      {
-        isLoading ? (
-          <Box sx={{ display: "flex", alignItems: "center", justifyContent: "center", height: "720px" }}>
-            <CircularProgress />
-          </Box>
-        ) : (
-          <Box 
-            sx={{ 
-              mt: 2,
-              width: "100%", 
-              maxHeight: "720px", 
-              overflowY: "auto" 
-              }}
+     <div className="w-full flex-1 bg-transparent p-4 rounded-xl border border-[#0038A8] flex flex-col">
+      <div className="flex mb-2 items-center w-full">
+        <div className="bg-[#0038A8] rounded-lg p-1">
+          <FaDiceSix size={24} color={"#F6BA12"} />
+        </div>
+        <div className="flex items-center justify-between flex-1 ml-3">
+          <p className="text-base">Top Betting Regions Today</p>
+          <button className="text-xs bg-[#0038A8] hover:bg-blue-700 text-white px-3 py-2 rounded-lg">
+            View Comparison
+          </button>
+        </div>
+      </div>
+      <div className="h-px bg-[#303030] mb-4" />
+      <div className="mt-2 w-full max-h-[720px] overflow-y-auto">
+        {rankedRegions.map((item, index) => (
+          <div
+            key={index}
+            className={`flex items-center py-2 ${
+              index === rankedRegions.length - 1 ? "border-none" : ""
+            }`}
           >
-            {rankedRegions.map((item, index) => (
-              <Box
-                key={index}
-                sx={{ 
-                  display: "flex", 
-                  alignItems: "center", 
-                  padding: "8px 0",
-                  borderBottom: "1px solid #303030",
-                  '&:last-child': {
-                    borderBottom: "none"
-                  }
-                }}
+            <div className="flex items-center w-[15%]">
+              <span
+                className={`font-bold text-[0.85rem] ${
+                  item.trend > 0
+                    ? "text-[#046115]"
+                    : item.trend < 0
+                      ? "text-[#CE1126]"
+                      : "text-[#aaa]"
+                }`}
               >
-                <Box 
-                  sx={{ 
-                    display: "flex", alignItems: "center", width: "15%" 
-                    }}
-                >
-                  <Typography
-                    sx={{
-                      fontWeight: "bold",
-                      fontSize: "0.85rem",
-                      color:
-                        item.trend! > 0
-                          ? "#046115"
-                          : item.trend! < 0
-                            ? "#CE1126"
-                            : "#aaa",
-                    }}
-                  >
-                    {item.trend! > 0
-                      ? `↑${item.trend}`
-                      : item.trend! < 0
-                        ? `↓${Math.abs(item.trend ?? 0)}`
-                        : "→"}
-                  </Typography>
-                </Box>
-                <Typography 
-                  sx={{ 
-                    color: "#0038A8", 
-                    flex: 1, 
-                    ml: 2, 
-                    fontSize: "0.9rem",
-                    whiteSpace: "nowrap",
-                    overflow: "hidden",
-                    textOverflow: "ellipsis"
-                  }}
-                >
-                  {item.region.Region}
-                </Typography>
-                <Typography
-                  sx={{
-                    color: "#212121",
-                    fontWeight: "bold",
-                    textAlign: "right",
-                    flex: 1,
-                    fontSize: "0.95rem",
-                  }}
-                >
-                  ₱{item.region.TotalBetAmount.toLocaleString()}
-                </Typography>
-              </Box>
-            ))}
-          </Box>
+                {item.trend > 0
+                  ? `↑${item.trend}`
+                  : item.trend < 0
+                    ? `↓${Math.abs(item.trend)}`
+                    : "→"}
+              </span>
+            </div>
 
-        )
-      }
+            <p className="text-[#0038A8] flex-1 ml-2 text-[0.9rem] whitespace-nowrap overflow-hidden text-ellipsis">
+              {item.region.Region}
+            </p>
 
-    </Box>
+            <p className="text-[#212121] font-bold text-right flex-1 text-[0.95rem]">
+              ₱{item.region.TotalBetAmount.toLocaleString()}
+            </p>
+          </div>
+        ))}
+      </div>
+    </div>
   );
 };
 
