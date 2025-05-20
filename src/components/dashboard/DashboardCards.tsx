@@ -14,10 +14,10 @@ const DashboardCardsPage = (params: { gameCategoryId?: number }) => {
   useEffect(() => {
     const fetchDataDashboard = async () => {
       try {
-        const response = await fetchHistoricalSummary();
+        const today = new Date().toISOString().split("T")[0];
+        const response = await fetchHistoricalSummary({from: today, to: today});
 
         if (response.success) {
-          const today = new Date().toISOString().split("T")[0];
 
           // Filter data for today's date
           let filteredData = response.data.filter(
@@ -79,7 +79,7 @@ const DashboardCardsPage = (params: { gameCategoryId?: number }) => {
     };
 
     fetchDataDashboard();
-  }, []);
+  }, [params.gameCategoryId]);
 
   return (
     <div className="mt-8 flex flex-nowrap justify-start items-center gap-4 overflow-x-auto">

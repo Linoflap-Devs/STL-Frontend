@@ -9,7 +9,7 @@ const DynamicBettingSummary = () => {
   const { gameCategory } = router.query;
 
   const gameCategoryMapping: Record<string, number> = {
-    'dashhboard': 0,
+    'dashboard': 0,
     'stl-pares': 1,
     'stl-swer2': 2,
     'stl-swer3': 3,

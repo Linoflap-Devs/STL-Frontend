@@ -3,11 +3,17 @@ export const translations = {
   bets: "Bets",
 } as const
 export const translationsGameTypes = {
-  STL_Pares: "STL Pares",
-  STL_Swer2: "STL Swer 2",
-  STL_Swer3: "STL Swer 3",
-  STL_Swer4: "STL Swer 4",
+  pares: "STL Pares",
+  swer2: "STL Swer 2",
+  swer3: "STL Swer 3",
+  swer4: "STL Swer 4",
 } as const;
+export const translationsBets = {
+  tumbok: "Tumbok",
+  sahod: "Sahod",
+  ramble: "Ramble",
+  casas: "Casas"
+}
 //  labels and value formatters
 //  T a generic of type, but with restriction
 //  Any object of type T must have a property called dataKey
@@ -40,6 +46,22 @@ export function addLabelsGameTypes<
   return series.map((item) => ({
     ...item,
     label: translationsGameTypes[item.dataKey],
+    valueFormatter: (v: number | null) => {
+      if (v === null) return '-';
+      return (v * 100000).toLocaleString(undefined, {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2,
+      });
+    },
+  }));
+}
+
+export function addLabelsBets<
+  T extends { dataKey: keyof typeof translationsBets }
+>(series: T[]) {
+  return series.map((item) => ({
+    ...item,
+    label: translationsBets[item.dataKey],
     valueFormatter: (v: number | null) => {
       if (v === null) return '-';
       return (v * 100000).toLocaleString(undefined, {
