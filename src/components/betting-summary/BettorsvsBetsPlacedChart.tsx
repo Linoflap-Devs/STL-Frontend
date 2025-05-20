@@ -72,8 +72,15 @@ const ChartBettorsvsBetsPlacedSummary = (params: { gameCategoryId?: number }) =>
         // setChartData(Object.values(drawMap));
         const today = new Date().toISOString().split('T')[0];
 
-        const res = await fetchHistoricalSummary({from: today, to: today});
-        const data = res.data as TransactionData[];
+        const response = await fetchHistoricalSummary({from: today, to: today});
+
+        let data = response.data as TransactionData[];
+
+         if(params.gameCategoryId && params.gameCategoryId > 0) {
+            data = data.filter((item: { GameCategoryId: number }) =>
+              item.GameCategoryId === params.gameCategoryId
+            );
+          }
 
         const drawMap = {
           1: { draw: "First Draw", bettors: 0, bets: 0 },
@@ -108,7 +115,7 @@ const ChartBettorsvsBetsPlacedSummary = (params: { gameCategoryId?: number }) =>
     };
 
     fetchData();
-  }, []);
+  }, [params.gameCategoryId]);
 
   // const xAxisTicks = Array.from({ length: 21 }, (_, i) => i * 5); // 0 to 100
 
@@ -129,7 +136,8 @@ const ChartBettorsvsBetsPlacedSummary = (params: { gameCategoryId?: number }) =>
       <CustomLegend />
 
       {loading ? (
-        <Box sx={{ display: "flex", justifyContent: "center", py: 5 }}>
+        // Matched height value with BarChart to prevent layout shift
+        <Box sx={{ display: "flex", justifyContent: "center", alignItems: "center", height: "300px" }}>
           <CircularProgress />
         </Box>
       ) : (
