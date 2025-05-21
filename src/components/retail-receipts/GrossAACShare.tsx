@@ -6,12 +6,6 @@ const GrossAACSharePage = () => {
   const [isTaxOpen, setIsTaxOpen] = useState(false);
   const [isNetIncomeTaxOpen, setNetIncomeTaxOpen] = useState(false);
 
-  // useEffect(() => {
-  //   fetchRetailReceipts(2025, 5).then(data => {
-  //     console.log("Retail Receipts:", data);
-  //   });
-  // }, []);
-
   return (
     <div className="flex flex-col">
         

@@ -28,7 +28,7 @@ const AACTaxesPage = () => {
         </button>
 
         {/* Accordion Content */}
-        {isTaxOpen && (
+        {!isTaxOpen && (
           <div className="bg-transparent border border-[#0038A8] p-2 rounded-md mt-3">
             <span className="text-sm font-bold">Tax Breakdown</span>
 
