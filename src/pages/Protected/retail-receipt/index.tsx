@@ -21,6 +21,15 @@ const RetailReceiptPage = () => {
   const [pcsoTotalShareAmount, setPcsoTotalShareAmount] = useState(0);
   const [pcsoBreakdown, setPcsoBreakdown] = useState<Share[]>([]);
 
+  const [aacTaxTotalPercentage, setAacTaxTotalPercentage] = useState(0);
+  const [aacTaxTotalShareAmount, setAacTaxTotalShareAmount] = useState(0);
+  const [aacTaxBreakdown, setAacTaxBreakdown] = useState<Share[]>([]);
+
+  const [pcsoTaxTotalPercentage, setPcsoTaxTotalPercentage] = useState(0);
+  const [pcsoTaxTotalShareAmount, setPcsoTaxTotalShareAmount] = useState(0);
+  const [pcsoTaxBreakdown, setPcsoTaxBreakdown] = useState<Share[]>([]);
+
+
   const [isOpen, setIsOpen] = useState(false);
 
   // set default current month
@@ -29,7 +38,7 @@ const RetailReceiptPage = () => {
     return `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, "0")}`;
   });
 
-  const AAC_TITLES = [
+  const AAC_GROSS_TITLES = [
     "Authorized Agent Share",
     "Commission of Salesforce",
     "Net Prize fund",
@@ -40,6 +49,22 @@ const RetailReceiptPage = () => {
     "Printing cost to PCSO",
     "PCSO Charity fund",
     "PCSO Operating fund",
+  ];
+
+  const AAC_TAX_TITLES = [
+    "Expanded witholding tax from Agency Commission",
+    "VAT witholding tax from Agency commission",
+    "Expanded witholding tax from Salesforce commission",
+    "VAT witholding tax from Salesforce commission",
+  ];
+
+  const PCSO_TAX_TITLES = [
+    "Expanded witholding tax from Agency Commission",
+    "VAT witholding tax from Agency commission",
+    "Expanded witholding tax from Salesforce commission",
+    "VAT witholding tax from Salesforce commission",
+    "Prize fund tax",
+    "Documentary stamp tax"
   ];
 
   const [receiptDataMetrics, setReceiptDataMetrics] = useState<{
@@ -109,7 +134,7 @@ const RetailReceiptPage = () => {
         // Process AAC shares (ShareType = 1)
         const aac = processShares(
           response?.data?.Receipts?.AAC,
-          AAC_TITLES,
+          AAC_GROSS_TITLES,
           year,
           month,
           1
@@ -129,6 +154,31 @@ const RetailReceiptPage = () => {
         setPcsoBreakdown(pcso.breakdown);
         setPcsoTotalPercentage(pcso.totalPercentage);
         setPcsoTotalShareAmount(pcso.totalShareAmount);
+
+        // Process Taxes (AAC) (ShareType = 2)
+        const aacTax = processShares(
+          response?.data?.Receipts?.PCSO,
+          AAC_TAX_TITLES,
+          year,
+          month,
+          2
+        );
+        setAacTaxBreakdown(aacTax.breakdown);
+        setAacTaxTotalPercentage(aacTax.totalPercentage);
+        setAacTaxTotalShareAmount(aacTax.totalShareAmount);
+
+        // Process Taxes (AAC) (ShareType = 2)
+        const pcsoTax = processShares(
+          response?.data?.Receipts?.PCSO,
+          PCSO_TAX_TITLES,
+          year,
+          month,
+          2
+        );
+        setPcsoTaxBreakdown(pcsoTax.breakdown);
+        setPcsoTaxTotalPercentage(pcsoTax.totalPercentage);
+        setPcsoTaxTotalShareAmount(pcsoTax.totalShareAmount);
+
       }
     });
   }, [operationDate]);
@@ -199,7 +249,11 @@ const RetailReceiptPage = () => {
               totalShareAmount={aacTotalShareAmount}
               breakdown={aacBreakdown}
             />
-            <AACTaxesPage />
+            <AACTaxesPage 
+              totalPercentage={aacTaxTotalPercentage}
+              totalShareAmount={aacTaxTotalShareAmount}
+              breakdown={aacTaxBreakdown}
+            />
             <NetAACIncomePage />
           </div>
 
@@ -210,7 +264,12 @@ const RetailReceiptPage = () => {
               totalShareAmount={pcsoTotalShareAmount}
               breakdown={pcsoBreakdown}
             />
-            <PCSOTaxesPage />
+            <PCSOTaxesPage
+              totalPercentage={pcsoTaxTotalPercentage}
+              totalShareAmount={pcsoTaxTotalShareAmount}
+              breakdown={pcsoTaxBreakdown}
+            />
+
             <NetPSCOIncomePage />
           </div>
         </div>
