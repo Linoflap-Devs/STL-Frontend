@@ -1,13 +1,13 @@
 import React, { useEffect } from "react";
 import { useRouter } from "next/router";
 import DetailedTable from "~/components/ui/tables/DetailedTable";
-import CardsPage from "~/components/ui/dashboardcards/CardsData";
 import ChartsDataPage from "~/components/ui/charts/UserChartsData";
 import UserFieldFormPage from "~/components/user/UserFormData";
 import { fetchMapOperators, fetchUsers } from "~/services/userService";
 import { userTableColumns } from "~/config/userTableColumns";
 import useUserRoleStore from "../../../../store/useUserStore";
 import { userRoleFormFields } from "~/config/userFormFields";
+import CardsPage from "~/components/user/CardsData";
 
 const roleMap: Record<string, { label: string; textlabel: string; roleId: number }> = {
   managers: { label: "Small Town Lottery Manager", textlabel: "Managers", roleId: 2 },

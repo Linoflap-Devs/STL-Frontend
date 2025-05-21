@@ -1,5 +1,5 @@
 import { z, ZodSchema } from "zod";
-import { User, Operator } from "./types";
+import { User, Operator, Share } from "./types";
 import { userSchema } from "~/schemas/userSchema";
 import { MultiValue } from "react-select";
 
@@ -267,4 +267,12 @@ export interface ConfirmUserActionModalProps {
     create: string;
     update: string;
   };
+}
+
+export interface ShareBreakdownPageProps {
+  totalPercentage: number;
+  totalShareAmount: number;
+  breakdown: Share[];
+  defaultBreakdown?: Share[]; // optional fallback if breakdown is empty
+  title?: string; // optional header title
 }

@@ -4,7 +4,6 @@ import Sidebar from "./components/layout/Sidebar";
 const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   return (
     <div className="flex min-h-screen items-stretch">
-      {" "}
       {/* Added items-stretch */}
       {/* Sidebar */}
       <Sidebar />

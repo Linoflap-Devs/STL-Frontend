@@ -14,8 +14,6 @@ import {
   FaStoreAlt,
   FaChevronLeft,
   FaChevronRight,
-  FaChevronDown,
-  FaChevronUp,
   FaReceipt,
 } from "react-icons/fa";
 import Skeleton from "@mui/material/Skeleton";
