@@ -108,7 +108,7 @@ const TableBettingActivityToday = (params: { gameCategoryId?: number }) => {
         <div className="flex items-center justify-center">
           <CircularProgress />
         </div>
-      ) : (
+      ) : rankedRegions.length > 0 ? (
         <div className="mt-2 w-full max-h-[720px] overflow-y-auto">
           {rankedRegions.map((item, index) => (
             <div
@@ -145,7 +145,13 @@ const TableBettingActivityToday = (params: { gameCategoryId?: number }) => {
             </div>
           ))}
         </div>
-      )}
+      ) : (
+        <div className="p-8 text-center text-[#888]">
+          <p>Top Betting Regions </p>
+          <p> data will be displayed once available.</p>
+        </div>
+      )
+    }
     </div>
   );
 };
