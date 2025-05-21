@@ -1,11 +1,11 @@
 import React, { useEffect } from "react";
 import { useOperatorsData } from "../../../../store/useOperatorStore";
 import DetailedTable from "~/components/ui/tables/DetailedTable";
-import CardsPage from "~/components/ui/dashboardcards/CardsData";
 import ChartsDataPage from "~/components/ui/charts/UserChartsData";
 import { OperatorFieldFormPage } from "~/components/operators/OperatorForm";
 import { fetchOperators } from "~/services/userService";
 import { operatorTableColumns } from "~/config/operatorTableColumns";
+import CardsPage from "~/components/user/CardsData";
 
 const OperatorsPage = () => {
   const { data, setData } = useOperatorsData();

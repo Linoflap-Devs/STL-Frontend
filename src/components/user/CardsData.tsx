@@ -2,14 +2,13 @@
 // This component is used to display various statistics on the dashboard
 // It takes in props for the dashboard data, role label, text label, and card data
 
-import React, { useEffect } from "react";
+import React from "react";
 import { CardsPageProps } from "~/types/interfaces";
 import { getUserStatus } from "~/utils/dashboarddata";
 import dayjs from "dayjs";
 import Card from "../ui/dashboardcards/Cards";
-import { fetchRetailReceipts } from "~/utils/api/transactions";
 
-const CardsRetailDataPage = <T extends { 
+const CardsPage = <T extends { 
   LastLogin?: string; 
   LastTokenRefresh?: string; 
   UserStatusId?: number;
@@ -74,9 +73,8 @@ const CardsRetailDataPage = <T extends {
       value: newItems.toString(),
       color: "#7ED321",
     },
-  ];
-
-
+  ];  
+  
   return (
     <div className="flex flex-wrap justify-center items-center gap-4 sm:gap-6 md:gap-3">
       {calculatedCardData.map((item, index) => (
@@ -92,4 +90,4 @@ const CardsRetailDataPage = <T extends {
   );
 };
 
-export default CardsRetailDataPage;
+export default CardsPage;
