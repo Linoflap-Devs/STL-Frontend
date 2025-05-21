@@ -29,9 +29,6 @@ const RetailReceiptPage = () => {
   const [pcsoTaxTotalShareAmount, setPcsoTaxTotalShareAmount] = useState(0);
   const [pcsoTaxBreakdown, setPcsoTaxBreakdown] = useState<Share[]>([]);
 
-
-  const [isOpen, setIsOpen] = useState(false);
-
   // set default current month
   const [operationDate, setOperationDate] = useState(() => {
     const today = new Date();
@@ -167,7 +164,7 @@ const RetailReceiptPage = () => {
         setAacTaxTotalPercentage(aacTax.totalPercentage);
         setAacTaxTotalShareAmount(aacTax.totalShareAmount);
 
-        // Process Taxes (AAC) (ShareType = 2)
+        // Process Taxes (PCSO) (ShareType = 2)
         const pcsoTax = processShares(
           response?.data?.Receipts?.PCSO,
           PCSO_TAX_TITLES,
@@ -178,7 +175,7 @@ const RetailReceiptPage = () => {
         setPcsoTaxBreakdown(pcsoTax.breakdown);
         setPcsoTaxTotalPercentage(pcsoTax.totalPercentage);
         setPcsoTaxTotalShareAmount(pcsoTax.totalShareAmount);
-
+        
       }
     });
   }, [operationDate]);
@@ -240,7 +237,6 @@ const RetailReceiptPage = () => {
       </div>
 
       {/* Accordion content below */}
-      {!isOpen && (
         <div className="flex flex-col md:flex-row gap-4">
           {/* Left Column */}
           <div className="w-full md:w-1/2">
@@ -254,7 +250,8 @@ const RetailReceiptPage = () => {
               totalShareAmount={aacTaxTotalShareAmount}
               breakdown={aacTaxBreakdown}
             />
-            <NetAACIncomePage />
+            <NetAACIncomePage 
+            />
           </div>
 
           {/* Right Column */}
@@ -270,10 +267,10 @@ const RetailReceiptPage = () => {
               breakdown={pcsoTaxBreakdown}
             />
 
-            <NetPSCOIncomePage />
+            <NetPSCOIncomePage 
+            />
           </div>
         </div>
-      )}
     </div>
   );
 };
