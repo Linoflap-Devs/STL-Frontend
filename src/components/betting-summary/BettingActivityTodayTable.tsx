@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
-import { Box, Typography, Divider, CircularProgress } from "@mui/material";
-import CasinoIcon from "@mui/icons-material/Casino";
+import { CircularProgress } from "@mui/material";
 import {
   fetchHistoricalRegion,
   fetchHistoricalSummary,

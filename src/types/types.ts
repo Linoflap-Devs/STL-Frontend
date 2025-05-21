@@ -132,7 +132,12 @@ export interface Share {
   ShareAmount: number;
   OperationDate: number;
   OperatorBreakdown?: Record<string, number>;
-} 
+}
+
+export interface NetIncomePageProps {
+  netAmount: number;
+  netPercentage: number;
+}
 
 
 
