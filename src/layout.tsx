@@ -10,7 +10,7 @@ const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
       <Sidebar />
       {/* Content Area */}
       <div className="flex flex-col flex-grow">
-        <main className="flex-grow overflow-y-auto p-7">{children}</main>
+        <main className="flex-grow overflow-y-auto p-5">{children}</main>
       </div>
     </div>
   );
