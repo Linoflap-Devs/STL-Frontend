@@ -1,11 +1,7 @@
 import { Button } from "@mui/material";
 import React, { useEffect, useMemo, useState } from "react";
 import AACTaxesPage from "~/components/retail-receipts/ACCSTaxes";
-import {
-  AACShare,
-  calculateShareTotals,
-  processAuthorizedAgentShares,
-} from "~/components/retail-receipts/calculateShareTotals ";
+import { processShares } from "~/components/retail-receipts/calculateShareTotals";
 import GrossAACSharePage from "~/components/retail-receipts/GrossAACShare";
 import GrossPSCOSharePage from "~/components/retail-receipts/GrossPSCOShare";
 import NetAACIncomePage from "~/components/retail-receipts/NetAACIncome";
@@ -13,21 +9,38 @@ import NetPSCOIncomePage from "~/components/retail-receipts/NetPSCOIncome";
 import PCSOTaxesPage from "~/components/retail-receipts/PCSOTaxes";
 import Card from "~/components/ui/dashboardcards/Cards";
 import { buttonStyles } from "~/styles/theme";
-import {
-  fetchRetailReceiptsDashboard,
-  fetchRetailReceipts,
-} from "~/utils/api/transactions";
+import { Share } from "~/types/types";
+import { fetchRetailReceiptsDashboard, fetchRetailReceipts } from "~/utils/api/transactions";
 
 const RetailReceiptPage = () => {
-const [totalPercentage, setTotalPercentage] = useState(0);
-const [totalShareAmount, setTotalShareAmount] = useState(0);
-const [breakdown, setBreakdown] = useState<AACShare[]>([]);
+  const [aacTotalPercentage, setAacTotalPercentage] = useState(0);
+  const [aacTotalShareAmount, setAacTotalShareAmount] = useState(0);
+  const [aacBreakdown, setAacBreakdown] = useState<Share[]>([]);
+
+  const [pcsoTotalPercentage, setPcsoTotalPercentage] = useState(0);
+  const [pcsoTotalShareAmount, setPcsoTotalShareAmount] = useState(0);
+  const [pcsoBreakdown, setPcsoBreakdown] = useState<Share[]>([]);
+
   const [isOpen, setIsOpen] = useState(false);
-  // default current month
+
+  // set default current month
   const [operationDate, setOperationDate] = useState(() => {
     const today = new Date();
     return `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, "0")}`;
   });
+
+  const AAC_TITLES = [
+    "Authorized Agent Share",
+    "Commission of Salesforce",
+    "Net Prize fund",
+  ];
+
+  const PCSO_TITLES = [
+    "PCSO Share",
+    "Printing cost to PCSO",
+    "PCSO Charity fund",
+    "PCSO Operating fund",
+  ];
 
   const [receiptDataMetrics, setReceiptDataMetrics] = useState<{
     TotalBets: number;
@@ -88,16 +101,34 @@ const [breakdown, setBreakdown] = useState<AACShare[]>([]);
     });
   }, [operationDate]);
 
-  // fetching for gross ACC share
   useEffect(() => {
     const [year, month] = operationDate.split("-").map(Number);
 
     fetchRetailReceipts(year, month).then((response) => {
       if (response?.success) {
-        const result = processAuthorizedAgentShares(response, year, month);
-        setTotalPercentage(result.totalPercentage);
-        setTotalShareAmount(result.totalShareAmount);
-        setBreakdown(result.breakdown);
+        // Process AAC shares (ShareType = 1)
+        const aac = processShares(
+          response?.data?.Receipts?.AAC,
+          AAC_TITLES,
+          year,
+          month,
+          1
+        );
+        setAacBreakdown(aac.breakdown);
+        setAacTotalPercentage(aac.totalPercentage);
+        setAacTotalShareAmount(aac.totalShareAmount);
+
+        // Process PCSO shares (ShareType = 2)
+        const pcso = processShares(
+          response?.data?.Receipts?.PCSO,
+          PCSO_TITLES,
+          year,
+          month,
+          1
+        );
+        setPcsoBreakdown(pcso.breakdown);
+        setPcsoTotalPercentage(pcso.totalPercentage);
+        setPcsoTotalShareAmount(pcso.totalShareAmount);
       }
     });
   }, [operationDate]);
@@ -164,9 +195,9 @@ const [breakdown, setBreakdown] = useState<AACShare[]>([]);
           {/* Left Column */}
           <div className="w-full md:w-1/2">
             <GrossAACSharePage
-              totalPercentage={totalPercentage}
-              totalShareAmount={totalShareAmount}
-              breakdown={breakdown}
+              totalPercentage={aacTotalPercentage}
+              totalShareAmount={aacTotalShareAmount}
+              breakdown={aacBreakdown}
             />
             <AACTaxesPage />
             <NetAACIncomePage />
@@ -174,7 +205,11 @@ const [breakdown, setBreakdown] = useState<AACShare[]>([]);
 
           {/* Right Column */}
           <div className="w-full md:w-1/2">
-            <GrossPSCOSharePage />
+            <GrossPSCOSharePage
+              totalPercentage={pcsoTotalPercentage}
+              totalShareAmount={pcsoTotalShareAmount}
+              breakdown={pcsoBreakdown}
+            />
             <PCSOTaxesPage />
             <NetPSCOIncomePage />
           </div>

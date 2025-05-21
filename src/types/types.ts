@@ -125,4 +125,14 @@ export type FormValidationProps = {
   setIsVerifyModalOpen: (isOpen: boolean) => void;
 };
 
+export interface Share {
+  ShareTitle: string;
+  ShareType: number;
+  Percentage: number;
+  ShareAmount: number;
+  OperationDate: number;
+  OperatorBreakdown?: Record<string, number>;
+} 
+
+
 

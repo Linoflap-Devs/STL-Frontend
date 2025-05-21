@@ -1,73 +1,69 @@
 import React, { useState } from "react";
+import { ShareBreakdownPageProps } from "~/types/interfaces";
 
-const GrossPSCOSharePage = () => {
-  const [isGrossPSCOShareOpen, setGrossPSCOShareOpen] = useState(false);
+const GrossPSCOSharePage: React.FC<ShareBreakdownPageProps> = ({
+  totalPercentage,
+  totalShareAmount,
+  breakdown,
+  defaultBreakdown = [],
+  title = "Gross PCSO Share",
+}) => {
+  const [isOpen, setIsOpen] = useState(false);
+
+  const breakdownToShow = breakdown && breakdown.length > 0 ? breakdown : defaultBreakdown;
 
   return (
     <div className="flex flex-col">
-
       <div className="mb-2">
-        {/* Accordion Header */}
         <button
-          onClick={() => setGrossPSCOShareOpen(!isGrossPSCOShareOpen)}
+          onClick={() => setIsOpen(!isOpen)}
           className="w-full bg-[#F6BA12] p-2 rounded-md grid grid-cols-1 md:grid-cols-2 items-center gap-2 text-left"
+          aria-expanded={isOpen}
+          aria-controls="share-breakdown-content"
         >
-          {/* Column 1 */}
           <div className="flex flex-col">
-            <span className="text-sm font-bold">Gross PCSO Share</span>
-            <span className="text-sm font-medium">51.21%</span>
+            <span className="text-sm font-bold">{title}</span>
+            <span className="text-sm font-medium">{totalPercentage.toFixed(2)}%</span>
           </div>
-
-          {/* Column 2 */}
           <div className="flex justify-center md:justify-end text-base font-semibold">
-            ₱ 2,092,734.40 
-            {/* {isGrossPSCOShareOpen ? "▲" : "▼"} */}
+            ₱{" "}
+            {totalShareAmount.toLocaleString(undefined, {
+              minimumFractionDigits: 2,
+              maximumFractionDigits: 2,
+            })}
+            {/* toggle icon here */}
           </div>
         </button>
 
         {/* Accordion Content */}
-        {!isGrossPSCOShareOpen && (
-          <div className="bg-transparent border border-[#0038A8] p-2 rounded-md mt-3">
-            <span className="text-sm font-bold">PSCO Share Breakdown</span>
+        {!isOpen && (
+          <div
+            id="share-breakdown-content"
+            className="bg-transparent border border-[#0038A8] p-2 rounded-md mt-3"
+          >
+            <span className="text-sm font-bold">{title} Details</span>
 
-            {/* Breakdown Row 1 */}
-            <div className="mt-2 grid grid-cols-1 md:grid-cols-2 items-center gap-2">
-              <div className="flex flex-col">
-                <span className="text-sm font-bold">Gross PSCO Share</span>
-                <span className="text-sm font-medium">51.21%</span>
+            {/* Breakdown List */}
+            {breakdownToShow.map((item, index) => (
+              <div
+                key={index}
+                className="mt-2 grid grid-cols-1 md:grid-cols-2 items-center gap-2"
+              >
+                <div className="flex flex-col">
+                  <span className="text-sm font-bold">{item.ShareTitle ?? "N/A"}</span>
+                  <span className="text-sm font-medium">{item.Percentage ?? 0}%</span>
+                </div>
+                <div className="flex justify-center md:justify-end text-base font-semibold">
+                  ₱{" "}
+                  {(item.ShareAmount ?? 0).toLocaleString(undefined, {
+                    minimumFractionDigits: 2,
+                  })}
+                </div>
               </div>
-              <div className="flex justify-center md:justify-end text-base font-semibold">
-                ₱ 2,092,734.40
-              </div>
-            </div>
-
-            {/* Breakdown Row 2 */}
-            <div className="mt-2 grid grid-cols-1 md:grid-cols-2 items-center gap-2">
-              <div className="flex flex-col">
-                <span className="text-sm font-bold">
-                  Commission of Salesforce
-                </span>
-                <span className="text-sm font-medium">10%</span>
-              </div>
-              <div className="flex justify-center md:justify-end text-base font-semibold">
-                ₱ 2,092,734.40
-              </div>
-            </div>
-
-            {/* Breakdown Row 3 */}
-            <div className="mt-2 grid grid-cols-1 md:grid-cols-2 items-center gap-2">
-              <div className="flex flex-col">
-                <span className="text-sm font-bold">Net Prize Fund</span>
-                <span className="text-sm font-medium">31.21%</span>
-              </div>
-              <div className="flex justify-center md:justify-end text-base font-semibold">
-                ₱ 6,530,377.70
-              </div>
-            </div>
+            ))}
           </div>
         )}
       </div>
-      
     </div>
   );
 };
