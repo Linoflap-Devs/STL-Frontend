@@ -6,21 +6,39 @@ import GrossPSCOSharePage from "~/components/retail-receipts/GrossPSCOShare";
 import NetAACIncomePage from "~/components/retail-receipts/NetAACIncome";
 import NetPSCOIncomePage from "~/components/retail-receipts/NetPSCOIncome";
 import PCSOTaxesPage from "~/components/retail-receipts/PCSOTaxes";
-import CardsPage from "~/components/ui/dashboardcards/CardsData";
+import Card from "~/components/ui/dashboardcards/Cards";
 import { buttonStyles } from "~/styles/theme";
 import { fetchRetailReceipts } from "~/utils/api/transactions";
 
 const RetailReceiptPage = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [operationDate, setOperationDate] = useState<string>("2025-05"); // Default to May 2025
+  const [receiptDataMetrics, setReceiptDataMetrics] = useState<null | {
+    TotalBets: number;
+    TotalBettors: number;
+    TotalPayout: number;
+    TotalRevenue: number;
+    TotalWinners: number;
+  }>(null);
 
-useEffect(() => {
-  const [year, month] = operationDate.split("-");
-  fetchRetailReceipts(Number(year), Number(month)).then((data) => {
-    console.log("Retail Receipts:", data);
-    // TODO: set to some state to pass to components
-  });
-}, [operationDate]);
+  useEffect(() => {
+    const [year, month] = operationDate.split("-");
+    fetchRetailReceipts(Number(year), Number(month)).then((data) => {
+      if (data?.success) {
+        setReceiptDataMetrics(data.data);
+      }
+    });
+  }, [operationDate]);
+
+  const calculatedCardData = receiptDataMetrics
+  ? [
+      { label: "Total Bets", value: `₱ ${receiptDataMetrics.TotalBets.toLocaleString()}` },
+      { label: "Total Bettors", value: receiptDataMetrics.TotalBettors.toLocaleString() },
+      { label: "Total Payout", value: `₱ ${receiptDataMetrics.TotalPayout.toLocaleString()}` },
+      { label: "Total Revenue", value: `₱ ${receiptDataMetrics.TotalRevenue.toLocaleString()}` },
+      { label: "Total Winners", value: receiptDataMetrics.TotalWinners.toLocaleString() },
+    ]
+  : [];
 
 
   return (
@@ -57,7 +75,13 @@ useEffect(() => {
       </div>
 
       {/* Cards */}
-      <CardsPage roleLabel={""} textlabel={""} dashboardData={[]} />
+      {calculatedCardData.length > 0 && (
+        <div className="flex flex-wrap justify-center items-center gap-4 sm:gap-6 md:gap-3">
+          {calculatedCardData.map((item, index) => (
+            <Card key={index} label={item.label} value={item.value} />
+          ))}
+        </div>
+      )}
 
       <div className="flex gap-4 mt-8 mb-3">
         <div className="w-1/2">
