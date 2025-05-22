@@ -217,6 +217,7 @@ const DrawResultsPage = () => {
               control: (provided, state) => ({
                 ...provided,
                 borderRadius: "0.5rem",
+                color: '#2F2F2F',
                 padding: "0.25rem",
                 boxShadow: state.isFocused
                   ? "none"
@@ -224,7 +225,7 @@ const DrawResultsPage = () => {
               }),
               menu: (provided) => ({
                 ...provided,
-                backgroundColor: "#F6BA12", // add this if you want menu background
+                backgroundColor: "#F8C73F", // add this if you want menu background
                 zIndex: 10,
               }),
             }}
@@ -257,7 +258,7 @@ const DrawResultsPage = () => {
               }),
               menu: (provided) => ({
                 ...provided,
-                backgroundColor: "#F6BA12", // add this if you want menu background
+                backgroundColor: "#F8C73F", // add this if you want menu background
                 zIndex: 10,
               }),
             }}
@@ -285,7 +286,7 @@ const DrawResultsPage = () => {
               }),
               menu: (provided) => ({
                 ...provided,
-                backgroundColor: "#F6BA12", // add this if you want menu background
+                backgroundColor: "#F8C73F", // add this if you want menu background
                 zIndex: 10,
               }),
             }}
@@ -310,60 +311,59 @@ const DrawResultsPage = () => {
             const displayInGrid = totalBoxes > 2;
 
             return (
-              <div key={gameTypeId} className="flex-1">
-                <p className="text-sm font-light mb-1">
-                  {gameTypeId === 1
-                    ? "First Draw"
-                    : gameTypeId === 2
-                      ? "Second Draw"
-                      : "Third Draw"}
-                </p>
+            <div key={gameTypeId} className="flex-1 min-w-0">
+              <p className="text-sm font-light mb-1">
+                {gameTypeId === 1
+                  ? "First Draw"
+                  : gameTypeId === 2
+                  ? "Second Draw"
+                  : "Third Draw"}
+              </p>
+
+              <div
+                className={`flex flex-wrap gap-2 w-full ${
+                  displayInGrid ? "" : "sm:flex-nowrap"
+                }`}
+              >
+                {/* Box 1 */}
                 <div
-                  className={`flex ${
-                    displayInGrid ? "flex-wrap" : "flex-nowrap"
-                  } gap-2 w-full`}
+                  className={`bg-transparent border border-[#0038A8] rounded-lg p-2 flex items-center justify-center 
+                    ${displayInGrid ? "w-[calc(50%-4px)]" : "w-full sm:flex-1"}`}
                 >
-                  {/* Box 1 */}
-                  <div
-                    className={`bg-transparent border border-[#0038A8] rounded-lg p-2 flex items-center justify-center ${
-                      displayInGrid ? "w-[calc(50%-4px)]" : "flex-1"
-                    }`}
-                  >
-                    <p className="font-bold text-2xl">
-                      {displayValue(item?.WinningCombinationOne ?? "-")}
-                    </p>
-                  </div>
-
-                  {/* Box 2 */}
-                  <div
-                    className={`bg-transparent border border-[#0038A8] rounded-lg p-2 flex items-center justify-center ${
-                      displayInGrid ? "w-[calc(50%-4px)]" : "flex-1"
-                    }`}
-                  >
-                    <p className="font-bold text-2xl">
-                      {displayValue(item?.WinningCombinationTwo ?? "-")}
-                    </p>
-                  </div>
-
-                  {/* Box 3 */}
-                  {totalBoxes >= 3 && (
-                    <div className="bg-transparent border border-[#0038A8] rounded-lg p-2 flex items-center justify-center w-[calc(50%-4px)] mt-1">
-                      <p className="font-bold text-2xl">
-                        {displayValue(item?.WinningCombinationThree ?? "-")}
-                      </p>
-                    </div>
-                  )}
-
-                  {/* Box 4 */}
-                  {totalBoxes >= 4 && (
-                    <div className="bg-transparent border border-[#0038A8] rounded-lg p-2 flex items-center justify-center w-[calc(50%-4px)] mt-1">
-                      <p className="font-bold text-2xl">
-                        {displayValue(item?.WinningCombinationFour ?? "-")}
-                      </p>
-                    </div>
-                  )}
+                  <p className="font-bold text-2xl text-center break-words">
+                    {displayValue(item?.WinningCombinationOne ?? "-")}
+                  </p>
                 </div>
+
+                {/* Box 2 */}
+                <div
+                  className={`bg-transparent border border-[#0038A8] rounded-lg p-2 flex items-center justify-center 
+                    ${displayInGrid ? "w-[calc(50%-4px)]" : "w-full sm:flex-1"}`}
+                >
+                  <p className="font-bold text-2xl text-center break-words">
+                    {displayValue(item?.WinningCombinationTwo ?? "-")}
+                  </p>
+                </div>
+
+                {/* Box 3 */}
+                {totalBoxes >= 3 && (
+                  <div className="bg-transparent border border-[#0038A8] rounded-lg p-2 flex items-center justify-center w-full sm:w-[calc(50%-4px)]">
+                    <p className="font-bold text-2xl text-center break-words">
+                      {displayValue(item?.WinningCombinationThree ?? "-")}
+                    </p>
+                  </div>
+                )}
+
+                {/* Box 4 */}
+                {totalBoxes >= 4 && (
+                  <div className="bg-transparent border border-[#0038A8] rounded-lg p-2 flex items-center justify-center w-full sm:w-[calc(50%-4px)]">
+                    <p className="font-bold text-2xl text-center break-words">
+                      {displayValue(item?.WinningCombinationFour ?? "-")}
+                    </p>
+                  </div>
+                )}
               </div>
+            </div>
             );
           })}
         </div>

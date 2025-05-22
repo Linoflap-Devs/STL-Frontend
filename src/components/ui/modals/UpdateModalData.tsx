@@ -47,9 +47,6 @@ const UpdateModalPage: React.FC<ModalPageProps> = ({
         initialUserData={initialUserData}
         
         operatorMap={operatorMap}
-        provinces={provinces}
-        regions={regions}
-        cities={cities}
         setSelectedRegion={setSelectedRegion ?? (() => {})}
         setSelectedProvince={setSelectedProvince ?? (() => {})}
         gameTypes={gameTypes}

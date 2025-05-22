@@ -81,7 +81,7 @@ select option:disabled {
   border: none !important;         /* use 'none' to remove border */
   font-size: 14px !important;      /* specify units for font-size */
   padding: 0px !important;
-  color: #0038A8 !important;
+  color: #2F2F2F !important;
 }
 .react-select-dashboard__option {
   background-color: transparent !important;  /* Transparent background for options */
@@ -96,7 +96,7 @@ select option:disabled {
 }
 /* Hover state for options */
 .react-select-dashboard__option:hover {
-  background-color: #d9a80f !important; /* Slightly darker blue on hover */
+  background-color: #F6BA12 !important; /* Slightly darker blue on hover */
 }
 
 .react-select-dashboard__dropdown-indicator {
@@ -104,10 +104,8 @@ select option:disabled {
 }
 
 .react-select-dashboard__placeholder {
-  color: #0038A8 !important;
+  color: #2F2F2F !important;
 }
-
-
 
 
 

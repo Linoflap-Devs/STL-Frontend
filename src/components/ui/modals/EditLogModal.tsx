@@ -2,8 +2,7 @@
 // the Edit Log component requires customized behavior and data structure
 
 import React, { useEffect, useMemo, useState } from "react";
-import { IconButton, Table, TableBody, TableCell, TableContainer, TableHead, TablePagination, TableRow } from "@mui/material";
-import ArrowBackIosIcon from "@mui/icons-material/ArrowBackIos";
+import { Table, TableBody, TableCell, TableContainer, TableHead, TablePagination, TableRow } from "@mui/material";
 import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
 import ArrowDropUpIcon from "@mui/icons-material/ArrowDropUp";
 import EditIcon from "@mui/icons-material/Edit";
@@ -17,6 +16,7 @@ import { getRoleName } from "~/utils/dashboarddata";
 import { EditLogFields, Operator, User } from "~/types/types";
 import { EditModalPageProps } from "~/types/interfaces";
 import dayjs from "dayjs";
+import BackIconButton from "../icons/BackButton";
 
 const EditModalPage: React.FC<EditModalPageProps> = ({ userId, onClose }) => {
   const { editLogColumns: columns, modalData, setModalData, setOperatorMap, setEditLogColumns } = useUserRoleStore();
@@ -80,32 +80,24 @@ const EditModalPage: React.FC<EditModalPageProps> = ({ userId, onClose }) => {
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-55 backdrop-blur-sm">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-55">
       <div className="bg-[#F8F0E3] w-full max-w-4xl mx-auto rounded-lg shadow-lg p-4 pb-0 pt-1 relative overflow-hidden max-h-[90vh]">
-        <IconButton
-          aria-label="back"
-          onClick={onClose}
-          sx={{
-            backgroundColor: "#ACA993",
-            left: 2,
-            padding: 0,
-            minWidth: 0,
-            width: 26,
-            height: 26,
-            display: 'flex',
-            alignItems: 'center',
-            my: '1rem',
-            justifyContent: 'center',
-            '&:hover': {
-              backgroundColor: "#928F7F",
-            },
-          }}
-        >
-          <ArrowBackIosIcon style={{ fontWeight: 'bold', fontSize: 16, color: "#F8F0E3", paddingLeft: '4px', }} />
-        </IconButton>
+        <div className="mt-4 mb-3">
+          <BackIconButton
+            bgColor="#0038A8"
+            hoverColor="#004ccf"
+            iconColor="#fff"
+            size={26}
+            onClick={onClose}
+            to={undefined} // prevents router.push('/')
+            paddingLeft="5px"
+          />
+        </div>
         {sortedAndFilteredData.length > 0 && sortedAndFilteredData[0].User && (
           <div className="mb-2">
-            <div className="text-2xl font-bold leading-none">{sortedAndFilteredData[0].User}</div>
+            <div className="text-2xl font-bold leading-none">
+              {sortedAndFilteredData[0].User}
+            </div>
             <div className="text-small">{getRoleName(roleId ?? 0)}</div>
           </div>
         )}
@@ -128,25 +120,25 @@ const EditModalPage: React.FC<EditModalPageProps> = ({ userId, onClose }) => {
             {sortedAndFilteredData.length === 0 ? (
               <div className="flex flex-col items-center py-7 text-[#0038A8]">
                 <EditIcon style={{ fontSize: 50 }} />
-                <h6 className="mt-2 font-sm text-lg">
-                  No Edit Logs Available
-                </h6>
+                <h6 className="mt-2 font-sm text-lg">No Edit Logs Available</h6>
               </div>
             ) : (
               <Table>
                 <TableHead>
-                  <TableRow sx={{ '&:hover': { backgroundColor: '#F08060' } }}>
+                  <TableRow sx={{ "&:hover": { backgroundColor: "#F08060" } }}>
                     {columns.map((col) => (
                       <TableCell
                         key={String(col.key)}
-                        onClick={() => col.sortable && handleSort(String(col.key))}
+                        onClick={() =>
+                          col.sortable && handleSort(String(col.key))
+                        }
                         className="cursor-pointer"
                       >
                         <div className="flex items-center">
                           {col.label}
                           {sortConfig.key === String(col.key) && (
                             <span className="ml-2">
-                              {sortConfig.direction === 'asc' ? (
+                              {sortConfig.direction === "asc" ? (
                                 <ArrowDropUpIcon fontSize="small" />
                               ) : (
                                 <ArrowDropDownIcon fontSize="small" />
@@ -169,7 +161,11 @@ const EditModalPage: React.FC<EditModalPageProps> = ({ userId, onClose }) => {
 
                           // Format the date field if it's the CreatedAt field
                           if (key === "CreatedAt" && value) {
-                            return <TableCell key={key}>{dayjs(value).format("YYYY/MM/DD")}</TableCell>;
+                            return (
+                              <TableCell key={key}>
+                                {dayjs(value).format("YYYY/MM/DD")}
+                              </TableCell>
+                            );
                           }
 
                           return <TableCell key={key}>{value}</TableCell>;

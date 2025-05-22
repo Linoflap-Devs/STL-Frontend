@@ -16,9 +16,9 @@ import { operatorSchema } from "~/schemas/operatorSchema";
 import { useModalStore } from "../../../../store/useModalStore";
 import { Operator } from "~/types/types";
 import { IconButton } from "@mui/material";
-import ArrowBackIosIcon from "@mui/icons-material/ArrowBackIos";
-import router from "next/router";
 import RetailReceiptOperatorsPage from "~/components/operators/RetailReceipts";
+import BackIconButton from "~/components/ui/icons/BackButton";
+import router from "next/router";
 
 export interface OperatorViewPageProps {
   slug: string;
@@ -42,7 +42,6 @@ const OperatorsView: React.FC<OperatorViewPageProps> = ({ slug, operator }) => {
   } = useOperatorFormStore();
 
   const { fields, setFields } = useOperatorsData();
-  const { setSelectedData } = useModalStore();
 
   // Fetch gameTypes and location data once on mount
   useEffect(() => {
@@ -120,32 +119,16 @@ const OperatorsView: React.FC<OperatorViewPageProps> = ({ slug, operator }) => {
   return (
     <div className="w-full flex flex-col gap-4">
       <div className="flex items-center space-x-4">
-        <IconButton
-          aria-label="back"
-          onClick={() => router.push("/operators")}
-          sx={{
-            backgroundColor: "#ACA993",
-            width: 30,
-            height: 30,
-            borderRadius: "50%",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            "&:hover": {
-              backgroundColor: "#928F7F",
-            },
-          }}
-        >
-          <ArrowBackIosIcon
-            style={{
-              fontWeight: "bold",
-              fontSize: 20,
-              color: "#F8F0E3",
-              paddingLeft: "7px",
+          <BackIconButton
+            to="/operators"
+            bgColor="#0038A8"
+            hoverColor="#004ccf"
+            iconColor="#fff"
+            size={30}
+            onClick={() => {
+              router.push("/operators"); // navigate
             }}
           />
-        </IconButton>
-
         <div className="text-2xl md:text-3xl font-bold truncate">
           {operator?.data?.OperatorName || "N/A"}
         </div>

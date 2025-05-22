@@ -145,36 +145,6 @@ const ConfirmSuspendModal: React.FC<ConfirmUserActionModalProps> = ({
         <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-black bg-opacity-75">
           <div className="relative z-20 flex w-full justify-center items-center">
             <div className="w-[60%] sm:w-[60%] md:w-[40%] max-w-[430px] py-11 px-6 bg-[#F8F0E3] rounded-lg relative">
-              {/* Close Button */}
-              <IconButton
-                aria-label="close"
-                onClick={onClose}
-                sx={{
-                  position: "absolute",
-                  top: 20,
-                  right: 20,
-                  backgroundColor: "#ACA993",
-                  padding: 0,
-                  minWidth: 0,
-                  width: 34,
-                  height: 34,
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  "&:hover": {
-                    backgroundColor: "#928F7F",
-                  },
-                }}
-              >
-                <CloseIcon
-                  style={{
-                    fontWeight: "bold",
-                    fontSize: 22,
-                    color: "#F8F0E3",
-                  }}
-                />
-              </IconButton>
-
               {/* Logo + Title */}
               <div className="text-center mb-4 mt-2">
                 <img

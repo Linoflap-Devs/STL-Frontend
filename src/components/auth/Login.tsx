@@ -77,13 +77,13 @@ const LoginPage = () => {
             <img
               src={LoginSectionData.image2}
               alt="PCSO Logo"
-              className="w-[35%] max-w-[150px] lg:max-w-[180px]"
+              className="w-[150px] h-[150px] lg:w-[180px] lg:h-[180px] object-contain"
               loading="lazy"
             />
             <img
               src={LoginSectionData.image}
               alt="STL Logo"
-              className="w-[35%] max-w-[120px] lg:max-w-[180px]"
+              className="w-[150px] h-[150px] lg:w-[180px] lg:h-[180px] object-contain"
               loading="lazy"
             />
           </div>
@@ -97,7 +97,7 @@ const LoginPage = () => {
       </div>
 
       {/* Right Section (Login Form) */}
-      <div className="w-full lg:flex-1 flex flex-col justify-center items-center px-4 pb-16 lg:pb-0 relative">
+      <div className="w-full lg:flex-1 flex flex-col justify-center items-center px-4 pb-10 lg:pb-0 relative">
         <div className="w-full max-w-md">
           <div className="mb-8">
             <h1 className="text-4xl sm:text-5xl font-bold text-[#0038A8]">

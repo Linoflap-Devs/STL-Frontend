@@ -111,7 +111,7 @@ const TopBettingRegionPage = () => {
           </div>
         ))
       ) : (
-        <div className="p-8 text-center text-[#888]">
+        <div className="p-8 text-sm text-center text-[#888]">
           <p>Top Betting Regions </p>
           <p> data will be displayed once available.</p>
         </div>

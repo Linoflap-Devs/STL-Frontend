@@ -6,7 +6,14 @@ export const LoginSectionData = {
   logoDescription: "PCSO Hindi Umuurong sa Pagtulong",
   description: "Big wins. Stronger communities.",
   cardTitle: "Welcome!",
-  cardDescription: <>Great to see you again! Let’s get you signed in.</>,
+  cardDescription: (
+    <>
+      <span className="font-bold text-sm">eTaya: </span>
+      <span className="text-xs">
+        A digital platform empowering Small Town Lottery collectors.
+      </span>
+    </>
+  ),
   rememberMe: "Remember Me?",
   EmailAddressTitle: "Email Address",
   PasswordTitle: "Password",
