@@ -63,3 +63,16 @@ export function processShares(
   };
 }
 
+// function in calculating net income ================
+export function calculateNetIncome(
+    grossAmount: number,
+    grossPercentage: number,
+    taxAmount: number,
+    taxPercentage: number
+  ) {
+    return {
+      netAmount: grossAmount - taxAmount,
+      netPercentage: grossPercentage - taxPercentage,
+    };
+  }
+

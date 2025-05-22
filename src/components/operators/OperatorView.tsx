@@ -1,13 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { ReusableModalPageProps } from "~/types/interfaces";
-import { IconButton } from "@mui/material";
-import ArrowBackIosIcon from "@mui/icons-material/ArrowBackIos";
-import router from "next/router";
 import Select from "react-select";
 import useUpdateModalState from "../../../store/useUpdateModalStore";
-import Swal from "sweetalert2";
-import axiosInstance from "~/utils/axiosInstance";
-import { AxiosError } from "axios";
 import Input from "../ui/inputs/TextInputs";
 import dayjs from "dayjs";
 

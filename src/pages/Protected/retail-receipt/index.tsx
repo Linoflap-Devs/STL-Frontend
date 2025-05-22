@@ -1,7 +1,7 @@
 import { Button } from "@mui/material";
 import React, { useEffect, useMemo, useState } from "react";
 import AACTaxesPage from "~/components/retail-receipts/ACCSTaxes";
-import { processShares } from "~/components/retail-receipts/calculateShareTotals";
+import { calculateNetIncome, processShares } from "~/components/retail-receipts/calculateShareTotals";
 import GrossAACSharePage from "~/components/retail-receipts/GrossAACShare";
 import GrossPSCOSharePage from "~/components/retail-receipts/GrossPSCOShare";
 import NetAACIncomePage from "~/components/retail-receipts/NetAACIncome";
@@ -28,6 +28,13 @@ const RetailReceiptPage = () => {
   const [pcsoTaxTotalPercentage, setPcsoTaxTotalPercentage] = useState(0);
   const [pcsoTaxTotalShareAmount, setPcsoTaxTotalShareAmount] = useState(0);
   const [pcsoTaxBreakdown, setPcsoTaxBreakdown] = useState<Share[]>([]);
+
+  // FOR NET INCOMES
+  const [netAacTotalAmount, setNetAacTotalAmount] = useState(0);
+  const [netAacTotalPercentage, setNetAacTotalPercentage] = useState(0);
+
+  const [netPcsoTotalAmount, setNetPcsoTotalAmount] = useState(0);
+  const [netPcsoTotalPercentage, setNetPcsoTotalPercentage] = useState(0);
 
   // set default current month
   const [operationDate, setOperationDate] = useState(() => {
@@ -128,7 +135,7 @@ const RetailReceiptPage = () => {
 
     fetchRetailReceipts(year, month).then((response) => {
       if (response?.success) {
-        // Process AAC shares (ShareType = 1)
+        // Gross AAC
         const aac = processShares(
           response?.data?.Receipts?.AAC,
           AAC_GROSS_TITLES,
@@ -140,7 +147,7 @@ const RetailReceiptPage = () => {
         setAacTotalPercentage(aac.totalPercentage);
         setAacTotalShareAmount(aac.totalShareAmount);
 
-        // Process PCSO shares (ShareType = 2)
+        // Gross PCSO
         const pcso = processShares(
           response?.data?.Receipts?.PCSO,
           PCSO_TITLES,
@@ -152,7 +159,7 @@ const RetailReceiptPage = () => {
         setPcsoTotalPercentage(pcso.totalPercentage);
         setPcsoTotalShareAmount(pcso.totalShareAmount);
 
-        // Process Taxes (AAC) (ShareType = 2)
+        // AAC Tax
         const aacTax = processShares(
           response?.data?.Receipts?.PCSO,
           AAC_TAX_TITLES,
@@ -164,7 +171,7 @@ const RetailReceiptPage = () => {
         setAacTaxTotalPercentage(aacTax.totalPercentage);
         setAacTaxTotalShareAmount(aacTax.totalShareAmount);
 
-        // Process Taxes (PCSO) (ShareType = 2)
+        // PCSO Tax
         const pcsoTax = processShares(
           response?.data?.Receipts?.PCSO,
           PCSO_TAX_TITLES,
@@ -175,11 +182,34 @@ const RetailReceiptPage = () => {
         setPcsoTaxBreakdown(pcsoTax.breakdown);
         setPcsoTaxTotalPercentage(pcsoTax.totalPercentage);
         setPcsoTaxTotalShareAmount(pcsoTax.totalShareAmount);
-        
+
+        // Calculate Net AAC Income
+        const { netAmount: netAacAmount, netPercentage: netAacPercentage } =
+          calculateNetIncome(
+            aac.totalShareAmount,
+            aac.totalPercentage,
+            aacTax.totalShareAmount,
+            aacTax.totalPercentage
+          );
+
+        setNetAacTotalAmount(netAacAmount);
+        setNetAacTotalPercentage(netAacPercentage);
+
+        // Calculate Net PCSO Income
+        const { netAmount: netPcsoAmount, netPercentage: netPcsoPercentage } =
+          calculateNetIncome(
+            pcso.totalShareAmount,
+            pcso.totalPercentage,
+            pcsoTax.totalShareAmount,
+            pcsoTax.totalPercentage
+          );
+
+        setNetPcsoTotalAmount(netPcsoAmount);
+        setNetPcsoTotalPercentage(netPcsoPercentage);
       }
     });
   }, [operationDate]);
-
+  
   return (
     <div className="mx-auto px-0 py-1">
       <h1 className="text-3xl font-bold mb-3">STL Retail Receipt</h1>
@@ -250,7 +280,9 @@ const RetailReceiptPage = () => {
               totalShareAmount={aacTaxTotalShareAmount}
               breakdown={aacTaxBreakdown}
             />
-            <NetAACIncomePage 
+            <NetAACIncomePage
+              netAmount={netAacTotalAmount}
+              netPercentage={netAacTotalPercentage}
             />
           </div>
 
@@ -266,8 +298,9 @@ const RetailReceiptPage = () => {
               totalShareAmount={pcsoTaxTotalShareAmount}
               breakdown={pcsoTaxBreakdown}
             />
-
-            <NetPSCOIncomePage 
+            <NetPSCOIncomePage
+              netAmount={netPcsoTotalAmount}
+              netPercentage={netPcsoTotalPercentage}
             />
           </div>
         </div>
