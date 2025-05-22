@@ -27,7 +27,7 @@ const RetailReceiptOperatorsPage = () => {
         {isOpen ? "▲" : "▼"}
       </button>
 
-      {isOpen && <GrossAACSharePage />}
+      {/* {isOpen && <GrossAACSharePage />} */}
     </div>
   );
 };

@@ -9,7 +9,6 @@ import {
   Stack,
   Typography,
 } from "@mui/material";
-import CloseIcon from "@mui/icons-material/Close";
 import { ReusableModalPageProps } from "~/types/interfaces";
 import Swal from "sweetalert2";
 import Select from "react-select";
@@ -19,6 +18,8 @@ import { generateValidPassword } from "~/utils/passwordgenerate";
 import Input from "../inputs/TextInputs";
 import CustomSelect from "../inputs/SelectInputs";
 import ConfirmUserActionModalPage from "~/components/shared/ConfirmUserActionModal";
+import router from "next/router";
+import ExitIconButton from "../icons/ExitButton";
 
 const ReusableCreateModalPage: React.FC<ReusableModalPageProps> = ({
   isOpen,
@@ -258,29 +259,27 @@ const ReusableCreateModalPage: React.FC<ReusableModalPageProps> = ({
     >
       <DialogTitle
         sx={{
-          display: "flex",
           flexDirection: "column",
-          alignItems: "flex-start",
           pb: 0,
         }}
       >
-        <IconButton sx={{ alignSelf: "flex-end" }} onClick={onClose}>
-          <CloseIcon
-            sx={{
-              fontSize: 28,
-              fontWeight: 700,
-              backgroundColor: "#ACA993",
-              borderRadius: "50%",
-              padding: "4px",
-              color: "#FFFFFF",
-            }}
+        <div className="flex justify-end p-0 m-0">
+          <ExitIconButton
+            bgColor="#0038A8"
+            hoverColor="#004ccf"
+            iconColor="#fff"
+            size={26}
+            onClick={onClose}
+            to={undefined} // prevents router.push('/')
+            paddingLeft="0px"
           />
-        </IconButton>
-        <Typography sx={{ fontSize: 26, fontWeight: "bold", mt: -3.5 }}>
-          {title}
-        </Typography>
+        </div>
+        <div className="flex justify-between items-center mb-4 ">
+          <Typography sx={{ fontSize: 26, fontWeight: "bold" }}>
+            {title}
+          </Typography>
+        </div>
       </DialogTitle>
-
       <DialogContent>
         <Stack spacing={2} sx={{ mt: 2 }}>
           {fields.some((field) => field.name === "name") &&

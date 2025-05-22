@@ -13,10 +13,8 @@ import {
   OutlinedInput,
   Box,
   Stack,
-  IconButton,
   FormHelperText,
 } from "@mui/material";
-import CloseIcon from "@mui/icons-material/Close";
 import dayjs from "dayjs";
 import { AxiosError } from "axios";
 import { ReusableModalPageProps } from "~/types/interfaces";
@@ -32,6 +30,7 @@ import Select from "react-select";
 import Visibility from "@mui/icons-material/Visibility";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
 import { generateValidPassword } from "~/utils/passwordgenerate";
+import ExitIconButton from "../icons/ExitButton";
 
 const ReusableUpdateModal: React.FC<ReusableModalPageProps> = ({
   title,
@@ -117,7 +116,7 @@ const ReusableUpdateModal: React.FC<ReusableModalPageProps> = ({
     setIsTouched(true);
   };
 
-  console.log("ENDPOINTTT", endpoint);
+  //console.log("ENDPOINTTT", endpoint);
 
   const roleName = getRoleName(roleId ?? 0);
   console.log("Role Name:", roleName);
@@ -258,27 +257,26 @@ const ReusableUpdateModal: React.FC<ReusableModalPageProps> = ({
     >
       <DialogTitle
         sx={{
-          display: "flex",
           flexDirection: "column",
-          alignItems: "flex-start",
-          py: 0,
+          pb: 0,
         }}
       >
-        <IconButton sx={{ alignSelf: "flex-end" }} onClick={onClose}>
-          <CloseIcon
-            sx={{
-              fontSize: 28,
-              fontWeight: 700,
-              backgroundColor: "#ACA993",
-              borderRadius: "50%",
-              padding: "4px",
-              color: "#FFFFFF",
-            }}
+        <div className="flex justify-end p-0 m-0">
+          <ExitIconButton
+            bgColor="#0038A8"
+            hoverColor="#004ccf"
+            iconColor="#fff"
+            size={26}
+            onClick={onClose}
+            to={undefined}
+            paddingLeft="0px"
           />
-        </IconButton>
-        <Typography sx={{ fontSize: 26, fontWeight: "bold", mt: -1 }}>
-          {isDisabled ? "View" : isViewMode ? "Update" : ""} {title}
-        </Typography>
+        </div>
+        <div className="flex justify-between items-center mb-4 ">
+          <Typography sx={{ fontSize: 26, fontWeight: "bold" }}>
+            {title}
+          </Typography>
+        </div>
       </DialogTitle>
 
       <DialogContent>

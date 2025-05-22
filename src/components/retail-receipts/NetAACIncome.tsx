@@ -8,9 +8,7 @@ const NetAACIncomePage: React.FC<NetIncomePageProps> = ({
   return (
     <div className="flex flex-col">
       <div className="mb-2">
-        <div
-          className="w-full bg-[#E97451] text-white p-2 rounded-md mt-2 grid grid-cols-1 md:grid-cols-2 items-center gap-2 text-left"
-        >
+        <div className="w-full bg-[#E97451] text-white p-2 rounded-md mt-2 grid grid-cols-1 md:grid-cols-2 items-center gap-2 text-left">
           <div className="flex flex-col">
             <span className="text-sm font-bold">Net AAC Income</span>
             <span className="text-sm font-medium">{netPercentage.toFixed(2)}%</span>
