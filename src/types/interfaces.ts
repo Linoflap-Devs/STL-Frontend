@@ -115,8 +115,8 @@ export interface DetailedTableProps<T> {
     create: string;
     update: string;
   };
-shouldOpenAsPage?: boolean;
-source: 'users' | 'operators';
+  shouldOpenAsPage?: boolean;
+  source?: 'users' | 'operators';
 }
 
 export interface ChartBarItem {

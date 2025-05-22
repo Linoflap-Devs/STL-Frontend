@@ -35,31 +35,33 @@ const TableBettingSummary = (params: { gameCategoryId?: number }) => {
       );
     }
 
-    const formattedData: Transactions[] = response.data.map((transaction: any) => {
-      return {
-        transactionNumber: transaction.TransactionNumber,
-        date: transaction.DateOfTransaction,
-        drawTime:
-          transaction.DrawOrder == 1
-            ? "First Draw"
-            : transaction.DrawOrder == 2
-              ? "Second Draw"
-              : "Third Draw",
-        betAmount: transaction.BetAmount,
-        tumbok: transaction.Tumbok,
-        sahod: transaction.Sahod,
-        ramble: transaction.Ramble,
-        tresCasas: transaction.TresCasas,
-        saisCasas: transaction.SaisCasas,
-        dyisCasas: transaction.DyisCasas,
-        gameType: transaction.GameCategory,
-        selectedPair: `${transaction.CombinationOne}-${transaction.CombinationTwo}${transaction.CombinationThree > 0 ? `-${transaction.CombinationThree}` : ""}${transaction.CombinationFour > 0 ? `-${transaction.CombinationFour}` : ""}`,
-        status: transaction.TransactionStatus,
-      };
-    });
+    const formattedData: Transactions[] = response.data.map(
+      (transaction: any) => {
+        return {
+          transactionNumber: transaction.TransactionNumber,
+          date: transaction.DateOfTransaction,
+          drawTime:
+            transaction.DrawOrder == 1
+              ? "First Draw"
+              : transaction.DrawOrder == 2
+                ? "Second Draw"
+                : "Third Draw",
+          betAmount: transaction.BetAmount,
+          tumbok: transaction.Tumbok,
+          sahod: transaction.Sahod,
+          ramble: transaction.Ramble,
+          tresCasas: transaction.TresCasas,
+          saisCasas: transaction.SaisCasas,
+          dyisCasas: transaction.DyisCasas,
+          gameType: transaction.GameCategory,
+          selectedPair: `${transaction.CombinationOne}-${transaction.CombinationTwo}${transaction.CombinationThree > 0 ? `-${transaction.CombinationThree}` : ""}${transaction.CombinationFour > 0 ? `-${transaction.CombinationFour}` : ""}`,
+          status: transaction.TransactionStatus,
+        };
+      }
+    );
 
     setTransactions(formattedData);
-    console.log('TRANSACTIONSS:',formattedData);
+    // console.log("TRANSACTIONS:", formattedData);
   };
 
   useEffect(() => {
@@ -67,11 +69,10 @@ const TableBettingSummary = (params: { gameCategoryId?: number }) => {
   }, []);
 
   return (
-      <ReadOnlyTablePage
-        source="users"
-        data={transactions} 
-        columns={tableColumns}
-      />
+    <ReadOnlyTablePage
+      data={transactions}
+      columns={tableColumns}
+    />
   );
 };
 

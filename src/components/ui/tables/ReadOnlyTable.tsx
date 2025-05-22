@@ -32,9 +32,6 @@ const ReadOnlyTablePage = <T extends Transactions>({
   actionsRender,
   pageType,
   operatorMap,
-  onClose,
-  endpoint,
-  source,
 }: DetailedTableProps<T>) => {
   const {
     searchQuery,
