@@ -42,7 +42,6 @@ const OperatorsView: React.FC<OperatorViewPageProps> = ({ slug, operator }) => {
   } = useOperatorFormStore();
 
   const { fields, setFields } = useOperatorsData();
-  const { setSelectedData } = useModalStore();
 
   // Fetch gameTypes and location data once on mount
   useEffect(() => {

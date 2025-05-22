@@ -274,7 +274,7 @@ const ReusableCreateModalPage: React.FC<ReusableModalPageProps> = ({
             paddingLeft="0px"
           />
         </div>
-        <div className="flex justify-between items-center mb-4 ">
+        <div className="flex justify-between items-center mb-3 -mt-3">
           <Typography sx={{ fontSize: 26, fontWeight: "bold" }}>
             {title}
           </Typography>

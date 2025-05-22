@@ -216,6 +216,14 @@ export const buttonStyles = {
   fontWeight: 1,
 };
 
+export const buttonStylesretail = {
+  textTransform: "none",
+  fontSize: 12,
+  borderRadius: "8px",
+  width: "100%",
+  fontWeight: 1,
+};
+
 export const deleteStyles = {
   paddingX: 3,
   paddingY: 0.9,

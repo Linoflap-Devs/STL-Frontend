@@ -40,10 +40,6 @@ const ReusableUpdateModal: React.FC<ReusableModalPageProps> = ({
   initialUserData,
   operatorMap,
   children,
-  provinces,
-  regions,
-  cities,
-  gameTypes,
 }) => {
   const {
     user,
@@ -272,15 +268,18 @@ const ReusableUpdateModal: React.FC<ReusableModalPageProps> = ({
             paddingLeft="0px"
           />
         </div>
-        <div className="flex justify-between items-center mb-4 ">
+        <div className="flex justify-between items-center mb-4 -mt-4">
           <Typography sx={{ fontSize: 26, fontWeight: "bold" }}>
-            {title}
+            {isDisabled ? "View" : isViewMode ? "Update" : ""} {title}
           </Typography>
         </div>
       </DialogTitle>
 
       <DialogContent>
         <Stack spacing={2} key={status} sx={{ mb: 1 }}>
+          <Typography sx={{ fontWeight: "bold" }}>
+            Executive Information
+          </Typography>
           <Stack direction="row" spacing={3} sx={{ mt: "1.5rem !important" }}>
             <Stack spacing={3} sx={{ flex: 1 }}>
               {(roleName === "Manager" || roleName === "Executive") &&
