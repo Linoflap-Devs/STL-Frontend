@@ -13,9 +13,7 @@ import {
 import { useOperatorsData } from "../../../../store/useOperatorStore";
 import { operatorConfig } from "~/config/operatorFormFields";
 import { operatorSchema } from "~/schemas/operatorSchema";
-import { useModalStore } from "../../../../store/useModalStore";
 import { Operator } from "~/types/types";
-import { IconButton } from "@mui/material";
 import RetailReceiptOperatorsPage from "~/components/operators/RetailReceipts";
 import BackIconButton from "~/components/ui/icons/BackButton";
 import router from "next/router";
@@ -42,6 +40,8 @@ const OperatorsView: React.FC<OperatorViewPageProps> = ({ slug, operator }) => {
   } = useOperatorFormStore();
 
   const { fields, setFields } = useOperatorsData();
+
+console.log('OPERATOR:', operator);
 
   // Fetch gameTypes and location data once on mount
   useEffect(() => {
@@ -162,7 +162,9 @@ const OperatorsView: React.FC<OperatorViewPageProps> = ({ slug, operator }) => {
 
         {/* Right Side - Retail Receipt */}
         <div className="flex flex-col w-full md:w-2/5 min-w-0">
-          <RetailReceiptOperatorsPage />
+          <RetailReceiptOperatorsPage 
+            operatorId={operator?.data?.OperatorId}
+          />
         </div>
       </div>
     </div>

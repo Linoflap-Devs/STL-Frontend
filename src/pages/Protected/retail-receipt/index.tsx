@@ -1,75 +1,22 @@
 import { Button } from "@mui/material";
 import React, { useEffect, useMemo, useState } from "react";
 import AACTaxesPage from "~/components/retail-receipts/ACCSTaxes";
-import { calculateNetIncome, processShares } from "~/components/retail-receipts/calculateShareTotals";
 import GrossAACSharePage from "~/components/retail-receipts/GrossAACShare";
 import GrossPSCOSharePage from "~/components/retail-receipts/GrossPSCOShare";
 import NetAACIncomePage from "~/components/retail-receipts/NetAACIncome";
 import NetPSCOIncomePage from "~/components/retail-receipts/NetPSCOIncome";
 import PCSOTaxesPage from "~/components/retail-receipts/PCSOTaxes";
+import { useRetailReceiptProcessor } from "~/components/retail-receipts/useRetailReceiptProcessor";
 import Card from "~/components/ui/dashboardcards/Cards";
-import { buttonStyles, buttonStylesretail } from "~/styles/theme";
-import { Share } from "~/types/types";
+import { buttonStylesretail } from "~/styles/theme";
 import { fetchRetailReceiptsDashboard, fetchRetailReceipts } from "~/utils/api/transactions";
 
 const RetailReceiptPage = () => {
-  const [aacTotalPercentage, setAacTotalPercentage] = useState(0);
-  const [aacTotalShareAmount, setAacTotalShareAmount] = useState(0);
-  const [aacBreakdown, setAacBreakdown] = useState<Share[]>([]);
-
-  const [pcsoTotalPercentage, setPcsoTotalPercentage] = useState(0);
-  const [pcsoTotalShareAmount, setPcsoTotalShareAmount] = useState(0);
-  const [pcsoBreakdown, setPcsoBreakdown] = useState<Share[]>([]);
-
-  const [aacTaxTotalPercentage, setAacTaxTotalPercentage] = useState(0);
-  const [aacTaxTotalShareAmount, setAacTaxTotalShareAmount] = useState(0);
-  const [aacTaxBreakdown, setAacTaxBreakdown] = useState<Share[]>([]);
-
-  const [pcsoTaxTotalPercentage, setPcsoTaxTotalPercentage] = useState(0);
-  const [pcsoTaxTotalShareAmount, setPcsoTaxTotalShareAmount] = useState(0);
-  const [pcsoTaxBreakdown, setPcsoTaxBreakdown] = useState<Share[]>([]);
-
-  // FOR NET INCOMES
-  const [netAacTotalAmount, setNetAacTotalAmount] = useState(0);
-  const [netAacTotalPercentage, setNetAacTotalPercentage] = useState(0);
-
-  const [netPcsoTotalAmount, setNetPcsoTotalAmount] = useState(0);
-  const [netPcsoTotalPercentage, setNetPcsoTotalPercentage] = useState(0);
-
   // set default current month
   const [operationDate, setOperationDate] = useState(() => {
     const today = new Date();
     return `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, "0")}`;
   });
-
-  const AAC_GROSS_TITLES = [
-    "Authorized Agent Share",
-    "Commission of Salesforce",
-    "Net Prize fund",
-  ];
-
-  const PCSO_TITLES = [
-    "PCSO Share",
-    "Printing cost to PCSO",
-    "PCSO Charity fund",
-    "PCSO Operating fund",
-  ];
-
-  const AAC_TAX_TITLES = [
-    "Expanded witholding tax from Agency Commission",
-    "VAT witholding tax from Agency commission",
-    "Expanded witholding tax from Salesforce commission",
-    "VAT witholding tax from Salesforce commission",
-  ];
-
-  const PCSO_TAX_TITLES = [
-    "Expanded witholding tax from Agency Commission",
-    "VAT witholding tax from Agency commission",
-    "Expanded witholding tax from Salesforce commission",
-    "VAT witholding tax from Salesforce commission",
-    "Prize fund tax",
-    "Documentary stamp tax"
-  ];
 
   const [receiptDataMetrics, setReceiptDataMetrics] = useState<{
     TotalBets: number;
@@ -130,86 +77,25 @@ const RetailReceiptPage = () => {
     });
   }, [operationDate]);
 
-  useEffect(() => {
-    const [year, month] = operationDate.split("-").map(Number);
+  const {
+    aacBreakdown,
+    aacTotalPercentage,
+    aacTotalShareAmount,
+    pcsoBreakdown,
+    pcsoTotalPercentage,
+    pcsoTotalShareAmount,
+    aacTaxBreakdown,
+    aacTaxTotalPercentage,
+    aacTaxTotalShareAmount,
+    pcsoTaxBreakdown,
+    pcsoTaxTotalPercentage,
+    pcsoTaxTotalShareAmount,
+    netAacTotalAmount,
+    netAacTotalPercentage,
+    netPcsoTotalAmount,
+    netPcsoTotalPercentage,
+  } = useRetailReceiptProcessor(operationDate);
 
-    fetchRetailReceipts(year, month).then((response) => {
-      if (response?.success) {
-        // Gross AAC
-        const aac = processShares(
-          response?.data?.Receipts?.AAC,
-          AAC_GROSS_TITLES,
-          year,
-          month,
-          1
-        );
-        setAacBreakdown(aac.breakdown);
-        setAacTotalPercentage(aac.totalPercentage);
-        setAacTotalShareAmount(aac.totalShareAmount);
-
-        // Gross PCSO
-        const pcso = processShares(
-          response?.data?.Receipts?.PCSO,
-          PCSO_TITLES,
-          year,
-          month,
-          1
-        );
-        setPcsoBreakdown(pcso.breakdown);
-        setPcsoTotalPercentage(pcso.totalPercentage);
-        setPcsoTotalShareAmount(pcso.totalShareAmount);
-
-        // AAC Tax
-        const aacTax = processShares(
-          response?.data?.Receipts?.PCSO,
-          AAC_TAX_TITLES,
-          year,
-          month,
-          2
-        );
-        setAacTaxBreakdown(aacTax.breakdown);
-        setAacTaxTotalPercentage(aacTax.totalPercentage);
-        setAacTaxTotalShareAmount(aacTax.totalShareAmount);
-
-        // PCSO Tax
-        const pcsoTax = processShares(
-          response?.data?.Receipts?.PCSO,
-          PCSO_TAX_TITLES,
-          year,
-          month,
-          2
-        );
-        setPcsoTaxBreakdown(pcsoTax.breakdown);
-        setPcsoTaxTotalPercentage(pcsoTax.totalPercentage);
-        setPcsoTaxTotalShareAmount(pcsoTax.totalShareAmount);
-
-        // Calculate Net AAC Income
-        const { netAmount: netAacAmount, netPercentage: netAacPercentage } =
-          calculateNetIncome(
-            aac.totalShareAmount,
-            aac.totalPercentage,
-            aacTax.totalShareAmount,
-            aacTax.totalPercentage
-          );
-
-        setNetAacTotalAmount(netAacAmount);
-        setNetAacTotalPercentage(netAacPercentage);
-
-        // Calculate Net PCSO Income
-        const { netAmount: netPcsoAmount, netPercentage: netPcsoPercentage } =
-          calculateNetIncome(
-            pcso.totalShareAmount,
-            pcso.totalPercentage,
-            pcsoTax.totalShareAmount,
-            pcsoTax.totalPercentage
-          );
-
-        setNetPcsoTotalAmount(netPcsoAmount);
-        setNetPcsoTotalPercentage(netPcsoPercentage);
-      }
-    });
-  }, [operationDate]);
-  
   return (
     <div className="mx-auto px-0 py-1">
       <h1 className="text-3xl font-bold mb-3">STL Retail Receipt</h1>
@@ -267,7 +153,7 @@ const RetailReceiptPage = () => {
         </div>
         <div className="w-1/2"></div>
       </div>
-
+      
       {/* Accordion content below */}
       <div className="flex flex-col md:flex-row gap-4">
         {/* Left Column */}

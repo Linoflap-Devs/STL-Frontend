@@ -10,6 +10,11 @@ type GameTypeOption = {
   label: string;
 };
 
+type ProvinceTypeOptions = {
+  value: number;
+  label: string;
+};
+
 const OperatorViewPage: React.FC<ReusableModalPageProps> = ({
   initialUserData,
   gameTypes,
@@ -25,10 +30,12 @@ const OperatorViewPage: React.FC<ReusableModalPageProps> = ({
   const [isDisabled, setIsDisabled] = useState(true);
   const [showEditButton, setShowEditButton] = useState(true);
   const [selectedGameTypes, setSelectedGameTypes] = useState([]);
+
+  const [selectedProvince, setSelectedProvince] = useState([]);
   const [area, setArea] = useState<string | null>(null);
 
   // console.log("hihihh", areaofoperations);
-
+  console.log('provinces:', provinces);
   const handleDisable = () => {
     setIsDisabled(false);
     setShowEditButton(false);
@@ -38,6 +45,12 @@ const OperatorViewPage: React.FC<ReusableModalPageProps> = ({
     gameTypes?.map((type) => ({
       value: type.GameCategoryId!,
       label: `${type.GameCategory}`,
+    })) || [];
+
+  const provincesOptions: ProvinceTypeOptions[] =
+    provinces?.map((province) => ({
+      value: province.ProvinceId,
+      label: province.ProvinceName,
     })) || [];
 
   const statusOptions = [
@@ -51,12 +64,12 @@ const OperatorViewPage: React.FC<ReusableModalPageProps> = ({
   }));
 
   useEffect(() => {
-    console.log("initialUserData:", initialUserData);
+    console.log("initialUserDatass:", initialUserData);
 
     if (initialUserData && Object.keys(initialUserData).length > 0) {
       const operatorData = initialUserData.data;
 
-      if (operatorData && operatorData.GameTypes) {
+      if (operatorData && operatorData.GameTypes && operatorData.Cities) {
         const mappedGameTypes = operatorData.GameTypes.map(
           (gt: { GameCategory: any; GameCategoryId: any }) => ({
             label: gt.GameCategory,
@@ -64,7 +77,17 @@ const OperatorViewPage: React.FC<ReusableModalPageProps> = ({
           })
         );
 
+        // fetching of cities to get the province
+        const mappedCities = operatorData.Cities.map(
+          (pv: { CityId: any; CityName: any }) => ({
+            label: pv.CityId,
+            value: pv.CityName,
+          })
+        );
+        
         console.log("Mapped GameTypes for Select:", mappedGameTypes);
+        console.log("cities", mappedCities);
+        console.log(mappedGameTypes);
         setSelectedGameTypes(mappedGameTypes);
       } else {
         setSelectedGameTypes([]);
@@ -115,7 +138,8 @@ const OperatorViewPage: React.FC<ReusableModalPageProps> = ({
           <div>
             <label
               htmlFor="createdBy"
-              className="block text-sm font-medium text-gray-700 mb-1"
+              className="block text-sm font-medium text-gray-700 mb-1" // #212121 to hindi gray 700 
+              // TINGNAN MO KASI YUNG UI!
             >
               Created By
             </label>
@@ -358,7 +382,7 @@ const OperatorViewPage: React.FC<ReusableModalPageProps> = ({
               id="provinces"
               name="provinces"
               isMulti
-              options={provinces}
+              options={provincesOptions}
               className="react-select-container"
               classNamePrefix="react-select"
               placeholder="Select Provinces"

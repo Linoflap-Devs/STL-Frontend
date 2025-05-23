@@ -43,7 +43,9 @@ const RolePage = () => {
         if (map) setOperatorMap(map);
       });
     }
-  }, [roleConfig]);
+  }, [roleConfig, setData]);
+  
+  console.log('DATA USER',data);
 
   if (!roleConfig) {
     return (
