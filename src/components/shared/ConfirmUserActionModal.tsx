@@ -5,7 +5,7 @@ import Swal from "sweetalert2";
 import { verifyPass } from "~/utils/api/auth";
 import { ConfirmUserActionModalProps } from "~/types/interfaces";
 import axiosInstance from "~/utils/axiosInstance";
-import { fetchUsers } from "~/services/userService";
+import { fetchUsers } from "~/utils/api/users";
 import useUserRoleStore from "../../../store/useUserStore";
 import { LoginSectionData } from "~/data/LoginSectionData";
 

@@ -30,11 +30,6 @@ const TableWinningSummary = (params: {gameCategoryId?: number}) => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const queryParams = {
-          page: 1,
-          limit: 10,
-        };
-
         const response = await fetchWinners();
         console.log(response);
 
@@ -82,7 +77,7 @@ const TableWinningSummary = (params: {gameCategoryId?: number}) => {
     fetchData();
   }, []);
 
-  console.log('Winning Transactions:',transactions); // we have no data here
+  // console.log('Winning Transactions:',transactions); // we have no data here
 
   if (loading) {
     return <div>Loading...</div>;

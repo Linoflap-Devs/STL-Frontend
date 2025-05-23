@@ -97,10 +97,16 @@ export const fetchRetailReceiptsDashboard = async (
   }
 };
 
-export const fetchRetailReceipts = async (year: number, month: number) => {
+export const fetchRetailReceipts = async (
+  year: number,
+  month: number,
+  operatorId?: number
+) => {
   try {
     const url = `/transactions/getRetailReceipts/${year}/${month}`;
-    const { data } = await axiosInstance.get(url);
+    const { data } = await axiosInstance.get(url, {
+      params: operatorId ? { operatorId } : {}, // Add query param only if operatorId exists
+    });
     return data;
   } catch (error: any) {
     console.error(
@@ -114,3 +120,4 @@ export const fetchRetailReceipts = async (year: number, month: number) => {
     };
   }
 };
+  

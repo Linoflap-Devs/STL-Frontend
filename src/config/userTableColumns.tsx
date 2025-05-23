@@ -17,33 +17,31 @@ export const userTableColumns = (operatorMap: Record<string, any>): Column<User>
     label: "Company Name",
     sortable: true,
     filterable: false,
-    render: (user: any) => {
-      const operator = operatorMap[user.OperatorId];
-      return operator ? operator.OperatorName : "No operator assigned";
-        },
-      },
-      {
-        key: "DateOfRegistration",
-        label: "Creation Date",
-        sortable: true,
-        filterable: true,
-        render: (user: any) =>
-          user.DateOfRegistration
+    render: (user) =>
+      user.OperatorDetails?.OperatorName ?? "No operator assigned",
+  },
+  {
+    key: "DateOfRegistration",
+    label: "Creation Date",
+    sortable: true,
+    filterable: true,
+    render: (user: any) =>
+      user.DateOfRegistration
         ? dayjs(user.DateOfRegistration).format("YYYY/MM/DD HH:mm:ss")
         : "",
-      },
-      {
-        key: "CreatedBy",
-        label: "Created By",
-        sortable: true,
-        filterable: true,
-      },
-      {
-        key: "Status",
-        label: "Status",
-        sortable: true,
-        filterable: true,
-        render: (user: any) => {
+  },
+  {
+    key: "CreatedBy",
+    label: "Created By",
+    sortable: true,
+    filterable: true,
+  },
+  {
+    key: "Status",
+    label: "Status",
+    sortable: true,
+    filterable: true,
+    render: (user: any) => {
       const sevenDaysAgo = dayjs().subtract(7, "days");
       const status = getUserStatus(user, sevenDaysAgo);
       return (
@@ -59,16 +57,16 @@ export const userTableColumns = (operatorMap: Record<string, any>): Column<User>
               status === "Suspended"
                 ? "#FF7A7A"
                 : status === "Inactive"
-                ? "#FFA726"
-                : "#046115",
+                  ? "#FFA726"
+                  : "#046115",
             color: "#ffff",
             "&:hover": {
               backgroundColor:
                 status === "Suspended"
                   ? "#F05252"
                   : status === "Inactive"
-                  ? "#FFA726"
-                  : "#046115",
+                    ? "#FFA726"
+                    : "#046115",
             },
           }}
         >
