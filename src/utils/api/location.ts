@@ -39,4 +39,36 @@ export const fetchProvinces = async(filters?: {regionId: number}) => {
     }
 }
 
+export const fetchCities = async(filters?: {provinceId: number}) => {
+    try {
+        const url = validateRelativeUrl("/location/getCities");
+        const response = await axiosInstance.get(url, {
+            params: {
+                regionId: filters?.provinceId
+            }
+        })
+
+        return response.data
+    }
+
+    catch (error) {
+        console.error("Error fetching provinces:", (error as Error).message);
+        return { success: false, message: (error as Error).message, data: [] };
+    }
+}
+
+export const fetchAreaOfOperations = async () => {
+    try {
+        const url = validateRelativeUrl("/operators/getAreaOptions");
+        const response = await axiosInstance.get(url)
+
+        return response.data
+    }
+
+    catch (error) {
+        console.error("Error fetching regions:", (error as Error).message);
+        return { success: false, message: (error as Error).message, data: [] };
+    }
+}
+
 

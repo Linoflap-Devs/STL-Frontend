@@ -29,7 +29,7 @@ const OperatorsView: React.FC<OperatorViewPageProps> = ({ slug, operator }) => {
     regions,
     provinces,
     cities,
-    areaofoperations,
+    areaOfOperations,
     selectedRegion,
     selectedProvince,
     setGameTypes,

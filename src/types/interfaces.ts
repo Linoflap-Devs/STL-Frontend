@@ -117,6 +117,7 @@ export interface DetailedTableProps<T> {
   };
   shouldOpenAsPage?: boolean;
   source?: 'users' | 'operators';
+  onAddClick: () => void;
 }
 
 export interface ChartBarItem {

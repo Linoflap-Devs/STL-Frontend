@@ -7,7 +7,7 @@ interface OperatorFormStore {
   cities: any[];
   selectedRegion: any;
   selectedProvince: any;
-  areaofoperations: any[];
+  areaOfOperations: any[];
   setGameTypes: (gameTypes: any[]) => void;
   setRegions: (regions: any[]) => void;
   setProvinces: (provinces: any[]) => void;
@@ -22,14 +22,14 @@ export const useOperatorFormStore = create<OperatorFormStore>((set) => ({
   regions: [],
   provinces: [],
   cities: [],
-  areaofoperations: [],
+  areaOfOperations: [],
   selectedRegion: '',
   selectedProvince: '',
   setGameTypes: (gameTypes) => set({ gameTypes }),
   setRegions: (regions) => set({ regions }),
   setProvinces: (provinces) => set({ provinces }),
   setCities: (cities) => set({ cities }),
-  setAreaOfOperations: (areaofoperations) => set({ areaofoperations }),
+  setAreaOfOperations: (areaOfOperations) => set({ areaOfOperations }),
   setSelectedRegion: (region) => set({ selectedRegion: region }),
   setSelectedProvince: (province) => set({ selectedProvince: province }),
 

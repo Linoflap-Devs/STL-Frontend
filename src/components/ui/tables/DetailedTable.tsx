@@ -27,6 +27,7 @@ const DetailedTable = <T extends User | Operator>({
   onClose,
   endpoint,
   source,
+  onAddClick 
 }: DetailedTableProps<T>) => {
   const { searchQuery, setIsFilterActive, isFilterActive, page, rowsPerPage, sortConfig, filters, handleChangePage, handleChangeRowsPerPage, setSearchQuery, anchorEl, selectedRow, setAnchorEl, setSelectedRow, resetMenu } = useDetailTableStore();
   const [openEditLogModal, setOpenEditLogModal] = useState(false);
@@ -194,7 +195,7 @@ const DetailedTable = <T extends User | Operator>({
               )}
             </IconButton>
           </div>
-          <Button variant="contained" onClick={() => useModalStore.getState().openModal("create")} sx={buttonStyles}>
+          <Button variant="contained" onClick={onAddClick} sx={buttonStyles}>
             {pageType === "manager"
               ? "Add Manager"
               : pageType === "executive"

@@ -16,46 +16,59 @@ export interface LegendItem {
 }
 
 export interface User {
-  UserId: number;
-  FirstName: string;
-  LastName: string;
-  fullName: string; // Consider making this a computed field on the frontend
-  Suffix: string | null;
-  UserTypeId: number;
-  email: string;
+  userId?: number;
+  firstName: string;
+  lastName: string;
+  password: string;
   phoneNumber: string;
-  DateOfRegistration: string;
-  OperatorId: number;
+  email: string;
+  suffix: string | null;
+  operatorId: number;
+  userTypeId: number;
+
+  fullName?: string; // Consider making this a computed field on the frontend
+  DateOfRegistration?: string;
   OperatorDetails?: {
     OperatorName?: string;
   };
   Region?: string; // Remove this if 'region' below is preferred
-  region: string;
-
+  region?: string;
   LastLogin?: string;
   LastTokenRefresh?: string;
   IsActive?: number;
-  Cities: { CityId: number; CityName: string }[];
+  Cities?: { CityId: number; CityName: string }[];
 }
 
 // Define the Operator type
 export interface Operator {
+  operatorId?: number;
+  name: string;
+  contactNumber: string;
+  dateOfOperation: string;
+  email: string;
+  address: string;
+  gameTypes: string;
+  areaOfOperations: string;
+  regions: any;
+  provinces: any;
+  cities: any;
+
   data?: any; // for operator update
-  OperatorId: number;
-  OperatorName: string;
-  Executive: string;
-  OperatorEmail: string | null;
-  Status: number; // Consider using enum if Status can be "Active" = 1, etc.
-  CreatedAt: string;
-  DateOfOperation: string;
-  Cities: { CityId: number; CityName: string }[];
-  OperatorAddress: string;
-  OperatorContactNos: string;
-  Email: string | null;
-  ContactNo: string;
-  OperatorRepresentative: string;
+  OperatorId?: number;
+  OperatorName?: string;
+  Executive?: string;
+  OperatorEmail?: string | null;
+  Status?: number; // Consider using enum if Status can be "Active" = 1, etc.
+  CreatedAt?: string;
+  DateOfOperation?: string;
+  Cities?: { CityId: number; CityName: string }[];
+  OperatorAddress?: string;
+  OperatorContactNos?: string;
+  Email?: string | null;
+  ContactNo?: string;
+  OperatorRepresentative?: string;
   OperatorRegion?: any; // Ideally replace `any` with a specific Region type
-  Region?: any;         // Same here
+  Region?: any; // Same here
   Slug?: string;
 
   // Optional shared fields (if reused with users)

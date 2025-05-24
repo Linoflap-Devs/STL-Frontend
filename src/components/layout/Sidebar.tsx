@@ -142,7 +142,7 @@ const Sidebar: React.FC = () => {
         >
           {name}
         </div>
-      );  
+      );
     });
 
   const toggleCollapse = () => {
@@ -221,25 +221,19 @@ const Sidebar: React.FC = () => {
   };
 
   return (
-    <aside
-      className={`p-3 bg-blue-800 text-white flex flex-col ${
-        collapsed ? "w-20" : "w-60"
-      } duration-200`}
-    >
+    <div className={`p-3 bg-blue-800 text-white flex flex-col transition-all duration-200 ${ collapsed ? "w-20" : "w-60" }`}>
       <div
-        className={clsx(
-          "flex items-center",
+        className={`flex items-center ${
           collapsed ? "flex-col justify-center" : "flex-row justify-center"
-        )}
+        }`}
       >
         {/* User Section */}
-        <div className="bg-[#ACA993] p-0 pt-1 rounded-md w-full">
-          <div className="flex justify-between px-3 p-3 w-full">
+        <div className="bg-[#ACA993] pt-1 rounded-md w-full">
+          <div className="flex justify-between px-3 py-3 w-full">
             {/* Toggle Collapse Icon (Left Corner) */}
             <button
               onClick={toggleCollapse}
-              className="flex justify-center items-center bg-[#0038A8] 
-                text-[#ACA993] rounded-full w-6 h-6 p-1 hover:bg-gray-300 transition-colors duration-200"
+              className="flex justify-center items-center bg-[#0038A8] text-[#ACA993] rounded-full w-6 h-6 p-1 hover:bg-gray-300 transition-colors duration-200"
             >
               {collapsed ? (
                 <FaChevronRight size={12} />
@@ -248,20 +242,15 @@ const Sidebar: React.FC = () => {
               )}
             </button>
 
+            {/* Logo (Right Corner) */}
             {!collapsed && (
-              <>
-                {/* Logo (Right Corner) */}
-                <div className="flex ml-auto">
-                  <img
-                    src={UserSectionData.image}
-                    alt="Logo"
-                    className={clsx(
-                      "transition-all duration-300",
-                      collapsed ? "w-10" : "max-w-[8rem]"
-                    )}
-                  />
-                </div>
-              </>
+              <div className="flex ml-auto">
+                <img
+                  src={UserSectionData.image}
+                  alt="Logo"
+                  className="transition-all duration-300 max-w-[8rem]"
+                />
+              </div>
             )}
           </div>
 
@@ -277,13 +266,14 @@ const Sidebar: React.FC = () => {
         </div>
       </div>
 
+      {/* User Info */}
       {!collapsed && (
         <div className="pt-5 pb-3 px-1">
           <div className="text-2xl font-bold text-white leading-tight">
             {user ? (
               `${user.firstName} ${user.lastName}`
             ) : (
-              <Skeleton variant="text" width={100} height={20} />
+              <div className="w-24 h-5 bg-gray-300 rounded animate-pulse" />
             )}
           </div>
           <div className="text-xs text-white">
@@ -293,18 +283,19 @@ const Sidebar: React.FC = () => {
       )}
 
       {/* Navigation Menu */}
-      <nav className={`flex-1 space-y-3 ${collapsed ? "mt-5" : ""} `}>
+      <nav className={`flex-1 space-y-3 ${collapsed ? "mt-5" : ""}`}>
         {UserSectionData.pages.map(renderMenuItem)}
+
         {/* Logout Button */}
         <div
           onClick={handleLogout}
-          className={`flex items-center px-4 py-2 cursor-pointer rounded-md text-sm transition-colors`}
+          className="flex items-center px-4 py-2 cursor-pointer rounded-md text-sm transition-colors hover:bg-blue-700"
         >
           <FaSignOutAlt size={20} />
           {!collapsed && <span className="ml-2">Logout</span>}
         </div>
       </nav>
-    </aside>
+    </div>
   );
 };
 
